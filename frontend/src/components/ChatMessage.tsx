@@ -2,6 +2,18 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import {
+  Bot,
+  User,
+  Copy,
+  Check,
+  Volume2,
+  RotateCw,
+  ThumbsUp,
+  ThumbsDown,
+  Sparkles,
+  Loader2,
+} from 'lucide-react';
 
 export interface ChatMessageData {
   id: string;
@@ -46,8 +58,8 @@ export default function ChatMessage({
     >
       {/* Avatar for Assistant */}
       {!isUser && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0A2A6A] to-[#163D8C] text-sm text-white font-bold shadow-xs">
-          🎓
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0A2A6A] to-[#163D8C] text-white font-bold shadow-xs">
+          <Bot className="h-4 w-4" />
         </div>
       )}
 
@@ -61,8 +73,9 @@ export default function ChatMessage({
         {/* Thinking Indicator */}
         {message.isThinking && (
           <div className="flex items-center gap-2 text-xs font-semibold text-[#163D8C]">
-            <span className="h-2 w-2 rounded-full bg-[#E8B24D] animate-ping" />
-            Analyzing college knowledge base...
+            <Loader2 className="h-4 w-4 animate-spin text-[#E8B24D]" />
+            <Sparkles className="h-3.5 w-3.5 text-[#163D8C]" />
+            <span>Analyzing college knowledge base...</span>
           </div>
         )}
 
@@ -83,9 +96,10 @@ export default function ChatMessage({
                         <span>{match ? match[1] : 'code'}</span>
                         <button
                           onClick={() => copyToClipboard(codeString)}
-                          className="rounded px-2 py-0.5 text-[10px] font-sans hover:bg-white/20"
+                          className="flex items-center gap-1 rounded px-2 py-0.5 text-[10px] font-sans hover:bg-white/20"
                         >
-                          {copied ? '✓ Copied' : 'Copy'}
+                          {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+                          <span>{copied ? 'Copied' : 'Copy'}</span>
                         </button>
                       </div>
                       <pre className="overflow-x-auto p-3 text-xs font-mono">
@@ -124,10 +138,10 @@ export default function ChatMessage({
             <div className="flex items-center gap-1.5 opacity-0 transition group-hover:opacity-100">
               <button
                 onClick={() => copyToClipboard(message.text)}
-                title="Copy response"
+                title="Copy message"
                 className="rounded p-1 hover:bg-[#F1F5F9] text-[#1F2937]"
               >
-                📋
+                {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
               </button>
               {onSpeak && (
                 <button
@@ -135,35 +149,37 @@ export default function ChatMessage({
                   title="Read aloud"
                   className="rounded p-1 hover:bg-[#F1F5F9] text-[#1F2937]"
                 >
-                  🔊
+                  <Volume2 className="h-3.5 w-3.5 text-[#163D8C]" />
                 </button>
               )}
               {onRegenerate && (
                 <button
                   onClick={onRegenerate}
-                  title="Regenerate"
+                  title="Regenerate response"
                   className="rounded p-1 hover:bg-[#F1F5F9] text-[#1F2937]"
                 >
-                  🔄
+                  <RotateCw className="h-3.5 w-3.5 text-[#163D8C]" />
                 </button>
               )}
               {onReact && (
                 <>
                   <button
                     onClick={() => onReact(message.id, 'like')}
+                    title="Like response"
                     className={`rounded p-1 hover:bg-[#F1F5F9] ${
-                      message.reaction === 'like' ? 'text-emerald-600 font-bold' : ''
+                      message.reaction === 'like' ? 'text-emerald-600 font-bold' : 'text-[#64748B]'
                     }`}
                   >
-                    👍
+                    <ThumbsUp className="h-3.5 w-3.5" />
                   </button>
                   <button
                     onClick={() => onReact(message.id, 'dislike')}
+                    title="Dislike response"
                     className={`rounded p-1 hover:bg-[#F1F5F9] ${
-                      message.reaction === 'dislike' ? 'text-rose-600 font-bold' : ''
+                      message.reaction === 'dislike' ? 'text-rose-600 font-bold' : 'text-[#64748B]'
                     }`}
                   >
-                    👎
+                    <ThumbsDown className="h-3.5 w-3.5" />
                   </button>
                 </>
               )}
@@ -175,7 +191,7 @@ export default function ChatMessage({
       {/* Avatar for User */}
       {isUser && (
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#E8B24D] text-xs font-bold text-[#0A2A6A] shadow-xs">
-          AP
+          <User className="h-4 w-4" />
         </div>
       )}
     </motion.div>

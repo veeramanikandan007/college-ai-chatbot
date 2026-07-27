@@ -1,4 +1,17 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  UserCheck,
+  X,
+  Building2,
+  Calendar,
+  Mail,
+  Phone,
+  PieChart,
+  Award,
+  Settings,
+  LogOut,
+  ArrowRight,
+} from 'lucide-react';
 
 interface ProfileDrawerProps {
   isOpen: boolean;
@@ -30,17 +43,22 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
           >
             {/* Header */}
             <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-4">
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#163D8C]">
-                  Student Account
-                </p>
-                <h2 className="text-xl font-bold text-[#0A2A6A]">Profile Details</h2>
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0A2A6A] text-white">
+                  <UserCheck className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#163D8C]">
+                    Student Account
+                  </p>
+                  <h2 className="text-lg font-bold text-[#0A2A6A]">Profile Details</h2>
+                </div>
               </div>
               <button
                 onClick={onClose}
                 className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-2 text-[#0A2A6A] hover:bg-[#F1F5F9]"
               >
-                ✕
+                <X className="h-4 w-4" />
               </button>
             </div>
 
@@ -63,16 +81,18 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
             {/* Metrics Cards */}
             <div className="mb-6 grid grid-cols-2 gap-3">
               <div className="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 text-center">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
-                  Attendance
-                </p>
+                <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
+                  <PieChart className="h-3 w-3 text-emerald-600" />
+                  <span>Attendance</span>
+                </div>
                 <p className="text-xl font-bold text-[#0A2A6A]">94%</p>
                 <span className="text-[10px] font-medium text-emerald-600">Excellent</span>
               </div>
               <div className="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 text-center">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
-                  CGPA
-                </p>
+                <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
+                  <Award className="h-3 w-3 text-amber-500" />
+                  <span>CGPA</span>
+                </div>
                 <p className="text-xl font-bold text-[#0A2A6A]">8.9</p>
                 <span className="text-[10px] font-medium text-[#163D8C]">Top 5%</span>
               </div>
@@ -81,20 +101,35 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
             {/* Profile Info Details List */}
             <div className="flex-1 space-y-3 text-xs text-[#1F2937]">
               <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-                <p className="text-[10px] font-bold uppercase text-[#64748B]">Department</p>
-                <p className="font-semibold text-[#0A2A6A]">Computer Science & Engineering</p>
+                <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-[#64748B]">
+                  <Building2 className="h-3.5 w-3.5 text-[#163D8C]" />
+                  <span>Department</span>
+                </div>
+                <p className="mt-1 font-semibold text-[#0A2A6A]">Computer Science & Engineering</p>
               </div>
+
               <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-                <p className="text-[10px] font-bold uppercase text-[#64748B]">Year & Semester</p>
-                <p className="font-semibold text-[#0A2A6A]">3rd Year • Semester 6</p>
+                <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-[#64748B]">
+                  <Calendar className="h-3.5 w-3.5 text-[#163D8C]" />
+                  <span>Year & Semester</span>
+                </div>
+                <p className="mt-1 font-semibold text-[#0A2A6A]">3rd Year • Semester 6</p>
               </div>
+
               <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-                <p className="text-[10px] font-bold uppercase text-[#64748B]">Email Address</p>
-                <p className="font-semibold text-[#0A2A6A]">ariana.patel@campusmail.edu</p>
+                <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-[#64748B]">
+                  <Mail className="h-3.5 w-3.5 text-[#163D8C]" />
+                  <span>Email Address</span>
+                </div>
+                <p className="mt-1 font-semibold text-[#0A2A6A]">ariana.patel@campusmail.edu</p>
               </div>
+
               <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-                <p className="text-[10px] font-bold uppercase text-[#64748B]">Phone Number</p>
-                <p className="font-semibold text-[#0A2A6A]">+1 (555) 019-2834</p>
+                <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-[#64748B]">
+                  <Phone className="h-3.5 w-3.5 text-[#163D8C]" />
+                  <span>Phone Number</span>
+                </div>
+                <p className="mt-1 font-semibold text-[#0A2A6A]">+1 (555) 019-2834</p>
               </div>
             </div>
 
@@ -104,9 +139,13 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                 onClick={() => alert('Profile Editing is managed by College Registrar.')}
                 className="flex w-full items-center justify-between rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] px-4 py-2.5 text-xs font-bold text-[#0A2A6A] hover:bg-[#F1F5F9] transition"
               >
-                <span>⚙️ Edit Profile</span>
-                <span>→</span>
+                <div className="flex items-center gap-2">
+                  <Settings className="h-4 w-4 text-[#163D8C]" />
+                  <span>Edit Profile</span>
+                </div>
+                <ArrowRight className="h-3.5 w-3.5" />
               </button>
+
               <button
                 onClick={() => {
                   onLogout();
@@ -114,8 +153,11 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                 }}
                 className="flex w-full items-center justify-between rounded-xl bg-rose-600 px-4 py-2.5 text-xs font-bold text-white shadow-md hover:bg-rose-700 transition"
               >
-                <span>🚪 Logout Account</span>
-                <span>→</span>
+                <div className="flex items-center gap-2">
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout Account</span>
+                </div>
+                <ArrowRight className="h-3.5 w-3.5" />
               </button>
             </div>
           </motion.aside>

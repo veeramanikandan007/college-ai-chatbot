@@ -1,4 +1,13 @@
 import { motion } from 'framer-motion';
+import {
+  BarChart3,
+  CheckCircle2,
+  Award,
+  CreditCard,
+  Megaphone,
+  Zap,
+  ArrowRight,
+} from 'lucide-react';
 
 interface RightPanelProps {
   attendancePercent?: number;
@@ -16,9 +25,10 @@ export default function RightPanel({
       {/* Student Overview Widget */}
       <div className="rounded-2xl border border-[#E2E8F0] bg-gradient-to-b from-[#F8FAFC] to-white p-4 shadow-sm">
         <div className="flex items-center justify-between">
-          <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#163D8C]">
-            Student Stats
-          </p>
+          <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.24em] text-[#163D8C]">
+            <BarChart3 className="h-4 w-4" />
+            <span>Student Stats</span>
+          </div>
           <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-600 border border-emerald-200">
             Active
           </span>
@@ -32,18 +42,27 @@ export default function RightPanel({
           <div>
             <h4 className="text-sm font-bold text-[#0A2A6A]">Attendance</h4>
             <p className="text-xs text-[#64748B]">Semester 6 • CS Dept</p>
-            <p className="mt-1 text-[11px] font-semibold text-emerald-600">✓ Above 75% threshold</p>
+            <div className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              <span>Above 75% threshold</span>
+            </div>
           </div>
         </div>
 
         {/* CGPA Card */}
         <div className="mt-4 grid grid-cols-2 gap-2 text-center">
           <div className="rounded-xl border border-[#E2E8F0] bg-white p-2.5 shadow-2xs">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">CGPA</p>
+            <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
+              <Award className="h-3 w-3 text-amber-500" />
+              <span>CGPA</span>
+            </div>
             <p className="text-lg font-bold text-[#0A2A6A]">{cgpa}</p>
           </div>
           <div className="rounded-xl border border-[#E2E8F0] bg-white p-2.5 shadow-2xs">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">Fees Paid</p>
+            <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
+              <CreditCard className="h-3 w-3 text-emerald-500" />
+              <span>Fees</span>
+            </div>
             <p className="text-lg font-bold text-emerald-600">Clear</p>
           </div>
         </div>
@@ -51,9 +70,10 @@ export default function RightPanel({
 
       {/* Notice Board */}
       <div className="mt-5 space-y-3">
-        <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-[#163D8C]">
-          📌 Campus Notices
-        </h4>
+        <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.2em] text-[#163D8C]">
+          <Megaphone className="h-4 w-4" />
+          <span>Campus Notices</span>
+        </div>
 
         <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 text-xs text-[#1F2937]">
           <span className="inline-block rounded-md bg-[#E8B24D]/20 px-1.5 py-0.5 text-[10px] font-bold text-[#0A2A6A] mb-1">
@@ -74,9 +94,10 @@ export default function RightPanel({
 
       {/* Quick AI Prompts */}
       <div className="mt-5">
-        <h4 className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#163D8C]">
-          ⚡ Quick Assist
-        </h4>
+        <div className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.2em] text-[#163D8C]">
+          <Zap className="h-4 w-4 text-[#E8B24D]" />
+          <span>Quick Assist</span>
+        </div>
         <div className="space-y-2">
           {[
             'Show my attendance report',
@@ -87,9 +108,10 @@ export default function RightPanel({
             <button
               key={prompt}
               onClick={() => onSelectPrompt(prompt)}
-              className="w-full rounded-xl border border-[#E2E8F0] bg-white px-3 py-2 text-left text-xs font-medium text-[#0A2A6A] hover:bg-[#F8FAFC] hover:border-[#163D8C] transition shadow-2xs"
+              className="flex w-full items-center justify-between rounded-xl border border-[#E2E8F0] bg-white px-3 py-2 text-left text-xs font-medium text-[#0A2A6A] hover:bg-[#F8FAFC] hover:border-[#163D8C] transition shadow-2xs group"
             >
-              ➔ {prompt}
+              <span>{prompt}</span>
+              <ArrowRight className="h-3.5 w-3.5 text-[#163D8C] opacity-0 group-hover:opacity-100 transition" />
             </button>
           ))}
         </div>

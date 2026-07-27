@@ -1,5 +1,20 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Plus,
+  Search,
+  MoreVertical,
+  Edit2,
+  Trash2,
+  Pin,
+  Star,
+  Copy,
+  Download,
+  GraduationCap,
+  Sparkles,
+  MessageSquare,
+  History,
+} from 'lucide-react';
 
 export interface ChatSession {
   id: string;
@@ -47,7 +62,6 @@ export default function Sidebar({
   const [editingTitle, setEditingTitle] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown menu on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -58,12 +72,10 @@ export default function Sidebar({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Filter conversations by search term
   const filtered = conversations.filter((c) =>
     c.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Date Grouping logic
   const now = Date.now();
   const ONE_DAY = 24 * 60 * 60 * 1000;
 
@@ -98,9 +110,10 @@ export default function Sidebar({
     if (groupChats.length === 0) return null;
     return (
       <div className="mb-4">
-        <p className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.24em] text-[#163D8C]">
-          {groupTitle}
-        </p>
+        <div className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.24em] text-[#163D8C]">
+          <History className="h-3 w-3" />
+          <span>{groupTitle}</span>
+        </div>
         <div className="mt-1 space-y-1">
           {groupChats.map((chat) => {
             const isActive = chat.id === activeChatId;
@@ -120,11 +133,16 @@ export default function Sidebar({
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <MessageSquare className={`h-4 w-4 shrink-0 ${isActive ? 'text-white' : 'text-[#163D8C]'}`} />
+                    
                     {chat.unread && (
                       <span className="h-2 w-2 rounded-full bg-[#E8B24D] shrink-0" />
                     )}
                     {chat.favorite && (
-                      <span className="text-amber-400 text-xs shrink-0">★</span>
+                      <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400 shrink-0" />
+                    )}
+                    {chat.pinned && (
+                      <Pin className="h-3.5 w-3.5 text-[#E8B24D] shrink-0" />
                     )}
 
                     {editingId === chat.id ? (
@@ -164,11 +182,7 @@ export default function Sidebar({
                           : 'text-[#64748B] hover:bg-[#E2E8F0]'
                       } ${isMenuOpen ? 'opacity-100' : ''}`}
                     >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                        <circle cx="12" cy="5" r="2" />
-                        <circle cx="12" cy="12" r="2" />
-                        <circle cx="12" cy="19" r="2" />
-                      </svg>
+                      <MoreVertical className="h-4 w-4" />
                     </button>
 
                     {/* Options Dropdown Menu */}
@@ -182,9 +196,10 @@ export default function Sidebar({
                             e.stopPropagation();
                             startRename(chat);
                           }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#1F2937] hover:bg-[#F1F5F9]"
+                          className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#1F2937] hover:bg-[#F1F5F9]"
                         >
-                          ✏️ Rename Chat
+                          <Edit2 className="h-3.5 w-3.5 text-[#163D8C]" />
+                          <span>Rename Chat</span>
                         </button>
                         <button
                           onClick={(e) => {
@@ -192,9 +207,10 @@ export default function Sidebar({
                             onPinChat(chat.id);
                             setOpenMenuId(null);
                           }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#1F2937] hover:bg-[#F1F5F9]"
+                          className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#1F2937] hover:bg-[#F1F5F9]"
                         >
-                          📌 {chat.pinned ? 'Unpin Chat' : 'Pin Chat'}
+                          <Pin className="h-3.5 w-3.5 text-[#163D8C]" />
+                          <span>{chat.pinned ? 'Unpin Chat' : 'Pin Chat'}</span>
                         </button>
                         <button
                           onClick={(e) => {
@@ -202,9 +218,10 @@ export default function Sidebar({
                             onFavoriteChat(chat.id);
                             setOpenMenuId(null);
                           }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#1F2937] hover:bg-[#F1F5F9]"
+                          className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#1F2937] hover:bg-[#F1F5F9]"
                         >
-                          ⭐ {chat.favorite ? 'Unfavorite' : 'Favorite Chat'}
+                          <Star className="h-3.5 w-3.5 text-amber-500" />
+                          <span>{chat.favorite ? 'Unfavorite' : 'Favorite Chat'}</span>
                         </button>
                         <button
                           onClick={(e) => {
@@ -212,9 +229,10 @@ export default function Sidebar({
                             onDuplicateChat(chat.id);
                             setOpenMenuId(null);
                           }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#1F2937] hover:bg-[#F1F5F9]"
+                          className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#1F2937] hover:bg-[#F1F5F9]"
                         >
-                          📄 Duplicate Chat
+                          <Copy className="h-3.5 w-3.5 text-[#163D8C]" />
+                          <span>Duplicate Chat</span>
                         </button>
                         <button
                           onClick={(e) => {
@@ -222,9 +240,10 @@ export default function Sidebar({
                             onExportChat(chat.id);
                             setOpenMenuId(null);
                           }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#1F2937] hover:bg-[#F1F5F9]"
+                          className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[#1F2937] hover:bg-[#F1F5F9]"
                         >
-                          📥 Export Chat
+                          <Download className="h-3.5 w-3.5 text-[#163D8C]" />
+                          <span>Export Chat</span>
                         </button>
                         <div className="my-1 border-t border-[#E2E8F0]" />
                         <button
@@ -233,9 +252,10 @@ export default function Sidebar({
                             onDeleteChat(chat.id);
                             setOpenMenuId(null);
                           }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50"
+                          className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50"
                         >
-                          🗑️ Delete Chat
+                          <Trash2 className="h-3.5 w-3.5 text-rose-600" />
+                          <span>Delete Chat</span>
                         </button>
                       </div>
                     )}
@@ -254,14 +274,15 @@ export default function Sidebar({
       {/* Brand Header */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0A2A6A] to-[#163D8C] text-lg text-white shadow-md shadow-[#0A2A6A]/20">
-            🎓
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0A2A6A] to-[#163D8C] text-white shadow-md shadow-[#0A2A6A]/20">
+            <GraduationCap className="h-6 w-6" />
           </div>
           <div>
             <h2 className="text-base font-bold tracking-tight text-[#0A2A6A]">CollegeMate AI</h2>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#E8B24D]">
-              SaaS Assistant
-            </p>
+            <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#E8B24D]">
+              <Sparkles className="h-3 w-3" />
+              <span>SaaS Assistant</span>
+            </div>
           </div>
         </div>
       </div>
@@ -274,7 +295,7 @@ export default function Sidebar({
         }}
         className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0A2A6A] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[#0A2A6A]/20 transition hover:bg-[#163D8C] active:scale-[0.98]"
       >
-        <span className="text-lg leading-none">+</span>
+        <Plus className="h-5 w-5" />
         <span>New Chat</span>
       </button>
 
@@ -287,19 +308,7 @@ export default function Sidebar({
           placeholder="Search conversations..."
           className="w-full rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] py-2 pl-9 pr-3 text-xs text-[#1F2937] outline-none transition focus:border-[#163D8C] focus:bg-white"
         />
-        <svg
-          className="absolute left-3 top-2.5 h-4 w-4 text-[#64748B]"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
+        <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#64748B]" />
       </div>
 
       {/* Conversation List */}

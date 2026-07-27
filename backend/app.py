@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from fastapi.requests import Request
 from config import APP_NAME, ENV, HOST, PORT
 from routes.auth import router as auth_router
+from routes.chat import router as chat_router
 
 app = FastAPI(title=APP_NAME, debug=(ENV == 'development'))
 
@@ -16,6 +17,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router, prefix='/auth', tags=['Auth'])
+app.include_router(chat_router, tags=['Chat'])
 
 
 @app.get('/')

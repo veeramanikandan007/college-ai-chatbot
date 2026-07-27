@@ -1,5 +1,15 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Mic,
+  MicOff,
+  Send,
+  Square,
+  Download,
+  Sparkles,
+  Bot,
+  Info,
+} from 'lucide-react';
 
 import Sidebar, { ChatSession } from '../components/Sidebar';
 import HeaderBar from '../components/HeaderBar';
@@ -12,7 +22,6 @@ import ExportModal from '../components/ExportModal';
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
-// Default initial chat history sessions
 const initialSessions: ChatSession[] = [
   {
     id: 'chat-today-1',
@@ -48,7 +57,6 @@ const initialSessions: ChatSession[] = [
   },
 ];
 
-// Initial default messages for existing session
 const initialMessagesMap: Record<string, ChatMessageData[]> = {
   'chat-today-1': [
     {
@@ -73,7 +81,6 @@ const initialMessagesMap: Record<string, ChatMessageData[]> = {
 };
 
 export default function DashboardPage() {
-  // State Management
   const [sessions, setSessions] = useState<ChatSession[]>(initialSessions);
   const [activeChatId, setActiveChatId] = useState<string>('chat-today-1');
   const [messagesMap, setMessagesMap] = useState<Record<string, ChatMessageData[]>>(initialMessagesMap);
@@ -81,39 +88,32 @@ export default function DashboardPage() {
   const [promptInput, setPromptInput] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
 
-  // UI Modals & Drawers
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
   const [isLoginOpen, setIsLoginOpen] = useState<boolean>(false);
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isExportOpen, setIsExportOpen] = useState<boolean>(false);
   const [isSidebarMobileOpen, setIsSidebarMobileOpen] = useState<boolean>(false);
 
-  // Voice Web APIs State
   const [isListeningVoice, setIsListeningVoice] = useState<boolean>(false);
   const recognitionRef = useRef<any>(null);
 
-  // Auto-scroll ref
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Active messages list
   const activeMessages = useMemo(() => {
     return messagesMap[activeChatId] || [];
   }, [messagesMap, activeChatId]);
 
-  // Current Chat Session metadata
   const currentSession = useMemo(() => {
     return sessions.find((s) => s.id === activeChatId);
   }, [sessions, activeChatId]);
 
-  // Auto scroll to bottom when messages update
   useEffect(() => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
   }, [activeMessages, isGenerating]);
 
-  // Automatic Chat Title Generator (max 4 words)
   const generateTitleFromPrompt = (userPrompt: string): string => {
     const cleaned = userPrompt.replace(/[^\w\s]/gi, '').trim();
     const words = cleaned.split(/\s+/).slice(0, 4);
@@ -121,12 +121,10 @@ export default function DashboardPage() {
     return words.map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
   };
 
-  // Helper: Get Current Time String
   const getCurrentTimeString = () => {
     return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  // Action: Create New Chat
   const handleNewChat = () => {
     const newId = `chat-${Date.now()}`;
     const newSession: ChatSession = {
@@ -142,23 +140,19 @@ export default function DashboardPage() {
     setPromptInput('');
   };
 
-  // Action: Select Chat Session
   const handleSelectChat = (id: string) => {
     setActiveChatId(id);
-    // Mark as read
     setSessions((prev) =>
       prev.map((s) => (s.id === id ? { ...s, unread: false } : s))
     );
   };
 
-  // Action: Rename Chat
   const handleRenameChat = (id: string, newTitle: string) => {
     setSessions((prev) =>
       prev.map((s) => (s.id === id ? { ...s, title: newTitle } : s))
     );
   };
 
-  // Action: Delete Chat
   const handleDeleteChat = (id: string) => {
     setSessions((prev) => prev.filter((s) => s.id !== id));
     delete messagesMap[id];
@@ -173,7 +167,6 @@ export default function DashboardPage() {
     }
   };
 
-  // Action: Pin / Favorite / Duplicate
   const handlePinChat = (id: string) => {
     setSessions((prev) =>
       prev.map((s) => (s.id === id ? { ...s, pinned: !s.pinned } : s))
@@ -203,7 +196,6 @@ export default function DashboardPage() {
     }));
   };
 
-  // Action: Voice Input Dictation (Web SpeechRecognition API)
   const handleToggleVoiceInput = () => {
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -239,20 +231,18 @@ export default function DashboardPage() {
     recognition.start();
   };
 
-  // Action: Text to Speech (SpeechSynthesis API)
   const handleSpeakText = (text: string) => {
     if (!('speechSynthesis' in window)) {
       alert('Speech synthesis is not supported in this browser.');
       return;
     }
-    window.speechSynthesis.cancel(); // Stop ongoing speech
+    window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 1.0;
     utterance.pitch = 1.0;
     window.speechSynthesis.speak(utterance);
   };
 
-  // Action: Submit Message to Backend AI API
   const handleSendMessage = async (customPrompt?: string) => {
     const textToSend = (customPrompt || promptInput).trim();
     if (!textToSend || isGenerating) return;
@@ -266,18 +256,15 @@ export default function DashboardPage() {
       timestamp,
     };
 
-    // Append user message immediately
     const updatedMessages = [...activeMessages, userMsg];
     setMessagesMap((prev) => ({ ...prev, [activeChatId]: updatedMessages }));
     setPromptInput('');
 
-    // If first message in conversation, auto-generate chat title
     if (activeMessages.length === 0) {
       const autoTitle = generateTitleFromPrompt(textToSend);
       handleRenameChat(activeChatId, autoTitle);
     }
 
-    // Set Thinking state
     setIsGenerating(true);
     const thinkingMsgId = `a-think-${Date.now()}`;
     const thinkingMsg: ChatMessageData = {
@@ -309,14 +296,12 @@ export default function DashboardPage() {
         }
       }
 
-      // Simulate streaming response
       simulateStreamResponse(aiReplyText, updatedMessages);
     } catch (err: any) {
       if (err.name === 'AbortError') {
         setIsGenerating(false);
         return;
       }
-      // Fallback response if offline
       const fallbackAnswer =
         `I am connected to the CollegeMate knowledge base. Here is what I found regarding **"${textToSend}"**:\n\n` +
         `• Minimum **75% attendance** is required for semester exams.\n` +
@@ -326,7 +311,6 @@ export default function DashboardPage() {
     }
   };
 
-  // Helper: Simulate response streaming effect
   const simulateStreamResponse = (fullText: string, baseMessages: ChatMessageData[]) => {
     const assistantMsgId = `a-${Date.now()}`;
     const timestamp = getCurrentTimeString();
@@ -356,7 +340,6 @@ export default function DashboardPage() {
     }, 30);
   };
 
-  // Action: Stop Generation
   const handleStopGeneration = () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -364,7 +347,6 @@ export default function DashboardPage() {
     setIsGenerating(false);
   };
 
-  // Action: Regenerate Response
   const handleRegenerate = () => {
     if (activeMessages.length < 2) return;
     const lastUserMessage = [...activeMessages].reverse().find((m) => m.role === 'user');
@@ -373,7 +355,6 @@ export default function DashboardPage() {
     }
   };
 
-  // Action: Message Reactions (Like/Dislike)
   const handleMessageReaction = (id: string, reaction: 'like' | 'dislike') => {
     setMessagesMap((prev) => ({
       ...prev,
@@ -424,10 +405,8 @@ export default function DashboardPage() {
               className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8"
             >
               {activeMessages.length === 0 ? (
-                /* SUGGESTED QUESTIONS (Shown on New Chat) */
                 <SuggestedQuestions onSelectQuestion={(q) => handleSendMessage(q)} />
               ) : (
-                /* MESSAGES STREAM */
                 <div className="mx-auto max-w-4xl space-y-4">
                   {activeMessages.map((msg) => (
                     <ChatMessage
@@ -476,7 +455,7 @@ export default function DashboardPage() {
                           : 'text-[#64748B] hover:bg-[#E2E8F0]'
                       }`}
                     >
-                      🎙️
+                      {isListeningVoice ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                     </button>
 
                     {/* Submit or Stop Button */}
@@ -484,17 +463,19 @@ export default function DashboardPage() {
                       <button
                         type="button"
                         onClick={handleStopGeneration}
-                        className="rounded-xl bg-rose-600 px-4 py-2 text-xs font-bold text-white shadow-md transition hover:bg-rose-700"
+                        className="flex items-center gap-1.5 rounded-xl bg-rose-600 px-4 py-2 text-xs font-bold text-white shadow-md transition hover:bg-rose-700"
                       >
-                        Stop ■
+                        <Square className="h-3.5 w-3.5 fill-current" />
+                        <span>Stop</span>
                       </button>
                     ) : (
                       <button
                         type="submit"
                         disabled={!promptInput.trim()}
-                        className="rounded-xl bg-[#0A2A6A] px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-[#0A2A6A]/20 transition hover:bg-[#163D8C] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="flex items-center gap-1.5 rounded-xl bg-[#0A2A6A] px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-[#0A2A6A]/20 transition hover:bg-[#163D8C] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
                       >
-                        Send →
+                        <span>Send</span>
+                        <Send className="h-3.5 w-3.5" />
                       </button>
                     )}
                   </div>
@@ -502,13 +483,17 @@ export default function DashboardPage() {
 
                 {/* Subtext info */}
                 <div className="mt-2 flex items-center justify-between text-[11px] font-medium text-[#94A3B8]">
-                  <span>CollegeMate AI may display verified college information.</span>
+                  <div className="flex items-center gap-1">
+                    <Info className="h-3 w-3 text-[#163D8C]" />
+                    <span>CollegeMate AI displays verified college information.</span>
+                  </div>
                   {activeMessages.length > 0 && (
                     <button
                       onClick={() => setIsExportOpen(true)}
-                      className="text-[#163D8C] hover:underline"
+                      className="flex items-center gap-1 text-[#163D8C] hover:underline"
                     >
-                      📥 Export Chat
+                      <Download className="h-3 w-3" />
+                      <span>Export Chat</span>
                     </button>
                   )}
                 </div>
