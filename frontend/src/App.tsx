@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import DashboardPage from './pages/DashboardPage';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   const location = useLocation();
@@ -19,6 +20,7 @@ function App() {
           <Routes location={location}>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Routes>
         </motion.div>
       </AnimatePresence>
