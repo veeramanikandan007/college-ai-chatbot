@@ -8,18 +8,33 @@ import {
   Zap,
   ArrowRight,
 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface RightPanelProps {
-  attendancePercent?: number;
-  cgpa?: number;
   onSelectPrompt: (promptText: string) => void;
 }
 
-export default function RightPanel({
-  attendancePercent = 94,
-  cgpa = 8.9,
-  onSelectPrompt,
-}: RightPanelProps) {
+export default function RightPanel({ onSelectPrompt }: RightPanelProps) {
+  const { user } = useAuth();
+
+  const attendancePercent = user?.attendancePercent ?? 87;
+  const cgpa = user?.cgpa ?? 8.52;
+  const feesPaid = user?.fees_paid ?? 45000;
+  const feesTotal = user?.fees_total ?? 75000;
+  const feesBalance = feesTotal - feesPaid;
+  const feesStatus = feesBalance === 0 ? 'Clear' : `Pending: ₹${feesBalance.toLocaleString()}`;
+
+  const attendanceColor =
+    attendancePercent >= 85
+      ? 'text-emerald-600'
+      : attendancePercent >= 75
+      ? 'text-amber-600'
+      : 'text-rose-600';
+
+  const attendanceLabel =
+    attendancePercent >= 85 ? 'Excellent' :
+    attendancePercent >= 75 ? 'Above Min' : 'Below Min';
+
   return (
     <aside className="hidden w-80 shrink-0 border-l border-[#E2E8F0] bg-white p-5 lg:block overflow-y-auto select-none">
       {/* Student Overview Widget */}
@@ -41,29 +56,29 @@ export default function RightPanel({
           </div>
           <div>
             <h4 className="text-sm font-bold text-[#0A2A6A]">Attendance</h4>
-            <p className="text-xs text-[#64748B]">Semester 6 • CS Dept</p>
-            <div className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
+            <p className="text-xs text-[#64748B]">{user?.semester ? `Semester ${user.semester}` : 'Semester 5'} • {user?.department?.split(' ')[0] ?? 'CS'} Dept</p>
+            <div className={`mt-1 flex items-center gap-1 text-[11px] font-semibold ${attendanceColor}`}>
               <CheckCircle2 className="h-3.5 w-3.5" />
-              <span>Above 75% threshold</span>
+              <span>{attendanceLabel}</span>
             </div>
           </div>
         </div>
 
-        {/* CGPA Card */}
+        {/* CGPA & Fees Cards */}
         <div className="mt-4 grid grid-cols-2 gap-2 text-center">
           <div className="rounded-xl border border-[#E2E8F0] bg-white p-2.5 shadow-2xs">
-            <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
+            <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B] mb-1">
               <Award className="h-3 w-3 text-amber-500" />
               <span>CGPA</span>
             </div>
             <p className="text-lg font-bold text-[#0A2A6A]">{cgpa}</p>
           </div>
           <div className="rounded-xl border border-[#E2E8F0] bg-white p-2.5 shadow-2xs">
-            <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
+            <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B] mb-1">
               <CreditCard className="h-3 w-3 text-emerald-500" />
               <span>Fees</span>
             </div>
-            <p className="text-lg font-bold text-emerald-600">Clear</p>
+            <p className={`text-lg font-bold ${feesBalance === 0 ? 'text-emerald-600' : 'text-rose-600'}`}>{feesStatus}</p>
           </div>
         </div>
       </div>

@@ -1,15 +1,6 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Mic,
-  MicOff,
-  Send,
-  Square,
-  Download,
-  Sparkles,
-  Bot,
-  Info,
-} from 'lucide-react';
+import { useState, useRef, useCallback, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { Mic, MicOff, Send, Square, Download, Info, Keyboard } from 'lucide-react';
 
 import Sidebar, { ChatSession } from '../components/Sidebar';
 import HeaderBar from '../components/HeaderBar';
@@ -20,8 +11,11 @@ import LoginModal from '../components/LoginModal';
 import ProfileDrawer from '../components/ProfileDrawer';
 import ExportModal from '../components/ExportModal';
 
-const API_BASE_URL = 'http://127.0.0.1:8000';
+import { sendChatMessage } from '../services/chatService';
+import { useAutoScroll } from '../hooks/useAutoScroll';
+import { useAuth } from '../contexts/AuthContext';
 
+// ─── Initial demo sessions ──────────────────────────────────────────────────
 const initialSessions: ChatSession[] = [
   {
     id: 'chat-today-1',
@@ -37,15 +31,15 @@ const initialSessions: ChatSession[] = [
     timestamp: Date.now() - 4 * 60 * 60 * 1000,
   },
   {
-    id: 'chat-[#163D8C]-yesterday',
+    id: 'chat-yesterday-1',
     title: 'Library Hours & Books',
     lastUpdated: 'Yesterday',
-    timestamp: Date.now() - 28 * 60 * 60 * 1000,
+    timestamp: Date.now() - 26 * 60 * 60 * 1000,
     pinned: true,
   },
   {
     id: 'chat-week-1',
-    title: 'Bus Route 1 Schedule',
+    title: 'Bus Route Timings',
     lastUpdated: '3 days ago',
     timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000,
   },
@@ -60,153 +54,165 @@ const initialSessions: ChatSession[] = [
 const initialMessagesMap: Record<string, ChatMessageData[]> = {
   'chat-today-1': [
     {
-      id: 'm1',
+      id: 'm-w',
       role: 'assistant',
-      text: 'Hello! I am CollegeMate AI. Ask me about attendance rules, fee schedules, bus routes, or certificates.',
+      text: 'Hello! I am **CollegeMate AI** 🎓\n\nI can answer questions about:\n- **Attendance** rules and condonation\n- **Fee** payment and due dates\n- **Library** hours and book limits\n- **Bus** routes and timings\n- **Certificates** (Bonafide, Transfer, etc.)\n- **Timetable** and exam schedules\n- **Placement** statistics\n\nHow can I help you today?',
       timestamp: '10:40 AM',
     },
     {
-      id: 'm2',
+      id: 'm-u1',
       role: 'user',
-      text: 'What is the attendance rule for final semester exams?',
+      text: 'What is the minimum attendance required for semester exams?',
       timestamp: '10:42 AM',
     },
     {
-      id: 'm3',
+      id: 'm-a1',
       role: 'assistant',
-      text: 'A minimum of **75% attendance** is mandatory in each subject to be eligible for final semester examinations.\n\n- Medical leave requires a valid certificate submitted to the HOD within 3 days.\n- Maximum condonation allowed is 10%.',
-      timestamp: '10:45 AM',
+      text: 'A minimum of **75% attendance** is mandatory in each subject to be eligible for semester examinations.\n\n### Condonation Policy\n- Medical leave with valid certificate: up to **10% condonation**\n- Certificate must be submitted to HOD within **3 working days** of returning\n- Students below 65% are **not eligible** even with medical condonation',
+      timestamp: '10:43 AM',
     },
   ],
 };
 
+// ─── Helper: generate a concise title from the first user prompt ─────────────
+function generateTitle(prompt: string): string {
+  const cleaned = prompt.replace(/[^\w\s]/gi, '').trim();
+  const words = cleaned.split(/\s+/).slice(0, 5);
+  if (words.length === 0) return 'New Conversation';
+  return words.map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+}
+
+function getTimeNow(): string {
+  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
 export default function DashboardPage() {
+  const { isLoggedIn } = useAuth();
+
+  // ─── Sessions & Messages ─────────────────────────────────────────────────
   const [sessions, setSessions] = useState<ChatSession[]>(initialSessions);
   const [activeChatId, setActiveChatId] = useState<string>('chat-today-1');
-  const [messagesMap, setMessagesMap] = useState<Record<string, ChatMessageData[]>>(initialMessagesMap);
+  const [messagesMap, setMessagesMap] = useState<Record<string, ChatMessageData[]>>(
+    initialMessagesMap,
+  );
 
-  const [promptInput, setPromptInput] = useState<string>('');
-  const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  // ─── UI State ────────────────────────────────────────────────────────────
+  const [promptInput, setPromptInput] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isExportOpen, setIsExportOpen] = useState(false);
+  const [isSidebarMobileOpen, setIsSidebarMobileOpen] = useState(false);
+  const [isListeningVoice, setIsListeningVoice] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
-  const [isLoginOpen, setIsLoginOpen] = useState<boolean>(false);
-  const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
-  const [isExportOpen, setIsExportOpen] = useState<boolean>(false);
-  const [isSidebarMobileOpen, setIsSidebarMobileOpen] = useState<boolean>(false);
-
-  const [isListeningVoice, setIsListeningVoice] = useState<boolean>(false);
-  const recognitionRef = useRef<any>(null);
-
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const activeMessages = useMemo(() => {
-    return messagesMap[activeChatId] || [];
-  }, [messagesMap, activeChatId]);
+  // ─── Auto-scroll on message updates ────────────────────────────────────
+  const activeMessages: ChatMessageData[] = useMemo(
+    () => messagesMap[activeChatId] ?? [],
+    [messagesMap, activeChatId],
+  );
 
-  const currentSession = useMemo(() => {
-    return sessions.find((s) => s.id === activeChatId);
-  }, [sessions, activeChatId]);
+  useAutoScroll(scrollContainerRef, [activeMessages.length, isGenerating]);
 
-  useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
-    }
-  }, [activeMessages, isGenerating]);
+  const currentSession = useMemo(
+    () => sessions.find((s) => s.id === activeChatId),
+    [sessions, activeChatId],
+  );
 
-  const generateTitleFromPrompt = (userPrompt: string): string => {
-    const cleaned = userPrompt.replace(/[^\w\s]/gi, '').trim();
-    const words = cleaned.split(/\s+/).slice(0, 4);
-    if (words.length === 0) return 'New Conversation';
-    return words.map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-  };
-
-  const getCurrentTimeString = () => {
-    return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
-
-  const handleNewChat = () => {
+  // ─── Session Handlers ────────────────────────────────────────────────────
+  const handleNewChat = useCallback(() => {
     const newId = `chat-${Date.now()}`;
-    const newSession: ChatSession = {
-      id: newId,
-      title: 'New Conversation',
-      lastUpdated: 'Just now',
-      timestamp: Date.now(),
-    };
-
-    setSessions((prev) => [newSession, ...prev]);
+    setSessions((prev) => [
+      { id: newId, title: 'New Conversation', lastUpdated: 'Just now', timestamp: Date.now() },
+      ...prev,
+    ]);
     setMessagesMap((prev) => ({ ...prev, [newId]: [] }));
     setActiveChatId(newId);
     setPromptInput('');
-  };
+    setTimeout(() => inputRef.current?.focus(), 100);
+  }, []);
 
-  const handleSelectChat = (id: string) => {
+  const handleSelectChat = useCallback((id: string) => {
     setActiveChatId(id);
-    setSessions((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, unread: false } : s))
-    );
-  };
+    setSessions((prev) => prev.map((s) => (s.id === id ? { ...s, unread: false } : s)));
+  }, []);
 
-  const handleRenameChat = (id: string, newTitle: string) => {
-    setSessions((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, title: newTitle } : s))
-    );
-  };
+  const handleRenameChat = useCallback((id: string, newTitle: string) => {
+    setSessions((prev) => prev.map((s) => (s.id === id ? { ...s, title: newTitle } : s)));
+  }, []);
 
-  const handleDeleteChat = (id: string) => {
-    setSessions((prev) => prev.filter((s) => s.id !== id));
-    delete messagesMap[id];
+  const handleDeleteChat = useCallback(
+    (id: string) => {
+      setSessions((prev) => {
+        const remaining = prev.filter((s) => s.id !== id);
+        if (id === activeChatId) {
+          const next = remaining[0];
+          if (next) {
+            setActiveChatId(next.id);
+          } else {
+            // Create a new session if no sessions remain
+            const newId = `chat-${Date.now()}`;
+            setMessagesMap((m) => ({ ...m, [newId]: [] }));
+            setActiveChatId(newId);
+            return [
+              { id: newId, title: 'New Conversation', lastUpdated: 'Just now', timestamp: Date.now() },
+            ];
+          }
+        }
+        return remaining;
+      });
+      // Remove messages via setState (never mutate directly)
+      setMessagesMap((prev) => {
+        const updated = { ...prev };
+        delete updated[id];
+        return updated;
+      });
+    },
+    [activeChatId],
+  );
 
-    if (activeChatId === id) {
-      const remaining = sessions.filter((s) => s.id !== id);
-      if (remaining.length > 0) {
-        setActiveChatId(remaining[0].id);
-      } else {
-        handleNewChat();
-      }
-    }
-  };
+  const handlePinChat = useCallback((id: string) => {
+    setSessions((prev) => prev.map((s) => (s.id === id ? { ...s, pinned: !s.pinned } : s)));
+  }, []);
 
-  const handlePinChat = (id: string) => {
-    setSessions((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, pinned: !s.pinned } : s))
-    );
-  };
+  const handleFavoriteChat = useCallback((id: string) => {
+    setSessions((prev) => prev.map((s) => (s.id === id ? { ...s, favorite: !s.favorite } : s)));
+  }, []);
 
-  const handleFavoriteChat = (id: string) => {
-    setSessions((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, favorite: !s.favorite } : s))
-    );
-  };
+  const handleDuplicateChat = useCallback(
+    (id: string) => {
+      const target = sessions.find((s) => s.id === id);
+      if (!target) return;
+      const dupId = `chat-dup-${Date.now()}`;
+      setSessions((prev) => [
+        { id: dupId, title: `${target.title} (Copy)`, lastUpdated: 'Just now', timestamp: Date.now() },
+        ...prev,
+      ]);
+      setMessagesMap((prev) => ({ ...prev, [dupId]: [...(prev[id] ?? [])] }));
+    },
+    [sessions],
+  );
 
-  const handleDuplicateChat = (id: string) => {
-    const target = sessions.find((s) => s.id === id);
-    if (!target) return;
-    const dupId = `chat-dup-${Date.now()}`;
-    const dupSession: ChatSession = {
-      id: dupId,
-      title: `${target.title} (Copy)`,
-      lastUpdated: 'Just now',
-      timestamp: Date.now(),
-    };
-    setSessions((prev) => [dupSession, ...prev]);
-    setMessagesMap((prev) => ({
-      ...prev,
-      [dupId]: [...(prev[id] || [])],
-    }));
-  };
-
-  const handleToggleVoiceInput = () => {
+  // ─── Voice Input ────────────────────────────────────────────────────────
+  const handleToggleVoiceInput = useCallback(() => {
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      alert('Speech Recognition is not supported by your browser. Please try Chrome or Edge.');
+      alert(
+        'Speech recognition is not supported in this browser.\n' +
+        'Please use Google Chrome or Microsoft Edge.',
+      );
       return;
     }
 
     if (isListeningVoice && recognitionRef.current) {
-      recognitionRef.current.stop();
+      (recognitionRef.current as any).stop?.();
       setIsListeningVoice(false);
       return;
     }
@@ -219,158 +225,182 @@ export default function DashboardPage() {
     recognition.onstart = () => setIsListeningVoice(true);
     recognition.onend = () => setIsListeningVoice(false);
     recognition.onerror = () => setIsListeningVoice(false);
-
     recognition.onresult = (event: any) => {
-      const transcript = Array.from(event.results)
-        .map((result: any) => result[0].transcript)
+      const transcript = Array.from(event.results as any[])
+        .map((r: any) => r[0].transcript)
         .join('');
       setPromptInput(transcript);
     };
 
-    recognitionRef.current = recognition;
+    recognitionRef.current = recognition as any;
     recognition.start();
-  };
+  }, [isListeningVoice]);
 
-  const handleSpeakText = (text: string) => {
+  // ─── Voice Output ────────────────────────────────────────────────────────
+  const handleSpeakText = useCallback((text: string) => {
     if (!('speechSynthesis' in window)) {
-      alert('Speech synthesis is not supported in this browser.');
+      alert('Text-to-speech is not supported in this browser.');
       return;
     }
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1.0;
+    const utterance = new SpeechSynthesisUtterance(text.replace(/\*\*/g, '').replace(/##/g, ''));
+    utterance.rate = 0.95;
     utterance.pitch = 1.0;
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find((v) => v.lang === 'en-US' && v.name.includes('Google'));
+    if (preferred) utterance.voice = preferred;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
     window.speechSynthesis.speak(utterance);
-  };
+  }, []);
 
-  const handleSendMessage = async (customPrompt?: string) => {
-    const textToSend = (customPrompt || promptInput).trim();
-    if (!textToSend || isGenerating) return;
+  const handleStopSpeech = useCallback(() => {
+    window.speechSynthesis?.cancel();
+    setIsSpeaking(false);
+  }, []);
 
-    const timestamp = getCurrentTimeString();
-    const userMsgId = `u-${Date.now()}`;
-    const userMsg: ChatMessageData = {
-      id: userMsgId,
-      role: 'user',
-      text: textToSend,
-      timestamp,
-    };
+  // ─── Streaming simulation ─────────────────────────────────────────────
+  // Uses a ref to the activeChatId to avoid stale closure issues
+  const activeChatIdRef = useRef(activeChatId);
+  activeChatIdRef.current = activeChatId;
 
-    const updatedMessages = [...activeMessages, userMsg];
-    setMessagesMap((prev) => ({ ...prev, [activeChatId]: updatedMessages }));
-    setPromptInput('');
+  const simulateStream = useCallback((fullText: string, baseMessages: ChatMessageData[]) => {
+    const msgId = `a-${Date.now()}`;
+    const timestamp = getTimeNow();
+    let pos = 0;
 
-    if (activeMessages.length === 0) {
-      const autoTitle = generateTitleFromPrompt(textToSend);
-      handleRenameChat(activeChatId, autoTitle);
-    }
-
-    setIsGenerating(true);
-    const thinkingMsgId = `a-think-${Date.now()}`;
-    const thinkingMsg: ChatMessageData = {
-      id: thinkingMsgId,
-      role: 'assistant',
-      text: '',
-      timestamp,
-      isThinking: true,
-    };
-    setMessagesMap((prev) => ({
-      ...prev,
-      [activeChatId]: [...updatedMessages, thinkingMsg],
-    }));
-
-    try {
-      abortControllerRef.current = new AbortController();
-      const response = await fetch(`${API_BASE_URL}/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: textToSend }),
-        signal: abortControllerRef.current.signal,
-      });
-
-      let aiReplyText = "I couldn't find this information in the college knowledge base.";
-      if (response.ok) {
-        const data = await response.json();
-        if (data.reply) {
-          aiReplyText = data.reply;
-        }
-      }
-
-      simulateStreamResponse(aiReplyText, updatedMessages);
-    } catch (err: any) {
-      if (err.name === 'AbortError') {
-        setIsGenerating(false);
-        return;
-      }
-      const fallbackAnswer =
-        `I am connected to the CollegeMate knowledge base. Here is what I found regarding **"${textToSend}"**:\n\n` +
-        `• Minimum **75% attendance** is required for semester exams.\n` +
-        `• Library working hours are **8:00 AM to 8:00 PM** (Mon-Sat).\n` +
-        `• For certificates or fee receipts, visit the **Finance & Registrar Office**.`;
-      simulateStreamResponse(fallbackAnswer, updatedMessages);
-    }
-  };
-
-  const simulateStreamResponse = (fullText: string, baseMessages: ChatMessageData[]) => {
-    const assistantMsgId = `a-${Date.now()}`;
-    const timestamp = getCurrentTimeString();
-
-    let currentLength = 0;
-    const interval = setInterval(() => {
-      currentLength += Math.floor(Math.random() * 4) + 3;
-      const partialText = fullText.slice(0, currentLength);
-
-      const streamedMsg: ChatMessageData = {
-        id: assistantMsgId,
-        role: 'assistant',
-        text: partialText,
-        timestamp,
-        isStreaming: currentLength < fullText.length,
-      };
+    const tick = () => {
+      pos += Math.floor(Math.random() * 5) + 3;
+      const partial = fullText.slice(0, pos);
+      const streaming = pos < fullText.length;
 
       setMessagesMap((prev) => ({
         ...prev,
-        [activeChatId]: [...baseMessages, streamedMsg],
+        [activeChatIdRef.current]: [
+          ...baseMessages,
+          { id: msgId, role: 'assistant', text: partial, timestamp, isStreaming: streaming },
+        ],
       }));
 
-      if (currentLength >= fullText.length) {
-        clearInterval(interval);
+      if (streaming) {
+        setTimeout(tick, 28);
+      } else {
         setIsGenerating(false);
       }
-    }, 30);
-  };
+    };
 
-  const handleStopGeneration = () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
+    tick();
+  }, []);
+
+  // ─── Send Message ─────────────────────────────────────────────────────
+  const handleSendMessage = useCallback(
+    async (customPrompt?: string) => {
+      const textToSend = (customPrompt ?? promptInput).trim();
+      if (!textToSend || isGenerating) return;
+
+      const timestamp = getTimeNow();
+      const userMsg: ChatMessageData = {
+        id: `u-${Date.now()}`,
+        role: 'user',
+        text: textToSend,
+        timestamp,
+      };
+
+      // Capture current messages synchronously before any async
+      const currentMessages = messagesMap[activeChatIdRef.current] ?? [];
+      const withUserMsg = [...currentMessages, userMsg];
+
+      setMessagesMap((prev) => ({ ...prev, [activeChatIdRef.current]: withUserMsg }));
+      setPromptInput('');
+
+      // Auto-title on first message
+      if (currentMessages.length === 0) {
+        const title = generateTitle(textToSend);
+        setSessions((prev) =>
+          prev.map((s) => (s.id === activeChatIdRef.current ? { ...s, title } : s)),
+        );
+      }
+
+      // Show thinking indicator
+      setIsGenerating(true);
+      const thinkingMsg: ChatMessageData = {
+        id: `think-${Date.now()}`,
+        role: 'assistant',
+        text: '',
+        timestamp,
+        isThinking: true,
+      };
+      setMessagesMap((prev) => ({
+        ...prev,
+        [activeChatIdRef.current]: [...withUserMsg, thinkingMsg],
+      }));
+
+      try {
+        abortControllerRef.current = new AbortController();
+        const result = await sendChatMessage({ message: textToSend });
+        simulateStream(result.reply, withUserMsg);
+      } catch (err: any) {
+        if (err?.name === 'AbortError') {
+          setIsGenerating(false);
+          return;
+        }
+        simulateStream(
+          `I encountered an error while searching the knowledge base. Please try again.\n\n` +
+          `If the issue persists, the backend server may be offline.`,
+          withUserMsg,
+        );
+      }
+    },
+    [promptInput, isGenerating, messagesMap, simulateStream],
+  );
+
+  // ─── Stop Generation ─────────────────────────────────────────────────
+  const handleStopGeneration = useCallback(() => {
+    abortControllerRef.current?.abort();
     setIsGenerating(false);
-  };
+  }, []);
 
-  const handleRegenerate = () => {
-    if (activeMessages.length < 2) return;
-    const lastUserMessage = [...activeMessages].reverse().find((m) => m.role === 'user');
-    if (lastUserMessage) {
-      handleSendMessage(lastUserMessage.text);
+  // ─── Regenerate ──────────────────────────────────────────────────────
+  const handleRegenerate = useCallback(() => {
+    const msgs = messagesMap[activeChatId] ?? [];
+    const lastUser = [...msgs].reverse().find((m) => m.role === 'user');
+    if (lastUser) {
+      // Remove the last assistant message then re-send
+      setMessagesMap((prev) => ({
+        ...prev,
+        [activeChatId]: (prev[activeChatId] ?? []).filter((m) => m.role === 'user' || m.id !== msgs[msgs.length - 1]?.id),
+      }));
+      handleSendMessage(lastUser.text);
     }
-  };
+  }, [messagesMap, activeChatId, handleSendMessage]);
 
-  const handleMessageReaction = (id: string, reaction: 'like' | 'dislike') => {
+  // ─── Message Reaction ─────────────────────────────────────────────────
+  const handleMessageReaction = useCallback((id: string, reaction: 'like' | 'dislike') => {
     setMessagesMap((prev) => ({
       ...prev,
-      [activeChatId]: (prev[activeChatId] || []).map((m) =>
-        m.id === id ? { ...m, reaction: m.reaction === reaction ? null : reaction } : m
+      [activeChatIdRef.current]: (prev[activeChatIdRef.current] ?? []).map((m) =>
+        m.id === id ? { ...m, reaction: m.reaction === reaction ? null : reaction } : m,
       ),
     }));
+  }, []);
+
+  // ─── Keyboard shortcut: Enter to send ────────────────────────────────
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#F8FAFC] text-[#1F2937]">
-      {/* 1. LEFT SIDEBAR */}
+    <div className="flex h-screen w-screen overflow-hidden bg-[#F5F7FA] text-[#1F2937]">
+
+      {/* ── 1. LEFT SIDEBAR ───────────────────────────────────── */}
       <Sidebar
         conversations={sessions}
         activeChatId={activeChatId}
-        onSelectChat={handleSelectChat}
+        onSelectChat={(id) => { handleSelectChat(id); setIsSidebarMobileOpen(false); }}
         onNewChat={handleNewChat}
         onRenameChat={handleRenameChat}
         onDeleteChat={handleDeleteChat}
@@ -382,151 +412,160 @@ export default function DashboardPage() {
         onCloseMobile={() => setIsSidebarMobileOpen(false)}
       />
 
-      {/* CENTER & RIGHT COLUMN CONTAINER */}
+      {/* ── CENTER + RIGHT ────────────────────────────────────── */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        {/* HEADER BAR */}
+
+        {/* HEADER */}
         <HeaderBar
-          currentChatTitle={currentSession?.title || 'CollegeMate AI'}
-          onToggleSidebarMobile={() => setIsSidebarMobileOpen(!isSidebarMobileOpen)}
-          onOpenProfile={() => setIsProfileOpen(true)}
+          currentChatTitle={currentSession?.title ?? 'CollegeMate AI'}
+          onToggleSidebarMobile={() => setIsSidebarMobileOpen((v) => !v)}
+          onOpenProfile={() => {
+            if (!isLoggedIn) { setIsLoginOpen(true); return; }
+            setIsProfileOpen(true);
+          }}
           onOpenLogin={() => setIsLoginOpen(true)}
-          isLoggedIn={isLoggedIn}
           isListeningVoice={isListeningVoice}
           onToggleVoiceInput={handleToggleVoiceInput}
         />
 
-        {/* WORKSPACE AREA (CENTER CHAT + RIGHT PANEL) */}
+        {/* WORKSPACE */}
         <div className="flex flex-1 overflow-hidden">
-          {/* 2. CENTER CHATBOT */}
-          <main className="flex flex-1 flex-col overflow-hidden bg-white shadow-xs">
-            {/* Chat Area Container */}
-            <div
-              ref={scrollContainerRef}
-              className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8"
-            >
+
+          {/* ── 2. CENTER CHATBOT ──────────────────────────────── */}
+          <main className="flex flex-1 flex-col overflow-hidden bg-white border-r border-[#E2E8F0]">
+
+            {/* Message Area */}
+            <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-6">
               {activeMessages.length === 0 ? (
-                <SuggestedQuestions onSelectQuestion={(q) => handleSendMessage(q)} />
+                <SuggestedQuestions onSelectQuestion={handleSendMessage} />
               ) : (
-                <div className="mx-auto max-w-4xl space-y-4">
+                <div className="mx-auto max-w-3xl space-y-1">
                   {activeMessages.map((msg) => (
                     <ChatMessage
                       key={msg.id}
                       message={msg}
-                      onRegenerate={handleRegenerate}
-                      onSpeak={handleSpeakText}
-                      onReact={handleMessageReaction}
+                      onRegenerate={msg.role === 'assistant' && !msg.isThinking && !msg.isStreaming ? handleRegenerate : undefined}
+                      onSpeak={msg.role === 'assistant' && !msg.isThinking ? handleSpeakText : undefined}
+                      onStopSpeech={handleStopSpeech}
+                      onReact={msg.role === 'assistant' && !msg.isThinking ? handleMessageReaction : undefined}
+                      isSpeaking={isSpeaking}
                     />
                   ))}
                 </div>
               )}
             </div>
 
-            {/* PROMPT INPUT BAR */}
+            {/* ── PROMPT INPUT BAR ──────────────────────────────── */}
             <div className="border-t border-[#E2E8F0] bg-white p-4">
-              <div className="mx-auto max-w-4xl">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleSendMessage();
-                  }}
-                  className="relative flex items-center rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-2 shadow-sm transition focus-within:border-[#163D8C] focus-within:bg-white"
+              <div className="mx-auto max-w-3xl">
+                <motion.div
+                  className="flex items-center rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-2 shadow-sm transition-shadow focus-within:border-[#163D8C] focus-within:bg-white focus-within:shadow-md"
                 >
                   <input
+                    ref={inputRef}
+                    id="chat-input"
                     type="text"
                     value={promptInput}
                     onChange={(e) => setPromptInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    disabled={isGenerating}
                     placeholder={
                       isListeningVoice
-                        ? 'Listening to your voice...'
-                        : 'Ask CollegeMate AI about rules, timetables, fees, library...'
+                        ? '🎤 Listening…'
+                        : isGenerating
+                        ? 'CollegeMate AI is thinking…'
+                        : 'Ask about attendance, fees, library, bus routes, certificates…'
                     }
-                    className="flex-1 bg-transparent px-3 py-2 text-sm text-[#1F2937] outline-none placeholder:text-[#94A3B8]"
+                    className="flex-1 bg-transparent px-3 py-2 text-sm text-[#1F2937] outline-none placeholder:text-[#94A3B8] disabled:cursor-not-allowed"
+                    autoComplete="off"
                   />
 
-                  <div className="flex items-center gap-2">
-                    {/* Voice Mic Button inside Prompt Bar */}
+                  <div className="flex items-center gap-1.5">
+                    {/* Voice Mic */}
                     <button
+                      id="voice-input-btn"
                       type="button"
                       onClick={handleToggleVoiceInput}
-                      title="Voice Dictation"
+                      title={isListeningVoice ? 'Stop voice input' : 'Voice input'}
                       className={`rounded-xl p-2.5 transition ${
                         isListeningVoice
                           ? 'bg-rose-500 text-white animate-pulse'
-                          : 'text-[#64748B] hover:bg-[#E2E8F0]'
+                          : 'text-[#64748B] hover:bg-[#E2E8F0] hover:text-[#0A2A6A]'
                       }`}
                     >
                       {isListeningVoice ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                     </button>
 
-                    {/* Submit or Stop Button */}
+                    {/* Send / Stop */}
                     {isGenerating ? (
                       <button
+                        id="stop-btn"
                         type="button"
                         onClick={handleStopGeneration}
-                        className="flex items-center gap-1.5 rounded-xl bg-rose-600 px-4 py-2 text-xs font-bold text-white shadow-md transition hover:bg-rose-700"
+                        className="flex items-center gap-1.5 rounded-xl bg-rose-600 px-3.5 py-2 text-xs font-bold text-white shadow-md transition hover:bg-rose-700"
                       >
                         <Square className="h-3.5 w-3.5 fill-current" />
                         <span>Stop</span>
                       </button>
                     ) : (
                       <button
-                        type="submit"
-                        disabled={!promptInput.trim()}
-                        className="flex items-center gap-1.5 rounded-xl bg-[#0A2A6A] px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-[#0A2A6A]/20 transition hover:bg-[#163D8C] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
+                        id="send-btn"
+                        type="button"
+                        onClick={() => handleSendMessage()}
+                        disabled={!promptInput.trim() || isGenerating}
+                        className="flex items-center gap-1.5 rounded-xl bg-[#0A2A6A] px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-[#0A2A6A]/20 transition hover:bg-[#163D8C] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         <span>Send</span>
                         <Send className="h-3.5 w-3.5" />
                       </button>
                     )}
                   </div>
-                </form>
+                </motion.div>
 
-                {/* Subtext info */}
-                <div className="mt-2 flex items-center justify-between text-[11px] font-medium text-[#94A3B8]">
+                {/* Footer Row */}
+                <div className="mt-2 flex items-center justify-between text-[11px] text-[#94A3B8]">
                   <div className="flex items-center gap-1">
                     <Info className="h-3 w-3 text-[#163D8C]" />
                     <span>CollegeMate AI displays verified college information.</span>
                   </div>
-                  {activeMessages.length > 0 && (
-                    <button
-                      onClick={() => setIsExportOpen(true)}
-                      className="flex items-center gap-1 text-[#163D8C] hover:underline"
-                    >
-                      <Download className="h-3 w-3" />
-                      <span>Export Chat</span>
-                    </button>
-                  )}
+                  <div className="flex items-center gap-3">
+                    <span className="hidden sm:flex items-center gap-1">
+                      <Keyboard className="h-3 w-3" />
+                      <span>Enter to send</span>
+                    </span>
+                    {activeMessages.length > 0 && (
+                      <button
+                        onClick={() => setIsExportOpen(true)}
+                        className="flex items-center gap-1 text-[#163D8C] hover:underline"
+                      >
+                        <Download className="h-3 w-3" />
+                        <span>Export</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </main>
 
-          {/* 3. RIGHT OPTIONAL PANEL (Desktop Stats) */}
+          {/* ── 3. RIGHT PANEL (Desktop only) ─────────────────── */}
           <RightPanel
             attendancePercent={94}
             cgpa={8.9}
-            onSelectPrompt={(p) => handleSendMessage(p)}
+            onSelectPrompt={handleSendMessage}
           />
         </div>
       </div>
 
-      {/* MODALS & DRAWERS */}
-      <LoginModal
-        isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
-        onLoginSuccess={() => setIsLoggedIn(true)}
-      />
+      {/* ── MODALS & DRAWERS ──────────────────────────────────── */}
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
 
-      <ProfileDrawer
-        isOpen={isProfileOpen}
-        onClose={() => setIsProfileOpen(false)}
-        onLogout={() => setIsLoggedIn(false)}
-      />
+      <ProfileDrawer isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
 
       <ExportModal
         isOpen={isExportOpen}
         onClose={() => setIsExportOpen(false)}
-        chatTitle={currentSession?.title || 'Conversation'}
+        chatTitle={currentSession?.title ?? 'Conversation'}
         messages={activeMessages}
       />
     </div>

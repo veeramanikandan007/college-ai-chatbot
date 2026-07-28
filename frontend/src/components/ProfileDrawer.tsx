@@ -11,15 +11,41 @@ import {
   Settings,
   LogOut,
   ArrowRight,
+  GraduationCap,
+  ExternalLink,
 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface ProfileDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  onLogout: () => void;
 }
 
-export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDrawerProps) {
+export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    onClose();
+  };
+
+  if (!user) return null;
+
+  const attendanceColor =
+    user.attendancePercent >= 85
+      ? 'text-emerald-600'
+      : user.attendancePercent >= 75
+      ? 'text-amber-600'
+      : 'text-rose-600';
+
+  const attendanceLabel =
+    user.attendancePercent >= 85 ? 'Excellent' :
+    user.attendancePercent >= 75 ? 'Above Min' : 'Below Min';
+
+  const cgpaColor =
+    user.cgpa >= 8.5 ? 'text-[#163D8C]' :
+    user.cgpa >= 7.5 ? 'text-emerald-600' : 'text-amber-600';
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -30,7 +56,7 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-[#0A2A6A]/30 backdrop-blur-xs"
+            className="absolute inset-0 bg-[#0A2A6A]/30 backdrop-blur-sm"
           />
 
           {/* Right Sliding Drawer */}
@@ -38,127 +64,126 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col border-l border-[#E2E8F0] bg-white p-6 shadow-2xl overflow-y-auto select-none"
+            transition={{ type: 'spring', damping: 26, stiffness: 220 }}
+            className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col border-l border-[#E2E8F0] bg-white shadow-2xl overflow-y-auto"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-4">
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0A2A6A] text-white">
-                  <UserCheck className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#163D8C]">
-                    Student Account
-                  </p>
-                  <h2 className="text-lg font-bold text-[#0A2A6A]">Profile Details</h2>
-                </div>
-              </div>
-              <button
-                onClick={onClose}
-                className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-2 text-[#0A2A6A] hover:bg-[#F1F5F9]"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
+            {/* Gold accent top border */}
+            <div className="h-1 w-full bg-gradient-to-r from-[#0A2A6A] via-[#163D8C] to-[#E8B24D] shrink-0" />
 
-            {/* Profile Hero */}
-            <div className="my-6 flex items-center gap-4 rounded-2xl border border-[#E2E8F0] bg-gradient-to-br from-[#F8FAFC] to-white p-4 shadow-xs">
-              <img
-                src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=180&q=80"
-                alt="Ariana Patel"
-                className="h-16 w-16 rounded-2xl border-2 border-[#163D8C] object-cover shadow-sm"
-              />
-              <div>
-                <h3 className="text-lg font-bold text-[#0A2A6A]">Ariana Patel</h3>
-                <p className="text-xs font-semibold text-[#163D8C]">ID: STU23911</p>
-                <span className="mt-1 inline-block rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-600 border border-emerald-200">
-                  Verified Student
-                </span>
-              </div>
-            </div>
-
-            {/* Metrics Cards */}
-            <div className="mb-6 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 text-center">
-                <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
-                  <PieChart className="h-3 w-3 text-emerald-600" />
-                  <span>Attendance</span>
+            <div className="flex flex-col flex-1 p-5 gap-4">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0A2A6A] text-white shadow-md shadow-[#0A2A6A]/20">
+                    <UserCheck className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#163D8C]">
+                      Student Account
+                    </p>
+                    <h2 className="text-base font-bold text-[#0A2A6A]">My Profile</h2>
+                  </div>
                 </div>
-                <p className="text-xl font-bold text-[#0A2A6A]">94%</p>
-                <span className="text-[10px] font-medium text-emerald-600">Excellent</span>
-              </div>
-              <div className="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 text-center">
-                <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B]">
-                  <Award className="h-3 w-3 text-amber-500" />
-                  <span>CGPA</span>
-                </div>
-                <p className="text-xl font-bold text-[#0A2A6A]">8.9</p>
-                <span className="text-[10px] font-medium text-[#163D8C]">Top 5%</span>
-              </div>
-            </div>
-
-            {/* Profile Info Details List */}
-            <div className="flex-1 space-y-3 text-xs text-[#1F2937]">
-              <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-                <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-[#64748B]">
-                  <Building2 className="h-3.5 w-3.5 text-[#163D8C]" />
-                  <span>Department</span>
-                </div>
-                <p className="mt-1 font-semibold text-[#0A2A6A]">Computer Science & Engineering</p>
+                <button
+                  onClick={onClose}
+                  className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-2 text-[#64748B] hover:bg-[#F1F5F9] hover:text-[#0A2A6A] transition"
+                  aria-label="Close profile drawer"
+                >
+                  <X className="h-4 w-4" />
+                </button>
               </div>
 
-              <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-                <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-[#64748B]">
-                  <Calendar className="h-3.5 w-3.5 text-[#163D8C]" />
-                  <span>Year & Semester</span>
+              {/* Profile Hero */}
+              <div className="flex items-center gap-4 rounded-2xl bg-gradient-to-br from-[#0A2A6A] to-[#163D8C] p-4 text-white shadow-lg shadow-[#0A2A6A]/20">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#E8B24D] text-2xl font-bold text-[#0A2A6A] shadow-md">
+                  {user.initials}
                 </div>
-                <p className="mt-1 font-semibold text-[#0A2A6A]">3rd Year • Semester 6</p>
+                <div className="min-w-0">
+                  <h3 className="text-lg font-bold truncate">{user.name}</h3>
+                  <p className="text-xs font-semibold text-blue-200">ID: {user.studentId}</p>
+                  <span className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-emerald-400/20 border border-emerald-400/30 px-2 py-0.5 text-[10px] font-bold text-emerald-300">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 inline-block" />
+                    Verified Student
+                  </span>
+                </div>
               </div>
 
-              <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-                <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-[#64748B]">
-                  <Mail className="h-3.5 w-3.5 text-[#163D8C]" />
-                  <span>Email Address</span>
+              {/* Stats Cards */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 text-center">
+                  <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B] mb-1">
+                    <PieChart className="h-3 w-3 text-emerald-600" />
+                    <span>Attendance</span>
+                  </div>
+                  <p className={`text-2xl font-bold ${attendanceColor}`}>{user.attendancePercent}%</p>
+                  <span className={`text-[10px] font-semibold ${attendanceColor}`}>{attendanceLabel}</span>
                 </div>
-                <p className="mt-1 font-semibold text-[#0A2A6A]">ariana.patel@campusmail.edu</p>
+                <div className="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 text-center">
+                  <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#64748B] mb-1">
+                    <Award className="h-3 w-3 text-[#E8B24D]" />
+                    <span>CGPA</span>
+                  </div>
+                  <p className={`text-2xl font-bold ${cgpaColor}`}>{user.cgpa}</p>
+                  <span className="text-[10px] font-semibold text-[#163D8C]">out of 10.0</span>
+                </div>
               </div>
 
-              <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-                <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-[#64748B]">
-                  <Phone className="h-3.5 w-3.5 text-[#163D8C]" />
-                  <span>Phone Number</span>
-                </div>
-                <p className="mt-1 font-semibold text-[#0A2A6A]">+1 (555) 019-2834</p>
+              {/* Profile Details */}
+              <div className="space-y-2">
+                {[
+                  { Icon: Building2, label: 'Department', value: user.department },
+                  { Icon: Calendar, label: 'Year & Semester', value: `${user.year} • ${user.semester}` },
+                  { Icon: Mail, label: 'Email', value: user.email },
+                  { Icon: Phone, label: 'Phone', value: user.phone },
+                  { Icon: GraduationCap, label: 'Student ID', value: user.studentId },
+                ].map(({ Icon, label, value }) => (
+                  <div key={label} className="flex items-start gap-3 rounded-xl border border-[#E2E8F0] bg-white p-3">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#163D8C]/8">
+                      <Icon className="h-3.5 w-3.5 text-[#163D8C]" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">{label}</p>
+                      <p className="mt-0.5 text-xs font-semibold text-[#0A2A6A] truncate">{value}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
 
-            {/* Quick Actions Footer */}
-            <div className="mt-6 space-y-2 border-t border-[#E2E8F0] pt-4">
-              <button
-                onClick={() => alert('Profile Editing is managed by College Registrar.')}
-                className="flex w-full items-center justify-between rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] px-4 py-2.5 text-xs font-bold text-[#0A2A6A] hover:bg-[#F1F5F9] transition"
-              >
-                <div className="flex items-center gap-2">
-                  <Settings className="h-4 w-4 text-[#163D8C]" />
-                  <span>Edit Profile</span>
-                </div>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </button>
+              {/* Actions */}
+              <div className="space-y-2 mt-auto pt-2 border-t border-[#E2E8F0]">
+                <button
+                  onClick={() => alert('Profile editing is managed by the College Registrar Office.\nVisit the Student Portal at studentportal.college.edu')}
+                  className="flex w-full items-center justify-between rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] px-4 py-2.5 text-xs font-bold text-[#0A2A6A] hover:bg-[#F1F5F9] transition"
+                >
+                  <div className="flex items-center gap-2">
+                    <Settings className="h-4 w-4 text-[#163D8C]" />
+                    <span>Edit Profile</span>
+                  </div>
+                  <ArrowRight className="h-3.5 w-3.5 text-[#64748B]" />
+                </button>
 
-              <button
-                onClick={() => {
-                  onLogout();
-                  onClose();
-                }}
-                className="flex w-full items-center justify-between rounded-xl bg-rose-600 px-4 py-2.5 text-xs font-bold text-white shadow-md hover:bg-rose-700 transition"
-              >
-                <div className="flex items-center gap-2">
-                  <LogOut className="h-4 w-4" />
-                  <span>Logout Account</span>
-                </div>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </button>
+                <button
+                  onClick={() => window.open('https://studentportal.college.edu', '_blank')}
+                  className="flex w-full items-center justify-between rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] px-4 py-2.5 text-xs font-bold text-[#0A2A6A] hover:bg-[#F1F5F9] transition"
+                >
+                  <div className="flex items-center gap-2">
+                    <ExternalLink className="h-4 w-4 text-[#163D8C]" />
+                    <span>Student Portal</span>
+                  </div>
+                  <ArrowRight className="h-3.5 w-3.5 text-[#64748B]" />
+                </button>
+
+                <button
+                  onClick={handleLogout}
+                  className="flex w-full items-center justify-between rounded-xl bg-rose-600 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-rose-600/20 hover:bg-rose-700 transition"
+                >
+                  <div className="flex items-center gap-2">
+                    <LogOut className="h-4 w-4" />
+                    <span>Logout Account</span>
+                  </div>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
           </motion.aside>
         </div>

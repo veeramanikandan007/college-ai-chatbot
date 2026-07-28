@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { THEME_COLORS } from '../constants/theme';
 import {
   CheckCircle2,
   CreditCard,
