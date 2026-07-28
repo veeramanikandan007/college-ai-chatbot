@@ -9,9 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@tanstack/react-query": "^5.101.4",
     "axios": "^1.5.1",
     "date-fns": "^4.4.0",
+=======
+    "axios": "^1.5.1",
+>>>>>>> 5f8c52a2a79f075aeeb064756d298fcea307a590
     "framer-motion": "^11.18.2",
     "lucide-react": "^1.27.0",
     "react": "^18.3.1",
