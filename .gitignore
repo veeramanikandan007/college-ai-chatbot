@@ -1,17 +1,7 @@
-# Node
 node_modules/
-frontend/node_modules/
-
-# Python
+dist/
+.env
 __pycache__/
 *.pyc
-
-# Environment files
-.env
-
-# Virtual environment
-venv/
-.venv/
-
-# IDE
-.vscode/
+.chroma/
+database/

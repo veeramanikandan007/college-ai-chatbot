@@ -62,7 +62,7 @@ export default function ChatPage() {
 
   return (
     <div className="container grid gap-10 py-10 lg:grid-cols-[280px_1fr]">
-      <Sidebar active="/chat" />
+      <Sidebar />
 
       <main className="flex min-h-[calc(100vh-4rem)] flex-col gap-6 rounded-[32px] border border-slate-800/80 bg-slate-950/75 p-6 shadow-glass backdrop-blur-xl">
         <div className="flex flex-col gap-3 rounded-3xl border border-slate-800/80 bg-slate-900/80 p-5">

@@ -1,59 +1,102 @@
-# HTML Project Tutorial - Event Page, Tables, and Forms
+# 🎓 CampusMate AI
 
-Welcome to the HTML Project Tutorial repository! This repository contains the starter and final code for two complete projects that will be covered in a YouTube tutorial series. The tutorial series aims to provide comprehensive knowledge about HTML and guide you through building two exciting projects: an Event Page and a project focused on Tables and Forms.
+> **One production-ready college management platform** — powered by Gemini AI, RAG, and a beautiful modern UI.
 
-## Project 1: Event Page
+CampusMate combines an intelligent AI chatbot (backed by a college knowledge base) with a full student portal: attendance tracking, timetables, assignments, library management, fees, and more — all in one seamless experience.
 
-In the first project, we will build an Event Page that will cover a wide range of fundamental HTML components. Throughout this project, you will learn how to use the following HTML elements:
+---
 
-- Heading Tags: `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, `<h6>`
-- Paragraph Tags: `<p>`
-- Anchor Tags: `<a>`
-- Body Tag: `<body>`
-- HTML Boilerplate: `<html>`
-- Image Tag: `<img>`
+## ✨ Features
 
-By the end of this project, you will have a clear understanding of how to structure basic HTML elements and create an appealing Event Page.
+| Feature | Description |
+|---------|-------------|
+| 🤖 **Gemini AI Chatbot** | Ask anything about college rules, exams, fees, and library — backed by RAG |
+| 🎤 **Advanced Voice System** | Dictate queries, TTS responses, and hands-free "Hey CampusMate" wake word |
+| 📊 **Attendance Tracker** | Subject-wise attendance with visual progress indicators |
+| 📅 **Interactive Timetable** | Day-by-day class schedule with room and faculty info |
+| 📝 **Assignments Board** | Track pending, submitted, and graded assignments |
+| 📚 **Digital Library** | View issued books, due dates, fines, and search the catalog |
+| 💳 **Fee Management** | Outstanding balance, payment history, and receipt download |
+| 🔔 **Notifications** | Real-time campus alerts and reminders |
+| 🛡️ **Admin Portal** | Full admin control: students, documents, RAG rebuild, and analytics |
 
-## Project 2: Tables and Forms
+---
 
-In the second project, we will dive deeper into HTML by focusing on two important components: Tables and Forms. Tables are used to present data in a structured format, while forms are essential for user input and data submission. Throughout this project, you will learn to use the following HTML elements:
+## 🚀 Quick Start
 
-- Table Tag: `<table>`
-- Table Row Tag: `<tr>`
-- Table Header Cell Tag: `<th>`
-- Table Data Cell Tag: `<td>`
-- Form Tag: `<form>`
-- Input Tags: `<input>` (various types), `<textarea>`, `<select>`, `<option>`, `<label>`, `<button>`
+```bash
+# 1. Setup & seed the backend
+cd CampusMate/backend
+pip install -r requirements.txt
+cp .env.example .env      # Fill in GOOGLE_API_KEY
+python scripts/seed_data.py
+python scripts/build_index.py
+uvicorn app.main:app --reload
 
-By the end of this project, you will be proficient in creating tables and forms, and you'll understand how to collect user input and process it.
+# 2. Start the frontend
+cd ../frontend
+npm install
+npm run dev
+```
 
-## How to Use this Repository
+Open `http://localhost:5173` in your browser.
 
-This repository is organized into two main directories: `Event_Page_Project` and `Tables_Forms_Project`. Each directory contains a `starter` folder, which includes the initial code for the respective projects, and a `final` folder with the completed code.
+**Default Login:**
+- Admin: `admin@campusmate.edu` / `Admin@1234`
+- Student: `rahul@campusmate.edu` / `password123`
 
-To get started with a specific project, follow these steps:
+---
 
-1. Clone this repository to your local machine using the following command:
+## 🐳 Docker Deployment
 
-   ```
-   git clone https://github.com/your-username/html-project-tutorial.git
-   ```
+To spin up the entire application in production-ready mode using Docker Compose:
 
-2. Navigate to the project folder of your choice, either `Event_Page_Project` or `Tables_Forms_Project`.
+```bash
+docker-compose up -d --build
+```
+This will launch the backend API and the compiled React application simultaneously.
 
-3. Inside each project folder, you will find a `starter` and a `final` folder. Open the `starter` folder in your preferred code editor to access the initial code.
+---
 
-4. Follow along with the YouTube tutorial series to build the projects step-by-step. You can use the `starter` code as a starting point and make changes as guided in the tutorial.
+## 🏗️ Tech Stack
 
-5. If you encounter any issues or have questions during the tutorial, feel free to open an issue in this repository. We encourage collaboration and learning together!
+**Backend**
+- FastAPI + SQLAlchemy + SQLite
+- Google Gemini 1.5 Pro (LLM)
+- ChromaDB (Vector Store)
+- JWT Authentication
 
-## Contributing
+**Frontend**
+- React 18 + TypeScript + Vite
+- Tailwind CSS (dark mode)
+- Framer Motion (animations)
+- Web Speech API (voice)
 
-If you find any bugs, have suggestions for improvements, or want to add more features to the projects, we welcome your contributions! Simply fork this repository, make your changes, and submit a pull request.
+---
 
-## About the Author
+## 📚 Documentation
 
-This tutorial series is created and presented by [Agnel John](https://www.youtube.com/@ErrorMakesClever), a passionate web developer with a goal to share knowledge and help others learn HTML effectively.
+| Doc | Description |
+|-----|-------------|
+| [SETUP.md](docs/SETUP.md) | Full local setup guide |
+| [DEPLOYMENT.md](docs/DEPLOYMENT.md) | Docker & Production Deployment Guide |
+| [API.md](docs/API.md) | Complete API endpoint reference |
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | System architecture & design decisions |
+| [PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) | Full file and folder breakdown |
+| [DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) | Contributor and local dev guide |
 
-Enjoy the journey of learning HTML and building exciting projects with us! Happy coding! 🚀🎉
+---
+
+## 📁 Project Structure
+
+```
+CampusMate/
+├── backend/          ← FastAPI + RAG
+└── frontend/         ← React + Vite
+```
+
+---
+
+## 📄 License
+
+MIT License — feel free to use, modify, and distribute.
