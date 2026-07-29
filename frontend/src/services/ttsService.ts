@@ -135,6 +135,7 @@ export class VoiceManager {
   private rvReady = false;
   private rvLoadPromise: Promise<boolean> | null = null;
   private activeAudio: HTMLAudioElement | null = null;
+  private activeUtterance: SpeechSynthesisUtterance | null = null;
 
   // React event subscribers
   public onStart?: () => void;
@@ -228,6 +229,7 @@ export class VoiceManager {
       this.activeAudio.currentTime = 0;
       this.activeAudio = null;
     }
+    this.activeUtterance = null;
     this.onEnd?.();
   }
 
@@ -383,12 +385,35 @@ export class VoiceManager {
     return new Promise<void>((resolve) => {
       if (item.queueId !== this.queueId) return resolve();
 
-      const onDone = () => resolve();
+      let isDone = false;
+      let safetyTimeout: ReturnType<typeof setTimeout>;
+
+      const onDone = () => {
+        if (isDone) return;
+        isDone = true;
+        clearTimeout(safetyTimeout);
+        resolve();
+      };
+
       const onFail = () => {
+        if (isDone) return;
+        isDone = true;
+        clearTimeout(safetyTimeout);
         console.error("[VoiceManager] Speech failed entirely for:", item.text);
         this.onError?.();
         resolve();
       };
+
+      // 30-second absolute safety timeout to prevent permanent hanging
+      safetyTimeout = setTimeout(() => {
+        console.warn("[VoiceManager] Absolute safety timeout triggered for:", item.text);
+        this.activeUtterance = null;
+        if (this.activeAudio) {
+          this.activeAudio.pause();
+          this.activeAudio = null;
+        }
+        onFail();
+      }, 30000);
 
       const provider = (import.meta.env.VITE_TTS_PROVIDER || 'responsivevoice') as TTSProvider;
 
@@ -509,13 +534,20 @@ export class VoiceManager {
     // If we wanted native tamil but only english exists, fail gracefully if requested
     
     const utterance = new SpeechSynthesisUtterance(text);
+    this.activeUtterance = utterance; // Prevent garbage collection mid-speech
+    
     if (voice) utterance.voice = voice;
     utterance.lang = language;
     utterance.rate = opts.speed ?? 1.0;
     utterance.volume = opts.volume ?? 1.0;
-    utterance.onend = onEnd;
+    
+    utterance.onend = () => {
+      this.activeUtterance = null;
+      onEnd();
+    };
     utterance.onerror = (e) => {
       console.warn("[VoiceManager] Browser Native TTS error:", e);
+      this.activeUtterance = null;
       onError();
     };
     
