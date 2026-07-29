@@ -45,12 +45,19 @@ class SpeechService:
         Returns the filename/url to the generated audio file.
         """
         try:
-            # map 'ta' or 'tanglish' correctly for gTTS
-            tts_lang = "ta" if lang in ["ta", "tanglish"] else "en"
+            from app.services.voice_language_router import VoiceLanguageRouter
+            router = VoiceLanguageRouter()
+            routing_result = await router.process_voice_text(text)
+            
+            processed_text = routing_result["text"]
+            detected_lang = routing_result["language"]
+            
+            # map 'ta-IN' or 'tanglish' correctly for gTTS
+            tts_lang = "ta" if "ta" in detected_lang else "en"
             
             # Since gTTS makes blocking HTTP calls, we run it in a thread
             def _generate_tts():
-                tts = gTTS(text=text, lang=tts_lang, slow=False)
+                tts = gTTS(text=processed_text, lang=tts_lang, slow=False)
                 filename = f"response_{uuid.uuid4().hex}.mp3"
                 filepath = os.path.join(self.audio_dir, filename)
                 tts.save(filepath)

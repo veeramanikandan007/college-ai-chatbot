@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Volume2, Gauge, RefreshCw, Mic } from 'lucide-react';
+import { Volume2, Gauge, RefreshCw, Mic, Wifi, WifiOff } from 'lucide-react';
+import { getTTSStatus, type TTSStatus } from '../services/ttsService';
 
 export interface VoiceSettings {
   voiceURI: string;
@@ -17,6 +18,7 @@ interface VoiceSettingsPanelProps {
 
 export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettingsPanelProps) {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [ttsStatus, setTtsStatus] = useState<TTSStatus | null>(null);
 
   useEffect(() => {
     const fetchVoices = () => {
@@ -30,6 +32,9 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.onvoiceschanged = fetchVoices;
     }
+
+    // Load TTS provider status
+    getTTSStatus().then(setTtsStatus);
   }, []);
 
   // Filter voices based on language setting
@@ -70,6 +75,7 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
               if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
                 setVoices(window.speechSynthesis.getVoices());
               }
+              getTTSStatus().then(setTtsStatus);
             }}
             title="Reload System Voices"
             className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
@@ -81,6 +87,31 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
           Customize Speech Synthesis & Speech Recognition.
         </p>
       </div>
+
+      {/* TTS Provider Status */}
+      {ttsStatus && (
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 p-3 space-y-2 bg-slate-50 dark:bg-slate-900/40">
+          <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">TTS Providers</p>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-600 dark:text-slate-300">🇬🇧 English</span>
+            <span className={`text-[10px] font-semibold flex items-center gap-1 ${
+              ttsStatus.english.ready ? 'text-emerald-500' : 'text-amber-500'
+            }`}>
+              {ttsStatus.english.ready ? <Wifi size={10} /> : <WifiOff size={10} />}
+              {ttsStatus.english.provider}
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-600 dark:text-slate-300">🇮🇳 Tamil</span>
+            <span className={`text-[10px] font-semibold flex items-center gap-1 ${
+              ttsStatus.tamil.ready ? 'text-emerald-500' : 'text-amber-500'
+            }`}>
+              {ttsStatus.tamil.ready ? <Wifi size={10} /> : <WifiOff size={10} />}
+              {ttsStatus.tamil.provider}
+            </span>
+          </div>
+        </div>
+      )}
 
       <div className="space-y-3.5">
         {/* Language Selection */}
@@ -124,8 +155,8 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
             ))}
           </select>
           {filteredVoices.length === 0 && (
-            <p className="text-[9px] text-amber-500 mt-1 font-semibold">
-              ⚠️ No local {settings.language === 'ta-IN' ? 'Tamil' : 'English'} voices found. The browser will use a fallback speech server.
+            <p className="text-[9px] text-slate-400 mt-1">
+              ℹ️ No local {settings.language === 'ta-IN' ? 'Tamil' : 'English'} voices. Using Cloud TTS automatically.
             </p>
           )}
         </div>

@@ -10,13 +10,28 @@ from app.models.user import User
 from app.services.speech_service import SpeechService
 from app.services.ai_service import AIService
 from app.services import chat_service
+from app.services.voice_language_router import VoiceLanguageRouter
 from app.schemas.chat import ChatResponse
+from pydantic import BaseModel
 from app.core.config import settings
 from app.core.limiter import limiter
 
 router = APIRouter()
 speech_service = SpeechService()
 ai_service = AIService()
+voice_router = VoiceLanguageRouter()
+
+class NormalizeRequest(BaseModel):
+    text: str
+
+@router.post("/normalize")
+@limiter.limit("30/minute")
+async def normalize_text_for_voice(
+    request: Request,
+    payload: NormalizeRequest
+):
+    """Normalize text (Tanglish -> Tamil) before TTS"""
+    return await voice_router.process_voice_text(payload.text)
 
 @router.post("", response_model=ChatResponse)
 @limiter.limit("10/minute")
