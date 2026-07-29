@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Volume2, Gauge, RefreshCw, Mic, Wifi, WifiOff } from 'lucide-react';
-import { getTTSStatus, type TTSStatus } from '../services/ttsService';
+import { voiceManager, type TTSStatus } from '../services/ttsService';
 
 export interface VoiceSettings {
   voiceURI: string;
@@ -34,7 +34,7 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
     }
 
     // Load TTS provider status
-    getTTSStatus().then(setTtsStatus);
+    voiceManager.getStatus().then(setTtsStatus);
   }, []);
 
   // Filter voices based on language setting
@@ -75,7 +75,7 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
               if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
                 setVoices(window.speechSynthesis.getVoices());
               }
-              getTTSStatus().then(setTtsStatus);
+              voiceManager.getStatus().then(setTtsStatus);
             }}
             title="Reload System Voices"
             className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"

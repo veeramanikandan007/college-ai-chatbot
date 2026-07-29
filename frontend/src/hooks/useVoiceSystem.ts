@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { speak, speakStream, cancelAllSpeech, pauseAllSpeech, resumeAllSpeech } from '../services/ttsService';
+import { voiceManager } from '../services/ttsService';
 import type { TTSOptions } from '../services/ttsService';
 
 export type AssistantVoiceState = 'IDLE' | 'WAKING' | 'LISTENING' | 'PROCESSING' | 'SPEAKING';
@@ -157,52 +157,56 @@ export function useVoiceSystem() {
     }
   }, [assistantState]);
 
+  // Subscribe to VoiceManager events
+  useEffect(() => {
+    voiceManager.onStart = () => {
+      setIsPlayingSpeech(true);
+      setAssistantState('SPEAKING');
+    };
+    voiceManager.onEnd = () => {
+      setIsPlayingSpeech(false);
+      setIsPausedSpeech(false);
+      setSpokenText('');
+      setAssistantState(prev => prev === 'SPEAKING' ? (voiceSettings.handsFree ? 'WAKING' : 'IDLE') : prev);
+    };
+    voiceManager.onError = () => {
+      setIsPlayingSpeech(false);
+      setIsPausedSpeech(false);
+      setSpokenText('');
+      setAssistantState(prev => prev === 'SPEAKING' ? (voiceSettings.handsFree ? 'WAKING' : 'IDLE') : prev);
+    };
+    
+    return () => {
+      voiceManager.onStart = undefined;
+      voiceManager.onEnd = undefined;
+      voiceManager.onError = undefined;
+    };
+  }, [voiceSettings.handsFree]);
+
   const stopSpeech = useCallback(() => {
-    cancelAllSpeech();
+    voiceManager.cancelAllSpeech();
     setIsPlayingSpeech(false);
     setIsPausedSpeech(false);
     setSpokenText('');
-    setAssistantState((prev) => (voiceSettings.handsFree && prev !== 'LISTENING' && prev !== 'PROCESSING' ? 'WAKING' : 'IDLE'));
+    setAssistantState(voiceSettings.handsFree ? 'WAKING' : 'IDLE');
   }, [voiceSettings.handsFree]);
 
   const pauseSpeech = useCallback(() => {
-    pauseAllSpeech();
+    voiceManager.pauseAllSpeech();
     setIsPausedSpeech(true);
   }, []);
 
   const resumeSpeech = useCallback(() => {
-    resumeAllSpeech();
+    voiceManager.resumeAllSpeech();
     setIsPausedSpeech(false);
   }, []);
 
   const speakText = useCallback(async (text: string, settingsToUse = voiceSettings) => {
     if (!text?.trim()) return;
 
-    const t0 = performance.now();
     setSpokenText(text);
-    setIsPlayingSpeech(true);
-    setIsPausedSpeech(false);
-    setAssistantState('SPEAKING');
-
-    await speak(text, { speed: settingsToUse.speed, volume: settingsToUse.volume }, {
-      onStart: () => {
-        console.log(`[Voice] TTS started: ${(performance.now() - t0).toFixed(0)}ms after call`);
-        setIsPlayingSpeech(true);
-        setAssistantState('SPEAKING');
-      },
-      onEnd: () => {
-        setIsPlayingSpeech(false);
-        setIsPausedSpeech(false);
-        setSpokenText('');
-        setAssistantState(settingsToUse.handsFree ? 'WAKING' : 'IDLE');
-      },
-      onError: () => {
-        setIsPlayingSpeech(false);
-        setIsPausedSpeech(false);
-        setSpokenText('');
-        setAssistantState(settingsToUse.handsFree ? 'WAKING' : 'IDLE');
-      },
-    });
+    // State updates now handled by voiceManager events natively
+    await voiceManager.speak(text, { speed: settingsToUse.speed, volume: settingsToUse.volume });
   }, [voiceSettings]);
 
   /**
@@ -211,23 +215,8 @@ export function useVoiceSystem() {
    * Call push() on each sentence as the LLM streams, then flush() at end.
    */
   const speakTextStream = useCallback((settingsToUse = voiceSettings) => {
-    setIsPlayingSpeech(true);
-    setIsPausedSpeech(false);
-    setAssistantState('SPEAKING');
-
     const opts: TTSOptions = { speed: settingsToUse.speed, volume: settingsToUse.volume };
-    return speakStream(opts, {
-      onStart: () => {
-        setIsPlayingSpeech(true);
-        setAssistantState('SPEAKING');
-      },
-      onEnd: () => {
-        setIsPlayingSpeech(false);
-        setIsPausedSpeech(false);
-        setSpokenText('');
-        setAssistantState(settingsToUse.handsFree ? 'WAKING' : 'IDLE');
-      },
-    });
+    return voiceManager.speakStream(opts);
   }, [voiceSettings]);
 
   useEffect(() => {
