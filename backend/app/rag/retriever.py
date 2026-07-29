@@ -17,13 +17,12 @@ class Retriever:
         self.vector_store = vector_store or VectorStore()
 
     def retrieve(self, question: str, top_k: int = 4) -> List[Dict[str, Any]]:
-        """Embed the user question and retrieve the nearest chunks from Chroma."""
+        """Retrieve the nearest chunks from Chroma via LangChain."""
         if not question or not question.strip():
             return []
 
         try:
-            embedding = self.embedding_service.create_embeddings([question])[0]
-            return self.vector_store.query(query_embedding=embedding, n_results=top_k)
+            return self.vector_store.query(query_text=question, n_results=top_k)
         except Exception as exc:
             logger.exception('Retrieval failed for question: %s', question)
             return []

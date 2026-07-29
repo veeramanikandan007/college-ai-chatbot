@@ -94,14 +94,8 @@ export default function Sidebar({
     c.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const now = Date.now();
-  const ONE_DAY = 24 * 60 * 60 * 1000;
-
-  const todayChats = filtered.filter((c) => now - c.timestamp < ONE_DAY && !c.pinned);
-  const yesterdayChats = filtered.filter((c) => now - c.timestamp >= ONE_DAY && now - c.timestamp < 2 * ONE_DAY && !c.pinned);
-  const prev7Days = filtered.filter((c) => now - c.timestamp >= 2 * ONE_DAY && now - c.timestamp < 7 * ONE_DAY && !c.pinned);
-  const olderChats = filtered.filter((c) => now - c.timestamp >= 7 * ONE_DAY && !c.pinned);
-  const pinnedChats = filtered.filter((c) => c.pinned);
+  const favoritesChats = filtered.filter((c) => c.favorite);
+  const recentChats = filtered.filter((c) => !c.favorite);
 
   const startRename = (chat: ChatSession) => {
     setEditingId(chat.id);
@@ -156,8 +150,24 @@ export default function Sidebar({
                         onClick={(e) => e.stopPropagation()}
                       />
                     ) : (
-                      <div className="truncate min-w-0 flex-1">
-                        <p className="truncate">{chat.title}</p>
+                      <div className="flex items-center gap-2 truncate min-w-0 flex-1">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onFavoriteChat(chat.id);
+                          }}
+                          className="group/star relative flex items-center justify-center p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                          title={chat.favorite ? 'Remove from Favorites' : 'Add to Favorites'}
+                        >
+                          <Star
+                            className={`h-4 w-4 transition-transform group-hover/star:scale-110 ${
+                              chat.favorite
+                                ? 'fill-[#EAB308] text-[#EAB308]'
+                                : 'text-slate-400 group-hover/star:text-[#EAB308]'
+                            }`}
+                          />
+                        </button>
+                        <p className="truncate font-medium">{chat.title}</p>
                       </div>
                     )}
                   </div>
@@ -268,7 +278,11 @@ export default function Sidebar({
             <div className="px-3 py-2 space-y-1">
               <button
                 onClick={() => {
-                  onNewChat();
+                  if (location.pathname !== '/dashboard') {
+                    navigate('/dashboard?newChat=true');
+                  } else {
+                    onNewChat();
+                  }
                   handleAction();
                 }}
                 className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-slate-200/50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200"
@@ -319,11 +333,8 @@ export default function Sidebar({
                 </div>
               ) : (
                 <>
-                  {renderGroup('Pinned', pinnedChats)}
-                  {renderGroup('Today', todayChats)}
-                  {renderGroup('Yesterday', yesterdayChats)}
-                  {renderGroup('Previous 7 Days', prev7Days)}
-                  {renderGroup('Older', olderChats)}
+                  {renderGroup('★ Favorites', favoritesChats)}
+                  {renderGroup('Recent', recentChats)}
                 </>
               )}
             </div>
@@ -333,7 +344,10 @@ export default function Sidebar({
               <div className="flex flex-col gap-1">
                 <Link
                   to="/settings"
-                  onClick={handleAction}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAction();
+                  }}
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition text-slate-700 dark:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-800"
                 >
                   <Settings className="h-4 w-4" />

@@ -159,6 +159,11 @@ export function useVoiceSystem() {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
     }
+    if (typeof window !== 'undefined' && (window as any).responsiveVoice) {
+      if ((window as any).responsiveVoice.isPlaying()) {
+        (window as any).responsiveVoice.cancel();
+      }
+    }
     setIsPlayingSpeech(false);
     setIsPausedSpeech(false);
     setSpokenText('');
@@ -169,6 +174,11 @@ export function useVoiceSystem() {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.pause();
     }
+    if (typeof window !== 'undefined' && (window as any).responsiveVoice) {
+      if ((window as any).responsiveVoice.isPlaying()) {
+        (window as any).responsiveVoice.pause();
+      }
+    }
     setIsPausedSpeech(true);
   }, []);
 
@@ -176,21 +186,45 @@ export function useVoiceSystem() {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.resume();
     }
+    if (typeof window !== 'undefined' && (window as any).responsiveVoice) {
+      (window as any).responsiveVoice.resume();
+    }
     setIsPausedSpeech(false);
   }, []);
 
-  const speakText = useCallback((text: string, settingsToUse = voiceSettings) => {
+  const loadResponsiveVoice = (): Promise<void> => {
+    return new Promise((resolve) => {
+      if ((window as any).responsiveVoice) {
+        resolve();
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://code.responsivevoice.org/responsivevoice.js';
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => resolve(); // Ignore error and continue natively
+      document.head.appendChild(script);
+    });
+  };
+
+  const speakText = useCallback(async (text: string, settingsToUse = voiceSettings) => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
+      if ((window as any).responsiveVoice && (window as any).responsiveVoice.isPlaying()) {
+        (window as any).responsiveVoice.cancel();
+      }
 
       if (!text || !text.trim()) return;
 
+      // Clean markdown, symbols, and formatting
       const cleaned = text
-        .replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '')
-        .replace(/•/g, 'point ')
+        .replace(/[*_~`>#]/g, '') // Remove Markdown symbols
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Extract link text
+        .replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '') // Remove emojis
+        .replace(/•/g, ' ')
+        .replace(/-/g, ' ')
         .trim();
 
-      const utterance = new SpeechSynthesisUtterance(cleaned);
       const hasTamil = /[\u0B80-\u0BFF]/.test(text);
       const targetLanguage = hasTamil ? 'ta-IN' : 'en-US';
 
@@ -200,6 +234,40 @@ export function useVoiceSystem() {
       if (!selectedVoice) {
         selectedVoice = availableVoices.find(v => v.lang.startsWith(hasTamil ? 'ta' : 'en'));
       }
+
+      if (!selectedVoice) {
+        // Fallback to ResponsiveVoice API
+        await loadResponsiveVoice();
+        if ((window as any).responsiveVoice) {
+          const rvVoice = hasTamil ? 'Tamil Female' : 'UK English Female';
+          
+          setSpokenText(text);
+          setIsPlayingSpeech(true);
+          setIsPausedSpeech(false);
+          setAssistantState('SPEAKING');
+
+          (window as any).responsiveVoice.speak(cleaned, rvVoice, {
+            rate: settingsToUse.speed,
+            volume: settingsToUse.volume,
+            onstart: () => {},
+            onend: () => {
+              setIsPlayingSpeech(false);
+              setIsPausedSpeech(false);
+              setSpokenText('');
+              setAssistantState(settingsToUse.handsFree ? 'WAKING' : 'IDLE');
+            },
+            onerror: () => {
+              setIsPlayingSpeech(false);
+              setIsPausedSpeech(false);
+              setSpokenText('');
+              setAssistantState(settingsToUse.handsFree ? 'WAKING' : 'IDLE');
+            }
+          });
+          return;
+        }
+      }
+
+      const utterance = new SpeechSynthesisUtterance(cleaned);
       if (selectedVoice) {
         utterance.voice = selectedVoice;
       }
