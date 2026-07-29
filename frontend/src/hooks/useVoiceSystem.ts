@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { speak, cancelAllSpeech, pauseAllSpeech, resumeAllSpeech } from '../services/ttsService';
+import { speak, speakStream, cancelAllSpeech, pauseAllSpeech, resumeAllSpeech } from '../services/ttsService';
+import type { TTSOptions } from '../services/ttsService';
 
 export type AssistantVoiceState = 'IDLE' | 'WAKING' | 'LISTENING' | 'PROCESSING' | 'SPEAKING';
 
@@ -177,6 +178,7 @@ export function useVoiceSystem() {
   const speakText = useCallback(async (text: string, settingsToUse = voiceSettings) => {
     if (!text?.trim()) return;
 
+    const t0 = performance.now();
     setSpokenText(text);
     setIsPlayingSpeech(true);
     setIsPausedSpeech(false);
@@ -184,6 +186,7 @@ export function useVoiceSystem() {
 
     await speak(text, { speed: settingsToUse.speed, volume: settingsToUse.volume }, {
       onStart: () => {
+        console.log(`[Voice] TTS started: ${(performance.now() - t0).toFixed(0)}ms after call`);
         setIsPlayingSpeech(true);
         setAssistantState('SPEAKING');
       },
@@ -194,6 +197,31 @@ export function useVoiceSystem() {
         setAssistantState(settingsToUse.handsFree ? 'WAKING' : 'IDLE');
       },
       onError: () => {
+        setIsPlayingSpeech(false);
+        setIsPausedSpeech(false);
+        setSpokenText('');
+        setAssistantState(settingsToUse.handsFree ? 'WAKING' : 'IDLE');
+      },
+    });
+  }, [voiceSettings]);
+
+  /**
+   * speakTextStream — for streaming AI responses.
+   * Returns a stream handle with push(chunk), flush(), cancel().
+   * Call push() on each sentence as the LLM streams, then flush() at end.
+   */
+  const speakTextStream = useCallback((settingsToUse = voiceSettings) => {
+    setIsPlayingSpeech(true);
+    setIsPausedSpeech(false);
+    setAssistantState('SPEAKING');
+
+    const opts: TTSOptions = { speed: settingsToUse.speed, volume: settingsToUse.volume };
+    return speakStream(opts, {
+      onStart: () => {
+        setIsPlayingSpeech(true);
+        setAssistantState('SPEAKING');
+      },
+      onEnd: () => {
         setIsPlayingSpeech(false);
         setIsPausedSpeech(false);
         setSpokenText('');
@@ -259,6 +287,7 @@ export function useVoiceSystem() {
     stopSpeech,
     pauseSpeech,
     resumeSpeech,
-    speakText
+    speakText,
+    speakTextStream,
   };
 }
