@@ -39,6 +39,10 @@ def startup_event():
     # Initialize DB (creates tables, seeds admin)
     init_db()
 
+    # Validate Groq API key once at startup
+    from app.services.groq_client import validate_at_startup
+    validate_at_startup()
+
     # Ensure directories exist
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     os.makedirs(settings.DOCUMENTS_DIR, exist_ok=True)

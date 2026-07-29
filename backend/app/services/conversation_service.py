@@ -1,13 +1,12 @@
 import re
-import os
 import random
 from enum import Enum
 from typing import Tuple
 
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage
-from app.core.config import settings
 from app.core.logging import get_logger
+from app.services.groq_client import get_api_key, get_router_model, is_configured
 
 logger = get_logger(__name__)
 
@@ -44,10 +43,12 @@ class ConversationService:
             "I don't have enough campus information to answer that accurately at the moment. Please try asking in a different way."
         ]
         
-        api_key = settings.GROQ_API_KEY or os.getenv('GROQ_API_KEY')
-        if api_key:
-            # We use a smaller model for fast intent classification
-            self.classifier_llm = ChatGroq(temperature=0, groq_api_key=api_key, model_name="llama-3.1-8b-instant")
+        if is_configured():
+            self.classifier_llm = ChatGroq(
+                temperature=0,
+                groq_api_key=get_api_key(),
+                model_name=get_router_model()
+            )
         else:
             self.classifier_llm = None
 

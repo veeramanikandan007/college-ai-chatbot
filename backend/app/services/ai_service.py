@@ -1,6 +1,5 @@
 import os
 import asyncio
-import json
 from typing import Optional, List, Dict, Any
 
 from fastapi import HTTPException, status
@@ -14,24 +13,26 @@ from app.core.config import settings
 from app.services.query_router import QueryRouter
 from app.services.weather_service import WeatherService
 from app.services.web_search_service import WebSearchService
+from app.services.groq_client import get_api_key, get_model_name, is_configured
 
 logger = get_logger(__name__)
+
+_FRIENDLY_UNAVAILABLE = "CampusMate AI is temporarily unavailable. Please try again later."
 
 
 class AIService:
     def __init__(self) -> None:
-        api_key = settings.GROQ_API_KEY or os.getenv('GROQ_API_KEY')
-        self.model_name = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
-        if api_key:
+        if is_configured():
             self.llm = ChatGroq(
                 temperature=0.2,
-                groq_api_key=api_key,
-                model_name=self.model_name,
+                groq_api_key=get_api_key(),
+                model_name=get_model_name(),
                 max_tokens=1000
             )
         else:
+            logger.warning("AIService: Groq API key not configured. LLM features disabled.")
             self.llm = None
-            
+
         self.rag_service = RAGService()
         self.conversation_service = ConversationService()
         self.query_router = QueryRouter()
@@ -45,10 +46,8 @@ class AIService:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Message is required')
 
         if not self.llm:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail='Groq API key is not configured'
-            )
+            logger.error("Chat request received but Groq LLM is not configured.")
+            return _FRIENDLY_UNAVAILABLE
 
         try:
             logger.info('Processing chat request with Groq Llama 3.3')
@@ -129,7 +128,13 @@ class AIService:
             )
             
             prompt = self._build_prompt(message, context_text)
-            answer = await self._get_llm_response(prompt, system_instruction)
+
+            # If LLM fails after RAG, return raw context as a fallback
+            try:
+                answer = await self._get_llm_response(prompt, system_instruction)
+            except Exception:
+                logger.warning("LLM unavailable after RAG retrieval — returning raw campus context.")
+                return "Here is the campus information I found:\n\n" + context_text
             
             sources_list = []
             for chunk in valid_chunks:
@@ -149,9 +154,9 @@ class AIService:
             return self.conversation_service.get_fallback_response()
 
     async def _get_llm_response(self, user_prompt: str, system_prompt: str) -> str:
+        """Call Groq LLM with exponential backoff retry. Returns friendly message on all failures."""
         retries = 3
         backoff = 1.0
-        response = None
 
         for attempt in range(retries):
             try:
@@ -160,18 +165,15 @@ class AIService:
                     SystemMessage(content=system_prompt),
                     HumanMessage(content=user_prompt)
                 ])
-                break
+                return response.content or _FRIENDLY_UNAVAILABLE
             except Exception as exc:
                 logger.warning('Groq request failed on attempt %s: %s', attempt + 1, exc)
-                if attempt == retries - 1:
-                    raise HTTPException(
-                        status_code=status.HTTP_502_BAD_GATEWAY,
-                        detail=f'LLM service failed: {exc}'
-                    ) from exc
-            await asyncio.sleep(backoff)
-            backoff *= 2.0
+                if attempt < retries - 1:
+                    await asyncio.sleep(backoff)
+                    backoff *= 2.0
 
-        return response.content if response else 'No response generated.'
+        logger.error('All %s Groq API attempts failed.', retries)
+        return _FRIENDLY_UNAVAILABLE
 
     def _build_context(self, context_chunks: list) -> str:
         if not context_chunks:
@@ -201,7 +203,8 @@ class AIService:
             return
 
         if not self.llm:
-            yield "Groq API key is not configured."
+            logger.error("Stream chat request received but Groq LLM is not configured.")
+            yield _FRIENDLY_UNAVAILABLE
             return
 
         try:
@@ -293,7 +296,8 @@ class AIService:
                 yield f"\n\n**Sources:**\n" + "\n".join([f"- {src}" for src in sources_list])
                 
         except HTTPException as e:
-            yield f"Error: {e.detail}"
+            logger.error('HTTPException during stream: %s', e.detail)
+            yield _FRIENDLY_UNAVAILABLE
         except Exception as exc:
             logger.exception('Unexpected error during ChatGroq stream generation')
             yield self.conversation_service.get_fallback_response()
@@ -308,5 +312,5 @@ class AIService:
                     yield chunk.content
         except Exception as exc:
             logger.warning('Groq stream request failed: %s', exc)
-            raise HTTPException(status_code=502, detail=f'LLM stream service failed: {exc}')
+            yield _FRIENDLY_UNAVAILABLE
 

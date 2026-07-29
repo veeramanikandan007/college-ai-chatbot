@@ -1,20 +1,18 @@
 import os
-import json
 from groq import AsyncGroq
 from app.services.language_service import LanguageService
-from app.core.config import settings
 from app.core.logging import get_logger
+from app.services.groq_client import get_api_key, is_configured
 
 logger = get_logger(__name__)
 
 class VoiceLanguageRouter:
     def __init__(self):
-        api_key = settings.GROQ_API_KEY or os.getenv('GROQ_API_KEY')
-        if not api_key:
-            logger.error("Groq API Key not found for VoiceLanguageRouter")
-            self.client = None
+        if is_configured():
+            self.client = AsyncGroq(api_key=get_api_key())
         else:
-            self.client = AsyncGroq(api_key=api_key)
+            logger.warning("VoiceLanguageRouter: Groq API key not configured. Tanglish conversion disabled.")
+            self.client = None
 
     async def process_voice_text(self, text: str) -> dict:
         """
