@@ -53,13 +53,16 @@ const TAMLISH_DICT: Record<string, string> = {
   'op': 'oh-pee',
   'cringe': 'krinje',
   'bro': 'bro',
+  'epdi': 'yeppadi',
+  'iruka': 'irukkaa',
+  'enna': 'yenna',
+  'panra': 'panra',
+  'super': 'sooper',
   'eppo': 'yeppo',
   'epo': 'yepo',
-  'enna': 'yenna',
   'evlo': 'yevvalavu',
   'venum': 'vaenum',
   'vendum': 'vaendum',
-  'iruka': 'irukkaa',
   'iruku': 'irukku',
   'theriyum': 'theriyum',
   'theriyala': 'theriyavillai',
@@ -141,6 +144,8 @@ export class VoiceManager {
   public onStart?: () => void;
   public onEnd?: () => void;
   public onError?: () => void;
+  public onPause?: () => void;
+  public onResume?: () => void;
   private isSpeakingSession = false;
 
   private constructor() {
@@ -175,10 +180,16 @@ export class VoiceManager {
 
   private initVoices() {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      console.log("[Voice] Initializing");
       this.cachedVoices = window.speechSynthesis.getVoices();
+      if (this.cachedVoices.length > 0) {
+        console.log(`[Voice] Voices Loaded (${this.cachedVoices.length})`);
+      }
+      
       if (this.cachedVoices.length === 0) {
         window.speechSynthesis.onvoiceschanged = () => {
           this.cachedVoices = window.speechSynthesis.getVoices();
+          console.log(`[Voice] Voices Loaded on voiceschanged (${this.cachedVoices.length})`);
         };
       }
     }
@@ -372,7 +383,7 @@ export class VoiceManager {
     while (this.queue.length > 0) {
       const item = this.queue.shift()!;
       if (item.queueId !== this.queueId) continue;
-      await this.speakOne(item);
+      await this.speakOne(item, 0);
     }
 
     this.queueRunning = false;
@@ -381,7 +392,7 @@ export class VoiceManager {
     this.endSession();
   }
 
-  private speakOne(item: QueueItem): Promise<void> {
+  private speakOne(item: QueueItem, retryCount: number = 0): Promise<void> {
     return new Promise<void>((resolve) => {
       if (item.queueId !== this.queueId) return resolve();
 
@@ -399,7 +410,16 @@ export class VoiceManager {
         if (isDone) return;
         isDone = true;
         clearTimeout(safetyTimeout);
-        console.error("[VoiceManager] Speech failed entirely for:", item.text);
+        console.error("[Voice] Speech Error for:", item.text);
+        
+        // Auto-Retry Logic (max 3 times)
+        if (retryCount < 3 && item.queueId === this.queueId) {
+          console.log(`[Voice] Retry (${retryCount + 1}/3)`);
+          this.speakOne(item, retryCount + 1).then(resolve);
+          return;
+        }
+        
+        console.error("[Voice] Failed entirely after retries:", item.text);
         this.onError?.();
         resolve();
       };
@@ -527,30 +547,65 @@ export class VoiceManager {
   private speakWithBrowser(text: string, language: string, isTamil: boolean, opts: TTSOptions, onEnd: () => void, onError: () => void): boolean {
     if (!('speechSynthesis' in window)) { onError(); return false; }
     
+    // Clear any stuck state safely before speaking
+    window.speechSynthesis.cancel();
+    
     const voices = this.getVoicesOnce();
+    // Priority: local tamil -> fallback -> default
     let voice = voices.find(v => v.lang === language);
     if (!voice) voice = voices.find(v => v.lang.startsWith(isTamil ? 'ta' : 'en'));
-    
-    // If we wanted native tamil but only english exists, fail gracefully if requested
     
     const utterance = new SpeechSynthesisUtterance(text);
     this.activeUtterance = utterance; // Prevent garbage collection mid-speech
     
-    if (voice) utterance.voice = voice;
+    if (voice) {
+      utterance.voice = voice;
+      console.log(`[Voice] Selected Voice: ${voice.name} (${voice.lang})`);
+    } else {
+      console.log(`[Voice] Selected Voice: Browser Default`);
+    }
+    
     utterance.lang = language;
     utterance.rate = opts.speed ?? 1.0;
     utterance.volume = opts.volume ?? 1.0;
     
+    let startTimeout: ReturnType<typeof setTimeout>;
+
+    utterance.onstart = () => {
+      clearTimeout(startTimeout);
+      console.log("[Voice] Speech Started");
+    };
+
     utterance.onend = () => {
+      clearTimeout(startTimeout);
+      console.log("[Voice] Speech Finished");
       this.activeUtterance = null;
       onEnd();
     };
+
     utterance.onerror = (e) => {
-      console.warn("[VoiceManager] Browser Native TTS error:", e);
+      clearTimeout(startTimeout);
+      console.warn("[Voice] Speech Error:", e);
       this.activeUtterance = null;
       onError();
     };
+
+    utterance.onpause = () => {
+      this.onPause?.();
+    };
+
+    utterance.onresume = () => {
+      this.onResume?.();
+    };
     
+    // Safety timeout: If speech doesn't start in 5 seconds, cancel and trigger error (which triggers retry)
+    startTimeout = setTimeout(() => {
+      console.warn("[Voice] Speech failed to start within 5s. Canceling and retrying...");
+      window.speechSynthesis.cancel();
+      this.activeUtterance = null;
+      onError();
+    }, 5000);
+
     window.speechSynthesis.speak(utterance);
     return true;
   }

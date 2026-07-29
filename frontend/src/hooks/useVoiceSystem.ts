@@ -175,11 +175,19 @@ export function useVoiceSystem() {
       setSpokenText('');
       setAssistantState(prev => prev === 'SPEAKING' ? (voiceSettings.handsFree ? 'WAKING' : 'IDLE') : prev);
     };
+    voiceManager.onPause = () => {
+      setIsPausedSpeech(true);
+    };
+    voiceManager.onResume = () => {
+      setIsPausedSpeech(false);
+    };
     
     return () => {
       voiceManager.onStart = undefined;
       voiceManager.onEnd = undefined;
       voiceManager.onError = undefined;
+      voiceManager.onPause = undefined;
+      voiceManager.onResume = undefined;
     };
   }, [voiceSettings.handsFree]);
 
