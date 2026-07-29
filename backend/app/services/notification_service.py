@@ -7,29 +7,30 @@ from app.schemas.notification import NotificationCreate, NotificationUpdate
 
 class ConnectionManager:
     def __init__(self):
-        # Maps user_id to a list of active WebSocket connections
-        self.active_connections: Dict[int, List[WebSocket]] = {}
+        # Maps user_id to a single active WebSocket connection
+        self.active_connections: Dict[int, WebSocket] = {}
 
     async def connect(self, websocket: WebSocket, user_id: int):
         await websocket.accept()
-        if user_id not in self.active_connections:
-            self.active_connections[user_id] = []
-        self.active_connections[user_id].append(websocket)
+        if user_id in self.active_connections:
+            # Gracefully evict old connection (Code 1008 signals the frontend not to reconnect)
+            try:
+                await self.active_connections[user_id].close(code=1008)
+            except Exception:
+                pass
+        self.active_connections[user_id] = websocket
 
     def disconnect(self, websocket: WebSocket, user_id: int):
         if user_id in self.active_connections:
-            if websocket in self.active_connections[user_id]:
-                self.active_connections[user_id].remove(websocket)
-            if not self.active_connections[user_id]:
+            if self.active_connections[user_id] == websocket:
                 del self.active_connections[user_id]
 
     async def send_personal_message(self, message: dict, user_id: int):
         if user_id in self.active_connections:
-            for connection in self.active_connections[user_id]:
-                try:
-                    await connection.send_json(message)
-                except Exception:
-                    pass
+            try:
+                await self.active_connections[user_id].send_json(message)
+            except Exception:
+                pass
 
 manager = ConnectionManager()
 

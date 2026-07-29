@@ -4,25 +4,32 @@ import * as NotificationAPI from '../api/notifications';
 
 let wsInstance: WebSocket | null = null;
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+let disconnectTimer: ReturnType<typeof setTimeout> | null = null;
 let currentBackoff = 1000;
 let activeSubscribers = 0;
+let isIntentionalDisconnect = false;
 
 function connectWebSocket(token: string, queryClient: QueryClient) {
   if (!token) return;
-  if (wsInstance && (wsInstance.readyState === WebSocket.OPEN || wsInstance.readyState === WebSocket.CONNECTING)) {
-    return;
+
+  if (wsInstance) {
+    if (wsInstance.readyState === WebSocket.CONNECTING || wsInstance.readyState === WebSocket.OPEN) {
+      return;
+    }
   }
 
+  isIntentionalDisconnect = false;
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   const wsUrl = import.meta.env.VITE_API_URL 
       ? import.meta.env.VITE_API_URL.replace('http', 'ws') 
       : `${protocol}//127.0.0.1:8000`;
       
+  console.log("[Socket] Created");
   wsInstance = new WebSocket(`${wsUrl}/api/v1/notifications/ws/${token}`);
 
   wsInstance.onopen = () => {
-    console.log("[Notifications] WebSocket connected");
-    currentBackoff = 1000; // reset backoff
+    console.log("[Socket] Connected");
+    currentBackoff = 1000;
     if (reconnectTimer) {
       clearTimeout(reconnectTimer);
       reconnectTimer = null;
@@ -37,36 +44,46 @@ function connectWebSocket(token: string, queryClient: QueryClient) {
         queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
       }
     } catch (err) {
-      console.error("Failed to parse websocket message", err);
+      // Parse error ignored
     }
   };
 
-  wsInstance.onclose = () => {
-    console.warn(`[Notifications] WebSocket closed. Active subscribers: ${activeSubscribers}`);
+  wsInstance.onclose = (event) => {
     wsInstance = null;
-    if (activeSubscribers > 0) {
-      // Exponential backoff reconnect
-      console.log(`[Notifications] Reconnecting in ${currentBackoff}ms...`);
+    
+    // Code 1008 means the backend explicitly kicked us because a newer connection for this user opened
+    if (event.code === 1008) {
+      console.log("[Socket] Closed (Superseded by new connection)");
+      return; // Do not reconnect! Let the new connection handle it.
+    }
+
+    if (!isIntentionalDisconnect && activeSubscribers > 0) {
+      console.log(`[Socket] Reconnecting in ${currentBackoff}ms...`);
       reconnectTimer = setTimeout(() => connectWebSocket(token, queryClient), currentBackoff);
-      currentBackoff = Math.min(currentBackoff * 2, 30000); // max 30s
+      currentBackoff = Math.min(currentBackoff * 2, 30000);
+    } else {
+      console.log("[Socket] Closed");
     }
   };
 
   wsInstance.onerror = (err) => {
-    console.error("[Notifications] WebSocket error", err);
+    console.error("[Socket] Error", err);
   };
 }
 
 function disconnectWebSocket() {
+  console.log("[Socket] Cleanup");
+  isIntentionalDisconnect = true;
   if (reconnectTimer) {
     clearTimeout(reconnectTimer);
     reconnectTimer = null;
   }
   if (wsInstance) {
-    wsInstance.onclose = null; // prevent reconnect loop
-    wsInstance.close();
+    const state = wsInstance.readyState;
+    if (state === WebSocket.CONNECTING || state === WebSocket.OPEN) {
+      wsInstance.close();
+    }
     wsInstance = null;
-    console.log("[Notifications] WebSocket disconnected");
   }
 }
 
@@ -86,18 +103,26 @@ export const useNotifications = (filterType?: string, unreadOnly = false) => {
     queryFn: NotificationAPI.getUnreadCount,
   });
 
-  // WebSocket Connection (Singleton Pooled)
+  // WebSocket Connection (Singleton Pooled with StrictMode Debounce)
   useEffect(() => {
     if (!token) return;
 
     activeSubscribers++;
+    if (disconnectTimer) {
+      clearTimeout(disconnectTimer);
+      disconnectTimer = null;
+    }
+    
     connectWebSocket(token, queryClient);
 
     return () => {
       activeSubscribers--;
       if (activeSubscribers <= 0) {
         activeSubscribers = 0;
-        disconnectWebSocket();
+        // 500ms debounce to prevent StrictMode double-unmount from killing the connection
+        disconnectTimer = setTimeout(() => {
+          disconnectWebSocket();
+        }, 500);
       }
     };
   }, [token, queryClient]);

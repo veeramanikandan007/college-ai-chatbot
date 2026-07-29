@@ -76,9 +76,6 @@ export default function DashboardPage() {
 
   useEffect(() => {
     loadSessions();
-    return () => {
-      stopSpeech();
-    };
   }, []);
 
   useEffect(() => {
