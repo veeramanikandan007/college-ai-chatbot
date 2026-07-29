@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Square, Download, Info, Settings2, AlertCircle, X } from 'lucide-react';
 
@@ -24,6 +25,8 @@ import { fetchApi, ApiError } from '../lib/api';
 export default function DashboardPage() {
   const { user, logout } = useAuth();
   const { showToast } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
@@ -72,7 +75,18 @@ export default function DashboardPage() {
 
   useEffect(() => {
     loadSessions();
+    return () => {
+      stopSpeech();
+    };
   }, []);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get('newChat') === 'true') {
+      handleNewChat();
+      navigate('/dashboard', { replace: true });
+    }
+  }, [location.search, navigate]);
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -124,28 +138,14 @@ export default function DashboardPage() {
   const getCurrentTimeString = () =>
     new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-  const handleNewChat = async () => {
-    try {
-      const data = await fetchApi('/chat/sessions', {
-        method: 'POST',
-        body: JSON.stringify({ title: 'New Conversation' }),
-      });
-      const newSession: ChatSession = {
-        id: String(data.id),
-        title: data.title,
-        lastUpdated: 'Just now',
-        timestamp: Date.now(),
-      };
-      setSessions((prev) => [newSession, ...prev]);
-      setMessagesMap((prev) => ({ ...prev, [String(data.id)]: [] }));
-      setActiveChatId(String(data.id));
-      setPromptInput('');
-    } catch {
-      showToast('Could not create a new chat.', 'error');
-    }
+  const handleNewChat = () => {
+    stopSpeech();
+    setActiveChatId(null);
+    setPromptInput('');
   };
 
   const handleSelectChat = async (id: string) => {
+    stopSpeech();
     setActiveChatId(id);
     await loadMessages(id);
   };
@@ -194,11 +194,15 @@ export default function DashboardPage() {
     const newFav = !chat.favorite;
     setSessions((prev) => prev.map((s) => (s.id === id ? { ...s, favorite: newFav } : s)));
     try {
-      await fetchApi(`/chat/sessions/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify({ is_favorite: newFav }),
-      });
-    } catch { }
+      if (newFav) {
+        await fetchApi(`/chat/sessions/${id}/favorite`, { method: 'POST' });
+      } else {
+        await fetchApi(`/chat/sessions/${id}/favorite`, { method: 'DELETE' });
+      }
+    } catch {
+      setSessions((prev) => prev.map((s) => (s.id === id ? { ...s, favorite: chat.favorite } : s)));
+      showToast('Could not update favorite status.', 'error');
+    }
   };
 
   const handleDuplicateChat = async (id: string) => {
@@ -225,7 +229,7 @@ export default function DashboardPage() {
     }
   };
 
-  const handleSendMessage = async (customPrompt?: string | any) => {
+  const handleSendMessage = async (customPrompt?: string | any, source: 'text' | 'voice' = 'text') => {
     let textToSend = promptInput;
     if (typeof customPrompt === 'string') {
       textToSend = customPrompt;
@@ -284,14 +288,75 @@ export default function DashboardPage() {
 
     try {
       abortControllerRef.current = new AbortController();
-      const data = await fetchApi('/chat', {
+      const token = localStorage.getItem('token');
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const response = await fetch('/api/v1/chat/stream', {
         method: 'POST',
+        headers,
         body: JSON.stringify({ message: textToSend, session_id: parseInt(sessionId!) }),
         signal: abortControllerRef.current.signal,
       });
 
-      const aiText: string = data.answer || "I couldn't find an answer for that right now.";
-      simulateStream(aiText, sessionId!, [...currentMsgs, userMsg], String(data.message_id));
+      if (!response.ok) {
+        throw new Error('Failed to fetch stream');
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder('utf-8');
+      
+      let fullText = '';
+      const assistantMsgId = `a-${Date.now()}`;
+      const timestamp = getCurrentTimeString();
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunkStr = decoder.decode(value, { stream: true });
+          const lines = chunkStr.split('\n');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const dataStr = line.slice(6);
+              try {
+                const data = JSON.parse(dataStr);
+                if (data.text) {
+                  fullText += data.text;
+                  const streamedMsg: ChatMessageData = {
+                    id: assistantMsgId,
+                    role: 'assistant',
+                    text: fullText,
+                    timestamp,
+                    isStreaming: true,
+                  };
+                  setMessagesMap((prev) => ({ ...prev, [sessionId!]: [...currentMsgs, userMsg, streamedMsg] }));
+                }
+              } catch (e) {
+                // Ignore parse errors on incomplete chunks
+              }
+            }
+          }
+        }
+      }
+
+      // Stream complete
+      setMessagesMap((prev) => {
+        const msgs = prev[sessionId!] || [];
+        const lastMsg = msgs[msgs.length - 1];
+        if (lastMsg && lastMsg.role === 'assistant') {
+          return { ...prev, [sessionId!]: [...msgs.slice(0, -1), { ...lastMsg, isStreaming: false }] };
+        }
+        return prev;
+      });
+      setIsGenerating(false);
+      
+      if (source === 'voice') {
+        speakText(fullText);
+      } else {
+        setAssistantState(voiceSettings.handsFree ? 'WAKING' : 'IDLE');
+      }
+
     } catch (err: any) {
       if (err?.name === 'AbortError') {
         setIsGenerating(false);
@@ -299,11 +364,11 @@ export default function DashboardPage() {
         return;
       }
       const fallback = `I'm having trouble reaching the knowledge base right now. Please try again in a moment.`;
-      simulateStream(fallback, sessionId!, [...currentMsgs, userMsg]);
+      simulateStream(fallback, sessionId!, [...currentMsgs, userMsg], undefined, source);
     }
   };
 
-  const simulateStream = (fullText: string, sessionId: string, baseMessages: ChatMessageData[], backendMsgId?: string) => {
+  const simulateStream = (fullText: string, sessionId: string, baseMessages: ChatMessageData[], backendMsgId?: string, source: 'text' | 'voice' = 'text') => {
     const assistantMsgId = backendMsgId || `a-${Date.now()}`;
     const timestamp = getCurrentTimeString();
     let currentLength = 0;
@@ -323,8 +388,8 @@ export default function DashboardPage() {
         clearInterval(interval);
         setIsGenerating(false);
         
-        // Auto-speak the AI response if enabled
-        if (voiceSettings.autoSpeak) {
+        // Auto-speak the AI response if enabled and it's a voice message
+        if (source === 'voice') {
           speakText(fullText);
         } else {
           setAssistantState(voiceSettings.handsFree ? 'WAKING' : 'IDLE');
@@ -517,7 +582,7 @@ export default function DashboardPage() {
                       onDurationChange={setRecordingDuration}
                       onTextRecognized={(text) => {
                         setPromptInput(text);
-                        handleSendMessage(text);
+                        handleSendMessage(text, 'voice');
                       }}
                       onRecognitionError={(err) => {
                         showVoiceError(err);

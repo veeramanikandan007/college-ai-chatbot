@@ -36,13 +36,7 @@ class RAGService:
         if reset:
             self.vector_store.reset()
 
-        try:
-            embeddings = self.embedding_service.create_embeddings([chunk['content'] for chunk in chunks])
-        except Exception as exc:
-            logger.exception('Embedding generation failed during index build: %s', exc)
-            return 0
-
-        indexed = self.vector_store.build_index(chunks, embeddings)
+        indexed = self.vector_store.build_index(chunks)
         logger.info('RAG index build completed successfully')
         return indexed
 

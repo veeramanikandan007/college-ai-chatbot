@@ -24,6 +24,6 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    chat_sessions = relationship("ChatSession", back_populates="user")
-    documents = relationship("UploadedDocument", back_populates="uploader")
-    notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
+    chat_sessions = relationship("app.models.chat.ChatSession", back_populates="user")
+    documents = relationship("app.models.document.UploadedDocument", back_populates="uploader")
+    notifications = relationship("app.models.notification.Notification", back_populates="user", cascade="all, delete-orphan")

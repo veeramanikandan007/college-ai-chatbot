@@ -13,7 +13,7 @@ ai_service = AIService()
 
 @router.post("", response_model=ChatResponse)
 @limiter.limit("20/minute")
-def send_message(request: Request, payload: ChatRequest, current_user: User = Depends(deps.get_current_user), db: Session = Depends(deps.get_db)):
+async def send_message(request: Request, payload: ChatRequest, current_user: User = Depends(deps.get_current_user), db: Session = Depends(deps.get_db)):
     """Send a message to the AI and get a response."""
     # Create session if not provided
     session_id = payload.session_id
@@ -25,13 +25,11 @@ def send_message(request: Request, payload: ChatRequest, current_user: User = De
     # Save user message
     chat_service.save_message(db, session_id, "user", payload.message)
 
-    # Get history for context
-    history = chat_service.get_messages(db, session_id, current_user.id)
-    history_dicts = [{"role": msg.role, "content": msg.content} for msg in history[:-1]] # Exclude the just-saved user message
-
+    # Get history for context (ignoring for now as get_chat_answer doesn't use it yet)
+    
     # Get AI response
     try:
-        ai_response_text = ai_service.get_response(payload.message, history=history_dicts)
+        ai_response_text = await ai_service.get_chat_answer(payload.message)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -82,4 +80,14 @@ def update_message_reaction(session_id: int, message_id: int, request: MessageRe
     # Verify session ownership
     chat_service.get_session(db, session_id, current_user.id)
     return chat_service.set_reaction(db, message_id, current_user.id, request.reaction)
+
+@router.post("/sessions/{session_id}/favorite", response_model=ChatSessionResponse)
+def favorite_session(session_id: int, current_user: User = Depends(deps.get_current_user), db: Session = Depends(deps.get_db)):
+    """Mark a chat session as favorite."""
+    return chat_service.update_session(db, session_id, current_user.id, is_favorite=True)
+
+@router.delete("/sessions/{session_id}/favorite", response_model=ChatSessionResponse)
+def unfavorite_session(session_id: int, current_user: User = Depends(deps.get_current_user), db: Session = Depends(deps.get_db)):
+    """Remove a chat session from favorites."""
+    return chat_service.update_session(db, session_id, current_user.id, is_favorite=False)
 

@@ -36,15 +36,24 @@ export default function RightPanel({
 
         {/* Progress Gauge */}
         <div className="mt-4 flex items-center gap-4">
-          <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-[#0A2A6A]/5 dark:bg-secondary/10 border-4 border-[#0A2A6A] dark:border-secondary">
+          <div 
+            className="relative flex h-16 w-16 items-center justify-center rounded-full border-4 transition-colors duration-500"
+            style={{ 
+              borderColor: attendancePercent >= 80 ? '#22C55E' : attendancePercent >= 75 ? '#EAB308' : '#EF4444',
+              backgroundColor: attendancePercent >= 80 ? 'rgba(34, 197, 94, 0.1)' : attendancePercent >= 75 ? 'rgba(234, 179, 8, 0.1)' : 'rgba(239, 68, 68, 0.1)'
+            }}
+          >
             <span className="text-sm font-bold text-[#0A2A6A] dark:text-slate-100">{attendancePercent}%</span>
           </div>
           <div>
             <h4 className="text-sm font-bold text-[#0A2A6A] dark:text-slate-100">Attendance</h4>
             <p className="text-xs text-[#64748B] dark:text-slate-400">Semester 6 • CS Dept</p>
-            <div className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+            <div 
+              className="mt-1 flex items-center gap-1 text-[11px] font-semibold transition-colors duration-500"
+              style={{ color: attendancePercent >= 80 ? '#22C55E' : attendancePercent >= 75 ? '#EAB308' : '#EF4444' }}
+            >
               <CheckCircle2 className="h-3.5 w-3.5" />
-              <span>Above 75% threshold</span>
+              <span>{attendancePercent >= 75 ? 'Above 75% threshold' : 'Below 75% threshold'}</span>
             </div>
           </div>
         </div>

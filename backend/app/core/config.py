@@ -18,6 +18,7 @@ class Settings(BaseSettings):
 
     # AI & RAG
     GEMINI_API_KEY: Optional[str] = None
+    GROQ_API_KEY: Optional[str] = None
     CHROMA_DB_DIR: str = "./chroma_db"
     DOCUMENTS_DIR: str = "./documents"
 
