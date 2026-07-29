@@ -104,8 +104,13 @@ class AIService:
 
             elif intent == "GENERAL":
                 logger.info('Intent detected: GENERAL')
-                system_instruction = f"You are a helpful college AI assistant. Answer the student's general knowledge question. {language_instruction}"
+                system_instruction = f"You are a helpful college AI assistant. Answer the student's general knowledge question using your broad knowledge base. {language_instruction}"
                 return await self._get_llm_response(normalized_message, system_instruction)
+                
+            elif intent == "CALCULATOR":
+                logger.info('Intent detected: CALCULATOR')
+                system_instruction = f"You are a helpful AI assistant. Evaluate the following mathematical expression or calculation query accurately. Provide only the final answer or a brief explanation of the calculation. {language_instruction}"
+                return await self._get_llm_response(message, system_instruction)
 
             # Intent is CAMPUS_QUERY -> Proceed with RAG
             logger.info('Intent detected: CAMPUS_QUERY\nUsing RAG pipeline')
@@ -115,8 +120,14 @@ class AIService:
             valid_chunks = [c for c in context_chunks if c.get('distance', 0) < 1.5]
 
             if not valid_chunks:
-                logger.info('No relevant RAG context retrieved. Returning professional fallback.')
-                return self.conversation_service.get_fallback_response()
+                logger.info('No relevant RAG context retrieved. Falling back to LLM general knowledge.')
+                system_instruction = (
+                    "You are CampusMate AI. The user asked a question categorized as a campus query, but no specific campus context was found in the database. "
+                    "If the question is actually general knowledge or about a public location/entity (e.g., 'Where is Mount Zion College?'), answer it using your own knowledge. "
+                    "If the question requires specific, internal college data (like a student's attendance or specific staff), politely explain that you do not have that specific campus information available right now. "
+                    f"{language_instruction}"
+                )
+                return await self._get_llm_response(message, system_instruction)
             
             logger.info('RAG context retrieved with %s chunks. Using context-guided prompt.', len(valid_chunks))
             context_text = self._build_context(valid_chunks)
@@ -260,8 +271,14 @@ class AIService:
                 return
 
             elif intent == "GENERAL":
-                system_instruction = f"You are a helpful college AI assistant. Answer the student's general knowledge question. {language_instruction}"
+                system_instruction = f"You are a helpful college AI assistant. Answer the student's general knowledge question using your broad knowledge base. {language_instruction}"
                 async for chunk in self._stream_llm_response(normalized_message, system_instruction):
+                    yield chunk
+                return
+                
+            elif intent == "CALCULATOR":
+                system_instruction = f"You are a helpful AI assistant. Evaluate the following mathematical expression or calculation query accurately. Provide only the final answer or a brief explanation of the calculation. {language_instruction}"
+                async for chunk in self._stream_llm_response(message, system_instruction):
                     yield chunk
                 return
 
@@ -270,7 +287,14 @@ class AIService:
             valid_chunks = [c for c in context_chunks if c.get('distance', 0) < 1.5]
 
             if not valid_chunks:
-                yield self.conversation_service.get_fallback_response()
+                system_instruction = (
+                    "You are CampusMate AI. The user asked a question categorized as a campus query, but no specific campus context was found in the database. "
+                    "If the question is actually general knowledge or about a public location/entity (e.g., 'Where is Mount Zion College?'), answer it using your own knowledge. "
+                    "If the question requires specific, internal college data (like a student's attendance or specific staff), politely explain that you do not have that specific campus information available right now. "
+                    f"{language_instruction}"
+                )
+                async for chunk in self._stream_llm_response(message, system_instruction):
+                    yield chunk
                 return
             
             context_text = self._build_context(valid_chunks)

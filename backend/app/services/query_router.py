@@ -22,6 +22,12 @@ class QueryRouter:
         self.greeting_patterns = [
             r"^\s*(hi|hello|hey|good morning|good afternoon|good evening|yo|hola|hii|hey there|hi campusmate|vanakkam|namaste)\b"
         ]
+        
+        # Regex for basic math calculation (e.g. 25*48, 12+5)
+        self.math_patterns = [
+            r"^\s*([\d\.]+\s*[\+\-\*\/x]\s*[\d\.]+)+\s*$",
+            r"^\s*(calculate|what is|whats)\s+[\d\.]+\s*[\+\-\*\/x]\s*[\d\.]+"
+        ]
 
     def route_query(self, message: str) -> str:
         """
@@ -37,11 +43,16 @@ class QueryRouter:
                 if len(clean_msg.split()) <= 3:
                     return "GREETING"
         
-        # 2. Heuristic for weather
+        # 2. Fast regex detection for basic math calculations
+        for pattern in self.math_patterns:
+            if re.search(pattern, msg_lower):
+                return "CALCULATOR"
+                
+        # 3. Heuristic for weather
         if "weather" in msg_lower or "mazhai" in msg_lower or "rain" in msg_lower:
             return "WEATHER"
 
-        # 3. LLM-based intelligent classification
+        # 4. LLM-based intelligent classification
         if self.llm:
             try:
                 system_prompt = (
@@ -49,10 +60,11 @@ class QueryRouter:
                     "Analyze the user's message and categorize it exactly into ONE of the following categories:\n\n"
                     "1. GREETING: Simple greetings like hi, hello.\n"
                     "2. SMALL_TALK: Personal questions about the bot, thanks, how are you.\n"
-                    "3. CAMPUS_QUERY: Questions about college, HOD, fees, attendance, semester exams, subjects, campus rules, campus facilities.\n"
+                    "3. CAMPUS_QUERY: Questions strictly about college, HOD, fees, attendance, semester exams, subjects, campus rules, campus facilities.\n"
                     "4. WEATHER: Questions about the weather, temperature, rain.\n"
                     "5. WEB_SEARCH: Questions requiring live, external, or current internet information (e.g., news, stock prices, celebrity info, external companies like Google, OpenAI).\n"
-                    "6. GENERAL: General knowledge, explanations, reasoning, coding, math, general science (e.g., 'explain machine learning', 'what is python').\n\n"
+                    "6. CALCULATOR: Questions asking for mathematical calculations (e.g. percentage, calculate GPA, multiply).\n"
+                    "7. GENERAL: General knowledge, explanations, reasoning, coding, general science, math concepts, or non-campus locations (e.g., 'explain machine learning', 'where is Mount Zion College', 'what is python').\n\n"
                     "Reply with ONLY the exact category name."
                 )
                 
@@ -64,7 +76,7 @@ class QueryRouter:
                 intent_str = response.content.strip().upper()
                 
                 # Ensure valid mapping
-                valid_intents = ["GREETING", "SMALL_TALK", "CAMPUS_QUERY", "WEB_SEARCH", "WEATHER", "GENERAL"]
+                valid_intents = ["GREETING", "SMALL_TALK", "CAMPUS_QUERY", "WEB_SEARCH", "WEATHER", "CALCULATOR", "GENERAL"]
                 for valid in valid_intents:
                     if valid in intent_str:
                         return valid
