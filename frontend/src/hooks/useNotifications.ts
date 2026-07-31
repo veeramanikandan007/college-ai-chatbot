@@ -1,6 +1,91 @@
 import { useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, QueryClient } from '@tanstack/react-query';
 import * as NotificationAPI from '../api/notifications';
+
+let wsInstance: WebSocket | null = null;
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+let disconnectTimer: ReturnType<typeof setTimeout> | null = null;
+let currentBackoff = 1000;
+let activeSubscribers = 0;
+let isIntentionalDisconnect = false;
+
+function connectWebSocket(token: string, queryClient: QueryClient) {
+  if (!token) return;
+
+  if (wsInstance) {
+    if (wsInstance.readyState === WebSocket.CONNECTING || wsInstance.readyState === WebSocket.OPEN) {
+      return;
+    }
+  }
+
+  isIntentionalDisconnect = false;
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const wsUrl = import.meta.env.VITE_API_URL 
+      ? import.meta.env.VITE_API_URL.replace('http', 'ws') 
+      : `${protocol}//127.0.0.1:8000`;
+      
+  console.log("[Socket] Created");
+  wsInstance = new WebSocket(`${wsUrl}/api/v1/notifications/ws/${token}`);
+
+  wsInstance.onopen = () => {
+    console.log("[Socket] Connected");
+    currentBackoff = 1000;
+    if (reconnectTimer) {
+      clearTimeout(reconnectTimer);
+      reconnectTimer = null;
+    }
+  };
+
+  wsInstance.onmessage = (event) => {
+    try {
+      const message = JSON.parse(event.data);
+      if (message.event === 'new_notification') {
+        queryClient.invalidateQueries({ queryKey: ['notifications'] });
+        queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+      }
+    } catch (err) {
+      // Parse error ignored
+    }
+  };
+
+  wsInstance.onclose = (event) => {
+    wsInstance = null;
+    
+    // Code 1008 means the backend explicitly kicked us because a newer connection for this user opened
+    if (event.code === 1008) {
+      console.log("[Socket] Closed (Superseded by new connection)");
+      return; // Do not reconnect! Let the new connection handle it.
+    }
+
+    if (!isIntentionalDisconnect && activeSubscribers > 0) {
+      console.log(`[Socket] Reconnecting in ${currentBackoff}ms...`);
+      reconnectTimer = setTimeout(() => connectWebSocket(token, queryClient), currentBackoff);
+      currentBackoff = Math.min(currentBackoff * 2, 30000);
+    } else {
+      console.log("[Socket] Closed");
+    }
+  };
+
+  wsInstance.onerror = (err) => {
+    console.error("[Socket] Error", err);
+  };
+}
+
+function disconnectWebSocket() {
+  console.log("[Socket] Cleanup");
+  isIntentionalDisconnect = true;
+  if (reconnectTimer) {
+    clearTimeout(reconnectTimer);
+    reconnectTimer = null;
+  }
+  if (wsInstance) {
+    const state = wsInstance.readyState;
+    if (state === WebSocket.CONNECTING || state === WebSocket.OPEN) {
+      wsInstance.close();
+    }
+    wsInstance = null;
+  }
+}
 
 export const useNotifications = (filterType?: string, unreadOnly = false) => {
   const queryClient = useQueryClient();
@@ -18,34 +103,27 @@ export const useNotifications = (filterType?: string, unreadOnly = false) => {
     queryFn: NotificationAPI.getUnreadCount,
   });
 
-  // WebSocket Connection
+  // WebSocket Connection (Singleton Pooled with StrictMode Debounce)
   useEffect(() => {
     if (!token) return;
 
-    // Use wss:// for production, ws:// for local
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    // Use the backend host or local dev server host
-    const wsUrl = import.meta.env.VITE_API_URL 
-        ? import.meta.env.VITE_API_URL.replace('http', 'ws') 
-        : `${protocol}//127.0.0.1:8000`;
-        
-    const ws = new WebSocket(`${wsUrl}/api/v1/notifications/ws/${token}`);
-
-    ws.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        if (message.event === 'new_notification') {
-          // Invalidate queries to refetch data when a new notification arrives
-          queryClient.invalidateQueries({ queryKey: ['notifications'] });
-          queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
-        }
-      } catch (err) {
-        console.error("Failed to parse websocket message", err);
-      }
-    };
+    activeSubscribers++;
+    if (disconnectTimer) {
+      clearTimeout(disconnectTimer);
+      disconnectTimer = null;
+    }
+    
+    connectWebSocket(token, queryClient);
 
     return () => {
-      ws.close();
+      activeSubscribers--;
+      if (activeSubscribers <= 0) {
+        activeSubscribers = 0;
+        // 500ms debounce to prevent StrictMode double-unmount from killing the connection
+        disconnectTimer = setTimeout(() => {
+          disconnectWebSocket();
+        }, 500);
+      }
     };
   }, [token, queryClient]);
 

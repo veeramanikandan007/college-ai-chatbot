@@ -1,7 +1,11 @@
 import os
 import asyncio
+<<<<<<< HEAD
 import json
 from typing import Optional, List, Dict, Any, AsyncGenerator
+=======
+from typing import Optional, List, Dict, Any
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
 
 from fastapi import HTTPException, status
 from langchain_groq import ChatGroq
@@ -15,9 +19,11 @@ from app.core.config import settings
 from app.services.query_router import QueryRouter
 from app.services.weather_service import WeatherService
 from app.services.web_search_service import WebSearchService
+from app.services.groq_client import get_api_key, get_model_name, is_configured
 
 logger = get_logger(__name__)
 
+<<<<<<< HEAD
 RAG_FALLBACK_RESPONSE = "I couldn't find this information in the college knowledge base."
 
 
@@ -36,10 +42,14 @@ SYSTEM_RAG_PROMPT = (
     "'I couldn't find that information in the college knowledge base.'\n\n"
     "Never hallucinate."
 )
+=======
+_FRIENDLY_UNAVAILABLE = "CampusMate AI is temporarily unavailable. Please try again later."
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
 
 
 class AIService:
     def __init__(self) -> None:
+<<<<<<< HEAD
         # Initialize Google Gemini as primary LLM if configured
         gemini_key = settings.GEMINI_API_KEY or os.getenv('GEMINI_API_KEY')
         raw_model = os.getenv('GEMINI_MODEL', 'gemini-2.0-flash').replace('models/', '')
@@ -63,15 +73,20 @@ class AIService:
         api_key = settings.GROQ_API_KEY or os.getenv('GROQ_API_KEY')
         self.model_name = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
         if api_key:
+=======
+        if is_configured():
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
             self.llm = ChatGroq(
                 temperature=0.2,
-                groq_api_key=api_key,
-                model_name=self.model_name,
+                groq_api_key=get_api_key(),
+                model_name=get_model_name(),
                 max_tokens=1000
             )
         else:
+            logger.warning("AIService: Groq API key not configured. LLM features disabled.")
             self.llm = None
 
+<<<<<<< HEAD
         # Try initializing Ollama Qwen2.5 if available locally
         try:
             from langchain_community.chat_models import ChatOllama
@@ -79,6 +94,8 @@ class AIService:
         except Exception:
             self.ollama_llm = None
             
+=======
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
         self.rag_service = RAGService()
         self.conversation_service = ConversationService()
         self.query_router = QueryRouter()
@@ -196,11 +213,17 @@ class AIService:
         if not message or not message.strip():
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Message is required')
 
+<<<<<<< HEAD
         if not self.llm and not self.ollama_llm:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail='AI LLM service is not configured'
             )
+=======
+        if not self.llm:
+            logger.error("Chat request received but Groq LLM is not configured.")
+            return _FRIENDLY_UNAVAILABLE
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
 
         try:
             logger.info('Processing chat request with AI engine')
@@ -240,6 +263,7 @@ class AIService:
                 prompt = f"User Question: {message}\n\nWeb Search Results:\n{search_results}"
                 return await self._get_llm_response(prompt, system_instruction)
 
+<<<<<<< HEAD
             elif intent in ["GENERAL", "CAMPUS_QUERY"]:
                 self.rag_service.ensure_index_ready()
                 context_chunks = self.rag_service.retrieve_context(normalized_message, top_k=5)
@@ -249,11 +273,59 @@ class AIService:
                 if not valid_chunks:
                     logger.info('No relevant RAG context retrieved. Returning exact fallback.')
                     return RAG_FALLBACK_RESPONSE
+=======
+            elif intent == "GENERAL":
+                logger.info('Intent detected: GENERAL')
+                system_instruction = f"You are a helpful college AI assistant. Answer the student's general knowledge question using your broad knowledge base. {language_instruction}"
+                return await self._get_llm_response(normalized_message, system_instruction)
+                
+            elif intent == "CALCULATOR":
+                logger.info('Intent detected: CALCULATOR')
+                system_instruction = f"You are a helpful AI assistant. Evaluate the following mathematical expression or calculation query accurately. Provide only the final answer or a brief explanation of the calculation. {language_instruction}"
+                return await self._get_llm_response(message, system_instruction)
+
+            # Intent is CAMPUS_QUERY -> Proceed with RAG
+            logger.info('Intent detected: CAMPUS_QUERY\nUsing RAG pipeline')
+            self.rag_service.ensure_index_ready()
+            context_chunks = self.rag_service.retrieve_context(normalized_message, top_k=4)
+
+            valid_chunks = [c for c in context_chunks if c.get('distance', 0) < 1.5]
+
+            if not valid_chunks:
+                logger.info('No relevant RAG context retrieved. Falling back to LLM general knowledge.')
+                system_instruction = (
+                    "You are CampusMate AI. The user asked a question categorized as a campus query, but no specific campus context was found in the database. "
+                    "If the question is actually general knowledge or about a public location/entity (e.g., 'Where is Mount Zion College?'), answer it using your own knowledge. "
+                    "If the question requires specific, internal college data (like a student's attendance or specific staff), politely explain that you do not have that specific campus information available right now. "
+                    f"{language_instruction}"
+                )
+                return await self._get_llm_response(message, system_instruction)
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
             
             logger.info('RAG context retrieved with %s chunks.', len(valid_chunks))
             context_text = self._build_context(valid_chunks)
             prompt = self._build_prompt(message, context_text)
+<<<<<<< HEAD
             answer = await self._get_llm_response(prompt, SYSTEM_RAG_PROMPT)
+=======
+
+            # If LLM fails after RAG, return raw context as a fallback
+            try:
+                answer = await self._get_llm_response(prompt, system_instruction)
+            except Exception:
+                logger.warning("LLM unavailable after RAG retrieval — returning raw campus context.")
+                return "Here is the campus information I found:\n\n" + context_text
+            
+            sources_list = []
+            for chunk in valid_chunks:
+                src = chunk.get('source', 'Unknown')
+                if src not in sources_list:
+                    sources_list.append(src)
+                    
+            if sources_list:
+                answer += f"\n\n**Sources:**\n" + "\n".join([f"- {src}" for src in sources_list])
+                
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
             return answer
 
         except HTTPException:
@@ -263,6 +335,7 @@ class AIService:
             return RAG_FALLBACK_RESPONSE
 
     async def _get_llm_response(self, user_prompt: str, system_prompt: str) -> str:
+<<<<<<< HEAD
         messages = [
             SystemMessage(content=system_prompt),
             HumanMessage(content=user_prompt)
@@ -292,25 +365,37 @@ class AIService:
         if not self.llm:
             return RAG_FALLBACK_RESPONSE
 
+=======
+        """Call Groq LLM with exponential backoff retry. Returns friendly message on all failures."""
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
         retries = 3
         backoff = 1.0
-        response = None
 
         for attempt in range(retries):
             try:
+<<<<<<< HEAD
                 response = await self.llm.ainvoke(messages)
                 break
+=======
+                logger.info('Calling Groq API (Attempt %s/%s)', attempt + 1, retries)
+                response = await self.llm.ainvoke([
+                    SystemMessage(content=system_prompt),
+                    HumanMessage(content=user_prompt)
+                ])
+                return response.content or _FRIENDLY_UNAVAILABLE
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
             except Exception as exc:
                 logger.warning('Groq request failed on attempt %s: %s', attempt + 1, exc)
-                if attempt == retries - 1:
-                    raise HTTPException(
-                        status_code=status.HTTP_502_BAD_GATEWAY,
-                        detail=f'LLM service failed: {exc}'
-                    ) from exc
-            await asyncio.sleep(backoff)
-            backoff *= 2.0
+                if attempt < retries - 1:
+                    await asyncio.sleep(backoff)
+                    backoff *= 2.0
 
+<<<<<<< HEAD
         return response.content if response else RAG_FALLBACK_RESPONSE
+=======
+        logger.error('All %s Groq API attempts failed.', retries)
+        return _FRIENDLY_UNAVAILABLE
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
 
     def _build_context(self, context_chunks: list) -> str:
         if not context_chunks:
@@ -337,8 +422,14 @@ class AIService:
             yield "Message is required."
             return
 
+<<<<<<< HEAD
         if not self.llm and not self.ollama_llm:
             yield RAG_FALLBACK_RESPONSE
+=======
+        if not self.llm:
+            logger.error("Stream chat request received but Groq LLM is not configured.")
+            yield _FRIENDLY_UNAVAILABLE
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
             return
 
         try:
@@ -384,8 +475,18 @@ class AIService:
                 return
 
             elif intent == "GENERAL":
+<<<<<<< HEAD
                 system_instruction = f"You are CampusMate AI. Answer general knowledge questions accurately. {language_instruction}"
+=======
+                system_instruction = f"You are a helpful college AI assistant. Answer the student's general knowledge question using your broad knowledge base. {language_instruction}"
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
                 async for chunk in self._stream_llm_response(normalized_message, system_instruction):
+                    yield chunk
+                return
+                
+            elif intent == "CALCULATOR":
+                system_instruction = f"You are a helpful AI assistant. Evaluate the following mathematical expression or calculation query accurately. Provide only the final answer or a brief explanation of the calculation. {language_instruction}"
+                async for chunk in self._stream_llm_response(message, system_instruction):
                     yield chunk
                 return
 
@@ -415,7 +516,18 @@ class AIService:
             valid_chunks = [c for c in context_chunks if c.get('distance', 0) < 1.5]
 
             if not valid_chunks:
+<<<<<<< HEAD
                 yield RAG_FALLBACK_RESPONSE
+=======
+                system_instruction = (
+                    "You are CampusMate AI. The user asked a question categorized as a campus query, but no specific campus context was found in the database. "
+                    "If the question is actually general knowledge or about a public location/entity (e.g., 'Where is Mount Zion College?'), answer it using your own knowledge. "
+                    "If the question requires specific, internal college data (like a student's attendance or specific staff), politely explain that you do not have that specific campus information available right now. "
+                    f"{language_instruction}"
+                )
+                async for chunk in self._stream_llm_response(message, system_instruction):
+                    yield chunk
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
                 return
             
             context_text = self._build_context(valid_chunks)
@@ -426,12 +538,14 @@ class AIService:
             return
                 
         except HTTPException as e:
-            yield f"Error: {e.detail}"
+            logger.error('HTTPException during stream: %s', e.detail)
+            yield _FRIENDLY_UNAVAILABLE
         except Exception as exc:
             logger.exception('Unexpected error during AI stream generation')
             yield RAG_FALLBACK_RESPONSE
 
     async def _stream_llm_response(self, user_prompt: str, system_prompt: str) -> AsyncGenerator[str, None]:
+<<<<<<< HEAD
         messages = [
             SystemMessage(content=system_prompt),
             HumanMessage(content=user_prompt)
@@ -467,4 +581,16 @@ class AIService:
 
         yield RAG_FALLBACK_RESPONSE
 
+=======
+        try:
+            async for chunk in self.llm.astream([
+                SystemMessage(content=system_prompt),
+                HumanMessage(content=user_prompt)
+            ]):
+                if chunk.content:
+                    yield chunk.content
+        except Exception as exc:
+            logger.warning('Groq stream request failed: %s', exc)
+            yield _FRIENDLY_UNAVAILABLE
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
 

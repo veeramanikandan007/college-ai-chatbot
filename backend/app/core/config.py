@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     # AI & RAG
     GEMINI_API_KEY: Optional[str] = None
     GROQ_API_KEY: Optional[str] = None
+    GROQ_MODEL: str = "llama-3.3-70b-versatile"
     CHROMA_DB_DIR: str = "./chroma_db"
     VECTOR_DB_DIR: str = "./vector_db"
     DOCUMENTS_DIR: str = "./documents"

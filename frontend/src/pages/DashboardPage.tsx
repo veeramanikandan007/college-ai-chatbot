@@ -69,14 +69,12 @@ export default function DashboardPage() {
     stopSpeech,
     pauseSpeech,
     resumeSpeech,
-    speakText
+    speakText,
+    speakTextStream,
   } = useVoiceSystem();
 
   useEffect(() => {
     loadSessions();
-    return () => {
-      stopSpeech();
-    };
   }, []);
 
   useEffect(() => {
@@ -320,6 +318,9 @@ export default function DashboardPage() {
       const assistantMsgId = `a-${Date.now()}`;
       const timestamp = getCurrentTimeString();
 
+      // Create a TTS stream handle — speech starts on first complete sentence
+      const ttsStream = source === 'voice' ? speakTextStream(voiceSettings) : null;
+
       if (reader) {
         while (true) {
           const { done, value } = await reader.read();
@@ -333,6 +334,8 @@ export default function DashboardPage() {
                 const data = JSON.parse(dataStr);
                 if (data.text) {
                   fullText += data.text;
+                  // Push chunk to TTS stream — speech starts after first sentence boundary
+                  ttsStream?.push(data.text);
                   const streamedMsg: ChatMessageData = {
                     id: assistantMsgId,
                     role: 'assistant',
@@ -348,9 +351,11 @@ export default function DashboardPage() {
             }
           }
         }
+        // Flush any remaining sentence buffer
+        ttsStream?.flush();
       }
 
-      // Stream complete
+      // Stream complete — finalize message
       setMessagesMap((prev) => {
         const msgs = prev[sessionId!] || [];
         const lastMsg = msgs[msgs.length - 1];
@@ -361,9 +366,9 @@ export default function DashboardPage() {
       });
       setIsGenerating(false);
       
-      if (source === 'voice') {
-        speakText(fullText);
-      } else {
+      // For text source (non-voice), just update state
+      // For voice, the ttsStream already handled speaking sentence-by-sentence
+      if (source !== 'voice') {
         setAssistantState(voiceSettings.handsFree ? 'WAKING' : 'IDLE');
       }
 

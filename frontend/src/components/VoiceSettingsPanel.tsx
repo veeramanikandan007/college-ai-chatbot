@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import { Volume2, Gauge, RefreshCw, Mic, Wifi, WifiOff, Sliders } from 'lucide-react';
 import { getTTSStatus, type TTSStatus } from '../services/ttsService';
+=======
+import { Volume2, Gauge, RefreshCw, Mic, Wifi, WifiOff } from 'lucide-react';
+import { voiceManager, type TTSStatus } from '../services/ttsService';
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
 
 export interface VoiceSettings {
   voiceURI: string;
@@ -45,7 +50,7 @@ export default function VoiceSettingsPanel({ settings, onChange, onClose }: Voic
     }
 
     // Load TTS provider status
-    getTTSStatus().then(setTtsStatus);
+    voiceManager.getStatus().then(setTtsStatus);
   }, []);
 
   // Filter voices based on language setting
@@ -103,9 +108,20 @@ export default function VoiceSettingsPanel({ settings, onChange, onClose }: Voic
 
         {onClose && (
           <button
+<<<<<<< HEAD
             onClick={onClose}
             className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
             title="Close Settings"
+=======
+            onClick={() => {
+              if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+                setVoices(window.speechSynthesis.getVoices());
+              }
+              voiceManager.getStatus().then(setTtsStatus);
+            }}
+            title="Reload System Voices"
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
           >
             <span className="sr-only">Close</span>
             ✕

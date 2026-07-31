@@ -6,25 +6,25 @@ from groq import AsyncGroq
 from fastapi import HTTPException
 from app.core.config import settings
 from app.core.logging import get_logger
+from app.services.groq_client import get_api_key, is_configured
 
 logger = get_logger(__name__)
 
 class SpeechService:
     def __init__(self):
-        api_key = settings.GROQ_API_KEY or os.getenv('GROQ_API_KEY')
-        if not api_key:
-            logger.error("Groq API Key not found for SpeechService")
-            self.client = None
+        if is_configured():
+            self.client = AsyncGroq(api_key=get_api_key())
         else:
-            self.client = AsyncGroq(api_key=api_key)
-        
+            logger.warning("SpeechService: Groq API key not configured. Voice transcription disabled.")
+            self.client = None
+
         self.audio_dir = os.path.join(settings.UPLOAD_DIR, "audio")
         os.makedirs(self.audio_dir, exist_ok=True)
 
     async def transcribe_audio(self, file_path: str) -> str:
         """Transcribe an audio file using Groq Whisper API"""
         if not self.client:
-            raise HTTPException(status_code=500, detail="Voice service is not configured (Missing Groq Key)")
+            raise HTTPException(status_code=503, detail="Voice transcription is temporarily unavailable.")
             
         try:
             with open(file_path, "rb") as file:

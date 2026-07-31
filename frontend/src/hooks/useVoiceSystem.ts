@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { speak, cancelAllSpeech, pauseAllSpeech, resumeAllSpeech } from '../services/ttsService';
+import { voiceManager } from '../services/ttsService';
+import type { TTSOptions } from '../services/ttsService';
 
 export type AssistantVoiceState = 'IDLE' | 'WAKING' | 'LISTENING' | 'PROCESSING' | 'SPEAKING';
 
@@ -158,21 +159,55 @@ export function useVoiceSystem() {
     }
   }, [assistantState]);
 
+  // Subscribe to VoiceManager events
+  useEffect(() => {
+    voiceManager.onStart = () => {
+      setIsPlayingSpeech(true);
+      setAssistantState('SPEAKING');
+    };
+    voiceManager.onEnd = () => {
+      setIsPlayingSpeech(false);
+      setIsPausedSpeech(false);
+      setSpokenText('');
+      setAssistantState(prev => prev === 'SPEAKING' ? (voiceSettings.handsFree ? 'WAKING' : 'IDLE') : prev);
+    };
+    voiceManager.onError = () => {
+      setIsPlayingSpeech(false);
+      setIsPausedSpeech(false);
+      setSpokenText('');
+      setAssistantState(prev => prev === 'SPEAKING' ? (voiceSettings.handsFree ? 'WAKING' : 'IDLE') : prev);
+    };
+    voiceManager.onPause = () => {
+      setIsPausedSpeech(true);
+    };
+    voiceManager.onResume = () => {
+      setIsPausedSpeech(false);
+    };
+    
+    return () => {
+      voiceManager.onStart = undefined;
+      voiceManager.onEnd = undefined;
+      voiceManager.onError = undefined;
+      voiceManager.onPause = undefined;
+      voiceManager.onResume = undefined;
+    };
+  }, [voiceSettings.handsFree]);
+
   const stopSpeech = useCallback(() => {
-    cancelAllSpeech();
+    voiceManager.cancelAllSpeech();
     setIsPlayingSpeech(false);
     setIsPausedSpeech(false);
     setSpokenText('');
-    setAssistantState((prev) => (voiceSettings.handsFree && prev !== 'LISTENING' && prev !== 'PROCESSING' ? 'WAKING' : 'IDLE'));
+    setAssistantState(voiceSettings.handsFree ? 'WAKING' : 'IDLE');
   }, [voiceSettings.handsFree]);
 
   const pauseSpeech = useCallback(() => {
-    pauseAllSpeech();
+    voiceManager.pauseAllSpeech();
     setIsPausedSpeech(true);
   }, []);
 
   const resumeSpeech = useCallback(() => {
-    resumeAllSpeech();
+    voiceManager.resumeAllSpeech();
     setIsPausedSpeech(false);
   }, []);
 
@@ -180,10 +215,11 @@ export function useVoiceSystem() {
     if (!text?.trim()) return;
 
     setSpokenText(text);
-    setIsPlayingSpeech(true);
-    setIsPausedSpeech(false);
-    setAssistantState('SPEAKING');
+    // State updates now handled by voiceManager events natively
+    await voiceManager.speak(text, { speed: settingsToUse.speed, volume: settingsToUse.volume });
+  }, [voiceSettings]);
 
+<<<<<<< HEAD
     await speak(text, { speed: settingsToUse.speed, pitch: settingsToUse.pitch, volume: settingsToUse.volume, voiceURI: settingsToUse.voiceURI }, {
       onStart: () => {
         setIsPlayingSpeech(true);
@@ -202,6 +238,16 @@ export function useVoiceSystem() {
         setAssistantState(settingsToUse.handsFree ? 'WAKING' : 'IDLE');
       },
     });
+=======
+  /**
+   * speakTextStream — for streaming AI responses.
+   * Returns a stream handle with push(chunk), flush(), cancel().
+   * Call push() on each sentence as the LLM streams, then flush() at end.
+   */
+  const speakTextStream = useCallback((settingsToUse = voiceSettings) => {
+    const opts: TTSOptions = { speed: settingsToUse.speed, volume: settingsToUse.volume };
+    return voiceManager.speakStream(opts);
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
   }, [voiceSettings]);
 
   useEffect(() => {
@@ -261,6 +307,7 @@ export function useVoiceSystem() {
     stopSpeech,
     pauseSpeech,
     resumeSpeech,
-    speakText
+    speakText,
+    speakTextStream,
   };
 }

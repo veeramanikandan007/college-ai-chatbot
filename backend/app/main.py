@@ -45,7 +45,15 @@ def startup_event():
     # Initialize SQLite DB (creates tables, seeds admin)
     init_db()
 
+<<<<<<< HEAD
     # Ensure required storage directories exist
+=======
+    # Validate Groq API key once at startup
+    from app.services.groq_client import validate_at_startup
+    validate_at_startup()
+
+    # Ensure directories exist
+>>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     os.makedirs(settings.DOCUMENTS_DIR, exist_ok=True)
     os.makedirs(settings.VECTOR_DB_DIR, exist_ok=True)
