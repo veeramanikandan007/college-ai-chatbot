@@ -1,0 +1,7 @@
+MOUNT ZION COLLEGE OF ENGINEERING AND TECHNOLOGY - ACADEMIC DEPARTMENTS
+1. Computer Science and Engineering (CSE): Intake 120. Focus on AI, Cloud Computing, Cybersecurity, and Software Engineering.
+2. Artificial Intelligence and Data Science (AI & DS): Intake 60. Specializing in Machine Learning, Deep Learning, Big Data Analytics.
+3. Electronics and Communication Engineering (ECE): Intake 120. Specializing in VLSI, Embedded Systems, IoT, and Telecom.
+4. Electrical and Electronics Engineering (EEE): Intake 60. Focusing on Renewable Energy, Smart Grids, Power Systems.
+5. Mechanical Engineering: Intake 60. Specializing in CAD/CAM, Robotics, Thermal Engineering, Automotive Design.
+6. Civil Engineering: Intake 60. Specializing in Structural Design, Surveying, Environmental Engineering.

@@ -39,7 +39,7 @@ export default function RegisterPage() {
         body: JSON.stringify({ name, email, password }),
       });
       login(data.access_token);
-      showToast('Account created! Welcome to CampusMate AI.', 'success');
+      showToast('Account created! Welcome to CollegeMate AI.', 'success');
       navigate('/dashboard');
     } catch (err) {
       const msg = err instanceof ApiError ? err.message : 'Registration failed. Please try again.';
@@ -57,14 +57,14 @@ export default function RegisterPage() {
           <div className="w-16 h-16 rounded-2xl bg-[#0A2A6A] flex items-center justify-center shadow-lg mb-4">
             <GraduationCap className="w-9 h-9 text-[#E8B24D]" />
           </div>
-          <h1 className="text-2xl font-bold text-[#0A2A6A]">{APP_NAME}</h1>
+          <h1 className="font-heading text-2xl font-bold tracking-tight text-[#0A2A6A]">{APP_NAME}</h1>
           <p className="text-sm text-slate-500 mt-1">{COLLEGE_NAME}</p>
         </div>
 
         {/* Card */}
         <div className="glass-panel rounded-2xl p-8 soft-ring">
           <h2 className="text-xl font-semibold text-slate-800 mb-1">Create your account</h2>
-          <p className="text-sm text-slate-500 mb-6">Join CampusMate AI — your smart campus companion.</p>
+          <p className="text-sm text-slate-500 mb-6">Join CollegeMate AI — your smart campus companion.</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}

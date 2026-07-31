@@ -27,9 +27,22 @@ async def send_message(request: Request, payload: ChatRequest, current_user: Use
 
     # Get history for context (ignoring for now as get_chat_answer doesn't use it yet)
     
+    # Extract plain dictionary representation of current_user
+    user_dict = {
+        "id": current_user.id,
+        "name": getattr(current_user, "full_name", None) or getattr(current_user, "name", "Student"),
+        "full_name": getattr(current_user, "full_name", None) or getattr(current_user, "name", "Student"),
+        "email": current_user.email,
+        "role": current_user.role,
+        "department": getattr(current_user, "department", None),
+        "semester": getattr(current_user, "semester", None),
+        "year": getattr(current_user, "year", None),
+        "student_id": getattr(current_user, "student_id", None)
+    }
+
     # Get AI response
     try:
-        ai_response_text = await ai_service.get_chat_answer(payload.message)
+        ai_response_text = await ai_service.get_chat_answer(payload.message, current_user=user_dict, db=db)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

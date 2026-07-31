@@ -1,6 +1,7 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { pageVariants } from './lib/animations';
 
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
@@ -36,15 +37,28 @@ const PageLoader = () => (
 
 function AnimatedRoutes() {
   const location = useLocation();
+  // Respect user's prefers-reduced-motion OS preference
+  const [prefersReduced, setPrefersReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReduced(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReduced(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  const resolvedVariants = prefersReduced
+    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
+    : pageVariants;
 
   return (
     <AnimatePresence mode="wait">
       <motion.div
         key={location.pathname}
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -12 }}
-        transition={{ duration: 0.28, ease: 'easeOut' }}
+        variants={resolvedVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
       >
         <Suspense fallback={<PageLoader />}>
           <Routes location={location}>

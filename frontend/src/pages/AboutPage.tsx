@@ -20,7 +20,7 @@ export default function AboutPage() {
           <section className="text-center space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/10 bg-primary/5 dark:border-secondary/15 dark:bg-secondary/5 text-sm font-semibold text-primary dark:text-secondary">
               <Sparkles size={14} />
-              About CampusMate AI
+              About CollegeMate AI
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
               <span className="text-gradient">Intelligent Assistant for Mount Zion</span>
@@ -32,12 +32,12 @@ export default function AboutPage() {
 
           {/* Description Block */}
           <section className="glass-panel soft-ring rounded-[32px] p-8 sm:p-10 space-y-6">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">What is CampusMate AI?</h2>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">What is CollegeMate AI?</h2>
             <p className="text-slate-600 dark:text-slate-300 leading-8">
-              CampusMate AI is an AI-powered virtual assistant developed for Mount Zion College of Engineering and Technology, Pudukkottai. It provides students, faculty, and staff with instant access to academic information, administrative services, campus announcements, and institutional knowledge using advanced AI and Retrieval-Augmented Generation (RAG).
+              CollegeMate AI is an AI-powered virtual assistant developed for Mount Zion College of Engineering and Technology, Pudukkottai. It provides students, faculty, and staff with instant access to academic information, administrative services, campus announcements, and institutional knowledge using advanced AI and Retrieval-Augmented Generation (RAG).
             </p>
             <p className="text-slate-600 dark:text-slate-300 leading-8">
-              By combining semantic search with pre-indexed college documents, CampusMate AI ensures that answer delivery is accurate, polite, and contextual to the college campus.
+              By combining semantic search with pre-indexed college documents, CollegeMate AI ensures that answer delivery is accurate, polite, and contextual to the college campus.
             </p>
           </section>
 

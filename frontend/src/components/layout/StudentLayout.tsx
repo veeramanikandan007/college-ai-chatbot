@@ -15,7 +15,7 @@ export default function StudentLayout() {
 
       <div className="flex flex-1 flex-col overflow-hidden">
         <HeaderBar
-          currentChatTitle="CampusMate"
+          currentChatTitle="CollegeMate AI"
           onOpenProfile={() => setIsProfileOpen(true)}
           onOpenLogin={() => {}}
           isLoggedIn={!!user}

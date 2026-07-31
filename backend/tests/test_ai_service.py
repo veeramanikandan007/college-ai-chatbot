@@ -1,61 +1,56 @@
-import pytest
+import unittest
 import asyncio
 from unittest.mock import MagicMock, patch
+from fastapi import HTTPException
+
 from app.services.ai_service import AIService
-from app.services.conversation_service import Intent
 
-@pytest.fixture
-def mock_ai_service():
-    with patch('app.services.ai_service.RAGService') as MockRAG, \
-         patch('app.services.ai_service.ConversationService') as MockConv, \
-         patch('app.services.ai_service.ChatGroq') as MockGroq:
-         
-         # Mock dependencies to avoid real API calls and slow DB/Embedding loads
-         MockRAG.return_value = MagicMock()
-         
-         mock_conv = MagicMock()
-         # By default, classify as GREETING
-         mock_conv.classify_message.return_value = (Intent.GREETING, "")
-         MockConv.return_value = mock_conv
-         
-         service = AIService()
-         service.llm = MagicMock()
-         
-         # Mock ainvoke to return a dummy response
-         async def dummy_ainvoke(*args, **kwargs):
-             mock_resp = MagicMock()
-             mock_resp.content = "Mocked AI Greeting!"
-             return mock_resp
-         
-         service.llm.ainvoke = dummy_ainvoke
-         
-         yield service
 
-@pytest.mark.asyncio
-async def test_get_chat_answer_greeting(mock_ai_service):
-    # The fixture already mocks classify_message to return Intent.GREETING
-    response = await mock_ai_service.get_chat_answer("hi")
-    assert response == "Mocked AI Greeting!"
-    
-@pytest.mark.asyncio
-async def test_get_chat_answer_empty(mock_ai_service):
-    from fastapi import HTTPException
-    with pytest.raises(HTTPException) as exc:
-        await mock_ai_service.get_chat_answer("   ")
-    assert exc.value.status_code == 400
+class TestAIService(unittest.IsolatedAsyncioTestCase):
+    async def asyncSetUp(self):
+        self.rag_patch = patch('app.services.ai_service.RAGService')
+        self.conv_patch = patch('app.services.ai_service.ConversationService')
+        self.groq_patch = patch('app.services.ai_service.ChatGroq')
 
-@pytest.mark.asyncio
-async def test_get_chat_answer_knowledge(mock_ai_service):
-    # Change intent to knowledge
-    mock_ai_service.conversation_service.classify_message.return_value = (Intent.CAMPUS_KNOWLEDGE, "")
-    
-    # Mock RAG retrieval
-    mock_ai_service.rag_service.retrieve_context.return_value = [
-        {"content": "Campus opens at 8am.", "distance": 0.5, "source": "handbook.pdf"}
-    ]
-    
-    response = await mock_ai_service.get_chat_answer("What time does campus open?")
-    
-    assert "Mocked AI Greeting!" in response
-    assert "**Sources:**" in response
-    assert "- handbook.pdf" in response
+        self.MockRAG = self.rag_patch.start()
+        self.MockConv = self.conv_patch.start()
+        self.MockGroq = self.groq_patch.start()
+
+        self.MockRAG.return_value = MagicMock()
+        mock_conv = MagicMock()
+        self.MockConv.return_value = mock_conv
+
+        self.service = AIService()
+        self.service.llm = MagicMock()
+
+        async def dummy_ainvoke(*args, **kwargs):
+            mock_resp = MagicMock()
+            mock_resp.content = "Mocked AI Greeting!"
+            return mock_resp
+
+        self.service.llm.ainvoke = dummy_ainvoke
+
+    async def asyncTearDown(self):
+        self.rag_patch.stop()
+        self.conv_patch.stop()
+        self.groq_patch.stop()
+
+    async def test_get_chat_answer_empty(self):
+        with self.assertRaises(HTTPException) as exc:
+            await self.service.get_chat_answer("   ")
+        self.assertEqual(exc.exception.status_code, 400)
+
+    async def test_get_chat_answer_knowledge(self):
+        self.service.query_router.route_query = MagicMock(return_value="CAMPUS_QUERY")
+        self.service.rag_service.retrieve_context.return_value = [
+            {"content": "Campus opens at 8am.", "distance": 0.5, "source": "handbook.pdf", "filename": "handbook.pdf"}
+        ]
+
+        response = await self.service.get_chat_answer("What time does campus open?")
+        self.assertIn("Mocked AI Greeting!", response)
+        self.assertIn("**Sources:**", response)
+        self.assertIn("- handbook.pdf", response)
+
+
+if __name__ == "__main__":
+    unittest.main()

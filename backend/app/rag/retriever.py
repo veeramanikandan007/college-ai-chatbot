@@ -16,8 +16,8 @@ class Retriever:
         self.embedding_service = embedding_service or EmbeddingService()
         self.vector_store = vector_store or VectorStore()
 
-    def retrieve(self, question: str, top_k: int = 4) -> List[Dict[str, Any]]:
-        """Retrieve the nearest chunks from Chroma via LangChain."""
+    def retrieve(self, question: str, top_k: int = 5) -> List[Dict[str, Any]]:
+        """Retrieve top_k (default 5) nearest chunks from ChromaDB via similarity search."""
         if not question or not question.strip():
             return []
 
@@ -26,3 +26,4 @@ class Retriever:
         except Exception as exc:
             logger.exception('Retrieval failed for question: %s', question)
             return []
+

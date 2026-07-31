@@ -11,8 +11,7 @@ import SuggestedQuestions from '../components/SuggestedQuestions';
 import ProfileDrawer from '../components/ProfileDrawer';
 import ExportModal from '../components/ExportModal';
 
-import VoiceButton from '../components/VoiceButton';
-import VoiceRecorder from '../components/VoiceRecorder';
+import VoiceInputBar from '../components/VoiceInputBar';
 import VoicePlayer from '../components/VoicePlayer';
 import VoiceSettingsPanel from '../components/VoiceSettingsPanel';
 import WakeStatusBanner from '../components/WakeStatusBanner';
@@ -104,7 +103,8 @@ export default function DashboardPage() {
         lastUpdated: new Date(s.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         timestamp: new Date(s.updated_at).getTime(),
         pinned: s.is_pinned,
-        favorite: s.is_favorite,
+        archived: false,
+        category: detectCategoryFromTitle(s.title),
       }));
       setSessions(mapped);
       if (mapped.length > 0) setActiveChatId(mapped[0].id);
@@ -115,6 +115,19 @@ export default function DashboardPage() {
     } finally {
       setSessionsLoading(false);
     }
+  };
+
+  const detectCategoryFromTitle = (title: string) => {
+    const lower = title.toLowerCase();
+    if (lower.includes('admission') || lower.includes('apply') || lower.includes('seat')) return 'Admissions';
+    if (lower.includes('exam') || lower.includes('timetable') || lower.includes('result') || lower.includes('mark') || lower.includes('grade') || lower.includes('gpa')) return 'Examinations';
+    if (lower.includes('attendance') || lower.includes('absent') || lower.includes('leave')) return 'Attendance';
+    if (lower.includes('book') || lower.includes('library') || lower.includes('journal')) return 'Library';
+    if (lower.includes('placement') || lower.includes('job') || lower.includes('company') || lower.includes('salary')) return 'Placements';
+    if (lower.includes('fee') || lower.includes('payment') || lower.includes('tuition')) return 'Fees';
+    if (lower.includes('hostel') || lower.includes('room') || lower.includes('mess')) return 'Hostel';
+    if (lower.includes('course') || lower.includes('subject') || lower.includes('syllabus') || lower.includes('faculty')) return 'Academics';
+    return 'General';
   };
 
   const loadMessages = async (sessionId: string) => {
@@ -151,7 +164,13 @@ export default function DashboardPage() {
   };
 
   const handleRenameChat = async (id: string, newTitle: string) => {
-    setSessions((prev) => prev.map((s) => (s.id === id ? { ...s, title: newTitle } : s)));
+    setSessions((prev) =>
+      prev.map((s) =>
+        s.id === id
+          ? { ...s, title: newTitle, category: detectCategoryFromTitle(newTitle) }
+          : s
+      )
+    );
     try {
       await fetchApi(`/chat/sessions/${id}`, {
         method: 'PUT',
@@ -188,21 +207,12 @@ export default function DashboardPage() {
     } catch { }
   };
 
-  const handleFavoriteChat = async (id: string) => {
-    const chat = sessions.find(s => s.id === id);
-    if (!chat) return;
-    const newFav = !chat.favorite;
-    setSessions((prev) => prev.map((s) => (s.id === id ? { ...s, favorite: newFav } : s)));
-    try {
-      if (newFav) {
-        await fetchApi(`/chat/sessions/${id}/favorite`, { method: 'POST' });
-      } else {
-        await fetchApi(`/chat/sessions/${id}/favorite`, { method: 'DELETE' });
-      }
-    } catch {
-      setSessions((prev) => prev.map((s) => (s.id === id ? { ...s, favorite: chat.favorite } : s)));
-      showToast('Could not update favorite status.', 'error');
-    }
+  const handleArchiveChat = (id: string) => {
+    setSessions((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, archived: !s.archived } : s))
+    );
+    const chat = sessions.find((s) => s.id === id);
+    showToast(chat?.archived ? 'Chat restored.' : 'Chat archived.', 'success');
   };
 
   const handleDuplicateChat = async (id: string) => {
@@ -433,6 +443,26 @@ export default function DashboardPage() {
     } catch { }
   };
 
+  const handleEditMessage = (id: string, newText: string) => {
+    if (!activeChatId) return;
+    setMessagesMap((prev) => ({
+      ...prev,
+      [activeChatId]: (prev[activeChatId] || []).map((m) =>
+        m.id === id ? { ...m, text: newText } : m
+      ),
+    }));
+    handleSendMessage(newText);
+  };
+
+  const handleDeleteMessage = (id: string) => {
+    if (!activeChatId) return;
+    setMessagesMap((prev) => ({
+      ...prev,
+      [activeChatId]: (prev[activeChatId] || []).filter((m) => m.id !== id),
+    }));
+    showToast('Message deleted.', 'info');
+  };
+
   const handleToggleSpeakBubble = (text: string) => {
     if (spokenText === text && isPlayingSpeech) {
       stopSpeech();
@@ -451,14 +481,14 @@ export default function DashboardPage() {
         onRenameChat={handleRenameChat}
         onDeleteChat={handleDeleteChat}
         onPinChat={handlePinChat}
+        onArchiveChat={handleArchiveChat}
         onDuplicateChat={handleDuplicateChat}
         onExportChat={() => setIsExportOpen(true)}
-        onFavoriteChat={handleFavoriteChat}
       />
 
       <div className="flex flex-1 flex-col overflow-hidden">
         <HeaderBar
-          currentChatTitle={currentSession?.title || 'CampusMate AI'}
+          currentChatTitle={currentSession?.title || 'CollegeMate AI'}
           onOpenProfile={() => setIsProfileOpen(true)}
           onOpenLogin={() => {}}
           isLoggedIn={!!user}
@@ -468,7 +498,7 @@ export default function DashboardPage() {
           <main className="flex flex-1 flex-col overflow-hidden bg-white dark:bg-slate-900 shadow-xs relative">
             
             {/* Voice HUD Overlay */}
-            <div className="absolute top-0 left-0 right-0 z-10 w-full max-w-4xl mx-auto px-4 pt-4 space-y-2 pointer-events-none">
+            <div className="absolute top-0 left-0 right-0 z-10 w-full max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto px-4 pt-4 space-y-2 pointer-events-none">
               <div className="pointer-events-auto">
                 <AnimatePresence>
                   {isPlayingSpeech && (
@@ -517,7 +547,7 @@ export default function DashboardPage() {
               )}
             </div>
 
-            <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 mt-4">
+            <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-3 sm:px-6 py-4">
               {sessionsLoading ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="w-10 h-10 rounded-full border-4 border-primary dark:border-secondary border-t-transparent animate-spin"></div>
@@ -525,105 +555,46 @@ export default function DashboardPage() {
               ) : activeMessages.length === 0 ? (
                 <SuggestedQuestions onSelectQuestion={(q) => handleSendMessage(q)} />
               ) : (
-                <div className="mx-auto max-w-4xl space-y-4 pt-10">
+                <div className="w-full max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto space-y-4 pt-2 transition-all duration-300 ease-in-out">
                   {activeMessages.map((msg) => (
                     <ChatMessage
                       key={msg.id}
                       message={msg}
                       onRegenerate={handleRegenerate}
                       onSpeak={msg.role === 'assistant' ? () => handleToggleSpeakBubble(msg.text) : undefined}
+                      onStopSpeak={stopSpeech}
+                      isSpeakingThis={isPlayingSpeech && spokenText === msg.text}
                       onReact={handleMessageReaction}
+                      onEdit={handleEditMessage}
+                      onDelete={handleDeleteMessage}
                     />
                   ))}
                 </div>
               )}
             </div>
 
-            <div className="border-t border-[#E2E8F0] dark:border-slate-800 bg-white dark:bg-slate-900 p-4 relative">
-              <div className="mx-auto max-w-4xl relative">
+            <div className="border-t border-[#E2E8F0] dark:border-slate-800 bg-white dark:bg-slate-900 p-3 sm:p-4 relative">
+              <div className="w-full max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto relative transition-all duration-300 ease-in-out">
                 
-                {isRecording && (
-                  <div className="absolute inset-x-0 bottom-full mb-4 px-2">
-                    <VoiceRecorder
-                      duration={recordingDuration}
-                      onCancel={() => {
-                        setAssistantState(voiceSettings.handsFree ? 'WAKING' : 'IDLE');
-                      }}
-                      onStop={() => {
-                        if (voiceButtonRef.current) voiceButtonRef.current.stopRecording();
-                      }}
-                    />
-                  </div>
-                )}
-
-                <form
-                  onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}
-                  className="relative flex items-center rounded-2xl border border-[#E2E8F0] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-800/50 p-2 shadow-sm transition focus-within:border-[#163D8C] dark:focus-within:border-secondary focus-within:bg-white dark:focus-within:bg-slate-800"
-                >
-                  <input
-                    type="text"
-                    value={promptInput}
-                    onChange={(e) => setPromptInput(e.target.value)}
-                    placeholder={
-                      isRecording
-                        ? 'Listening to your voice…'
-                        : 'Ask CampusMate AI about rules, timetables, fees, library…'
-                    }
-                    className="flex-1 bg-transparent px-3 py-2 text-sm text-[#1F2937] dark:text-white outline-none placeholder:text-[#94A3B8] dark:placeholder:text-slate-500"
-                    disabled={isGenerating || isRecording}
-                  />
-                  
-                  <div className="flex items-center gap-2">
-                    <VoiceButton
-                      ref={voiceButtonRef}
-                      language={voiceSettings.language}
-                      disabled={isGenerating}
-                      onRecordingStateChange={setIsRecording}
-                      onDurationChange={setRecordingDuration}
-                      onTextRecognized={(text) => {
-                        setPromptInput(text);
-                        handleSendMessage(text, 'voice');
-                      }}
-                      onRecognitionError={(err) => {
-                        showVoiceError(err);
-                        setAssistantState(voiceSettings.handsFree ? 'WAKING' : 'IDLE');
-                      }}
-                    />
-
-                    {isGenerating ? (
-                      <button
-                        type="button"
-                        onClick={handleStopGeneration}
-                        className="flex items-center gap-1.5 rounded-xl bg-rose-600 px-4 py-3.5 text-xs font-bold text-white shadow-md transition hover:bg-rose-700"
-                      >
-                        <Square className="h-3.5 w-3.5 fill-current" />
-                        <span className="hidden sm:inline">Stop</span>
-                      </button>
-                    ) : (
-                      <button
-                        type="submit"
-                        disabled={!promptInput.trim()}
-                        className="flex items-center gap-1.5 rounded-xl bg-primary dark:bg-secondary px-5 py-3.5 text-xs font-bold text-white dark:text-slate-900 shadow-md transition hover:bg-accent hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
-                      >
-                        <span className="hidden sm:inline">Send</span>
-                        <Send className="h-4 w-4" />
-                      </button>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                      className={`p-3.5 rounded-xl transition ${isSettingsOpen ? 'bg-slate-200 dark:bg-slate-700 text-primary dark:text-secondary' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300'}`}
-                    >
-                      <Settings2 size={18} />
-                    </button>
-                  </div>
-                </form>
+                <VoiceInputBar
+                  promptInput={promptInput}
+                  setPromptInput={setPromptInput}
+                  onSendMessage={handleSendMessage}
+                  isGenerating={isGenerating}
+                  onStopGeneration={handleStopGeneration}
+                  isSettingsOpen={isSettingsOpen}
+                  setIsSettingsOpen={setIsSettingsOpen}
+                  language={voiceSettings.language}
+                  onError={(err) => {
+                    showVoiceError(err);
+                    setAssistantState(voiceSettings.handsFree ? 'WAKING' : 'IDLE');
+                  }}
+                />
 
                 <div className="mt-2 flex items-center justify-between text-[11px] font-medium text-[#94A3B8] dark:text-slate-500">
                   <div className="flex items-center gap-1">
                     <Info className="h-3 w-3 text-accent dark:text-secondary" />
-                    <span>CampusMate AI displays verified college information.</span>
+                    <span>CollegeMate AI displays verified college information.</span>
                   </div>
                   {activeMessages.length > 0 && (
                     <button
@@ -640,26 +611,22 @@ export default function DashboardPage() {
           </main>
 
           {isSettingsOpen && (
-            <aside className="w-80 shrink-0 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-slate-800 dark:text-slate-200">Voice Settings</h3>
-                <button onClick={() => setIsSettingsOpen(false)} className="text-slate-400 hover:text-slate-600">
-                  <X size={16} />
-                </button>
-              </div>
-              <VoiceSettingsPanel
-                settings={voiceSettings}
-                onChange={handleVoiceSettingsChange}
+            <div className="fixed inset-0 z-50 overflow-hidden md:relative md:z-auto md:w-80 md:shrink-0 flex justify-end">
+              {/* Backdrop for Mobile */}
+              <div
+                onClick={() => setIsSettingsOpen(false)}
+                className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs md:hidden"
               />
-            </aside>
-          )}
 
-          {!isSettingsOpen && (
-            <RightPanel
-              attendancePercent={94}
-              cgpa={8.9}
-              onSelectPrompt={(p) => handleSendMessage(p)}
-            />
+              {/* Drawer Container */}
+              <aside className="relative z-10 h-full w-full max-w-sm border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4 shadow-2xl md:w-80 md:max-w-none md:shadow-none flex flex-col">
+                <VoiceSettingsPanel
+                  settings={voiceSettings}
+                  onChange={handleVoiceSettingsChange}
+                  onClose={() => setIsSettingsOpen(false)}
+                />
+              </aside>
+            </div>
           )}
         </div>
       </div>

@@ -22,8 +22,10 @@ export interface TTSStatus {
 
 export interface TTSOptions {
   speed?: number;  // 0.5 – 2.0
+  pitch?: number;  // 0.5 – 2.0
   volume?: number; // 0.0 – 1.0
   language?: string; // e.g. 'en-IN', 'ta-IN'
+  voiceURI?: string;
 }
 
 // ─── Utility: Clean text for TTS ──────────────────────────────────────────────
@@ -107,6 +109,7 @@ async function speakWithGoogle(
       audioConfig: {
         audioEncoding: 'MP3',
         speakingRate: opts.speed ?? 1.0,
+        pitch: (opts.pitch ?? 1.0) * 4 - 4,
         volumeGainDb: opts.volume !== undefined ? (opts.volume - 1) * 6 : 0,
       },
     };
@@ -152,7 +155,7 @@ async function speakWithAzure(
 
     const ssml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='${language.startsWith('ta') ? 'ta-IN' : 'en-IN'}'>
       <voice name='${voiceName}'>
-        <prosody rate='${(opts.speed ?? 1.0) * 100}%' volume='${Math.round((opts.volume ?? 1.0) * 100)}'>
+        <prosody rate='${(opts.speed ?? 1.0) * 100}%' pitch='${Math.round(((opts.pitch ?? 1.0) - 1.0) * 50)}%' volume='${Math.round((opts.volume ?? 1.0) * 100)}'>
           ${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
         </prosody>
       </voice>
@@ -218,6 +221,7 @@ async function speakWithResponsiveVoice(
   const voice = isTamil ? 'Tamil Female' : 'Indian English Female';
   (window as any).responsiveVoice.speak(text, voice, {
     rate: opts.speed ?? 1.0,
+    pitch: opts.pitch ?? 1.0,
     volume: opts.volume ?? 1.0,
     onend: onEnd,
     onerror: onError,
@@ -226,6 +230,17 @@ async function speakWithResponsiveVoice(
 }
 
 // ─── Provider: Browser Native SpeechSynthesis ─────────────────────────────────
+
+// ─── Provider: Browser Native SpeechSynthesis ─────────────────────────────────
+
+let speechKeepAliveInterval: any = null;
+
+function clearKeepAlive() {
+  if (speechKeepAliveInterval) {
+    clearInterval(speechKeepAliveInterval);
+    speechKeepAliveInterval = null;
+  }
+}
 
 function speakWithBrowser(
   text: string,
@@ -236,24 +251,80 @@ function speakWithBrowser(
   onEnd: () => void,
   onError: () => void
 ): void {
-  const available = window.speechSynthesis.getVoices();
-  let voice = available.find(v => v.lang === language);
-  if (!voice) voice = available.find(v => v.lang.startsWith(isTamil ? 'ta' : 'en'));
+  if (!('speechSynthesis' in window)) {
+    onError();
+    return;
+  }
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  if (voice) utterance.voice = voice;
-  utterance.lang = language;
-  utterance.rate = opts.speed ?? 1.0;
-  utterance.volume = opts.volume ?? 1.0;
-  utterance.onstart = onStart;
-  utterance.onend = onEnd;
-  utterance.onerror = onError;
-  window.speechSynthesis.speak(utterance);
+  const doSpeak = () => {
+    try {
+      window.speechSynthesis.cancel();
+      clearKeepAlive();
+
+      const available = window.speechSynthesis.getVoices();
+      let voice = opts.voiceURI ? available.find(v => v.voiceURI === opts.voiceURI) : undefined;
+      if (!voice) voice = available.find(v => v.lang === language);
+      if (!voice) voice = available.find(v => v.lang.startsWith(isTamil ? 'ta' : 'en'));
+      if (!voice && available.length > 0) voice = available[0];
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      if (voice) utterance.voice = voice;
+      utterance.lang = language || (isTamil ? 'ta-IN' : 'en-US');
+      utterance.rate = opts.speed ?? 1.0;
+      utterance.pitch = opts.pitch ?? 1.0;
+      utterance.volume = opts.volume ?? 1.0;
+
+      utterance.onstart = () => {
+        onStart();
+        // Chrome keepalive timer to prevent pause on long text (>15s)
+        clearKeepAlive();
+        speechKeepAliveInterval = setInterval(() => {
+          if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+            window.speechSynthesis.pause();
+            window.speechSynthesis.resume();
+          } else {
+            clearKeepAlive();
+          }
+        }, 12000);
+      };
+
+      utterance.onend = () => {
+        clearKeepAlive();
+        onEnd();
+      };
+
+      utterance.onerror = (e) => {
+        console.error('SpeechSynthesis error:', e);
+        clearKeepAlive();
+        onError();
+      };
+
+      window.speechSynthesis.speak(utterance);
+    } catch (err) {
+      console.error('Failed in speakWithBrowser:', err);
+      clearKeepAlive();
+      onError();
+    }
+  };
+
+  const voices = window.speechSynthesis.getVoices();
+  if (voices.length === 0) {
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.onvoiceschanged = null;
+      doSpeak();
+    };
+    // Fallback trigger if onvoiceschanged doesn't fire
+    setTimeout(doSpeak, 250);
+  } else {
+    doSpeak();
+  }
 }
+
 
 // ─── Public API: cancelSpeech ─────────────────────────────────────────────────
 
 export function cancelAllSpeech(): void {
+  clearKeepAlive();
   if ('speechSynthesis' in window) window.speechSynthesis.cancel();
   if ((window as any).responsiveVoice?.isPlaying?.()) {
     (window as any).responsiveVoice.cancel();
@@ -277,7 +348,7 @@ export function resumeAllSpeech(): void {
 // ─── Public API: getTTSStatus ─────────────────────────────────────────────────
 
 export async function getTTSStatus(): Promise<TTSStatus> {
-  const provider = (import.meta.env.VITE_TTS_PROVIDER || 'responsivevoice') as TTSProvider;
+  const provider = (import.meta.env.VITE_TTS_PROVIDER || 'browser') as TTSProvider;
   const hasGoogle = !!import.meta.env.VITE_GOOGLE_TTS_KEY;
   const hasAzure = !!import.meta.env.VITE_AZURE_TTS_KEY;
   const nativeVoices = 'speechSynthesis' in window ? window.speechSynthesis.getVoices() : [];
@@ -285,11 +356,10 @@ export async function getTTSStatus(): Promise<TTSStatus> {
   const hasEnglishNative = nativeVoices.some(v => v.lang.startsWith('en'));
 
   let englishProvider = 'Browser Native';
-  let tamilProvider = 'ResponsiveVoice (Cloud)';
+  let tamilProvider = hasTamilNative ? 'Browser Native (Tamil)' : 'ResponsiveVoice / Native Fallback';
 
   if (provider === 'google' && hasGoogle) { englishProvider = 'Google Neural (en-IN)'; tamilProvider = 'Google Neural (ta-IN)'; }
   else if (provider === 'azure' && hasAzure) { englishProvider = 'Azure Pallavi Neural'; tamilProvider = 'Azure Pallavi Neural (ta-IN)'; }
-  else { englishProvider = hasEnglishNative ? 'Browser Native' : 'ResponsiveVoice (Cloud)'; }
 
   return {
     english: { provider: englishProvider, ready: true },
@@ -341,7 +411,7 @@ export async function speak(
   onStart();
 
   // 5. Try providers in priority order
-  const provider = (import.meta.env.VITE_TTS_PROVIDER || 'responsivevoice') as TTSProvider;
+  const provider = (import.meta.env.VITE_TTS_PROVIDER || 'browser') as TTSProvider;
 
   if (provider === 'google') {
     const ok = await speakWithGoogle(cleaned, language, opts, onEnd, onError);
@@ -353,12 +423,11 @@ export async function speak(
     if (ok) return;
   }
 
-  // ResponsiveVoice: always try for Tamil (best free Tamil TTS available)
-  if (isTamil || provider === 'responsivevoice') {
+  if (provider === 'responsivevoice') {
     const ok = await speakWithResponsiveVoice(cleaned, isTamil, opts, onEnd, onError);
     if (ok) return;
   }
 
-  // Final fallback: native browser
+  // Primary default / robust fallback: browser native speech synthesis
   speakWithBrowser(cleaned, language, isTamil, opts, onStart, onEnd, onError);
 }

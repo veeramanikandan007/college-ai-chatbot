@@ -4,7 +4,7 @@ import { User, getMe } from '../lib/auth';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (token: string) => void;
+  login: (token: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -12,7 +12,7 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  login: () => {},
+  login: async () => {},
   logout: () => {},
   refreshUser: async () => {},
 });
@@ -30,18 +30,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       } catch (error) {
         console.error('Failed to authenticate:', error);
         localStorage.removeItem('token');
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
+    } else {
+      setUser(null);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
     fetchUser();
   }, []);
 
-  const login = (token: string) => {
+  const login = async (token: string) => {
     localStorage.setItem('token', token);
-    fetchUser();
+    setLoading(true);
+    await fetchUser();
   };
 
   const logout = () => {
@@ -56,3 +62,4 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     </AuthContext.Provider>
   );
 };
+

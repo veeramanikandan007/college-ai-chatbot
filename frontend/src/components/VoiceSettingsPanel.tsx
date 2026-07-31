@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Volume2, Gauge, RefreshCw, Mic, Wifi, WifiOff } from 'lucide-react';
+import { Volume2, Gauge, RefreshCw, Mic, Wifi, WifiOff, Sliders } from 'lucide-react';
 import { getTTSStatus, type TTSStatus } from '../services/ttsService';
 
 export interface VoiceSettings {
   voiceURI: string;
   language: 'en-US' | 'ta-IN';
   speed: number;
+  pitch: number;
   volume: number;
   autoSpeak: boolean;
   handsFree: boolean; // Active Wake Word mode
@@ -14,11 +15,21 @@ export interface VoiceSettings {
 interface VoiceSettingsPanelProps {
   settings: VoiceSettings;
   onChange: (newSettings: VoiceSettings) => void;
+  onClose?: () => void;
 }
 
-export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettingsPanelProps) {
+export default function VoiceSettingsPanel({ settings, onChange, onClose }: VoiceSettingsPanelProps) {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [ttsStatus, setTtsStatus] = useState<TTSStatus | null>(null);
+
+  // Lock body scroll when panel is open
+  useEffect(() => {
+    const originalStyle = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
 
   useEffect(() => {
     const fetchVoices = () => {
@@ -53,7 +64,7 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
     onChange({ ...settings, voiceURI: e.target.value });
   };
 
-  const handleRangeChange = (key: 'speed' | 'volume', val: number) => {
+  const handleRangeChange = (key: 'speed' | 'pitch' | 'volume', val: number) => {
     onChange({ ...settings, [key]: val });
   };
 
@@ -66,55 +77,76 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
   };
 
   return (
-    <div className="rounded-[24px] glass-panel soft-ring border border-slate-200/80 dark:border-slate-800/80 p-5 bg-white/70 dark:bg-slate-900/60 space-y-4">
-      <div>
-        <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center justify-between">
-          <span>Voice AI Settings</span>
+    <div className="flex flex-col h-full max-h-[90vh] w-full rounded-[24px] glass-panel soft-ring border border-slate-200/80 dark:border-slate-800/80 bg-white/95 dark:bg-slate-950/95 p-5 shadow-2xl overflow-hidden select-none">
+      {/* Sticky Top Header */}
+      <div className="sticky top-0 z-20 flex items-center justify-between pb-3 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md">
+        <div>
+          <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <span>Voice AI Settings</span>
+            <button
+              onClick={() => {
+                if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+                  setVoices(window.speechSynthesis.getVoices());
+                }
+                getTTSStatus().then(setTtsStatus);
+              }}
+              title="Reload System Voices"
+              className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            >
+              <RefreshCw size={12} />
+            </button>
+          </h3>
+          <p className="text-[10px] text-slate-500 dark:text-slate-400">
+            Speech synthesis, voice selection & controls
+          </p>
+        </div>
+
+        {onClose && (
           <button
-            onClick={() => {
-              if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-                setVoices(window.speechSynthesis.getVoices());
-              }
-              getTTSStatus().then(setTtsStatus);
-            }}
-            title="Reload System Voices"
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            onClick={onClose}
+            className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            title="Close Settings"
           >
-            <RefreshCw size={12} />
+            <span className="sr-only">Close</span>
+            ✕
           </button>
-        </h3>
-        <p className="text-[10px] text-slate-500 dark:text-slate-400">
-          Customize Speech Synthesis & Speech Recognition.
-        </p>
+        )}
       </div>
 
-      {/* TTS Provider Status */}
-      {ttsStatus && (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 p-3 space-y-2 bg-slate-50 dark:bg-slate-900/40">
-          <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">TTS Providers</p>
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-600 dark:text-slate-300">🇬🇧 English</span>
-            <span className={`text-[10px] font-semibold flex items-center gap-1 ${
-              ttsStatus.english.ready ? 'text-emerald-500' : 'text-amber-500'
-            }`}>
-              {ttsStatus.english.ready ? <Wifi size={10} /> : <WifiOff size={10} />}
-              {ttsStatus.english.provider}
-            </span>
+      {/* Scrollable Middle Container */}
+      <div className="flex-1 overflow-y-auto max-h-[calc(90vh-7rem)] custom-scrollbar py-3 space-y-4 pr-1">
+        {/* TTS Provider Status */}
+        {ttsStatus && (
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 p-3 space-y-2 bg-slate-50 dark:bg-slate-900/40">
+            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              TTS Providers
+            </p>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-slate-600 dark:text-slate-300">🇬🇧 English</span>
+              <span
+                className={`text-[10px] font-semibold flex items-center gap-1 ${
+                  ttsStatus.english.ready ? 'text-emerald-500' : 'text-amber-500'
+                }`}
+              >
+                {ttsStatus.english.ready ? <Wifi size={10} /> : <WifiOff size={10} />}
+                {ttsStatus.english.provider}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-slate-600 dark:text-slate-300">🇮🇳 Tamil</span>
+              <span
+                className={`text-[10px] font-semibold flex items-center gap-1 ${
+                  ttsStatus.tamil.ready ? 'text-emerald-500' : 'text-amber-500'
+                }`}
+              >
+                {ttsStatus.tamil.ready ? <Wifi size={10} /> : <WifiOff size={10} />}
+                {ttsStatus.tamil.provider}
+              </span>
+            </div>
           </div>
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-600 dark:text-slate-300">🇮🇳 Tamil</span>
-            <span className={`text-[10px] font-semibold flex items-center gap-1 ${
-              ttsStatus.tamil.ready ? 'text-emerald-500' : 'text-amber-500'
-            }`}>
-              {ttsStatus.tamil.ready ? <Wifi size={10} /> : <WifiOff size={10} />}
-              {ttsStatus.tamil.provider}
-            </span>
-          </div>
-        </div>
-      )}
+        )}
 
-      <div className="space-y-3.5">
-        {/* Language Selection */}
+        {/* Interface Language */}
         <div>
           <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">
             Interface Language
@@ -127,7 +159,7 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
                 onClick={() => handleLangChange(lang)}
                 className={`py-2 rounded-xl text-xs font-bold transition-all border ${
                   settings.language === lang
-                    ? 'bg-primary border-primary text-white dark:bg-secondary dark:border-secondary dark:text-slate-950 shadow-sm'
+                    ? 'bg-[#0A2A6A] border-[#0A2A6A] text-white dark:bg-secondary dark:border-secondary dark:text-slate-950 shadow-sm'
                     : 'border-slate-200 dark:border-slate-800 text-slate-600 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
                 }`}
               >
@@ -145,7 +177,7 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
           <select
             value={settings.voiceURI}
             onChange={handleVoiceChange}
-            className="w-full text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 p-2.5 outline-none focus:ring-1 focus:ring-primary dark:focus:ring-secondary"
+            className="w-full text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 p-2.5 outline-none focus:ring-1 focus:ring-[#0A2A6A] dark:focus:ring-secondary"
           >
             <option value="">-- Default System Voice --</option>
             {filteredVoices.map((voice) => (
@@ -156,12 +188,12 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
           </select>
           {filteredVoices.length === 0 && (
             <p className="text-[9px] text-slate-400 mt-1">
-              ℹ️ No local {settings.language === 'ta-IN' ? 'Tamil' : 'English'} voices. Using Cloud TTS automatically.
+              ℹ️ No local {settings.language === 'ta-IN' ? 'Tamil' : 'English'} voices found. Using Cloud TTS automatically.
             </p>
           )}
         </div>
 
-        {/* Speed Dials */}
+        {/* Speaking Speed */}
         <div>
           <div className="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">
             <span className="flex items-center gap-1">
@@ -177,18 +209,40 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
             step="0.1"
             value={settings.speed}
             onChange={(e) => handleRangeChange('speed', parseFloat(e.target.value))}
-            className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary dark:accent-secondary"
+            className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#0A2A6A] dark:accent-secondary"
           />
         </div>
 
-        {/* Volume Dials */}
+        {/* Voice Pitch */}
+        <div>
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">
+            <span className="flex items-center gap-1">
+              <Sliders size={13} />
+              Voice Pitch
+            </span>
+            <span className="font-mono text-slate-700 dark:text-slate-300">{settings.pitch || 1.0}x</span>
+          </div>
+          <input
+            type="range"
+            min="0.5"
+            max="2"
+            step="0.1"
+            value={settings.pitch || 1.0}
+            onChange={(e) => handleRangeChange('pitch', parseFloat(e.target.value))}
+            className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#0A2A6A] dark:accent-secondary"
+          />
+        </div>
+
+        {/* Speaking Volume */}
         <div>
           <div className="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">
             <span className="flex items-center gap-1">
               <Volume2 size={13} />
               Speaking Volume
             </span>
-            <span className="font-mono text-slate-700 dark:text-slate-300">{Math.round(settings.volume * 100)}%</span>
+            <span className="font-mono text-slate-700 dark:text-slate-300">
+              {Math.round(settings.volume * 100)}%
+            </span>
           </div>
           <input
             type="range"
@@ -197,11 +251,11 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
             step="0.05"
             value={settings.volume}
             onChange={(e) => handleRangeChange('volume', parseFloat(e.target.value))}
-            className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary dark:accent-secondary"
+            className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#0A2A6A] dark:accent-secondary"
           />
         </div>
 
-        {/* Auto Speak Toggle */}
+        {/* Read Responses Automatically */}
         <div className="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 pt-3">
           <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
             Read Responses Automatically
@@ -210,7 +264,7 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
             type="button"
             onClick={handleToggleAutoSpeak}
             className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-              settings.autoSpeak ? 'bg-primary dark:bg-secondary' : 'bg-slate-200 dark:bg-slate-800'
+              settings.autoSpeak ? 'bg-[#0A2A6A] dark:bg-secondary' : 'bg-slate-200 dark:bg-slate-800'
             }`}
           >
             <span
@@ -221,22 +275,22 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
           </button>
         </div>
 
-        {/* Hands-Free Wake Word Toggle */}
+        {/* Hands-Free Assistant Toggle */}
         <div className="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 pt-3">
           <div>
             <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
-              <Mic size={13} className="text-primary dark:text-secondary shrink-0" />
+              <Mic size={13} className="text-[#0A2A6A] dark:text-secondary shrink-0" />
               Hands-Free Assistant
             </span>
             <span className="text-[9px] text-slate-400 block mt-0.5">
-              Listen for "Hey CampusMate" continuously.
+              Listen for "Hey CollegeMate" continuously.
             </span>
           </div>
           <button
             type="button"
             onClick={handleToggleHandsFree}
             className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-              settings.handsFree ? 'bg-primary dark:bg-secondary' : 'bg-slate-200 dark:bg-slate-800'
+              settings.handsFree ? 'bg-[#0A2A6A] dark:bg-secondary' : 'bg-slate-200 dark:bg-slate-800'
             }`}
           >
             <span
@@ -247,6 +301,19 @@ export default function VoiceSettingsPanel({ settings, onChange }: VoiceSettings
           </button>
         </div>
       </div>
+
+      {/* Sticky Bottom Footer */}
+      {onClose && (
+        <div className="sticky bottom-0 z-20 pt-3 border-t border-slate-200/80 dark:border-slate-800/80 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md">
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-full py-2.5 rounded-xl bg-[#0A2A6A] dark:bg-secondary text-xs font-bold text-white dark:text-slate-950 shadow-md hover:bg-[#163D8C] transition active:scale-95"
+          >
+            Apply & Done
+          </button>
+        </div>
+      )}
     </div>
   );
 }

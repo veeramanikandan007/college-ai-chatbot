@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { X, Check, Mic } from 'lucide-react';
 
 interface VoiceRecorderProps {
@@ -8,81 +9,94 @@ interface VoiceRecorderProps {
 }
 
 export default function VoiceRecorder({ duration, onCancel, onStop }: VoiceRecorderProps) {
-  // Format duration (in seconds) to MM:SS
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60).toString().padStart(2, '0');
     const s = (secs % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
   };
 
+  const waveHeights = [
+    [8, 24, 12, 28, 10],
+    [20, 10, 26, 14, 22],
+    [12, 28, 8, 20, 16],
+    [26, 14, 22, 10, 28],
+    [10, 22, 16, 26, 12],
+    [24, 12, 28, 14, 20],
+  ];
+
   return (
-    <div className="absolute inset-0 z-20 flex items-center justify-between rounded-2xl border border-primary/20 dark:border-secondary/20 bg-white/95 dark:bg-slate-950/95 px-6 py-4 shadow-lg backdrop-blur-xl animate-fade-in transition-all duration-300">
-      
-      {/* Listening status & pulsing icon */}
-      <div className="flex items-center gap-4">
-        <div className="relative flex items-center justify-center w-12 h-12">
-          {/* Animated pulsing ripple rings */}
-          <div className="absolute inset-0 rounded-full bg-red-500/20 dark:bg-secondary/20 ripple-ring-1" />
-          <div className="absolute inset-0 rounded-full bg-red-500/10 dark:bg-secondary/10 ripple-ring-2" />
-          <div className="absolute inset-0 rounded-full bg-red-500/5 dark:bg-secondary/5 ripple-ring-3" />
-          
-          {/* Microphone core */}
-          <div className="relative z-10 flex items-center justify-center w-8 h-8 rounded-full bg-red-500 dark:bg-secondary text-white dark:text-slate-950">
-            <Mic size={16} className="animate-pulse" />
+    <motion.div
+      initial={{ opacity: 0, y: 12, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 10, scale: 0.97 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+      className="absolute inset-0 z-20 flex items-center justify-between rounded-2xl border border-red-500/30 dark:border-red-500/20 bg-white/95 dark:bg-slate-900/95 px-5 py-3 shadow-xl backdrop-blur-xl transition-all select-none"
+    >
+      {/* Listening Status & Pulsing Icon */}
+      <div className="flex items-center gap-3">
+        <div className="relative flex items-center justify-center w-10 h-10">
+          <motion.div
+            animate={{ scale: [1, 1.4, 1], opacity: [0.5, 0, 0.5] }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
+            className="absolute inset-0 rounded-full bg-red-500/30 dark:bg-red-400/30"
+          />
+          <div className="relative z-10 flex items-center justify-center w-8 h-8 rounded-full bg-red-500 text-white shadow-md">
+            <Mic size={16} />
           </div>
         </div>
-        
+
         <div>
-          <p className="text-sm font-bold text-red-500 dark:text-secondary animate-pulse flex items-center gap-1.5">
-            Listening...
+          <p className="text-xs font-bold text-red-600 dark:text-red-400 flex items-center gap-1.5">
+            Listening to your speech…
           </p>
           <p className="text-[10px] text-slate-500 dark:text-slate-400">
-            Speak clearly. Press Space/Esc to control.
+            Press Check to finish or Esc to cancel.
           </p>
         </div>
       </div>
 
-      {/* Waveform Visualization */}
-      <div className="flex items-end gap-1 h-6">
-        <div className="w-1 bg-primary dark:bg-secondary rounded-full wave-bar wave-bar-1 h-4" />
-        <div className="w-1 bg-primary dark:bg-secondary rounded-full wave-bar wave-bar-2 h-6" />
-        <div className="w-1 bg-accent dark:bg-secondary rounded-full wave-bar wave-bar-3 h-3" />
-        <div className="w-1 bg-accent dark:bg-secondary rounded-full wave-bar wave-bar-4 h-5" />
-        <div className="w-1 bg-primary dark:bg-secondary rounded-full wave-bar wave-bar-5 h-2" />
-        <div className="w-1 bg-primary dark:bg-secondary rounded-full wave-bar wave-bar-6 h-6" />
-        <div className="w-1 bg-accent dark:bg-secondary rounded-full wave-bar wave-bar-7 h-4" />
-        <div className="w-1 bg-accent dark:bg-secondary rounded-full wave-bar wave-bar-8 h-3" />
+      {/* Dynamic Animated Waveform */}
+      <div className="flex items-center gap-1 h-7 px-2">
+        {waveHeights.map((heights, idx) => (
+          <motion.div
+            key={idx}
+            animate={{ height: heights }}
+            transition={{ repeat: Infinity, duration: 1.2, delay: idx * 0.1, ease: 'easeInOut' }}
+            className="w-1 rounded-full bg-gradient-to-t from-red-500 to-amber-500"
+          />
+        ))}
       </div>
 
-      {/* Control Buttons & Timer */}
-      <div className="flex items-center gap-4">
-        {/* Timer */}
-        <span className="font-mono text-sm font-bold text-slate-800 dark:text-slate-200">
+      {/* Control Buttons & Monospace Timer */}
+      <div className="flex items-center gap-3">
+        <span className="font-mono text-xs font-bold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">
           {formatTime(duration)}
         </span>
 
-        {/* Buttons */}
-        <div className="flex items-center gap-2">
-          <button
+        <div className="flex items-center gap-1.5">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={onCancel}
             title="Cancel recording (Esc)"
-            className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95"
+            className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
           >
-            <X size={16} />
-          </button>
-          
-          <button
+            <X size={15} />
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={onStop}
             title="Finish and send (Space)"
-            className="p-2.5 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-md hover:scale-105 transition active:scale-95"
+            className="p-2 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-md transition"
           >
-            <Check size={16} />
-          </button>
+            <Check size={15} />
+          </motion.button>
         </div>
       </div>
-
-    </div>
+    </motion.div>
   );
 }

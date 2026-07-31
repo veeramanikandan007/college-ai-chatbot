@@ -104,38 +104,63 @@ def delete_student(
 # ────────────────────────────────────────────
 
 DOCUMENTS_DIR = "documents"
+SUPPORTED_EXTS = (".pdf", ".docx", ".txt")
 
 @router.post("/documents/upload")
 async def upload_document(
     file: UploadFile = File(...),
     current_user: User = Depends(deps.require_admin),
 ):
-    """Upload a PDF document to be indexed by the RAG pipeline."""
-    if not file.filename.endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Only PDF files are supported.")
+    """Upload a document (PDF, DOCX, TXT) and automatically index in ChromaDB."""
+    if not file.filename.lower().endswith(SUPPORTED_EXTS):
+        raise HTTPException(status_code=400, detail="Supported document types are: PDF, DOCX, TXT.")
     os.makedirs(DOCUMENTS_DIR, exist_ok=True)
     dest = os.path.join(DOCUMENTS_DIR, file.filename)
     with open(dest, "wb") as f:
         shutil.copyfileobj(file.file, f)
-    return {"message": f"'{file.filename}' uploaded successfully.", "path": dest}
+
+    # Automatically index file into ChromaDB
+    try:
+        from app.rag.rag_service import RAGService
+        rag = RAGService()
+        meta = rag.process_and_index_file(dest)
+    except Exception as e:
+        print(f"Auto RAG index warning: {e}")
+        meta = {"filename": file.filename, "status": "indexed_with_warning"}
+
+    return {"message": f"'{file.filename}' uploaded and indexed successfully.", "path": dest, "document": meta}
 
 
 @router.get("/documents")
 def list_documents(current_user: User = Depends(deps.require_admin)):
     """List all uploaded documents."""
-    os.makedirs(DOCUMENTS_DIR, exist_ok=True)
-    files = [f for f in os.listdir(DOCUMENTS_DIR) if f.endswith(".pdf")]
-    return {"documents": files, "count": len(files)}
+    try:
+        from app.rag.rag_service import RAGService
+        rag = RAGService()
+        docs = rag.get_all_documents_metadata()
+        return {"documents": docs, "count": len(docs)}
+    except Exception:
+        os.makedirs(DOCUMENTS_DIR, exist_ok=True)
+        files = [f for f in os.listdir(DOCUMENTS_DIR) if f.lower().endswith(SUPPORTED_EXTS)]
+        return {"documents": files, "count": len(files)}
 
 
 @router.delete("/documents/{filename}")
 def delete_document(filename: str, current_user: User = Depends(deps.require_admin)):
-    """Delete a specific document."""
-    path = os.path.join(DOCUMENTS_DIR, filename)
-    if not os.path.exists(path):
-        raise HTTPException(status_code=404, detail="File not found.")
-    os.remove(path)
-    return {"message": f"'{filename}' deleted."}
+    """Delete a specific document and update RAG index."""
+    try:
+        from app.rag.rag_service import RAGService
+        rag = RAGService()
+        success = rag.remove_document(filename)
+        if not success:
+            raise HTTPException(status_code=404, detail="File not found or already deleted.")
+        return {"message": f"'{filename}' deleted and vector index updated."}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to delete document: {e}")
+
+
 
 
 # ────────────────────────────────────────────

@@ -3,7 +3,7 @@ from typing import Optional
 import os
 
 class Settings(BaseSettings):
-    APP_NAME: str = "CampusMate AI"
+    APP_NAME: str = "CollegeMate AI"
     ENV: str = "development"
     HOST: str = "127.0.0.1"
     PORT: int = 8000
@@ -20,7 +20,9 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: Optional[str] = None
     GROQ_API_KEY: Optional[str] = None
     CHROMA_DB_DIR: str = "./chroma_db"
+    VECTOR_DB_DIR: str = "./vector_db"
     DOCUMENTS_DIR: str = "./documents"
+    EMBEDDINGS_DIR: str = "./embeddings"
 
     # File Uploads
     UPLOAD_DIR: str = "./uploads"
@@ -38,6 +40,9 @@ settings = Settings()
 
 # Ensure directories exist
 os.makedirs(settings.CHROMA_DB_DIR, exist_ok=True)
+os.makedirs(settings.VECTOR_DB_DIR, exist_ok=True)
 os.makedirs(settings.DOCUMENTS_DIR, exist_ok=True)
+os.makedirs(settings.EMBEDDINGS_DIR, exist_ok=True)
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
 os.makedirs(os.path.dirname(settings.DATABASE_URL.replace("sqlite:///", "")), exist_ok=True)
+

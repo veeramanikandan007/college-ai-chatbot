@@ -15,7 +15,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requir
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-full border-4 border-[#0A2A6A] border-t-transparent animate-spin"></div>
-          <p className="text-slate-500 text-sm">Loading CampusMate…</p>
+          <p className="text-slate-500 text-sm font-medium">Loading CollegeMate AI…</p>
         </div>
       </div>
     );

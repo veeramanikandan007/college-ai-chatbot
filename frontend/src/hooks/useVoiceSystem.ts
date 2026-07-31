@@ -7,6 +7,7 @@ export interface VoiceSettings {
   voiceURI: string;
   language: 'en-US' | 'ta-IN';
   speed: number;
+  pitch: number;
   volume: number;
   autoSpeak: boolean;
   handsFree: boolean;
@@ -35,6 +36,7 @@ export function useVoiceSystem() {
       voiceURI: '',
       language: 'en-US',
       speed: 1.0,
+      pitch: 1.0,
       volume: 1.0,
       autoSpeak: true,
       handsFree: false,
@@ -182,7 +184,7 @@ export function useVoiceSystem() {
     setIsPausedSpeech(false);
     setAssistantState('SPEAKING');
 
-    await speak(text, { speed: settingsToUse.speed, volume: settingsToUse.volume }, {
+    await speak(text, { speed: settingsToUse.speed, pitch: settingsToUse.pitch, volume: settingsToUse.volume, voiceURI: settingsToUse.voiceURI }, {
       onStart: () => {
         setIsPlayingSpeech(true);
         setAssistantState('SPEAKING');

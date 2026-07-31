@@ -1,3 +1,5 @@
+const DEFAULT_TIMEOUT_MS = 10000;
+
 export const API_URL = '/api/v1';
 
 export class ApiError extends Error {
@@ -7,9 +9,9 @@ export class ApiError extends Error {
   }
 }
 
-export const fetchApi = async (endpoint: string, options: RequestInit = {}) => {
+export const fetchApi = async (endpoint: string, options: RequestInit = {}, timeoutMs: number = DEFAULT_TIMEOUT_MS) => {
   const token = localStorage.getItem('token');
-  
+
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
@@ -19,17 +21,33 @@ export const fetchApi = async (endpoint: string, options: RequestInit = {}) => {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    ...options,
-    headers,
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new ApiError(response.status, errorData.detail || response.statusText);
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      ...options,
+      headers,
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new ApiError(response.status, errorData.detail || response.statusText);
+    }
+
+    const text = await response.text();
+    return text ? JSON.parse(text) : {};
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      throw new ApiError(0, 'Request timed out. Please check your connection and try again.');
+    }
+    if (err instanceof ApiError) {
+      throw err;
+    }
+    throw new ApiError(0, 'Network error. Please check if the server is running.');
   }
-
-  // Handle empty responses (like 204 No Content)
-  const text = await response.text();
-  return text ? JSON.parse(text) : {};
 };

@@ -57,8 +57,8 @@ const VoiceButton = forwardRef<VoiceButtonRef, VoiceButtonProps>(({
     
     try {
       const rec = new SpeechRecognitionClass();
-      rec.continuous = false;
-      rec.interimResults = false;
+      rec.continuous = true;
+      rec.interimResults = true;
       rec.lang = language;
 
       rec.onstart = () => {
@@ -67,6 +67,7 @@ const VoiceButton = forwardRef<VoiceButtonRef, VoiceButtonProps>(({
         setDuration(0);
         onDurationChange(0);
         
+        if (timerRef.current) clearInterval(timerRef.current);
         timerRef.current = window.setInterval(() => {
           setDuration((d) => {
             const next = d + 1;
@@ -77,28 +78,29 @@ const VoiceButton = forwardRef<VoiceButtonRef, VoiceButtonProps>(({
       };
 
       rec.onresult = (event: any) => {
-        if (event.results && event.results[0] && event.results[0][0]) {
-          const resultText = event.results[0][0].transcript;
-          if (resultText && resultText.trim()) {
-            onTextRecognized(resultText);
-          } else {
-            onRecognitionError('No speech detected');
-          }
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          transcript += event.results[i][0].transcript;
+        }
+        if (transcript && transcript.trim()) {
+          onTextRecognized(transcript);
         }
       };
 
       rec.onerror = (event: any) => {
         console.error('Speech Recognition Error event:', event);
         const err = event.error;
-        if (err === 'not-allowed') {
-          onRecognitionError('Microphone permission denied. Please allow microphone access.');
+        if (err === 'not-allowed' || err === 'service-not-allowed') {
+          onRecognitionError('Microphone access denied. Please grant microphone permission in browser settings.');
         } else if (err === 'no-speech') {
           onRecognitionError('No speech detected. Please speak closer to your microphone.');
         } else if (err === 'network') {
-          onRecognitionError('Network error occurred during speech recognition.');
-        } else {
-          onRecognitionError(`Speech recognition failed: ${err}`);
+          onRecognitionError('Network error during speech recognition. Check internet connection.');
+        } else if (err !== 'aborted') {
+          onRecognitionError(`Speech recognition error: ${err}`);
         }
+        setIsRecording(false);
+        onRecordingStateChange(false);
       };
 
       rec.onend = () => {
@@ -117,6 +119,8 @@ const VoiceButton = forwardRef<VoiceButtonRef, VoiceButtonProps>(({
     } catch (e: any) {
       console.error('Failed to initialize speech recognition', e);
       onRecognitionError(`Failed to initialize recorder: ${e.message || e}`);
+      setIsRecording(false);
+      onRecordingStateChange(false);
     }
   };
 

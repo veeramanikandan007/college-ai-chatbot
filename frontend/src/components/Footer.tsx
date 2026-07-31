@@ -20,7 +20,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="text-xs text-slate-400 dark:text-slate-500">
-          <p>© 2026 CampusMate AI. All Rights Reserved.</p>
+          <p>© 2026 CollegeMate AI. All Rights Reserved.</p>
           <p className="mt-1 font-semibold text-slate-700 dark:text-slate-300">
             Mount Zion College of Engineering and Technology
           </p>

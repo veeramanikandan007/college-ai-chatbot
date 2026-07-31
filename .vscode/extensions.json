@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.debugpy",
+    "rangav.vscode-thunder-client",
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg",
+    "ms-azuretools.vscode-docker",
+    "usernamehw.errorlens",
+    "github.copilot"
+  ]
+}

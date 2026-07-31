@@ -27,14 +27,14 @@ class ConversationService:
         
         self.small_talk_patterns = {
             r"^\s*(how are you|epdi iruka|how are u)": "I'm doing great, thank you for asking! 😊 How can I assist you with your studies or college-related questions today?",
-            r"^\s*(who are you|yaru neenga|ni yaru)": "I'm CampusMate AI, your college assistant. I can help with subjects, attendance, assignments, schedules, college information, and general questions.",
+            r"^\s*(who are you|yaru neenga|ni yaru)": "I'm CollegeMate AI, your college assistant. I can help with subjects, attendance, assignments, schedules, college information, and general questions.",
             r"^\s*(what can you do|enna panna mudiyum|help)": "I can help you with:\n\n• College information\n• Attendance\n• Assignments\n• Timetables\n• Subjects\n• Notes\n• Exams\n• General knowledge\n• AI assistance\n\nWhat would you like to explore today?",
             r"^\s*(thanks|nandri|thank you)\b": "You're welcome! I'm always happy to help. If you have any more questions, just ask.",
             r"^\s*(bye|goodbye|cya)\b": "Goodbye! Have a great day, and best of luck with your studies. 👋"
         }
 
         self.greeting_responses = [
-            "Hello! 👋 I'm CampusMate AI. How can I assist you today?",
+            "Hello! 👋 I'm CollegeMate AI. How can I assist you today?",
             "Hi! Welcome back. What would you like help with today?",
             "Hey! I'm here to help with academics, attendance, assignments, college information, and more."
         ]

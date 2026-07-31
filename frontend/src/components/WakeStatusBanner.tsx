@@ -18,7 +18,7 @@ export default function WakeStatusBanner({ state, onStopListening }: WakeStatusB
           <>
             <div className="w-2.5 h-2.5 rounded-full bg-secondary pulse-gold shrink-0" />
             <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
-              Hands-Free Assistant Active. Say <strong className="text-primary dark:text-secondary">"Hey CampusMate"</strong> or <strong className="text-primary dark:text-secondary">"Hello CampusMate"</strong>.
+              Hands-Free Assistant Active. Say <strong className="text-primary dark:text-secondary">"Hey CollegeMate"</strong> or <strong className="text-primary dark:text-secondary">"Hello CollegeMate"</strong>.
             </span>
           </>
         )}

@@ -1,0 +1,4 @@
+College Attendance Rules:
+Students must maintain a minimum of 75% attendance in all courses to be eligible for end semester examinations.
+If attendance is between 65% and 74%, condonation may be granted on medical grounds with proper documentation.
+Students with attendance below 65% will be detained and must repeat the course semester.

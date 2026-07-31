@@ -35,7 +35,7 @@ export default function LoginPage() {
         },
         body: formData.toString(),
       });
-      login(data.access_token);
+      await login(data.access_token);
       showToast('Welcome back!', 'success');
       navigate('/dashboard');
     } catch (err) {
@@ -54,19 +54,19 @@ export default function LoginPage() {
           <div className="w-16 h-16 rounded-2xl bg-[#0A2A6A] flex items-center justify-center shadow-lg mb-4">
             <GraduationCap className="w-9 h-9 text-[#E8B24D]" />
           </div>
-          <h1 className="text-2xl font-bold text-[#0A2A6A] dark:text-slate-100">{APP_NAME}</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{COLLEGE_NAME}</p>
+          <h1 className="font-heading text-2xl font-bold tracking-tight text-[#0A2A6A] dark:text-slate-100">{APP_NAME}</h1>
+          <p className="ty-label text-slate-500 dark:text-slate-400 mt-1">{COLLEGE_NAME}</p>
         </div>
 
         {/* Card */}
         <div className="glass-panel rounded-2xl p-8 soft-ring transition-colors duration-300">
-          <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-1">Welcome back</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Sign in to access your campus dashboard.</p>
+          <h2 className="font-heading text-xl font-semibold tracking-tight text-slate-800 dark:text-slate-200 mb-1">Welcome back</h2>
+          <p className="ty-desc text-slate-500 dark:text-slate-400 mb-6">Sign in to access your campus dashboard.</p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div className="space-y-1.5">
-              <label htmlFor="login-email" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label htmlFor="login-email" className="ty-label block text-slate-700 dark:text-slate-300">
                 Email address
               </label>
               <div className="relative">
@@ -86,7 +86,7 @@ export default function LoginPage() {
 
             {/* Password */}
             <div className="space-y-1.5">
-              <label htmlFor="login-password" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label htmlFor="login-password" className="ty-label block text-slate-700 dark:text-slate-300">
                 Password
               </label>
               <div className="relative">

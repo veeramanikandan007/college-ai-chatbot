@@ -80,7 +80,7 @@ export default function AdminDashboardPage() {
             <GraduationCap className="h-6 w-6" />
           </div>
           <div>
-            <h2 className="text-base font-bold tracking-tight text-[#0A2A6A] dark:text-white">CampusMate</h2>
+            <h2 className="text-base font-bold tracking-tight text-[#0A2A6A] dark:text-white">CollegeMate</h2>
             <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-rose-500">
               <ShieldAlert className="h-3 w-3" />
               <span>Admin Portal</span>
