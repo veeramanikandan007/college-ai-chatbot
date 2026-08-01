@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
 from app.services.ai_service import AIService
 from app.core.logging import get_logger
@@ -60,24 +60,20 @@ class TimetableService:
     @staticmethod
     def get_today_timetable(day_name: Optional[str] = None) -> Dict[str, Any]:
         """
-        Returns today's timetable entries, ongoing class status, next class countdown, and stats breakdown.
+        Returns today's timetable entries, ongoing class status, next class countdown, and stats breakdown without emojis.
         """
         now = datetime.now()
         current_day = day_name or now.strftime("%A")
-        # Default to Monday if Sunday
         if current_day == "Sunday":
             current_day = "Monday"
 
         today_entries = [e for e in DEFAULT_TIMETABLE if e["day_of_week"] == current_day]
 
-        # Calculate class status: Ongoing, Upcoming, Completed
         current_time_str = now.strftime("%I:%M %p")
         
-        # Calculate ongoing and next class
         ongoing_class = None
         next_class = None
         
-        # Stat breakdown
         theory_count = sum(1 for e in today_entries if e["subject_type"] == "Theory")
         lab_count = sum(1 for e in today_entries if e["subject_type"] == "Lab")
         seminar_count = sum(1 for e in today_entries if e["subject_type"] == "Seminar")
@@ -85,7 +81,6 @@ class TimetableService:
         processed_entries = []
         for idx, entry in enumerate(today_entries):
             status = "Upcoming"
-            # For demonstration, assign first as completed, second as ongoing if current time fits
             if idx == 0:
                 status = "Completed"
             elif idx == 1:
@@ -128,9 +123,6 @@ class TimetableService:
 
     @staticmethod
     def get_weekly_timetable() -> Dict[str, List[Dict[str, Any]]]:
-        """
-        Returns complete weekly timetable grouped by days.
-        """
         days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         result = {}
         for d in days:
@@ -139,9 +131,6 @@ class TimetableService:
 
     @staticmethod
     def get_academic_calendar() -> List[Dict[str, Any]]:
-        """
-        Returns monthly academic calendar highlights (Class Days, Exam Days, Holidays, Events).
-        """
         return [
             {"date": "2026-08-03", "title": "Semester 6 Classes Commence", "type": "Class Day"},
             {"date": "2026-08-15", "title": "Independence Day Celebration", "type": "Holiday"},
@@ -152,27 +141,28 @@ class TimetableService:
 
     async def answer_timetable_ai_query(self, query: str) -> str:
         """
-        Answers student timetable questions using real timetable schedule data.
+        Answers student timetable questions using real timetable schedule data with NO emojis.
         """
         q = query.lower()
         if "next class" in q:
             return "Your next class is **Database Management Systems** (CS601) conducted by **Dr. R. Sundaram** in **Lab-3 / Hall A** from 10:00 AM to 11:00 AM."
         elif "tomorrow" in q:
-            return "### Tomorrow's Schedule (Tuesday):\n1. **09:00 AM - 10:00 AM**: Artificial Intelligence & Neural Nets (Dr. A. Meenakshi)\n2. **10:00 AM - 11:00 AM**: Computer Networks & Cloud (Prof. V. Rajesh)\n3. **11:15 AM - 12:15 PM**: Database Management Systems (Dr. R. Sundaram)\n4. **01:15 PM - 02:15 PM**: Operating Systems & Kernels (Prof. M. Anitha)\n5. **02:15 PM - 04:15 PM**: Placement Aptitude & Verbal (Placement Cell)"
+            return "Tomorrow's Schedule (Tuesday):\n1. 09:00 AM - 10:00 AM: Artificial Intelligence & Neural Nets (Dr. A. Meenakshi)\n2. 10:00 AM - 11:00 AM: Computer Networks & Cloud (Prof. V. Rajesh)\n3. 11:15 AM - 12:15 PM: Database Management Systems (Dr. R. Sundaram)\n4. 01:15 PM - 02:15 PM: Operating Systems & Kernels (Prof. M. Anitha)\n5. 02:15 PM - 04:15 PM: Placement Aptitude & Verbal (Placement Cell)"
         elif "lab" in q:
-            return "You have **4 Lab sessions** this week:\n- **Monday (01:15 PM - 04:15 PM)**: Full Stack Web Engineering Lab\n- **Wednesday (09:00 AM - 12:00 PM)**: Machine Learning & AI Lab\n- **Thursday (01:15 PM - 04:15 PM)**: Database & SQL Lab\n- **Friday (01:15 PM - 03:15 PM)**: Capstone Mini-Project Guidance"
+            return "You have 4 Lab sessions this week:\n- Monday (01:15 PM - 04:15 PM): Full Stack Web Engineering Lab\n- Wednesday (09:00 AM - 12:00 PM): Machine Learning & AI Lab\n- Thursday (01:15 PM - 04:15 PM): Database & SQL Lab\n- Friday (01:15 PM - 03:15 PM): Capstone Mini-Project Guidance"
         elif "monday" in q:
-            return "Your first class on **Monday** is **Database Management Systems** (CS601) with **Dr. R. Sundaram** in **Hall A** at **09:00 AM**."
+            return "Your first class on Monday is Database Management Systems (CS601) with Dr. R. Sundaram in Hall A at 09:00 AM."
         
         prompt = f"""
         You are CollegeMate AI Timetable Assistant.
         Answer the following student question accurately using this timetable data:
         {DEFAULT_TIMETABLE}
 
+        IMPORTANT: Do not use any emojis in your response.
         Question: {query}
         """
         try:
-            res = await self.ai_service._get_llm_response(prompt, "You are CollegeMate AI Timetable Assistant.")
+            res = await self.ai_service._get_llm_response(prompt, "You are CollegeMate AI Timetable Assistant. Do not use any emojis.")
             return res
         except Exception as err:
             logger.warning(f"AI Timetable Query fallback triggered: {err}")
