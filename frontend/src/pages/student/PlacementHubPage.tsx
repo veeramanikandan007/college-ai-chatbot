@@ -367,7 +367,7 @@ export default function PlacementHubPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0B0F19] text-[#1E293B] dark:text-[#F8FAFC] p-4 md:p-8 font-body transition-colors duration-300">
+    <div className="w-full h-full overflow-y-auto bg-[#F8FAFC] dark:bg-[#0B0F19] text-[#1E293B] dark:text-[#F8FAFC] p-4 md:p-8 font-body transition-colors duration-300">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* ========================================================================= */}

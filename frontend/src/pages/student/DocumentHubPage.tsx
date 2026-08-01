@@ -196,7 +196,7 @@ export default function DocumentHubPage() {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] transition-colors duration-300 font-body min-h-screen">
+    <div className="w-full h-full overflow-y-auto p-4 md:p-8 bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] transition-colors duration-300 font-body">
       <div className="mx-auto max-w-7xl space-y-6">
         {/* Header Title & Top Controls */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
