@@ -297,6 +297,32 @@ export default function Sidebar({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // ESC key to close mobile sidebar
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isOpen, setIsOpen]);
+
+  // Mobile Swipe Gesture
+  const touchStartX = useRef<number | null>(null);
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const currentX = e.touches[0].clientX;
+    const diffX = touchStartX.current - currentX;
+    if (diffX > 50) { // Swiped left
+      setIsOpen(false);
+      touchStartX.current = null;
+    }
+  };
+
   // Live search filtering
   const filteredChats = useMemo(() => {
     if (!searchTerm.trim()) return conversations;
@@ -435,7 +461,7 @@ export default function Sidebar({
       <motion.aside
         ref={desktopRef}
         initial={false}
-        animate={{ width: isCollapsed ? 72 : 260 }}
+        animate={{ width: isCollapsed ? 72 : 320 }}
         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
         className="hidden lg:flex flex-col h-screen shrink-0 border-r border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#111827] relative z-40 overflow-hidden select-none py-[16px] px-[12px] box-border justify-between"
       >
@@ -705,17 +731,19 @@ export default function Sidebar({
               className="fixed inset-0 bg-[#0F172A]/60 backdrop-blur-xs"
             />
 
-            {/* Mobile Drawer (Always 260px) */}
+            {/* Mobile Drawer (Width: max 85vw or 320px on mobile, 300px on tablet) */}
             <motion.div
               ref={drawerRef}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-              className="relative flex h-full w-[260px] max-w-[85vw] flex-col border-r border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#111827] shadow-2xl z-10 overflow-hidden py-[16px] px-[12px] box-border justify-between"
+              className="relative flex h-[100dvh] w-[min(320px,85vw)] md:w-[300px] flex-col border-r border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#111827] shadow-2xl z-10 overflow-hidden py-4 px-3 box-border justify-between"
             >
-              {/* Header */}
-              <div className="flex items-center justify-between shrink-0 mb-4 h-[72px]">
+              {/* Header — Height 64px fixed */}
+              <div className="flex items-center justify-between shrink-0 mb-3 h-[64px] border-b border-[#E2E8F0] dark:border-[#334155] pb-2">
                 <div className="flex items-center gap-3">
                   <div className="w-[40px] h-[40px] rounded-xl flex items-center justify-center shrink-0 bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white shadow-xs border border-[#D9A441]/30">
                     <GraduationCap size={20} strokeWidth={1.75} />
@@ -726,15 +754,15 @@ export default function Sidebar({
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="w-[40px] h-[40px] rounded-xl flex items-center justify-center shrink-0 text-[#64748B] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition"
+                  className="w-[40px] h-[40px] rounded-xl flex items-center justify-center shrink-0 text-[#64748B] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition cursor-pointer"
                   title="Close Menu"
                 >
-                  <X size={18} strokeWidth={1.75} />
+                  <X size={20} strokeWidth={1.75} />
                 </button>
               </div>
 
-              {/* Navigation Actions */}
-              <div className="flex flex-col gap-[8px] shrink-0 mb-3">
+              {/* Navigation Actions — Fixed Sticky Header */}
+              <div className="flex flex-col gap-2 shrink-0 mb-3">
                 <button
                   onClick={() => {
                     if (location.pathname !== '/dashboard') {
@@ -744,22 +772,22 @@ export default function Sidebar({
                     }
                     setIsOpen(false);
                   }}
-                  className="h-[44px] w-full rounded-[14px] font-heading font-bold text-[15px] tracking-[0.02em] transition-all duration-250 bg-[#0E2A6D] text-white shadow-xs flex items-center justify-between px-3.5"
+                  className="h-[44px] w-full rounded-xl font-heading font-bold text-[14px] tracking-[0.02em] transition-all duration-250 bg-[#0E2A6D] text-white shadow-xs flex items-center justify-between px-3.5 cursor-pointer"
                 >
-                  <div className="flex items-center gap-[12px]">
+                  <div className="flex items-center gap-3">
                     <SquarePen size={18} strokeWidth={1.75} />
                     <span>New Chat</span>
                   </div>
                 </button>
 
                 <div className="relative flex items-center">
-                  <Search size={18} strokeWidth={1.75} className="absolute left-3.5 text-[#64748B] pointer-events-none" />
+                  <Search size={16} strokeWidth={1.75} className="absolute left-3 text-[#64748B] pointer-events-none" />
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Search conversations..."
-                    className="w-full h-[44px] rounded-[14px] bg-[#F5F7FB] dark:bg-[#1E293B] border border-transparent py-2 pl-10 pr-7 text-[15px] text-[#1F2937] dark:text-[#F8FAFC] outline-none focus:border-[#1E4DB7] placeholder:text-[#64748B] transition"
+                    className="w-full h-[40px] rounded-xl bg-[#F5F7FB] dark:bg-[#1E293B] border border-transparent py-2 pl-9 pr-7 text-[13px] text-[#1F2937] dark:text-[#F8FAFC] outline-none focus:border-[#1E4DB7] placeholder:text-[#64748B] transition"
                   />
                   {searchTerm && (
                     <button
@@ -771,11 +799,29 @@ export default function Sidebar({
                   )}
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1 pt-1">
+                  <Link
+                    to="/quiz"
+                    onClick={() => setIsOpen(false)}
+                    className="h-[40px] rounded-xl font-heading font-bold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center gap-3 px-3"
+                  >
+                    <Brain size={18} strokeWidth={1.75} className="text-[#1E4DB7] shrink-0" />
+                    <span>AI Quiz Generator</span>
+                  </Link>
+
+                  <Link
+                    to="/placement"
+                    onClick={() => setIsOpen(false)}
+                    className="h-[40px] rounded-xl font-heading font-bold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center gap-3 px-3"
+                  >
+                    <Briefcase size={18} strokeWidth={1.75} className="text-[#D9A441] shrink-0" />
+                    <span>AI Placement Hub</span>
+                  </Link>
+
                   <Link
                     to="/notes"
                     onClick={() => setIsOpen(false)}
-                    className="h-[44px] rounded-[14px] font-heading font-bold text-[15px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center gap-[12px] px-3.5"
+                    className="h-[40px] rounded-xl font-heading font-bold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center gap-3 px-3"
                   >
                     <BookOpen size={18} strokeWidth={1.75} className="text-[#1E4DB7] shrink-0" />
                     <span>Knowledge Base</span>
@@ -784,7 +830,7 @@ export default function Sidebar({
                   <Link
                     to="/settings"
                     onClick={() => setIsOpen(false)}
-                    className="h-[44px] rounded-[14px] font-heading font-bold text-[15px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center gap-[12px] px-3.5"
+                    className="h-[40px] rounded-xl font-heading font-bold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center gap-3 px-3"
                   >
                     <Settings size={18} strokeWidth={1.75} className="text-[#64748B] shrink-0" />
                     <span>Settings</span>
@@ -792,7 +838,7 @@ export default function Sidebar({
                 </div>
               </div>
 
-              {/* Chat History */}
+              {/* Chat History — Only this section scrolls! */}
               <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar min-h-0">
                 {filteredChats.length === 0 ? (
                   <div className="py-10 text-center text-caption text-[#64748B] flex flex-col items-center gap-2">
@@ -811,8 +857,8 @@ export default function Sidebar({
                 )}
               </div>
 
-              {/* Safe Area Profile Bottom Bar */}
-              <div className="flex shrink-0 flex-col gap-4 pt-3 border-t border-[#E2E8F0] dark:border-[#334155]">
+              {/* Safe Area Profile Bottom Bar — Fixed at bottom */}
+              <div className="flex shrink-0 flex-col pt-3 border-t border-[#E2E8F0] dark:border-[#334155] mt-auto">
                 <div className="flex items-center justify-between gap-2 rounded-[14px] p-1.5 bg-transparent">
                   <div className="flex items-center gap-3 min-w-0">
                     <UserAvatar user={user} size="sm" />
