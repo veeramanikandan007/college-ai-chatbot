@@ -367,34 +367,40 @@ export default function PlacementHubPage() {
   }
 
   return (
-    <div className="w-full h-full overflow-y-auto bg-[#F8FAFC] dark:bg-[#0B0F19] text-[#1E293B] dark:text-[#F8FAFC] p-4 md:p-8 font-body transition-colors duration-300">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="w-full h-full overflow-y-auto bg-[#F8FAFC] dark:bg-[#0B0F19] text-[#1E293B] dark:text-[#F8FAFC] p-3 sm:p-6 md:p-8 font-body transition-colors duration-300">
+      <div className="w-full max-w-[1600px] mx-auto space-y-6">
 
         {/* ========================================================================= */}
-        {/* HEADER BAR & NAV TABS                                                     */}
+        {/* HEADER BAR                                                                */}
         {/* ========================================================================= */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#111827] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white flex items-center justify-center shadow-md border border-[#D9A441]/30 shrink-0">
-              <Briefcase size={30} strokeWidth={1.75} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="font-heading font-extrabold text-2xl md:text-3xl text-[#0E2A6D] dark:text-white tracking-wide">
-                  AI Placement Hub
-                </h1>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#D9A441]/20 text-[#0E2A6D] dark:text-[#D9A441] font-bold border border-[#D9A441]/30">
-                  Career Readiness
-                </span>
+        <div className="bg-white dark:bg-[#111827] p-4 sm:p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white flex items-center justify-center shadow-md border border-[#D9A441]/30 shrink-0">
+                <Briefcase size={28} strokeWidth={1.75} />
               </div>
-              <p className="text-xs md:text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5">
-                Centralized platform for campus drives, ATS resumes, coding practice, AI mock interviews, and career guidance.
-              </p>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="font-heading font-extrabold text-xl sm:text-2xl md:text-3xl text-[#0E2A6D] dark:text-white tracking-wide">
+                    AI Placement Hub
+                  </h1>
+                  <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#D9A441]/20 text-[#0E2A6D] dark:text-[#D9A441] font-bold border border-[#D9A441]/30">
+                    Career Readiness
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5">
+                  Centralized platform for campus drives, ATS resumes, coding practice, AI mock interviews, and career guidance.
+                </p>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Tab Navigation */}
-          <div className="flex items-center bg-[#F1F5F9] dark:bg-[#1E293B] p-1 rounded-xl overflow-x-auto shrink-0">
+        {/* ========================================================================= */}
+        {/* RESPONSIVE NAVIGATION TAB BAR (Touch scroll, no-scrollbar, snap-x)       */}
+        {/* ========================================================================= */}
+        <div className="w-full bg-white dark:bg-[#111827] p-2 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs overflow-hidden">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory flex-nowrap py-1 px-1 touch-pan-x">
             {[
               { id: 'drives', label: 'Drives & Companies', icon: Building2 },
               { id: 'tracker', label: 'Tracker', icon: Layers },
@@ -411,14 +417,14 @@ export default function PlacementHubPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`px-3.5 py-2 text-xs font-bold rounded-lg transition whitespace-nowrap flex items-center gap-1.5 ${
+                  className={`snap-start shrink-0 px-4 py-2.5 text-xs font-bold rounded-xl transition whitespace-nowrap flex items-center gap-2 cursor-pointer ${
                     isActive
                       ? 'bg-[#0E2A6D] text-white shadow-xs'
-                      : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#0E2A6D] dark:hover:text-white'
+                      : 'bg-[#F8FAFC] dark:bg-[#1E293B] text-[#64748B] dark:text-[#94A3B8] hover:text-[#0E2A6D] dark:hover:text-white'
                   }`}
                 >
-                  <Icon size={15} />
-                  {tab.label}
+                  <Icon size={16} />
+                  <span>{tab.label}</span>
                 </button>
               );
             })}
@@ -428,7 +434,7 @@ export default function PlacementHubPage() {
         {/* ========================================================================= */}
         {/* STATS OVERVIEW CARDS (5 Metrics)                                          */}
         {/* ========================================================================= */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <div className="bg-white dark:bg-[#111827] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs space-y-1">
             <span className="text-[11px] text-[#64748B] font-bold uppercase">Total Companies</span>
             <div className="text-2xl font-extrabold font-heading text-[#0E2A6D] dark:text-white">
@@ -489,7 +495,7 @@ export default function PlacementHubPage() {
             </div>
 
             {/* Drives Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {filteredDrives.map((drive) => {
                 const isApplied = applications.some((a) => a.drive_id === drive.id);
                 return (
@@ -912,7 +918,7 @@ export default function PlacementHubPage() {
             </div>
 
             {/* Coding Problems List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {filteredCodingProblems.map((prob) => (
                 <div
                   key={prob.id}
@@ -1097,7 +1103,7 @@ export default function PlacementHubPage() {
               Daily Placement Aptitude & Logical Practice
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {['Quantitative Aptitude', 'Logical Reasoning', 'Verbal Ability', 'Data Interpretation'].map((c, i) => (
                 <div key={i} className="p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] bg-[#F8FAFC] dark:bg-[#1E293B]/40 space-y-3">
                   <h3 className="font-bold text-sm text-[#0E2A6D] dark:text-white">{c}</h3>
@@ -1185,7 +1191,7 @@ export default function PlacementHubPage() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {certificates.map((cert) => (
                 <div key={cert.id} className="p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] bg-[#F8FAFC] dark:bg-[#1E293B]/40 space-y-2">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#1E4DB7]">{cert.category}</span>

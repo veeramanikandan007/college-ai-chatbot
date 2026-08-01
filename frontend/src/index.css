@@ -292,3 +292,12 @@ button, input, textarea, select {
 ::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.25); border-radius: 9999px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.45); }
 
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
