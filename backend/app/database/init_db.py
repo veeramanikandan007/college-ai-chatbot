@@ -9,7 +9,7 @@ from datetime import date, datetime, timedelta
 
 def init_db(db: Session = None):
     # Import all models to ensure they are registered with Base.metadata
-    from app.models import user, chat, document, student, notification
+    from app.models import user, chat, document, student, notification, quiz, attendance, placement
     
     Base.metadata.create_all(bind=engine)
 

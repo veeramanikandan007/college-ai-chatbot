@@ -23,6 +23,8 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const AdminDashboardPage = lazy(() => import('./pages/AdminDashboardPage'));
 const HomePage = lazy(() => import('./pages/HomePage'));
 
+const PlacementHubPage = lazy(() => import('./pages/student/PlacementHubPage'));
+const QuizGeneratorPage = lazy(() => import('./pages/student/QuizGeneratorPage'));
 const DocumentHubPage = lazy(() => import('./pages/student/DocumentHubPage'));
 const AttendancePage = lazy(() => import('./pages/student/AttendancePage'));
 const TimetablePage = lazy(() => import('./pages/student/TimetablePage'));
@@ -65,6 +67,10 @@ function App() {
                     {/* Main chat */}
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/documents" element={<DocumentHubPage />} />
+                    <Route path="/placement" element={<PlacementHubPage />} />
+                    <Route path="/placement-hub" element={<PlacementHubPage />} />
+                    <Route path="/quiz" element={<QuizGeneratorPage />} />
+                    <Route path="/quiz-generator" element={<QuizGeneratorPage />} />
 
                     {/* Student portal pages */}
                     <Route path="/attendance" element={<AttendancePage />} />

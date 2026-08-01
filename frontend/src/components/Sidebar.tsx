@@ -19,6 +19,8 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   UserRound,
+  Brain,
+  Briefcase,
 } from 'lucide-react';
 
 import { useSidebar } from '../context/SidebarContext';
@@ -545,6 +547,38 @@ export default function Sidebar({
               >
                 <FileText size={16} strokeWidth={1.75} className="text-[#D9A441] shrink-0" />
                 {!isCollapsed && <span>AI Document Hub</span>}
+              </Link>
+            </motion.div>
+
+            {/* AI Quiz Generator — Height 40px, Icon 16px, Text 14px, Gap 10px */}
+            <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.25 }}>
+              <Link
+                to="/quiz"
+                className={`h-[40px] rounded-[12px] font-body font-semibold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center shrink-0 ${
+                  location.pathname === '/quiz' || location.pathname === '/quiz-generator'
+                    ? 'bg-[#1E4DB7]/10 dark:bg-[#1E4DB7]/20 text-[#1E4DB7] dark:text-[#60A5FA]'
+                    : ''
+                } ${isCollapsed ? 'w-[40px] justify-center mx-auto' : 'w-full gap-[10px] px-3'}`}
+                title="AI Quiz Generator"
+              >
+                <Brain size={16} strokeWidth={1.75} className="text-[#1E4DB7] dark:text-[#60A5FA] shrink-0" />
+                {!isCollapsed && <span>AI Quiz Generator</span>}
+              </Link>
+            </motion.div>
+
+            {/* AI Placement Hub — Height 40px, Icon 16px, Text 14px, Gap 10px */}
+            <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.25 }}>
+              <Link
+                to="/placement"
+                className={`h-[40px] rounded-[12px] font-body font-semibold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center shrink-0 ${
+                  location.pathname === '/placement' || location.pathname === '/placement-hub'
+                    ? 'bg-[#1E4DB7]/10 dark:bg-[#1E4DB7]/20 text-[#1E4DB7] dark:text-[#60A5FA]'
+                    : ''
+                } ${isCollapsed ? 'w-[40px] justify-center mx-auto' : 'w-full gap-[10px] px-3'}`}
+                title="AI Placement Hub"
+              >
+                <Briefcase size={16} strokeWidth={1.75} className="text-[#D9A441] shrink-0" />
+                {!isCollapsed && <span>AI Placement Hub</span>}
               </Link>
             </motion.div>
 

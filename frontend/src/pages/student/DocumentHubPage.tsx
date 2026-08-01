@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
   BookOpen,
   UploadCloud,
@@ -39,6 +40,7 @@ import { DocumentAIActionModal, AIActionType } from '../../components/documents/
 type CategoryFilter = 'all' | 'recent' | 'pinned' | 'favorites' | 'shared' | string;
 
 export default function DocumentHubPage() {
+  const navigate = useNavigate();
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [folders, setFolders] = useState<string[]>([]);
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
@@ -515,6 +517,14 @@ export default function DocumentHubPage() {
                 {/* AI Quick Actions Pill Bar */}
                 <div className="py-3 border-t border-b border-[#E2E8F0] dark:border-[#334155] my-3">
                   <div className="flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1">
+                    <button
+                      onClick={() => {
+                        navigate(`/quiz?docId=${doc.id}&docName=${encodeURIComponent(doc.original_name)}`);
+                      }}
+                      className="px-2.5 py-1 rounded-lg bg-[#0E2A6D] text-white font-bold text-[11px] hover:bg-[#153B8A] transition shrink-0 flex items-center gap-1 shadow-xs"
+                    >
+                      <Sparkles size={12} className="text-[#D9A441]" /> Quiz
+                    </button>
                     <button
                       onClick={() => {
                         setAiActionDoc(doc);
