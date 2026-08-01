@@ -1,12 +1,12 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Time
 from sqlalchemy.orm import relationship
-from datetime import datetime
-from app.database.session import Base
+from datetime import datetime, timezone
+from app.database.base import Base
 
 class Department(Base):
     __tablename__ = "departments"
 
-    id = Column(Integer, primary_order=True, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
     code = Column(String, unique=True, index=True)
 
@@ -44,4 +44,4 @@ class TimetableEntry(Base):
     faculty_name = Column(String)
     classroom = Column(String)
     color_code = Column(String, default="#1E4DB7")
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))

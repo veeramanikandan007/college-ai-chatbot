@@ -172,7 +172,7 @@ class TimetableService:
         Question: {query}
         """
         try:
-            res = await self.ai_service.generate_chat_response(messages=[{"role": "user", "content": prompt}])
+            res = await self.ai_service._get_llm_response(prompt, "You are CollegeMate AI Timetable Assistant.")
             return res
         except Exception as err:
             logger.warning(f"AI Timetable Query fallback triggered: {err}")

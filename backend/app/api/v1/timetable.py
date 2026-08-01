@@ -11,7 +11,7 @@ router = APIRouter()
 timetable_service = TimetableService()
 
 class AIQueryRequest(BaseModel):
-    query: str = Field(..., example="When is my next class?")
+    query: str = Field(..., description="Timetable question", json_schema_extra={"example": "When is my next class?"})
 
 class ReminderRequest(BaseModel):
     entry_id: int

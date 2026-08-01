@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy.orm import Session
 from app.database.engine import engine, SessionLocal
 from app.database.base import Base
@@ -7,7 +8,7 @@ from app.models.notification import Notification
 from app.models.student import Attendance, TimetableEntry, Assignment, Fee, Event, Note, LibraryBook
 from datetime import date, datetime, timedelta
 
-def init_db(db: Session = None):
+def init_db(db: Optional[Session] = None):
     # Import all models to ensure they are registered with Base.metadata
     from app.models import user, chat, document, student, notification, quiz, attendance, placement, timetable
     
