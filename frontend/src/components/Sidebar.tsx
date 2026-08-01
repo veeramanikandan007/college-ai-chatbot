@@ -26,6 +26,7 @@ import {
 import { useSidebar } from '../context/SidebarContext';
 import { useAuth } from '../hooks/useAuth';
 import UserAvatar from './UserAvatar';
+import { mainNavItems } from '../config/navigation';
 
 export type ChatCategory =
   | 'Admissions'
@@ -517,32 +518,58 @@ export default function Sidebar({
 
         {/* Navigation Buttons & Chat History (8px vertical spacing) */}
         <div className="flex-1 flex flex-col min-h-0 gap-[8px]">
-          
-          {/* Navigation Buttons List */}
+          {/* Main Action Links — Rendered dynamically from central navigation config */}
           <div className="flex flex-col gap-[8px] shrink-0">
-            
-            {/* New Chat Button — Height 40px, Icon 16px, Text 14px, Gap 10px */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.25 }}
-              onClick={() => {
-                if (location.pathname !== '/dashboard') {
-                  navigate('/dashboard?newChat=true');
-                } else {
-                  onNewChat();
-                }
-              }}
-              className={`h-[40px] rounded-[12px] font-body font-semibold text-[14px] transition-all duration-250 bg-[#0E2A6D] hover:bg-[#153B8A] text-white shadow-xs flex items-center shrink-0 ${
-                isCollapsed ? 'w-[40px] justify-center mx-auto' : 'w-full justify-between px-3'
-              }`}
-              title="New Chat (Ctrl + N)"
-            >
-              <div className="flex items-center gap-[10px]">
-                <SquarePen size={16} strokeWidth={1.75} className="shrink-0" />
-                {!isCollapsed && <span>New Chat</span>}
-              </div>
-              {!isCollapsed && <span className="font-body text-[11px] opacity-80">Ctrl+N</span>}
-            </motion.button>
+            {mainNavItems.map((item) => {
+              const Icon = item.icon;
+              if (item.isAction) {
+                return (
+                  <motion.button
+                    key={item.id}
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.25 }}
+                    onClick={() => {
+                      if (location.pathname !== '/dashboard') {
+                        navigate('/dashboard?newChat=true');
+                      } else {
+                        onNewChat();
+                      }
+                    }}
+                    className={`h-[40px] rounded-[12px] font-body font-semibold text-[14px] transition-all duration-250 bg-[#0E2A6D] hover:bg-[#153B8A] text-white shadow-xs flex items-center shrink-0 ${
+                      isCollapsed ? 'w-[40px] justify-center mx-auto' : 'w-full justify-between px-3'
+                    }`}
+                    title="New Chat (Ctrl + N)"
+                  >
+                    <div className="flex items-center gap-[10px]">
+                      <Icon size={16} strokeWidth={1.75} className="shrink-0" />
+                      {!isCollapsed && <span>{item.label}</span>}
+                    </div>
+                    {!isCollapsed && <span className="font-body text-[11px] opacity-80">Ctrl+N</span>}
+                  </motion.button>
+                );
+              }
+
+              const isActive =
+                location.pathname === item.path ||
+                (item.matchPaths && item.matchPaths.includes(location.pathname));
+
+              return (
+                <motion.div key={item.id} whileHover={{ scale: 1.02 }} transition={{ duration: 0.25 }}>
+                  <Link
+                    to={item.path}
+                    className={`h-[40px] rounded-[12px] font-body font-semibold text-[14px] transition-all duration-250 flex items-center shrink-0 ${
+                      isActive
+                        ? 'bg-[#1E4DB7]/10 dark:bg-[#1E4DB7]/20 text-[#1E4DB7] dark:text-[#60A5FA]'
+                        : 'text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B]'
+                    } ${isCollapsed ? 'w-[40px] justify-center mx-auto' : 'w-full gap-[10px] px-3'}`}
+                    title={item.label}
+                  >
+                    <Icon size={16} strokeWidth={1.75} className={`${item.colorClass} shrink-0`} />
+                    {!isCollapsed && <span>{item.label}</span>}
+                  </Link>
+                </motion.div>
+              );
+            })}
 
             {/* Search Button (Collapsed mode) */}
             {isCollapsed && (
@@ -553,88 +580,12 @@ export default function Sidebar({
                   setIsCollapsed(false);
                   setTimeout(() => searchInputRef.current?.focus(), 150);
                 }}
-                className="w-[40px] h-[40px] rounded-[12px] flex items-center justify-center shrink-0 mx-auto text-[#64748B] dark:text-[#94A3B8] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250"
+                className="w-[40px] h-[40px] rounded-[12px] flex items-center justify-center shrink-0 mx-auto text-[#64748B] dark:text-[#94A3B8] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 mt-1"
                 title="Search Conversations (Ctrl + K)"
               >
                 <Search size={16} strokeWidth={1.75} />
               </motion.button>
             )}
-
-            {/* AI Document Hub — Height 40px, Icon 16px, Text 14px, Gap 10px */}
-            <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.25 }}>
-              <Link
-                to="/documents"
-                className={`h-[40px] rounded-[12px] font-body font-semibold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center shrink-0 ${
-                  location.pathname === '/documents'
-                    ? 'bg-[#1E4DB7]/10 dark:bg-[#1E4DB7]/20 text-[#1E4DB7] dark:text-[#60A5FA]'
-                    : ''
-                } ${isCollapsed ? 'w-[40px] justify-center mx-auto' : 'w-full gap-[10px] px-3'}`}
-                title="AI Document Hub"
-              >
-                <FileText size={16} strokeWidth={1.75} className="text-[#D9A441] shrink-0" />
-                {!isCollapsed && <span>AI Document Hub</span>}
-              </Link>
-            </motion.div>
-
-            {/* AI Quiz Generator — Height 40px, Icon 16px, Text 14px, Gap 10px */}
-            <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.25 }}>
-              <Link
-                to="/quiz"
-                className={`h-[40px] rounded-[12px] font-body font-semibold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center shrink-0 ${
-                  location.pathname === '/quiz' || location.pathname === '/quiz-generator'
-                    ? 'bg-[#1E4DB7]/10 dark:bg-[#1E4DB7]/20 text-[#1E4DB7] dark:text-[#60A5FA]'
-                    : ''
-                } ${isCollapsed ? 'w-[40px] justify-center mx-auto' : 'w-full gap-[10px] px-3'}`}
-                title="AI Quiz Generator"
-              >
-                <Brain size={16} strokeWidth={1.75} className="text-[#1E4DB7] dark:text-[#60A5FA] shrink-0" />
-                {!isCollapsed && <span>AI Quiz Generator</span>}
-              </Link>
-            </motion.div>
-
-            {/* AI Placement Hub — Height 40px, Icon 16px, Text 14px, Gap 10px */}
-            <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.25 }}>
-              <Link
-                to="/placement"
-                className={`h-[40px] rounded-[12px] font-body font-semibold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center shrink-0 ${
-                  location.pathname === '/placement' || location.pathname === '/placement-hub'
-                    ? 'bg-[#1E4DB7]/10 dark:bg-[#1E4DB7]/20 text-[#1E4DB7] dark:text-[#60A5FA]'
-                    : ''
-                } ${isCollapsed ? 'w-[40px] justify-center mx-auto' : 'w-full gap-[10px] px-3'}`}
-                title="AI Placement Hub"
-              >
-                <Briefcase size={16} strokeWidth={1.75} className="text-[#D9A441] shrink-0" />
-                {!isCollapsed && <span>AI Placement Hub</span>}
-              </Link>
-            </motion.div>
-
-            {/* Knowledge Base — Height 40px, Icon 16px, Text 14px, Gap 10px */}
-            <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.25 }}>
-              <Link
-                to="/notes"
-                className={`h-[40px] rounded-[12px] font-body font-semibold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center shrink-0 ${
-                  isCollapsed ? 'w-[40px] justify-center mx-auto' : 'w-full gap-[10px] px-3'
-                }`}
-                title="Knowledge Base"
-              >
-                <BookOpen size={16} strokeWidth={1.75} className="text-[#1E4DB7] dark:text-[#60A5FA] shrink-0" />
-                {!isCollapsed && <span>Knowledge Base</span>}
-              </Link>
-            </motion.div>
-
-            {/* Settings — Height 40px, Icon 16px, Text 14px, Gap 10px */}
-            <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.25 }}>
-              <Link
-                to="/settings"
-                className={`h-[40px] rounded-[12px] font-body font-semibold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center shrink-0 ${
-                  isCollapsed ? 'w-[40px] justify-center mx-auto' : 'w-full gap-[10px] px-3'
-                }`}
-                title="Settings"
-              >
-                <Settings size={16} strokeWidth={1.75} className="text-[#64748B] dark:text-[#94A3B8] shrink-0" />
-                {!isCollapsed && <span>Settings</span>}
-              </Link>
-            </motion.div>
           </div>
 
           {/* Search Input & Scrollable History — Height 40px, Icon 16px */}
@@ -761,26 +712,54 @@ export default function Sidebar({
                 </button>
               </div>
 
-              {/* Navigation Actions — Fixed Sticky Header */}
+              {/* Navigation Actions — Rendered dynamically from central navigation config */}
               <div className="flex flex-col gap-2 shrink-0 mb-3">
-                <button
-                  onClick={() => {
-                    if (location.pathname !== '/dashboard') {
-                      navigate('/dashboard?newChat=true');
-                    } else {
-                      onNewChat();
-                    }
-                    setIsOpen(false);
-                  }}
-                  className="h-[44px] w-full rounded-xl font-heading font-bold text-[14px] tracking-[0.02em] transition-all duration-250 bg-[#0E2A6D] text-white shadow-xs flex items-center justify-between px-3.5 cursor-pointer"
-                >
-                  <div className="flex items-center gap-3">
-                    <SquarePen size={18} strokeWidth={1.75} />
-                    <span>New Chat</span>
-                  </div>
-                </button>
+                {mainNavItems.map((item) => {
+                  const Icon = item.icon;
+                  if (item.isAction) {
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => {
+                          if (location.pathname !== '/dashboard') {
+                            navigate('/dashboard?newChat=true');
+                          } else {
+                            onNewChat();
+                          }
+                          setIsOpen(false);
+                        }}
+                        className="h-[44px] w-full rounded-xl font-heading font-bold text-[14px] tracking-[0.02em] transition-all duration-250 bg-[#0E2A6D] text-white shadow-xs flex items-center justify-between px-3.5 cursor-pointer"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Icon size={18} strokeWidth={1.75} />
+                          <span>{item.label}</span>
+                        </div>
+                      </button>
+                    );
+                  }
 
-                <div className="relative flex items-center">
+                  const isActive =
+                    location.pathname === item.path ||
+                    (item.matchPaths && item.matchPaths.includes(location.pathname));
+
+                  return (
+                    <Link
+                      key={item.id}
+                      to={item.path}
+                      onClick={() => setIsOpen(false)}
+                      className={`h-[40px] rounded-xl font-heading font-bold text-[14px] transition-all duration-250 flex items-center gap-3 px-3 ${
+                        isActive
+                          ? 'bg-[#1E4DB7]/10 dark:bg-[#1E4DB7]/20 text-[#1E4DB7] dark:text-[#60A5FA]'
+                          : 'text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B]'
+                      }`}
+                    >
+                      <Icon size={18} strokeWidth={1.75} className={`${item.colorClass} shrink-0`} />
+                      <span>{item.label}</span>
+                    </Link>
+                  );
+                })}
+
+                <div className="relative flex items-center mt-1">
                   <Search size={16} strokeWidth={1.75} className="absolute left-3 text-[#64748B] pointer-events-none" />
                   <input
                     type="text"
@@ -797,44 +776,6 @@ export default function Sidebar({
                       <X size={14} />
                     </button>
                   )}
-                </div>
-
-                <div className="space-y-1 pt-1">
-                  <Link
-                    to="/quiz"
-                    onClick={() => setIsOpen(false)}
-                    className="h-[40px] rounded-xl font-heading font-bold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center gap-3 px-3"
-                  >
-                    <Brain size={18} strokeWidth={1.75} className="text-[#1E4DB7] shrink-0" />
-                    <span>AI Quiz Generator</span>
-                  </Link>
-
-                  <Link
-                    to="/placement"
-                    onClick={() => setIsOpen(false)}
-                    className="h-[40px] rounded-xl font-heading font-bold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center gap-3 px-3"
-                  >
-                    <Briefcase size={18} strokeWidth={1.75} className="text-[#D9A441] shrink-0" />
-                    <span>AI Placement Hub</span>
-                  </Link>
-
-                  <Link
-                    to="/notes"
-                    onClick={() => setIsOpen(false)}
-                    className="h-[40px] rounded-xl font-heading font-bold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center gap-3 px-3"
-                  >
-                    <BookOpen size={18} strokeWidth={1.75} className="text-[#1E4DB7] shrink-0" />
-                    <span>Knowledge Base</span>
-                  </Link>
-
-                  <Link
-                    to="/settings"
-                    onClick={() => setIsOpen(false)}
-                    className="h-[40px] rounded-xl font-heading font-bold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center gap-3 px-3"
-                  >
-                    <Settings size={18} strokeWidth={1.75} className="text-[#64748B] shrink-0" />
-                    <span>Settings</span>
-                  </Link>
                 </div>
               </div>
 
