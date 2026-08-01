@@ -1,423 +1,294 @@
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ *  CollegeMate AI — Enterprise Design System Architecture & UI Audit
+ *  Mount Zion College of Engineering and Technology
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@700;800&family=Montserrat:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ══════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — LIGHT MODE
+   ══════════════════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — LIGHT MODE
+   ══════════════════════════════════════════════════════════════════════════ */
 :root {
   color-scheme: light;
-  --font-heading: 'Sora', 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-code: 'JetBrains Mono', 'Fira Code', monospace;
 
-  /* ── Typography Scale ───────────────────────── */
-  --text-logo:    2.25rem;  /* 36px  – App Logo        */
-  --text-h1:      1.875rem; /* 30px  – Page Titles     */
-  --text-h2:      1.375rem; /* 22px  – Section Titles  */
-  --text-h3:      1.125rem; /* 18px  – Card Titles     */
-  --text-chat:    1rem;     /* 16px  – Chat Messages   */
-  --text-sidebar: 0.9375rem;/* 15px  – Sidebar Items   */
-  --text-btn:     0.9375rem;/* 15px  – Buttons         */
-  --text-desc:    0.875rem; /* 14px  – Descriptions    */
-  --text-label:   0.8125rem;/* 13px  – Small Labels    */
+  /* ── Layout Dimensions ──────────────────────────────────────────────── */
+  --header-height:     64px;
+  --sidebar-width:      260px;
+  --sidebar-collapsed:  72px;
 
-  /* ── Line Heights ──────────────────────────── */
-  --leading-tight:  1.25;
-  --leading-snug:   1.4;
-  --leading-normal: 1.6;
-  --leading-relaxed:1.75;
+  /* ── Font Family Definitions ────────────────────────────────────────── */
+  --font-heading: 'League Spartan', ui-sans-serif, system-ui, sans-serif;
+  --font-body:    'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-code:    'JetBrains Mono', 'Fira Code', monospace;
 
-  /* Light Theme Color Palette (GamesSeal / ChatGPT SaaS) */
-  --bg-primary: #FAFBFC;
-  --bg-secondary: #F3F4F6;
+  /* ── Typography Scale (Exact Audit Requirements) ───────────────────── */
+  --text-hero:    2.625rem;  /* 42px — Hero Title    */
+  --text-page:    1.875rem;  /* 30px — Page Title    */
+  --text-section: 1.375rem;  /* 22px — Section Title */
+  --text-card:    1rem;      /* 16px — Card Title    */
+  --text-nav:     0.875rem;  /* 14px — Navigation    */
+  --text-body:    0.875rem;  /* 14px — Body Text     */
+  --text-caption: 0.75rem;   /* 12px — Caption       */
+  --text-small:   0.6875rem; /* 11px — Small Text    */
+
+  --line-height-base: 1.5;
+
+  /* ── Color System — Light Mode ──────────────────────────────────────── */
+  --bg-primary: #F5F7FB;
+  --bg-surface: #FFFFFF;
   --bg-sidebar: #FFFFFF;
-  --bg-header: #FFFFFF;
-  --bg-card: #FFFFFF;
+  --bg-header:  #FFFFFF;
+  --bg-card:    #FFFFFF;
 
-  --color-primary-blue: #2563EB;
-  --color-secondary-blue: #0EA5E9;
-  --color-accent-gold: #0EA5E9;
+  --color-primary:       #0E2A6D;
+  --color-primary-hover: #153B8A;
+  --color-royal:         #1E4DB7;
+  --color-accent:        #D9A441;
+  --color-accent-hover:  #C4902E;
 
-  --text-primary: #1F2937;
-  --text-secondary: #6B7280;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger:  #EF4444;
 
-  --border-color: #E5E7EB;
-  --input-bg: #FFFFFF;
-  --hover-bg: #F3F4F6;
-
-  --status-success: #22C55E;
-  --status-warning: #F59E0B;
-  --status-error: #EF4444;
+  --color-border:  #E2E8F0;
+  --color-heading: #1F2937;
+  --color-body:    #475569;
+  --color-muted:   #64748B;
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — DARK MODE
+   ══════════════════════════════════════════════════════════════════════════ */
 :root.dark {
   color-scheme: dark;
 
-  /* Dark Theme Color Palette (GamesSeal / ChatGPT SaaS) */
-  --bg-primary: #0B1220;
-  --bg-secondary: #111827;
+  --bg-primary: #0F172A;
+  --bg-surface: #111827;
   --bg-sidebar: #111827;
-  --bg-header: #111827;
-  --bg-card: #1F2937;
+  --bg-header:  #111827;
+  --bg-card:    #1E293B;
 
-  --color-primary-blue: #3B82F6;
-  --color-secondary-blue: #60A5FA;
-  --color-accent-gold: #22D3EE;
+  --color-primary:       #3B82F6;
+  --color-primary-hover: #2563EB;
+  --color-royal:         #60A5FA;
+  --color-accent:        #D9A441;
+  --color-accent-hover:  #FBBF24;
 
-  --text-primary: #F9FAFB;
-  --text-secondary: #CBD5E1;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger:  #EF4444;
 
-  --border-color: #374151;
-  --input-bg: #1F2937;
-  --hover-bg: #293548;
-
-  --status-success: #22C55E;
-  --status-warning: #F59E0B;
-  --status-error: #EF4444;
+  --color-border:  #334155;
+  --color-heading: #F8FAFC;
+  --color-body:    #CBD5E1;
+  --color-muted:   #94A3B8;
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   GLOBAL BASE RESETS
+   ══════════════════════════════════════════════════════════════════════════ */
 html {
   scroll-behavior: smooth;
   font-family: var(--font-body);
   font-size: 16px;
-  line-height: var(--leading-normal);
+  line-height: var(--line-height-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
-}
-
-/* ── Global smooth font rendering ────────────────────────────── */
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* ── Accessibility: Respect prefers-reduced-motion ───────────── */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--bg);
-  background-image: radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(191,219,254,0.24), transparent 25%),
-    linear-gradient(180deg, var(--bg) 0%, rgba(219, 234, 254, 0.4) 100%);
-  color: var(--text);
+  background-color: var(--bg-primary);
+  color: var(--color-body);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--line-height-base);
   overflow-x: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-:root.dark body {
-  background-image: 
-    radial-gradient(circle at top left, rgba(0, 71, 143, 0.12), transparent 35%),
-    radial-gradient(circle at 80% 20%, rgba(253, 185, 19, 0.04), transparent 28%),
-    linear-gradient(135deg, var(--bg) 0%, rgba(13, 21, 46, 0.7) 60%, var(--bg) 100%);
+button, input, textarea, select {
+  font-family: var(--font-body);
+  font-size: inherit;
+  line-height: var(--line-height-base);
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(120deg, rgba(255,255,255,0.35), rgba(255,255,255,0));
-  mix-blend-mode: screen;
-  animation: drift 8s ease-in-out infinite alternate;
-}
+/* ══════════════════════════════════════════════════════════════════════════
+   TYPOGRAPHY CLASSES (ENTERPRISE STANDARD)
+   ══════════════════════════════════════════════════════════════════════════ */
 
-:root.dark body::before {
-  background: linear-gradient(120deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
-}
-
-@keyframes drift {
-  from { transform: translate3d(-2%, -1%, 0) scale(1); }
-  to { transform: translate3d(2%, 1%, 0) scale(1.03); }
-}
-
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-/* ══════════════════════════════════════════════
-   TYPOGRAPHY UTILITY CLASSES — Sora / Inter / JetBrains Mono
-   ══════════════════════════════════════════════ */
-
-/* Heading font — Sora */
-.font-heading { font-family: var(--font-heading); }
-
-/* Body/UI font — Inter */
-.font-body { font-family: var(--font-body); }
-
-/* Code/IDs — JetBrains Mono */
-.font-code { font-family: var(--font-code); }
-
-/* ── Heading Styles ──────────────────────────── */
-/* App Logo: Sora ExtraBold 36px */
-.ty-logo {
+/* Hero Title — League Spartan 700 · 42px */
+.ty-hero {
   font-family: var(--font-heading);
-  font-size: var(--text-logo);
-  font-weight: 800;
-  line-height: var(--leading-tight);
-  letter-spacing: -0.03em;
+  font-size: var(--text-hero);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--color-heading);
 }
 
-/* Page Title: Sora Bold 30px */
+/* Page Title — League Spartan 700 · 30px */
 .ty-h1 {
   font-family: var(--font-heading);
-  font-size: var(--text-h1);
+  font-size: var(--text-page);
   font-weight: 700;
-  line-height: var(--leading-tight);
-  letter-spacing: -0.02em;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--color-heading);
 }
 
-/* Section Title: Sora SemiBold 22px */
+/* Section Title — League Spartan 700 · 22px */
 .ty-h2 {
   font-family: var(--font-heading);
-  font-size: var(--text-h2);
-  font-weight: 600;
-  line-height: var(--leading-snug);
-  letter-spacing: -0.015em;
+  font-size: var(--text-section);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-heading);
 }
 
-/* Card Title: Sora SemiBold 18px */
+/* Card Title — League Spartan 700 · 16px */
 .ty-h3 {
   font-family: var(--font-heading);
-  font-size: var(--text-h3);
+  font-size: var(--text-card);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--color-heading);
+}
+
+/* Navigation — Inter 600 · 14px */
+.ty-nav {
+  font-family: var(--font-body);
+  font-size: var(--text-nav);
   font-weight: 600;
-  line-height: var(--leading-snug);
-  letter-spacing: -0.01em;
+  line-height: 1.4;
 }
 
-/* ── Body / Chat Styles ─────────────────────── */
-/* Chat Messages: Inter Regular 16px */
-.ty-chat {
+/* Logo — League Spartan 700 · 18px */
+.ty-logo {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* Body Text — Inter 500 · 14px */
+.ty-body {
   font-family: var(--font-body);
-  font-size: var(--text-chat);
+  font-size: var(--text-body);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--color-body);
+}
+
+/* Caption — Inter 400 · 12px */
+.ty-caption {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
   font-weight: 400;
-  line-height: var(--leading-relaxed);
-  letter-spacing: 0;
+  line-height: 1.4;
+  color: var(--color-muted);
 }
 
-/* User Chat bubble: Inter Medium */
-.ty-chat-user {
+/* Small Text — Inter 400 · 11px */
+.ty-small {
   font-family: var(--font-body);
-  font-size: var(--text-chat);
-  font-weight: 500;
-  line-height: var(--leading-relaxed);
+  font-size: var(--text-small);
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-muted);
 }
 
-/* ── UI Element Styles ──────────────────────── */
-/* Sidebar Items: Inter Medium 15px */
-.ty-sidebar {
+/* Primary Button — Height 42px, Radius 12px, Text 14px 600 */
+.btn-primary {
+  height: 42px;
+  border-radius: 12px;
   font-family: var(--font-body);
-  font-size: var(--text-sidebar);
-  font-weight: 500;
-  line-height: var(--leading-snug);
-  letter-spacing: 0.005em;
-}
-
-/* Sidebar Active: Inter SemiBold */
-.ty-sidebar-active {
-  font-family: var(--font-body);
-  font-size: var(--text-sidebar);
+  font-size: 14px;
   font-weight: 600;
-  letter-spacing: 0.005em;
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
 }
 
-/* Buttons: Inter SemiBold 15px */
-.ty-btn {
+/* Secondary Button — Height 40px, Radius 12px, Text 14px 600 */
+.btn-secondary {
+  height: 40px;
+  border-radius: 12px;
   font-family: var(--font-body);
-  font-size: var(--text-btn);
+  font-size: 14px;
   font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0.01em;
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-heading);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-secondary:hover {
+  background-color: rgba(148, 163, 184, 0.08);
 }
 
-/* Descriptions: Inter Regular 14px */
-.ty-desc {
-  font-family: var(--font-body);
-  font-size: var(--text-desc);
-  font-weight: 400;
-  line-height: var(--leading-relaxed);
-  letter-spacing: 0.005em;
+/* Icon Button — 40x40, Radius 12px */
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-body);
+  transition: all 0.18s ease;
+}
+.btn-icon:hover {
+  background-color: rgba(148, 163, 184, 0.12);
+  color: var(--color-heading);
 }
 
-/* Small Labels: Inter Medium 13px */
-.ty-label {
+/* Input Standard — Height 48px, Radius 12px, Text 14px */
+.input-standard {
+  height: 48px;
+  border-radius: 12px;
   font-family: var(--font-body);
-  font-size: var(--text-label);
+  font-size: 14px;
   font-weight: 500;
-  line-height: var(--leading-snug);
-  letter-spacing: 0.02em;
+  padding: 0 16px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-heading);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.input-standard:focus {
+  outline: none;
+  border-color: var(--color-royal);
+  box-shadow: 0 0 0 3px rgba(30, 77, 183, 0.15);
 }
 
-/* Code / Student IDs: JetBrains Mono */
-.ty-code,
-code,
-pre,
-kbd,
-samp {
-  font-family: var(--font-code);
-  font-size: 0.875rem;
-  font-weight: 400;
-  font-variant-ligatures: common-ligatures;
-  letter-spacing: -0.01em;
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.25); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.45); }
 
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.3);
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.5);
-}
-
-.prose a {
-  color: #E8B24D;
-  text-decoration: underline;
-}
-
-.prose code {
-  background: rgba(15, 23, 42, 0.08);
-  padding: 0.1rem 0.3rem;
-  border-radius: 0.35rem;
-}
-
-:root.dark .prose code {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1.5rem;
-}
-
-.text-gradient {
-  background: linear-gradient(92deg, #003366 0%, #2563EB 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-:root.dark .text-gradient {
-  background: linear-gradient(92deg, #60a5fa 0%, #FDB913 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.glass-panel {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-}
-
-:root.dark .glass-panel {
-  background: rgba(11, 17, 34, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.soft-ring {
-  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.03);
-}
-
-:root.dark .soft-ring {
-  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.25);
-}
-
-.card-hover {
-  transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1), border-color 220ms ease;
-}
-
-.card-hover:hover {
-  transform: translateY(-4px);
-  border-color: rgba(37, 99, 235, 0.3);
-}
-
-:root.dark .card-hover:hover {
-  border-color: rgba(253, 185, 19, 0.4);
-}
-
-@keyframes pulse-ripple {
-  0% { transform: scale(0.95); opacity: 0.8; }
-  50% { transform: scale(1.3); opacity: 0.4; }
-  100% { transform: scale(1.65); opacity: 0; }
-}
-
-.ripple-ring-1 { animation: pulse-ripple 2.2s infinite cubic-bezier(0.1, 0, 0, 1); }
-.ripple-ring-2 { animation: pulse-ripple 2.2s infinite cubic-bezier(0.1, 0, 0, 1); animation-delay: 0.7s; }
-.ripple-ring-3 { animation: pulse-ripple 2.2s infinite cubic-bezier(0.1, 0, 0, 1); animation-delay: 1.4s; }
-
-@keyframes bounce-bar {
-  0%, 100% { transform: scaleY(0.25); }
-  50% { transform: scaleY(1.2); }
-}
-
-.wave-bar { animation: bounce-bar 1.2s ease-in-out infinite; transform-origin: bottom; }
-.wave-bar-1 { animation-delay: 0.1s; }
-.wave-bar-2 { animation-delay: 0.35s; animation-duration: 0.9s; }
-.wave-bar-3 { animation-delay: 0.2s; animation-duration: 1.4s; }
-.wave-bar-4 { animation-delay: 0.5s; animation-duration: 1.1s; }
-.wave-bar-5 { animation-delay: 0.3s; animation-duration: 0.8s; }
-.wave-bar-6 { animation-delay: 0.6s; animation-duration: 1.3s; }
-.wave-bar-7 { animation-delay: 0.45s; }
-.wave-bar-8 { animation-delay: 0.15s; animation-duration: 1.0s; }
-
-@keyframes gold-pulse {
-  0% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(253, 185, 19, 0.6); }
-  70% { transform: scale(1.04); box-shadow: 0 0 0 12px rgba(253, 185, 19, 0); }
-  100% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(253, 185, 19, 0); }
-}
-
-.pulse-gold { animation: gold-pulse 2s infinite ease-in-out; }
-
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
-  -webkit-overflow-scrolling: touch;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(148, 163, 184, 0.4);
-  border-radius: 9999px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(148, 163, 184, 0.7);
-}

@@ -19,17 +19,17 @@ export default function Logo({ className = '', showText = true, size = 40 }: Log
       >
         <defs>
           <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#003366" />
-            <stop offset="100%" stopColor="#001F40" />
+            <stop offset="0%" stopColor="#0E2A6D" />
+            <stop offset="100%" stopColor="#0A1E4F" />
           </linearGradient>
           <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#FFF2A3" />
-            <stop offset="50%" stopColor="#FDB913" />
-            <stop offset="100%" stopColor="#C88E00" />
+            <stop offset="0%" stopColor="#F5D076" />
+            <stop offset="50%" stopColor="#D9A441" />
+            <stop offset="100%" stopColor="#B38025" />
           </linearGradient>
         </defs>
         
-        {/* Shield Background with Gradient */}
+        {/* Shield Background with Navy & Gold Gradient */}
         <path
           d="M50 10 L84 27 V55 C84 72 50 86 50 86 C50 86 16 72 16 55 V27 L50 10 Z"
           fill="url(#shieldGrad)"
@@ -42,7 +42,7 @@ export default function Logo({ className = '', showText = true, size = 40 }: Log
         <path
           d="M50 16 L78 30 V52 C78 66 50 78 50 78 C50 78 22 66 22 52 V30 L50 16 Z"
           fill="none"
-          stroke="#FDB913"
+          stroke="#D9A441"
           strokeWidth="1.5"
           strokeDasharray="2 3"
         />
@@ -57,7 +57,7 @@ export default function Logo({ className = '', showText = true, size = 40 }: Log
         />
         <path
           d="M50 45 V63"
-          stroke="#003366"
+          stroke="#0E2A6D"
           strokeWidth="2"
         />
         
@@ -70,10 +70,10 @@ export default function Logo({ className = '', showText = true, size = 40 }: Log
       
       {showText && (
         <div className="flex flex-col">
-          <span className="text-sm font-bold uppercase tracking-wider text-slate-800 dark:text-white leading-tight">
+          <span className="font-heading font-extrabold text-sm tracking-[0.02em] uppercase text-[#0E2A6D] dark:text-white leading-tight">
             Mount Zion
           </span>
-          <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 tracking-wide leading-none">
+          <span className="font-body text-[10px] font-medium text-slate-500 dark:text-slate-400 tracking-normal leading-tight">
             College of Engg & Tech
           </span>
         </div>

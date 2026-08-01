@@ -1,7 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { pageVariants } from './lib/animations';
 
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
@@ -10,7 +8,14 @@ import { ToastContainer } from './components/common/Toast';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { ThemeProvider } from './context/ThemeContext';
 import { SidebarProvider } from './context/SidebarContext';
+import FloatingVoicePlayer from './components/FloatingVoicePlayer';
 
+// ── Layouts ────────────────────────────────────────────────────────────────
+// AppLayout is the single shared layout for ALL protected routes.
+// It mounts the Sidebar once and never remounts it on navigation.
+const AppLayout = lazy(() => import('./components/layout/AppLayout'));
+
+// ── Pages ──────────────────────────────────────────────────────────────────
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
@@ -18,7 +23,7 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const AdminDashboardPage = lazy(() => import('./pages/AdminDashboardPage'));
 const HomePage = lazy(() => import('./pages/HomePage'));
 
-const StudentLayout = lazy(() => import('./components/layout/StudentLayout'));
+const DocumentHubPage = lazy(() => import('./pages/student/DocumentHubPage'));
 const AttendancePage = lazy(() => import('./pages/student/AttendancePage'));
 const TimetablePage = lazy(() => import('./pages/student/TimetablePage'));
 const AssignmentsPage = lazy(() => import('./pages/student/AssignmentsPage'));
@@ -31,91 +36,9 @@ const SettingsPage = lazy(() => import('./pages/student/SettingsPage'));
 
 const PageLoader = () => (
   <div className="flex h-screen w-screen items-center justify-center bg-[#F8FAFC] dark:bg-slate-950">
-    <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#0A2A6A] border-t-transparent dark:border-[#E8B24D]"></div>
+    <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#0A2A6A] border-t-transparent dark:border-[#E8B24D]" />
   </div>
 );
-
-function AnimatedRoutes() {
-  const location = useLocation();
-  // Respect user's prefers-reduced-motion OS preference
-  const [prefersReduced, setPrefersReduced] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReduced(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setPrefersReduced(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
-
-  const resolvedVariants = prefersReduced
-    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
-    : pageVariants;
-
-  return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={location.pathname}
-        variants={resolvedVariants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-      >
-        <Suspense fallback={<PageLoader />}>
-          <Routes location={location}>
-            {/* Public routes */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-
-            {/* Protected student routes with layout */}
-            <Route element={<ProtectedRoute><StudentLayout /></ProtectedRoute>}>
-              <Route path="/attendance" element={<AttendancePage />} />
-              <Route path="/timetable" element={<TimetablePage />} />
-              <Route path="/assignments" element={<AssignmentsPage />} />
-              <Route path="/notes" element={<NotesPage />} />
-              <Route path="/notifications" element={<NotificationsPage />} />
-              <Route path="/events" element={<EventsPage />} />
-              <Route path="/library" element={<LibraryPage />} />
-              <Route path="/fees" element={<FeesPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-            </Route>
-
-            {/* Protected standalone routes */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <DashboardPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Admin-only routes */}
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute requiredRole="admin">
-                  <AdminDashboardPage />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Catch-all */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
-      </motion.div>
-    </AnimatePresence>
-  );
-}
 
 function App() {
   return (
@@ -124,7 +47,55 @@ function App() {
         <SidebarProvider>
           <ToastProvider>
             <AuthProvider>
-              <AnimatedRoutes />
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  {/* ── Public routes (no sidebar, no layout) ── */}
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+
+                  {/* ── Protected routes — ALL share AppLayout (Sidebar mounted once) ── */}
+                  <Route
+                    element={
+                      <ProtectedRoute>
+                        <AppLayout />
+                      </ProtectedRoute>
+                    }
+                  >
+                    {/* Main chat */}
+                    <Route path="/dashboard" element={<DashboardPage />} />
+                    <Route path="/documents" element={<DocumentHubPage />} />
+
+                    {/* Student portal pages */}
+                    <Route path="/attendance" element={<AttendancePage />} />
+                    <Route path="/timetable" element={<TimetablePage />} />
+                    <Route path="/assignments" element={<AssignmentsPage />} />
+                    <Route path="/notes" element={<NotesPage />} />
+                    <Route path="/notifications" element={<NotificationsPage />} />
+                    <Route path="/events" element={<EventsPage />} />
+                    <Route path="/library" element={<LibraryPage />} />
+                    <Route path="/fees" element={<FeesPage />} />
+                    <Route path="/settings" element={<SettingsPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                  </Route>
+
+                  {/* ── Admin-only (standalone, no student sidebar) ── */}
+                  <Route
+                    path="/admin"
+                    element={
+                      <ProtectedRoute requiredRole="admin">
+                        <AdminDashboardPage />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  {/* Catch-all */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </Suspense>
+
+              {/* Global overlays — rendered outside routes, always visible */}
+              <FloatingVoicePlayer />
               <ToastContainer />
             </AuthProvider>
           </ToastProvider>

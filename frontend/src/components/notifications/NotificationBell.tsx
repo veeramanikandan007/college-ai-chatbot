@@ -15,7 +15,7 @@ export function NotificationBell() {
         className="relative p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-[#163D8C]/50"
         aria-label="Notifications"
       >
-        <Bell size={20} className={unreadCount > 0 ? 'text-[#163D8C] dark:text-blue-400' : ''} />
+        <Bell size={18} strokeWidth={1.75} className={unreadCount > 0 ? 'text-[#163D8C] dark:text-blue-400' : ''} />
         
         <AnimatePresence>
           {unreadCount > 0 && (

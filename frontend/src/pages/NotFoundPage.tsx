@@ -6,33 +6,33 @@ import Footer from '../components/Footer';
 
 export default function NotFoundPage() {
   return (
-    <div className="min-h-screen flex flex-col justify-between transition-colors duration-300">
+    <div className="min-h-screen flex flex-col justify-between transition-colors duration-300 bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] font-body">
       <Header />
 
-      <main className="flex-1 container flex items-center justify-center py-12">
+      <main className="flex-1 container mx-auto flex items-center justify-center py-12">
         <div className="text-center space-y-6 max-w-md mx-auto">
-          <div className="inline-flex p-4 rounded-full bg-red-100 dark:bg-red-950/30 text-red-600 dark:text-red-400">
+          <div className="inline-flex p-4 rounded-full bg-red-100 dark:bg-red-950/30 text-[#EF4444]">
             <AlertCircle size={48} />
           </div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
+          <h1 className="font-heading text-hero font-extrabold tracking-[0.02em] text-[#1F2937] dark:text-[#F8FAFC]">
             Page Not Found
           </h1>
-          <p className="text-base text-slate-600 dark:text-slate-400 leading-7">
+          <p className="text-body text-[#64748B] dark:text-[#94A3B8] leading-relaxed">
             The page you are looking for does not exist or has been removed. You can return back to the chatbot or home page using the links below.
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-4">
             <Link
               to="/"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-semibold transition"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#1F2937] dark:text-[#F8FAFC] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] text-small font-btn transition"
             >
-              <Home size={16} />
+              <Home size={18} />
               Home Page
             </Link>
             <Link
-              to="/chat"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white dark:bg-secondary dark:text-slate-900 text-sm font-semibold transition hover:opacity-95"
+              to="/dashboard"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-small font-btn transition shadow-sm"
             >
-              <MessageSquare size={16} />
+              <MessageSquare size={18} />
               Start Chat
             </Link>
           </div>

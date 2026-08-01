@@ -1,191 +1,376 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { staggerContainer, staggerItem } from '../lib/animations';
+import { useNavigate } from 'react-router-dom';
 import {
-  BookOpen,
-  CheckCircle2,
-  CreditCard,
-  Calendar,
-  Bus,
-  Library,
-  Briefcase,
-  Home,
+  Mic,
+  UploadCloud,
   Bot,
   Sparkles,
+  CheckCircle2,
+  FileText,
+  Calendar,
+  BookOpen,
+  BarChart3,
+  Briefcase,
+  Bus,
+  Home,
   ArrowRight,
+  TrendingUp,
+  Clock,
+  Layers,
 } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
+import { staggerContainer, staggerItem } from '../lib/animations';
 
 interface SuggestedQuestionsProps {
   onSelectQuestion: (question: string) => void;
+  onStartVoice?: () => void;
 }
 
-const actionCards = [
-  {
-    icon: BookOpen,
-    category: 'Academics',
-    question: 'Show my course syllabus and subject details',
-    prompt: 'Show my course syllabus and subject details',
-    color: 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800',
-  },
-  {
-    icon: CheckCircle2,
-    category: 'Attendance',
-    question: 'What is my current attendance percentage and condonation rule?',
-    prompt: 'What is my current attendance percentage and condonation rule?',
-    color: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800',
-  },
-  {
-    icon: CreditCard,
-    category: 'Fees',
-    question: 'Show my tuition fee status and upcoming due dates',
-    prompt: 'Show my tuition fee status and upcoming due dates',
-    color: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/30 border-rose-200 dark:border-rose-800',
-  },
-  {
-    icon: Calendar,
-    category: 'Exams',
-    question: 'When do semester examinations and CIA tests start?',
-    prompt: 'When do semester examinations and CIA tests start?',
-    color: 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/30 border-purple-200 dark:border-purple-800',
-  },
-  {
-    icon: Bus,
-    category: 'Transport',
-    question: 'What are the college bus routes and timing schedules?',
-    prompt: 'What are the college bus routes and timing schedules?',
-    color: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800',
-  },
-  {
-    icon: Library,
-    category: 'Library',
-    question: 'What are the digital library working hours and book rules?',
-    prompt: 'What are the digital library working hours and book rules?',
-    color: 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/30 border-teal-200 dark:border-teal-800',
-  },
-  {
-    icon: Briefcase,
-    category: 'Placements',
-    question: 'Show recent campus placement drives and company salary packages',
-    prompt: 'Show recent campus placement drives and company salary packages',
-    color: 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 border-indigo-200 dark:border-indigo-800',
-  },
-  {
-    icon: Home,
-    category: 'Hostel',
-    question: 'What are the hostel room rules and mess timings?',
-    prompt: 'What are the hostel room rules and mess timings?',
-    color: 'text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-900/30 border-cyan-200 dark:border-cyan-800',
-  },
-];
+export default function SuggestedQuestions({
+  onSelectQuestion,
+  onStartVoice,
+}: SuggestedQuestionsProps) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-const typewriterPhrases = [
-  'Ask anything about your college...',
-  'Check attendance, fees, timetable & exams...',
-  'Get placement stats, hostel & transport info...',
-];
-
-export default function SuggestedQuestions({ onSelectQuestion }: SuggestedQuestionsProps) {
-  const [phraseIndex, setPhraseIndex] = useState(0);
-  const [text, setText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
+  // Dynamic Time Greeting
+  const [greeting, setGreeting] = useState('');
+  const [currentDateStr, setCurrentDateStr] = useState('');
 
   useEffect(() => {
-    const currentPhrase = typewriterPhrases[phraseIndex];
-    const typingSpeed = isDeleting ? 30 : 60;
+    const hour = new Date().getHours();
+    if (hour < 12) {
+      setGreeting('Good Morning');
+    } else if (hour < 17) {
+      setGreeting('Good Afternoon');
+    } else {
+      setGreeting('Good Evening');
+    }
 
-    const timer = setTimeout(() => {
-      if (!isDeleting && text === currentPhrase) {
-        setTimeout(() => setIsDeleting(true), 2000);
-      } else if (isDeleting && text === '') {
-        setIsDeleting(false);
-        setPhraseIndex((prev) => (prev + 1) % typewriterPhrases.length);
-      } else {
-        setText(
-          isDeleting
-            ? currentPhrase.substring(0, text.length - 1)
-            : currentPhrase.substring(0, text.length + 1)
-        );
-      }
-    }, typingSpeed);
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    };
+    setCurrentDateStr(new Date().toLocaleDateString('en-US', options));
+  }, []);
 
-    return () => clearTimeout(timer);
-  }, [text, isDeleting, phraseIndex]);
+  const studentName = user?.name || 'Student';
+
+  // Statistics Data
+  const stats = [
+    {
+      id: 'attendance',
+      label: 'Attendance Rate',
+      value: '88.5%',
+      trend: '+2.5% this month',
+      icon: CheckCircle2,
+      accent: 'text-emerald-600 dark:text-emerald-400',
+      bg: 'bg-emerald-500/10 border-emerald-500/20',
+      progress: 88.5,
+    },
+    {
+      id: 'assignments',
+      label: 'Pending Assignments',
+      value: '3 Pending',
+      trend: '2 due this week',
+      icon: FileText,
+      accent: 'text-amber-600 dark:text-amber-400',
+      bg: 'bg-amber-500/10 border-amber-500/20',
+      progress: 60,
+    },
+    {
+      id: 'exams',
+      label: 'Next Exam',
+      value: '12 Days',
+      trend: 'CIA Test II • Oct 24',
+      icon: Calendar,
+      accent: 'text-purple-600 dark:text-purple-400',
+      bg: 'bg-purple-500/10 border-purple-500/20',
+      progress: 40,
+    },
+    {
+      id: 'documents',
+      label: 'Uploaded Documents',
+      value: '24 Files',
+      trend: 'Indexed in Vector DB',
+      icon: BookOpen,
+      accent: 'text-[#1E4DB7] dark:text-[#60A5FA]',
+      bg: 'bg-[#1E4DB7]/10 border-[#1E4DB7]/20',
+      progress: 100,
+    },
+  ];
+
+  // Bento Grid Feature Cards Data
+  const bentoFeatures = [
+    {
+      id: 'library',
+      title: 'AI Library & Study Notes',
+      description: 'Access verified course syllabus, lecture summaries, and vector-indexed study materials.',
+      icon: BookOpen,
+      span: 'md:col-span-2',
+      gradient: 'from-[#0E2A6D] to-[#1E4DB7]',
+      badge: 'Verified Notes',
+      action: () => navigate('/notes'),
+      prompt: 'Show my course syllabus and study material for this semester',
+    },
+    {
+      id: 'attendance',
+      title: 'Attendance Tracker',
+      description: 'Track subject-wise attendance, condonation limits, and leave eligibility.',
+      icon: BarChart3,
+      span: 'md:col-span-1',
+      gradient: 'from-emerald-600 to-teal-700',
+      badge: '88.5% Present',
+      action: () => navigate('/attendance'),
+      prompt: 'What is my current attendance percentage and condonation rule?',
+    },
+    {
+      id: 'timetable',
+      title: 'Timetable & Exam Schedule',
+      description: 'View daily class hours, CIA exam dates, and lab schedules.',
+      icon: Calendar,
+      span: 'md:col-span-1',
+      gradient: 'from-purple-600 to-indigo-700',
+      badge: 'Today: 4 Classes',
+      action: () => navigate('/timetable'),
+      prompt: 'Show my timetable and upcoming exam schedule',
+    },
+    {
+      id: 'placements',
+      title: 'Placement & Careers',
+      description: 'Explore active campus recruitment drives, company CTC packages, and interview tips.',
+      icon: Briefcase,
+      span: 'md:col-span-1',
+      gradient: 'from-indigo-600 to-[#0E2A6D]',
+      badge: '18 Drives Active',
+      action: () => onSelectQuestion('Show recent campus placement drives and salary packages'),
+      prompt: 'Show recent campus placement drives and company salary packages',
+    },
+    {
+      id: 'transport',
+      title: 'Campus Transport',
+      description: 'Bus route numbers, pickup timings, and emergency driver contact info.',
+      icon: Bus,
+      span: 'md:col-span-1',
+      gradient: 'from-amber-500 to-orange-600',
+      badge: '14 Routes',
+      action: () => onSelectQuestion('What are the college bus routes and timing schedules?'),
+      prompt: 'What are the college bus routes and timing schedules?',
+    },
+    {
+      id: 'hostel',
+      title: 'Hostel & Campus Amenities',
+      description: 'Hostel room guidelines, daily mess menu timing, warden contacts, and digital library hours.',
+      icon: Home,
+      span: 'md:col-span-2',
+      gradient: 'from-cyan-600 to-blue-700',
+      badge: 'Hostel & Library',
+      action: () => onSelectQuestion('What are the hostel room rules and mess timings?'),
+      prompt: 'What are the hostel room rules and mess timings?',
+    },
+  ];
 
   return (
-    <div className="mx-auto my-auto max-w-4xl px-4 py-6 select-none flex flex-col justify-center min-h-[60vh]">
-      {/* Floating AI Logo & Hero Header */}
+    <div className="mx-auto my-auto max-w-6xl px-4 py-6 select-none flex flex-col justify-center font-body space-y-6">
+
+      {/* ========================================================================= */}
+      {/* SECTION 1: STUDENT WELCOME CARD                                          */}
+      {/* ========================================================================= */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-8 text-center"
+        transition={{ duration: 0.4 }}
+        className="relative overflow-hidden rounded-[16px] border border-[#E2E8F0] dark:border-[#334155] bg-gradient-to-r from-white via-[#F8FAFC] to-[#F5F7FB] dark:from-[#1E293B] dark:via-[#111827] dark:to-[#0F172A] p-6 shadow-sm"
       >
-        <motion.div
-          animate={{ y: [0, -8, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-          className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#0A2A6A] via-[#163D8C] to-[#0A2A6A] text-white shadow-xl shadow-[#0A2A6A]/25 border border-white/20 relative"
-        >
-          <Bot size={32} strokeWidth={1.75} />
-          <div className="absolute -top-1 -right-1 h-3.5 w-3.5 rounded-full bg-emerald-400 border-2 border-white dark:border-slate-900 animate-pulse" />
-        </motion.div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="font-heading text-[12px] font-bold uppercase tracking-wider text-[#1E4DB7] dark:text-[#60A5FA]">
+                {greeting}
+              </span>
+              <span className="text-[#64748B] dark:text-[#94A3B8]">•</span>
+              <span className="font-body text-[12px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+                {currentDateStr}
+              </span>
+            </div>
 
-        <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-[#0A2A6A] dark:text-slate-100 flex items-center justify-center gap-2">
-          <span>How can I help you today?</span>
-          <Sparkles className="h-6 w-6 text-[#E8B24D]" />
-        </h1>
+            <h1 className="font-heading font-bold text-[30px] leading-tight text-[#0E2A6D] dark:text-[#F8FAFC]">
+              Welcome back, <span className="text-[#1E4DB7] dark:text-[#60A5FA]">{studentName}</span>
+            </h1>
 
-        <p className="ty-desc mt-2 font-semibold text-[#163D8C] dark:text-secondary max-w-xl mx-auto">
-          Mount Zion College of Engineering and Technology
-        </p>
+            <p className="font-body text-[14px] text-[#475569] dark:text-[#CBD5E1]">
+              Mount Zion College of Engineering and Technology • Smart AI Student Portal
+            </p>
+          </div>
 
-        {/* Typewriter text string */}
-        <div className="mt-2 h-6 flex items-center justify-center font-code text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-          <span>{text}</span>
-          <span className="w-0.5 h-4 ml-0.5 bg-[#0A2A6A] dark:bg-secondary animate-pulse" />
+          {/* AI Status Indicator Pill */}
+          <div className="flex items-center gap-2 self-start sm:self-auto rounded-full bg-white dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] px-3.5 py-1.5 shadow-xs">
+            <div className="relative flex h-2.5 w-2.5 items-center justify-center">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#22C55E] opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#22C55E]" />
+            </div>
+            <span className="font-body text-[12px] font-semibold text-[#1F2937] dark:text-[#F8FAFC]">
+              AI Online & Ready
+            </span>
+            <Sparkles size={14} strokeWidth={1.75} className="text-[#D9A441]" />
+          </div>
         </div>
+
+        {/* Soft Background Accent Glow */}
+        <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#1E4DB7]/10 blur-3xl dark:bg-[#60A5FA]/10" />
       </motion.div>
 
-      {/* Suggested Quick Action Cards */}
+      {/* ========================================================================= */}
+      {/* SECTION 2: QUICK STATISTICS CARDS                                       */}
+      {/* ========================================================================= */}
       <motion.div
         variants={staggerContainer}
         initial="initial"
         animate="animate"
-        className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+        className="grid grid-cols-2 lg:grid-cols-4 gap-4"
       >
-        {actionCards.map((item) => {
-          const IconComponent = item.icon;
-
+        {stats.map((st) => {
+          const Icon = st.icon;
           return (
-            <motion.button
-              key={item.category}
+            <motion.div
+              key={st.id}
               variants={staggerItem}
-              whileHover={{ y: -5, scale: 1.02 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => onSelectQuestion(item.prompt)}
-              className="group flex flex-col justify-between rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 text-left shadow-xs transition-all hover:border-[#163D8C] dark:hover:border-secondary hover:shadow-lg hover:shadow-[#0A2A6A]/5"
+              whileHover={{ y: -2, scale: 1.01 }}
+              className="p-[20px] rounded-[16px] border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] shadow-xs transition-all hover:shadow-md flex flex-col justify-between"
             >
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <div className={`flex h-9 w-9 items-center justify-center rounded-xl border ${item.color}`}>
-                    <IconComponent size={20} strokeWidth={1.75} />
-                  </div>
-                  <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#163D8C] dark:text-secondary group-hover:bg-[#163D8C]/10">
-                    {item.category}
-                  </span>
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="font-body text-[12px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+                    {st.label}
+                  </p>
+                  <h3 className="font-heading font-bold text-[22px] text-[#1F2937] dark:text-[#F8FAFC] mt-0.5">
+                    {st.value}
+                  </h3>
                 </div>
-                <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug">
-                  {item.question}
-                </p>
+                <div className={`p-2.5 rounded-xl border ${st.bg} ${st.accent}`}>
+                  <Icon size={16} strokeWidth={1.75} />
+                </div>
               </div>
-              <div className="mt-3 flex items-center gap-1 text-[11px] font-bold text-[#163D8C] dark:text-secondary opacity-0 transition group-hover:opacity-100">
-                <span>Ask AI</span>
-                <ArrowRight size={12} strokeWidth={2} />
+
+              <div className="mt-3 flex items-center justify-between pt-2 border-t border-[#E2E8F0]/60 dark:border-[#334155]/60">
+                <span className="font-body text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8] truncate">
+                  {st.trend}
+                </span>
+                <TrendingUp size={12} strokeWidth={1.75} className={st.accent} />
               </div>
-            </motion.button>
+            </motion.div>
           );
         })}
       </motion.div>
+
+      {/* ========================================================================= */}
+      {/* SECTION 3: QUICK ACTIONS BAR (3 PRIMARY BUTTONS)                         */}
+      {/* ========================================================================= */}
+      <div className="flex flex-col sm:flex-row items-center gap-3">
+        {/* Action 1: Start Voice Chat */}
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => {
+            if (onStartVoice) {
+              onStartVoice();
+            } else {
+              onSelectQuestion('Start voice interaction');
+            }
+          }}
+          className="w-full sm:flex-1 h-[42px] rounded-[12px] bg-gradient-to-r from-[#0E2A6D] to-[#1E4DB7] hover:from-[#153B8A] hover:to-[#2563EB] text-white font-body text-[14px] font-semibold flex items-center justify-center gap-2 shadow-xs transition"
+        >
+          <Mic size={16} strokeWidth={1.75} />
+          <span>Start Voice Chat</span>
+        </motion.button>
+
+        {/* Action 2: Upload Notes */}
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => navigate('/documents')}
+          className="w-full sm:flex-1 h-[40px] rounded-[12px] border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#0E2A6D] dark:text-[#F8FAFC] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] font-body text-[14px] font-semibold flex items-center justify-center gap-2 shadow-xs transition"
+        >
+          <UploadCloud size={16} strokeWidth={1.75} className="text-[#D9A441]" />
+          <span>Upload Notes</span>
+        </motion.button>
+
+        {/* Action 3: Ask CollegeMate AI */}
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => onSelectQuestion('Help me with my studies and exams')}
+          className="w-full sm:flex-1 h-[40px] rounded-[12px] border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#0E2A6D] dark:text-[#F8FAFC] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] font-body text-[14px] font-semibold flex items-center justify-center gap-2 shadow-xs transition"
+        >
+          <Bot size={16} strokeWidth={1.75} className="text-[#1E4DB7] dark:text-[#60A5FA]" />
+          <span>Ask CollegeMate AI</span>
+        </motion.button>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* SECTION 4: FEATURE GRID (BENTO STYLE LAYOUT)                             */}
+      {/* ========================================================================= */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="font-heading font-bold text-[22px] text-[#0E2A6D] dark:text-[#F8FAFC] flex items-center gap-2">
+            <span>Explore Campus AI Services</span>
+            <Sparkles size={16} strokeWidth={1.75} className="text-[#D9A441]" />
+          </h2>
+          <span className="font-body text-[12px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+            Interactive Student Modules
+          </span>
+        </div>
+
+        <motion.div
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+          className="grid grid-cols-1 md:grid-cols-3 gap-4"
+        >
+          {bentoFeatures.map((feat) => {
+            const Icon = feat.icon;
+            return (
+              <motion.div
+                key={feat.id}
+                variants={staggerItem}
+                whileHover={{ y: -3, scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={feat.action}
+                className={`group cursor-pointer rounded-[16px] border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] p-[20px] shadow-xs hover:shadow-md hover:border-[#1E4DB7] dark:hover:border-[#D9A441] transition-all flex flex-col justify-between ${feat.span}`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className={`p-3 rounded-xl bg-gradient-to-tr ${feat.gradient} text-white shadow-xs`}>
+                      <Icon size={16} strokeWidth={1.75} />
+                    </div>
+
+                    <span className="rounded-full bg-[#F5F7FB] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] px-3 py-1 font-body text-[12px] font-semibold text-[#0E2A6D] dark:text-[#D9A441]">
+                      {feat.badge}
+                    </span>
+                  </div>
+
+                  <h3 className="font-heading font-bold text-[16px] text-[#1F2937] dark:text-[#F8FAFC] mb-1 group-hover:text-[#1E4DB7] dark:group-hover:text-[#60A5FA] transition-colors">
+                    {feat.title}
+                  </h3>
+
+                  <p className="font-body text-[14px] text-[#475569] dark:text-[#CBD5E1] leading-relaxed line-clamp-2">
+                    {feat.description}
+                  </p>
+                </div>
+
+                <div className="mt-4 flex items-center gap-1.5 font-body text-[12px] font-semibold text-[#0E2A6D] dark:text-[#60A5FA] group-hover:translate-x-1 transition-transform">
+                  <span>Open Module</span>
+                  <ArrowRight size={14} strokeWidth={1.75} />
+                </div>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </div>
+
     </div>
   );
 }
-

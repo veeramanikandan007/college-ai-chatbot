@@ -1,18 +1,17 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   PanelLeft,
   Bot,
   MessageSquareMore,
-  Bell,
   Sun,
   Moon,
-  CircleUserRound,
   LogIn,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useSidebar } from '../context/SidebarContext';
+import { useAuth } from '../hooks/useAuth';
+import UserAvatar from './UserAvatar';
 import { NotificationBell } from './notifications/NotificationBell';
 import { themeToggleVariants, buttonHover } from '../lib/animations';
 
@@ -29,19 +28,20 @@ export default function HeaderBar({
   onOpenProfile,
   onOpenLogin,
   isLoggedIn,
-  unreadNotificationsCount = 2,
 }: HeaderBarProps) {
   const { isDarkMode, toggleTheme } = useTheme();
-  const { toggleSidebar, isPinned } = useSidebar();
+  const { toggleSidebar } = useSidebar();
+  const { user } = useAuth();
 
   return (
     <motion.header
       initial={{ y: -12, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="sticky top-0 z-30 border-b border-[#E2E8F0] dark:border-slate-800 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md shadow-xs select-none transition-colors duration-300"
+      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+      className="sticky top-0 z-30 border-b border-[#E2E8F0] dark:border-[#334155] bg-white/95 dark:bg-[#111827]/95 backdrop-blur-md shadow-xs select-none transition-colors duration-200"
     >
-      <div className="flex h-16 w-full items-center justify-between px-4 sm:px-6">
+      {/* Header Height: 64px, Vertical Center Alignment */}
+      <div className="flex h-[64px] w-full items-center justify-between px-4 sm:px-6">
         {/* Left: Mobile Toggle & Branding */}
         <div className="flex items-center gap-3">
           <motion.button
@@ -50,49 +50,52 @@ export default function HeaderBar({
             whileHover="hover"
             whileTap="tap"
             onClick={toggleSidebar}
-            className={`rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-900 p-2 text-[#0A2A6A] dark:text-slate-200 hover:bg-[#F1F5F9] dark:hover:bg-slate-800 transition-colors ${isPinned ? 'md:hidden' : ''}`}
-            title="Toggle Sidebar"
+            className="flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#1E293B] text-[#0E2A6D] dark:text-[#60A5FA] hover:bg-[#E2E8F0] dark:hover:bg-[#334155] transition-colors lg:hidden shrink-0"
+            title="Toggle Sidebar Menu"
           >
-            <PanelLeft size={22} strokeWidth={1.75} />
+            <PanelLeft size={16} strokeWidth={1.75} />
           </motion.button>
 
-          <Link to="/" className="flex items-center gap-2">
+          {/* Logo + Brand — 34x34 container, 16px Bot icon, League Spartan 18px 700 */}
+          <Link to="/" className="flex items-center gap-2.5">
             <motion.div
-              whileHover={{ scale: 1.08, rotate: -4 }}
-              whileTap={{ scale: 0.94 }}
-              transition={{ duration: 0.2 }}
-              className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0A2A6A] to-[#163D8C] text-white shadow-xs"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.18 }}
+              className="flex h-[34px] w-[34px] items-center justify-center rounded-[10px] bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white shadow-xs border border-[#D9A441]/30 shrink-0"
             >
-              <Bot size={22} strokeWidth={1.75} />
+              <Bot size={16} strokeWidth={1.75} />
             </motion.div>
             <div className="hidden sm:block">
-              <span className="font-heading text-base font-bold text-[#0A2A6A] dark:text-slate-100 tracking-tight transition-colors">CollegeMate AI</span>
+              <span className="font-heading font-bold text-[16px] tracking-tight text-[#0E2A6D] dark:text-[#F8FAFC] transition-colors">
+                CollegeMate AI
+              </span>
             </div>
           </Link>
         </div>
 
-        {/* Center: Current Chat Title */}
+        {/* Center: Current Chat Title Search Pill — Chat Title in Inter 14px 600 */}
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.1, duration: 0.25 }}
+          transition={{ delay: 0.05, duration: 0.2 }}
           className="flex flex-1 items-center justify-center px-4 max-w-md"
         >
-          <div className="flex items-center gap-2 truncate text-center text-xs sm:text-sm font-semibold text-[#0A2A6A] dark:text-slate-200 rounded-full bg-[#F8FAFC] dark:bg-slate-900 border border-[#E2E8F0] dark:border-slate-800 px-4 py-1.5 shadow-xs transition-colors">
-            <MessageSquareMore size={18} strokeWidth={1.75} className="text-[#163D8C] dark:text-secondary shrink-0" />
+          <div className="flex h-[36px] items-center gap-2 truncate text-center font-body font-semibold text-[14px] text-[#1F2937] dark:text-[#F8FAFC] rounded-full bg-[#F5F7FB] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] px-3.5 shadow-xs transition-colors">
+            <MessageSquareMore size={16} strokeWidth={1.75} className="text-[#0E2A6D] dark:text-[#60A5FA] shrink-0" />
             <span className="truncate">{currentChatTitle || 'New Conversation'}</span>
           </div>
         </motion.div>
 
-        {/* Right Action Icons & Auth */}
-        <div className="flex items-center gap-2">
-          {/* Theme Toggle with rotation animation */}
+        {/* Right: Action Buttons — All Buttons 40x40px, Icons 16px */}
+        <div className="flex items-center gap-2.5">
+          {/* Theme Toggle */}
           <motion.button
             onClick={toggleTheme}
             title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-900 text-[#0A2A6A] dark:text-amber-400 hover:bg-[#F1F5F9] dark:hover:bg-slate-800 transition-colors overflow-hidden"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#1E293B] text-[#0E2A6D] dark:text-[#D9A441] hover:bg-[#E2E8F0] dark:hover:bg-[#334155] transition-colors overflow-hidden shrink-0"
           >
             <AnimatePresence mode="wait" initial={false}>
               {isDarkMode ? (
@@ -104,7 +107,7 @@ export default function HeaderBar({
                   exit="exit"
                   className="flex items-center justify-center"
                 >
-                  <Sun size={20} strokeWidth={1.75} />
+                  <Sun size={16} strokeWidth={1.75} />
                 </motion.span>
               ) : (
                 <motion.span
@@ -115,37 +118,35 @@ export default function HeaderBar({
                   exit="exit"
                   className="flex items-center justify-center"
                 >
-                  <Moon size={20} strokeWidth={1.75} />
+                  <Moon size={16} strokeWidth={1.75} />
                 </motion.span>
               )}
             </AnimatePresence>
           </motion.button>
 
           {/* Notification Bell */}
-          <div className="relative flex items-center justify-center rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-900 transition-colors hover:bg-[#F1F5F9] dark:hover:bg-slate-800">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#1E293B] transition-colors hover:bg-[#E2E8F0] dark:hover:bg-[#334155] shrink-0">
             {isLoggedIn && <NotificationBell />}
           </div>
 
-          {/* Profile Avatar or Login Button */}
+          {/* Profile Avatar Button or Login */}
           {isLoggedIn ? (
-            <motion.button
-              onClick={onOpenProfile}
-              title="Open Student Profile Drawer"
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.92 }}
-              transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-              className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0A2A6A] to-[#163D8C] text-white shadow-md"
-            >
-              <CircleUserRound size={22} strokeWidth={1.75} />
-            </motion.button>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <UserAvatar
+                user={user}
+                size="header"
+                onClick={onOpenProfile}
+                className="shadow-xs cursor-pointer"
+              />
+            </motion.div>
           ) : (
             <motion.button
               onClick={onOpenLogin}
-              whileHover={{ scale: 1.04, y: -1 }}
+              whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
-              className="flex items-center gap-1.5 rounded-xl bg-[#0A2A6A] px-4 py-2 text-xs font-semibold text-white shadow-md shadow-[#0A2A6A]/20 hover:bg-[#163D8C] transition-colors"
+              className="flex h-10 items-center gap-2 rounded-[12px] bg-[#0E2A6D] hover:bg-[#153B8A] px-3.5 font-body text-[14px] font-semibold text-white shadow-xs transition-colors shrink-0"
             >
-              <LogIn className="h-3.5 w-3.5" />
+              <LogIn size={16} strokeWidth={1.75} />
               <span>Login</span>
             </motion.button>
           )}
@@ -154,4 +155,3 @@ export default function HeaderBar({
     </motion.header>
   );
 }
-

@@ -22,23 +22,26 @@ export default function TimetablePage() {
   const [currentDay, setCurrentDay] = useState('Monday');
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 lg:p-8 bg-slate-50 dark:bg-slate-900">
-      <div className="mx-auto max-w-6xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <CalendarIcon className="text-[#0A2A6A]" />
-            Weekly Timetable
-          </h1>
+    <div className="flex-1 overflow-y-auto p-6 lg:p-8 bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] transition-colors duration-300 font-body">
+      <div className="mx-auto max-w-5xl space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="font-heading font-bold text-page tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC] flex items-center gap-3">
+              <CalendarIcon className="text-[#0E2A6D] dark:text-[#60A5FA]" size={32} />
+              Weekly Timetable
+            </h1>
+            <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-1">Review your weekly lecture schedule and classroom locations.</p>
+          </div>
           
-          <div className="flex bg-white dark:bg-slate-800 rounded-xl p-1 shadow-sm border border-slate-200 dark:border-slate-700 w-full sm:w-auto overflow-x-auto">
-            {days.map(day => (
+          <div className="flex bg-white dark:bg-[#1E293B] rounded-xl p-1.5 shadow-xs border border-[#E2E8F0] dark:border-[#334155] w-full sm:w-auto overflow-x-auto">
+            {days.map((day) => (
               <button
                 key={day}
                 onClick={() => setCurrentDay(day)}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
-                  currentDay === day 
-                    ? 'bg-[#0A2A6A] text-white shadow-sm' 
-                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+                className={`px-4 py-2.5 text-small font-semibold rounded-xl transition-all duration-180 whitespace-nowrap ${
+                  currentDay === day
+                    ? 'bg-[#0E2A6D] text-white shadow-xs'
+                    : 'text-[#64748B] dark:text-[#94A3B8] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A]'
                 }`}
               >
                 {day}
@@ -47,17 +50,17 @@ export default function TimetablePage() {
           </div>
         </div>
 
-        <div className="grid gap-4">
+        <div className="grid gap-4 pt-2">
           {periods.map((time, index) => {
             const key = `${currentDay}-${time}`;
             const cls = mockTimetable[key];
 
-            // If it's a break (1:15 PM)
+            // Lunch break
             if (index === 4) {
               return (
                 <div key="lunch" className="flex items-center gap-4 py-2">
-                  <div className="w-24 shrink-0 text-sm font-bold text-slate-400 text-right">1:15 PM</div>
-                  <div className="flex-1 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-700 p-4 text-center text-sm font-medium text-slate-500 uppercase tracking-widest">
+                  <div className="w-24 shrink-0 text-small font-bold text-[#64748B] text-right">1:15 PM</div>
+                  <div className="flex-1 rounded-xl bg-white dark:bg-[#1E293B] border border-dashed border-[#E2E8F0] dark:border-[#334155] p-4 text-center text-small font-heading font-bold text-[#64748B] dark:text-[#94A3B8] uppercase tracking-[0.02em]">
                     Lunch Break
                   </div>
                 </div>
@@ -66,25 +69,25 @@ export default function TimetablePage() {
 
             return (
               <div key={time} className="flex items-stretch gap-4">
-                <div className="w-24 shrink-0 flex flex-col justify-center text-sm font-bold text-slate-500 dark:text-slate-400 text-right pt-4">
+                <div className="w-24 shrink-0 flex flex-col justify-center text-small font-bold text-[#64748B] text-right pt-4">
                   {time}
                 </div>
                 
                 <div className="flex-1">
                   {cls ? (
-                    <div className="h-full rounded-2xl bg-white dark:bg-slate-800 p-5 shadow-sm border border-l-4 border-slate-100 border-l-[#163D8C] dark:border-slate-700 transition hover:shadow-md">
-                      <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-3">{cls.subject}</h3>
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
-                        <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900/50 px-2.5 py-1 rounded-md">
-                          <User size={14} className="text-[#E8B24D]" />
+                    <div className="h-full rounded-xl bg-white dark:bg-[#1E293B] p-5 shadow-xs border border-l-4 border-[#E2E8F0] dark:border-[#334155] border-l-[#0E2A6D] dark:border-l-[#60A5FA] hover:shadow-md transition-all duration-180">
+                      <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] mb-3">{cls.subject}</h3>
+                      <div className="flex flex-wrap items-center gap-4 text-small text-[#64748B] dark:text-[#94A3B8]">
+                        <div className="flex items-center gap-1.5 bg-[#F5F7FB] dark:bg-[#0F172A] px-2.5 py-1 rounded-lg">
+                          <User size={14} className="text-[#F59E0B]" />
                           <span>{cls.faculty}</span>
                         </div>
-                        <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900/50 px-2.5 py-1 rounded-md">
-                          <MapPin size={14} className="text-emerald-500" />
+                        <div className="flex items-center gap-1.5 bg-[#F5F7FB] dark:bg-[#0F172A] px-2.5 py-1 rounded-lg">
+                          <MapPin size={14} className="text-[#22C55E]" />
                           <span>{cls.room}</span>
                         </div>
                         {cls.span > 1 && (
-                          <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900/50 px-2.5 py-1 rounded-md text-[#163D8C] font-medium">
+                          <div className="flex items-center gap-1.5 bg-[#F5F7FB] dark:bg-[#0F172A] px-2.5 py-1 rounded-lg text-[#0E2A6D] dark:text-[#60A5FA] font-bold">
                             <Clock size={14} />
                             <span>{cls.span} Hours</span>
                           </div>
@@ -92,8 +95,8 @@ export default function TimetablePage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="h-full rounded-2xl bg-slate-50/50 dark:bg-slate-800/20 border border-dashed border-slate-200 dark:border-slate-700 p-5 flex items-center justify-center">
-                      <span className="text-sm font-medium text-slate-400">Free Period</span>
+                    <div className="h-full min-h-[80px] rounded-xl bg-white dark:bg-[#1E293B] border border-dashed border-[#E2E8F0] dark:border-[#334155] p-5 flex items-center justify-center">
+                      <span className="text-small font-semibold text-[#64748B] dark:text-[#94A3B8]">Free Period</span>
                     </div>
                   )}
                 </div>
@@ -101,7 +104,6 @@ export default function TimetablePage() {
             );
           })}
         </div>
-
       </div>
     </div>
   );

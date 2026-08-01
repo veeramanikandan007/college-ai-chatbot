@@ -4,6 +4,9 @@ import { userMessageVariants, aiMessageVariants } from '../lib/animations';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import toast from 'react-hot-toast';
+import { useVoiceStore } from '../store/useVoiceStore';
+import { useAuth } from '../hooks/useAuth';
+import UserAvatar from './UserAvatar';
 import {
   Bot,
   CircleUserRound,
@@ -57,6 +60,11 @@ export default function ChatMessage({
   onDelete,
   onRetry,
 }: ChatMessageProps) {
+  const { activeMessageId, finishedMessageIds, voiceState } = useVoiceStore();
+  const { user } = useAuth();
+  const isSpeakingThisMsg = activeMessageId === message.id && voiceState === 'speaking';
+  const isFinishedThisMsg = finishedMessageIds.includes(message.id);
+
   const [copied, setCopied] = useState(false);
   const [copiedCodeIndex, setCopiedCodeIndex] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -124,23 +132,23 @@ export default function ChatMessage({
     >
       {/* Avatar for Assistant */}
       {!isUser && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0A2A6A] to-[#163D8C] text-white font-bold shadow-xs">
-          <Bot className="h-4 w-4" />
+        <div className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0E2A6D] to-[#1E4DB7] text-white font-bold shadow-xs border border-[#D9A441]/30">
+          <Bot size={16} strokeWidth={1.75} />
         </div>
       )}
 
       <div
-        className={`group relative max-w-[92%] sm:max-w-[88%] md:max-w-[85%] lg:max-w-[82%] rounded-2xl p-3.5 sm:p-4 shadow-sm transition-all duration-300 break-words ${
+        className={`group relative max-w-[92%] sm:max-w-[88%] md:max-w-[85%] lg:max-w-[82%] rounded-xl p-3.5 sm:p-4 shadow-xs transition-all duration-200 break-words font-body text-[14px] font-medium leading-[1.5] ${
           isUser
-            ? 'ty-chat-user bg-[#0A2A6A] dark:bg-slate-800 text-white rounded-tr-xs'
-            : 'ty-chat bg-white dark:bg-slate-900 text-[#1F2937] dark:text-slate-200 border border-[#E2E8F0] dark:border-slate-700 rounded-tl-xs'
+            ? 'bg-[#0E2A6D] dark:bg-[#1E293B] text-white rounded-tr-xs'
+            : 'bg-white dark:bg-[#1E293B] text-[#1F2937] dark:text-[#F8FAFC] border border-[#E2E8F0] dark:border-[#334155] rounded-tl-xs'
         }`}
       >
         {/* Thinking Indicator */}
         {message.isThinking && (
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#163D8C] dark:text-secondary py-1">
-            <Loader2 className="h-4 w-4 animate-spin text-[#E8B24D]" />
-            <Sparkles className="h-3.5 w-3.5 text-[#163D8C] dark:text-secondary animate-pulse" />
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#1E3A8A] dark:text-[#60A5FA] py-1">
+            <Loader2 className="h-4 w-4 animate-spin text-[#F59E0B]" />
+            <Sparkles className="h-3.5 w-3.5 text-[#1E3A8A] dark:text-[#60A5FA] animate-pulse" />
             <span>Analyzing college knowledge base...</span>
           </div>
         )}
@@ -224,29 +232,56 @@ export default function ChatMessage({
 
         {/* Footer Actions & Timestamp */}
         <div className="mt-2 flex items-center justify-between text-[10px] font-medium text-[#64748B] dark:text-slate-400">
-          <span className={isUser ? 'text-slate-300' : 'text-[#64748B] dark:text-slate-400'}>
-            {message.timestamp}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className={isUser ? 'text-slate-300' : 'text-[#64748B] dark:text-slate-400'}>
+              {message.timestamp}
+            </span>
+            {isSpeakingThisMsg && (
+              <span className="text-primary dark:text-[#60A5FA] flex items-center gap-1 font-bold">
+                <span className="w-1 h-1 rounded-full bg-primary dark:bg-[#60A5FA] animate-ping" />
+                Speaking...
+              </span>
+            )}
+            {!isSpeakingThisMsg && isFinishedThisMsg && (
+              <span className="text-[#22C55E] font-bold flex items-center gap-1">
+                <Check size={14} strokeWidth={1.75} />
+                <span>Read Complete</span>
+              </span>
+            )}
+          </div>
 
           {/* Action buttons for messages */}
           {!message.isThinking && !isEditing && (
             <div className="flex items-center gap-1.5 opacity-90 sm:opacity-0 transition group-hover:opacity-100">
-              {/* Speaker / Read Aloud Button (TASK 5) */}
+              {/* Speaker / Read Aloud Button */}
               {!isUser && onSpeak && (
                 <button
-                  onClick={() => (isSpeakingThis && onStopSpeak ? onStopSpeak() : onSpeak(message.text))}
-                  title={isSpeakingThis ? 'Stop speaking' : 'Read response aloud'}
+                  onClick={() => (isSpeakingThisMsg && onStopSpeak ? onStopSpeak() : onSpeak(message.text))}
+                  title={isSpeakingThisMsg ? 'Stop speaking' : 'Read response aloud'}
                   className={`rounded p-1 transition ${
-                    isSpeakingThis
-                      ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 animate-pulse'
-                      : 'hover:bg-[#F1F5F9] dark:hover:bg-slate-800 text-[#163D8C] dark:text-secondary'
+                    isSpeakingThisMsg
+                      ? 'bg-primary/10 text-primary dark:text-[#60A5FA]'
+                      : 'hover:bg-[#F1F5F9] dark:hover:bg-slate-800 text-muted'
                   }`}
                 >
-                  {isSpeakingThis ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+                  {isSpeakingThisMsg ? (
+                    <div className="flex items-center gap-[1.5px] h-3 px-0.5">
+                      {[1, 2, 3].map((b) => (
+                        <motion.span
+                          key={b}
+                          animate={{ scaleY: [0.3, 1, 0.3] }}
+                          transition={{ duration: 0.8, repeat: Infinity, delay: b * 0.15 }}
+                          className="w-[1.5px] h-full bg-primary dark:bg-[#60A5FA] rounded-full"
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <Volume2 size={16} strokeWidth={1.75} />
+                  )}
                 </button>
               )}
 
-              {/* Copy Button (TASK 6) */}
+              {/* Copy Button */}
               <button
                 onClick={() => copyToClipboard(message.text)}
                 title="Copy message text"
@@ -254,7 +289,7 @@ export default function ChatMessage({
                   isUser ? 'hover:bg-white/20 text-white' : 'hover:bg-[#F1F5F9] dark:hover:bg-slate-800 text-[#1F2937] dark:text-slate-300'
                 }`}
               >
-                {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                {copied ? <Check size={16} strokeWidth={1.75} className="text-emerald-400" /> : <Copy size={16} strokeWidth={1.75} />}
               </button>
 
               {/* User Actions: Edit, Delete, Retry */}
@@ -264,7 +299,7 @@ export default function ChatMessage({
                   title="Edit message"
                   className="rounded p-1 hover:bg-white/20 text-white transition"
                 >
-                  <Pencil className="h-3.5 w-3.5" />
+                  <Pencil size={16} strokeWidth={1.75} />
                 </button>
               )}
 
@@ -274,7 +309,7 @@ export default function ChatMessage({
                   title="Retry prompt"
                   className="rounded p-1 hover:bg-white/20 text-white transition"
                 >
-                  <RotateCcw className="h-3.5 w-3.5" />
+                  <RotateCcw size={16} strokeWidth={1.75} />
                 </button>
               )}
 
@@ -286,7 +321,7 @@ export default function ChatMessage({
                     isUser ? 'hover:bg-white/20 text-white' : 'hover:bg-[#F1F5F9] dark:hover:bg-slate-800 text-rose-500'
                   }`}
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <Trash2 size={16} strokeWidth={1.75} />
                 </button>
               )}
 
@@ -298,7 +333,7 @@ export default function ChatMessage({
                     title="Share response"
                     className="rounded p-1 hover:bg-[#F1F5F9] dark:hover:bg-slate-800 text-[#64748B] dark:text-slate-400 transition"
                   >
-                    <Share2 className="h-3.5 w-3.5" />
+                    <Share2 size={16} strokeWidth={1.75} />
                   </button>
 
                   {onRegenerate && (
@@ -307,7 +342,7 @@ export default function ChatMessage({
                       title="Regenerate response"
                       className="rounded p-1 hover:bg-[#F1F5F9] dark:hover:bg-slate-800 text-[#163D8C] dark:text-secondary transition"
                     >
-                      <RotateCcw className="h-3.5 w-3.5" />
+                      <RotateCcw size={16} strokeWidth={1.75} />
                     </button>
                   )}
 
@@ -320,7 +355,7 @@ export default function ChatMessage({
                           message.reaction === 'like' ? 'text-emerald-600 font-bold' : 'text-[#64748B] dark:text-slate-400'
                         }`}
                       >
-                        <ThumbsUp className="h-3.5 w-3.5" />
+                        <ThumbsUp size={16} strokeWidth={1.75} />
                       </button>
                       <button
                         onClick={() => onReact(message.id, 'dislike')}
@@ -329,7 +364,7 @@ export default function ChatMessage({
                           message.reaction === 'dislike' ? 'text-rose-600 font-bold' : 'text-[#64748B] dark:text-slate-400'
                         }`}
                       >
-                        <ThumbsDown className="h-3.5 w-3.5" />
+                        <ThumbsDown size={16} strokeWidth={1.75} />
                       </button>
                     </>
                   )}
@@ -341,11 +376,7 @@ export default function ChatMessage({
       </div>
 
       {/* Avatar for User */}
-      {isUser && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#E8B24D] text-xs font-bold text-[#0A2A6A] shadow-xs">
-          <CircleUserRound size={20} strokeWidth={1.75} />
-        </div>
-      )}
+      {isUser && <UserAvatar user={user} size="sm" />}
     </motion.div>
   );
 }

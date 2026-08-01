@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle, Award } from 'lucide-react';
 
 export default function AttendancePage() {
   const [attendanceData] = useState([
@@ -15,82 +15,88 @@ export default function AttendancePage() {
   const overallPercentage = ((totalAttended / totalClasses) * 100).toFixed(1);
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 lg:p-8 bg-slate-50 dark:bg-slate-900">
-      <div className="mx-auto max-w-5xl">
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">Attendance Overview</h1>
+    <div className="flex-1 overflow-y-auto p-6 lg:p-8 bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] transition-colors duration-300 font-body">
+      <div className="mx-auto max-w-5xl space-y-6">
+        <div>
+          <h1 className="font-heading font-bold text-page tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC] flex items-center gap-3">
+            <Award className="text-[#0E2A6D] dark:text-[#60A5FA]" size={32} />
+            Attendance Overview
+          </h1>
+          <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-1">Monitor your class attendance and status metrics.</p>
+        </div>
 
         {/* Top Stats */}
-        <div className="grid gap-6 md:grid-cols-3 mb-8">
-          <div className="rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col items-center justify-center">
+        <div className="grid gap-6 md:grid-cols-3">
+          <div className="rounded-xl bg-white dark:bg-[#1E293B] p-6 shadow-xs border border-[#E2E8F0] dark:border-[#334155] flex flex-col items-center justify-center">
             <div className="relative w-32 h-32 flex items-center justify-center mb-2">
               <svg className="w-full h-full transform -rotate-90">
-                <circle cx="64" cy="64" r="56" fill="none" stroke="currentColor" strokeWidth="12" className="text-slate-100 dark:text-slate-700" />
+                <circle cx="64" cy="64" r="56" fill="none" stroke="currentColor" strokeWidth="10" className="text-[#E2E8F0] dark:text-[#334155]" />
                 <circle 
-                  cx="64" cy="64" r="56" fill="none" stroke="currentColor" strokeWidth="12" 
+                  cx="64" cy="64" r="56" fill="none" stroke="currentColor" strokeWidth="10" 
                   strokeDasharray={351.8} 
                   strokeDashoffset={351.8 - (351.8 * (parseFloat(overallPercentage) / 100))}
-                  className="text-emerald-500 transition-all duration-1000 ease-out" 
+                  className="text-[#22C55E] transition-all duration-1000 ease-out" 
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-2xl font-bold text-slate-800 dark:text-white">{overallPercentage}%</span>
+                <span className="font-heading font-bold text-section text-[#1F2937] dark:text-[#F8FAFC]">{overallPercentage}%</span>
               </div>
             </div>
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Overall Attendance</p>
+            <p className="text-small font-semibold text-[#64748B] dark:text-[#94A3B8]">Overall Attendance</p>
           </div>
           
-          <div className="rounded-2xl bg-gradient-to-br from-[#0A2A6A] to-[#163D8C] p-6 shadow-sm flex flex-col justify-center text-white">
-            <h3 className="text-lg font-medium opacity-90 mb-1">Total Classes</h3>
-            <p className="text-4xl font-bold">{totalClasses}</p>
-            <p className="text-sm mt-4 opacity-75">Conducted this semester</p>
+          <div className="rounded-xl bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] p-6 shadow-md flex flex-col justify-center text-white border border-[#D9A441]/30">
+            <h3 className="font-heading text-card font-bold opacity-90 mb-1">Total Classes</h3>
+            <p className="font-heading text-hero font-extrabold">{totalClasses}</p>
+            <p className="text-small mt-4 opacity-80">Conducted this semester</p>
           </div>
 
-          <div className="rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-center">
-            <h3 className="text-lg font-medium text-slate-500 dark:text-slate-400 mb-1">Classes Attended</h3>
-            <p className="text-4xl font-bold text-slate-800 dark:text-white">{totalAttended}</p>
-            <p className="text-sm mt-4 text-emerald-600 font-medium">Keep it up!</p>
+          <div className="rounded-xl bg-white dark:bg-[#1E293B] p-6 shadow-xs border border-[#E2E8F0] dark:border-[#334155] flex flex-col justify-center">
+            <h3 className="font-heading text-card font-bold text-[#64748B] dark:text-[#94A3B8] mb-1">Classes Attended</h3>
+            <p className="font-heading text-hero font-extrabold text-[#1F2937] dark:text-[#F8FAFC]">{totalAttended}</p>
+            <p className="text-small mt-4 text-[#22C55E] font-semibold">Keep it up!</p>
           </div>
         </div>
 
         {/* Subject-wise Table */}
-        <div className="rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
-            <h2 className="font-semibold text-slate-800 dark:text-white">Subject-wise Details</h2>
+        <div className="rounded-xl bg-white dark:bg-[#1E293B] shadow-xs border border-[#E2E8F0] dark:border-[#334155] overflow-hidden">
+          <div className="px-6 py-4 border-b border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B]">
+            <h2 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Subject-wise Details</h2>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600 dark:text-slate-400">
-              <thead className="text-xs uppercase bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+            <table className="w-full text-left text-body text-[#475569] dark:text-[#CBD5E1]">
+              <thead className="text-caption font-heading font-bold uppercase bg-[#F5F7FB] dark:bg-[#111827] text-[#64748B] dark:text-[#94A3B8] border-b border-[#E2E8F0] dark:border-[#334155]">
                 <tr>
-                  <th className="px-6 py-4 font-medium">Subject</th>
-                  <th className="px-6 py-4 font-medium">Classes Attended</th>
-                  <th className="px-6 py-4 font-medium">Total Classes</th>
-                  <th className="px-6 py-4 font-medium">Percentage</th>
-                  <th className="px-6 py-4 font-medium text-right">Status</th>
+                  <th className="px-6 py-4 font-semibold">Subject</th>
+                  <th className="px-6 py-4 font-semibold">Classes Attended</th>
+                  <th className="px-6 py-4 font-semibold">Total Classes</th>
+                  <th className="px-6 py-4 font-semibold">Percentage</th>
+                  <th className="px-6 py-4 font-semibold text-right">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+              <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#334155]">
                 {attendanceData.map((row) => {
                   const percent = ((row.attended / row.total) * 100).toFixed(1);
                   let StatusIcon = CheckCircle;
-                  let statusColor = 'text-emerald-500';
-                  if (row.status === 'Warning') { StatusIcon = AlertCircle; statusColor = 'text-amber-500'; }
-                  if (row.status === 'Critical') { StatusIcon = XCircle; statusColor = 'text-rose-500'; }
+                  let statusColor = 'text-[#22C55E]';
+                  if (row.status === 'Warning') { StatusIcon = AlertCircle; statusColor = 'text-[#F59E0B]'; }
+                  if (row.status === 'Critical') { StatusIcon = XCircle; statusColor = 'text-[#EF4444]'; }
 
                   return (
-                    <tr key={row.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                      <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{row.subject}</td>
+                    <tr key={row.id} className="hover:bg-[#F5F7FB] dark:hover:bg-[#111827] transition-colors duration-180">
+                      <td className="px-6 py-4 font-heading font-bold text-[#1F2937] dark:text-[#F8FAFC]">{row.subject}</td>
                       <td className="px-6 py-4">{row.attended}</td>
                       <td className="px-6 py-4">{row.total}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <span className="w-10 font-medium">{percent}%</span>
-                          <div className="h-2 w-24 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                          <span className="w-10 font-bold">{percent}%</span>
+                          <div className="h-2 w-24 bg-[#E2E8F0] dark:bg-[#334155] rounded-full overflow-hidden">
                             <div className={`h-full bg-current ${statusColor}`} style={{ width: `${percent}%` }} />
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className={`inline-flex items-center gap-1.5 font-medium ${statusColor}`}>
+                        <div className={`inline-flex items-center gap-1.5 font-bold ${statusColor}`}>
                           <StatusIcon size={16} />
                           <span>{row.status}</span>
                         </div>
@@ -102,7 +108,6 @@ export default function AttendancePage() {
             </table>
           </div>
         </div>
-
       </div>
     </div>
   );

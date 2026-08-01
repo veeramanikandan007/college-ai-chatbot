@@ -1,41 +1,61 @@
+/**
+ * DashboardPage — Chat UI only.
+ *
+ * This page no longer owns its own Sidebar, HeaderBar, sessions state,
+ * or ProfileDrawer. All of that lives in AppLayout (mounted once globally).
+ *
+ * This page only renders:
+ *   - The chat message list
+ *   - The voice input bar
+ *   - Voice overlays (settings, wake banner, error)
+ *   - The export modal
+ *
+ * All session + message state is read from and written to useChatStore.
+ */
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Square, Download, Info, Settings2, AlertCircle, X } from 'lucide-react';
+import { Download, Info, AlertCircle, X } from 'lucide-react';
 
-import Sidebar, { ChatSession } from '../components/Sidebar';
-import HeaderBar from '../components/HeaderBar';
-import RightPanel from '../components/RightPanel';
+import { ChatSession } from '../components/Sidebar';
 import ChatMessage, { ChatMessageData } from '../components/ChatMessage';
 import SuggestedQuestions from '../components/SuggestedQuestions';
-import ProfileDrawer from '../components/ProfileDrawer';
 import ExportModal from '../components/ExportModal';
 
 import VoiceInputBar from '../components/VoiceInputBar';
-import VoicePlayer from '../components/VoicePlayer';
 import VoiceSettingsPanel from '../components/VoiceSettingsPanel';
 import WakeStatusBanner from '../components/WakeStatusBanner';
 
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { useVoiceSystem } from '../hooks/useVoiceSystem';
-import { fetchApi, ApiError } from '../lib/api';
+import { useVoiceStore } from '../store/useVoiceStore';
+import { useChatStore } from '../store/useChatStore';
+import { fetchApi } from '../lib/api';
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [sessions, setSessions] = useState<ChatSession[]>([]);
-  const [activeChatId, setActiveChatId] = useState<string | null>(null);
-  const [messagesMap, setMessagesMap] = useState<Record<string, ChatMessageData[]>>({});
+  // ── Global chat state from the store (survives navigation) ────────────────
+  const {
+    sessions,
+    activeChatId,
+    messagesMap,
+    sessionsLoading,
+    sessionsLoaded,
+    loadSessions,
+    setActiveChatId,
+    addSession,
+    updateSession,
+    loadMessages,
+    setMessagesMap,
+  } = useChatStore();
 
   const [promptInput, setPromptInput] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
-  const [sessionsLoading, setSessionsLoading] = useState<boolean>(true);
-
-  const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isExportOpen, setIsExportOpen] = useState<boolean>(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
 
@@ -50,7 +70,7 @@ export default function DashboardPage() {
     return activeChatId ? sessions.find((s) => s.id === activeChatId) : null;
   }, [sessions, activeChatId]);
 
-  // --- Advanced Voice System Hook ---
+  // ── Voice system ──────────────────────────────────────────────────────────
   const {
     assistantState,
     setAssistantState,
@@ -60,92 +80,49 @@ export default function DashboardPage() {
     setRecordingDuration,
     voiceError,
     showVoiceError,
-    spokenText,
-    isPlayingSpeech,
-    isPausedSpeech,
-    voiceSettings,
-    handleVoiceSettingsChange,
     voiceButtonRef,
-    stopSpeech,
-    pauseSpeech,
-    resumeSpeech,
-    speakText,
-    speakTextStream,
   } = useVoiceSystem();
 
-  useEffect(() => {
-    loadSessions();
-  }, []);
+  const {
+    spokenText,
+    setSpokenText,
+    voiceState,
+    settings: voiceSettings,
+    updateSettings,
+    speak: speakText,
+    stop: stopSpeech,
+  } = useVoiceStore();
 
+  const isPlayingSpeech = voiceState === 'loading' || voiceState === 'speaking' || voiceState === 'paused';
+
+  const handleVoiceSettingsChange = (newSettings: any) => {
+    updateSettings(newSettings);
+  };
+
+  // ── Load sessions if not already loaded (guard is inside the store) ───────
+  useEffect(() => {
+    if (user) loadSessions();
+  }, [user]);
+
+  // ── Handle ?newChat=true URL param (from sidebar New Chat in collapsed mode) ─
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     if (searchParams.get('newChat') === 'true') {
       handleNewChat();
       navigate('/dashboard', { replace: true });
     }
-  }, [location.search, navigate]);
+  }, [location.search]);
 
+  // ── Auto-scroll on new messages ───────────────────────────────────────────
   useEffect(() => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
   }, [activeMessages, isGenerating]);
 
-  const loadSessions = async () => {
-    setSessionsLoading(true);
-    try {
-      const data: any[] = await fetchApi('/chat/sessions');
-      const mapped: ChatSession[] = data.map((s) => ({
-        id: String(s.id),
-        title: s.title,
-        lastUpdated: new Date(s.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        timestamp: new Date(s.updated_at).getTime(),
-        pinned: s.is_pinned,
-        archived: false,
-        category: detectCategoryFromTitle(s.title),
-      }));
-      setSessions(mapped);
-      if (mapped.length > 0) setActiveChatId(mapped[0].id);
-    } catch (e) {
-      if (!(e instanceof ApiError && e.status === 401)) {
-        showToast('Failed to load chat sessions.', 'error');
-      }
-    } finally {
-      setSessionsLoading(false);
-    }
-  };
-
-  const detectCategoryFromTitle = (title: string) => {
-    const lower = title.toLowerCase();
-    if (lower.includes('admission') || lower.includes('apply') || lower.includes('seat')) return 'Admissions';
-    if (lower.includes('exam') || lower.includes('timetable') || lower.includes('result') || lower.includes('mark') || lower.includes('grade') || lower.includes('gpa')) return 'Examinations';
-    if (lower.includes('attendance') || lower.includes('absent') || lower.includes('leave')) return 'Attendance';
-    if (lower.includes('book') || lower.includes('library') || lower.includes('journal')) return 'Library';
-    if (lower.includes('placement') || lower.includes('job') || lower.includes('company') || lower.includes('salary')) return 'Placements';
-    if (lower.includes('fee') || lower.includes('payment') || lower.includes('tuition')) return 'Fees';
-    if (lower.includes('hostel') || lower.includes('room') || lower.includes('mess')) return 'Hostel';
-    if (lower.includes('course') || lower.includes('subject') || lower.includes('syllabus') || lower.includes('faculty')) return 'Academics';
-    return 'General';
-  };
-
-  const loadMessages = async (sessionId: string) => {
-    if (messagesMap[sessionId]) return;
-    try {
-      const data: any[] = await fetchApi(`/chat/sessions/${sessionId}/messages`);
-      const mapped: ChatMessageData[] = data.map((m) => ({
-        id: String(m.id),
-        role: m.role,
-        text: m.content,
-        timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        reaction: m.reaction,
-        isBookmarked: m.is_bookmarked,
-      }));
-      setMessagesMap((prev) => ({ ...prev, [sessionId]: mapped }));
-    } catch {
-      showToast('Failed to load messages.', 'error');
-    }
-  };
-
+  // ─────────────────────────────────────────────────────────────────────────
+  // Chat handlers
+  // ─────────────────────────────────────────────────────────────────────────
   const getCurrentTimeString = () =>
     new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -155,20 +132,8 @@ export default function DashboardPage() {
     setPromptInput('');
   };
 
-  const handleSelectChat = async (id: string) => {
-    stopSpeech();
-    setActiveChatId(id);
-    await loadMessages(id);
-  };
-
   const handleRenameChat = async (id: string, newTitle: string) => {
-    setSessions((prev) =>
-      prev.map((s) =>
-        s.id === id
-          ? { ...s, title: newTitle, category: detectCategoryFromTitle(newTitle) }
-          : s
-      )
-    );
+    updateSession(id, { title: newTitle });
     try {
       await fetchApi(`/chat/sessions/${id}`, {
         method: 'PUT',
@@ -177,76 +142,15 @@ export default function DashboardPage() {
     } catch { }
   };
 
-  const handleDeleteChat = async (id: string) => {
-    const remaining = sessions.filter((s) => s.id !== id);
-    setSessions(remaining);
-    setMessagesMap((prev) => { const next = { ...prev }; delete next[id]; return next; });
-    if (activeChatId === id) {
-      if (remaining.length > 0) setActiveChatId(remaining[0].id);
-      else setActiveChatId(null);
-    }
-    try {
-      await fetchApi(`/chat/sessions/${id}`, { method: 'DELETE' });
-    } catch {
-      showToast('Could not delete chat.', 'error');
-    }
-  };
-
-  const handlePinChat = async (id: string) => {
-    const chat = sessions.find(s => s.id === id);
-    if (!chat) return;
-    const newPinned = !chat.pinned;
-    setSessions((prev) => prev.map((s) => (s.id === id ? { ...s, pinned: newPinned } : s)));
-    try {
-      await fetchApi(`/chat/sessions/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify({ is_pinned: newPinned }),
-      });
-    } catch { }
-  };
-
-  const handleArchiveChat = (id: string) => {
-    setSessions((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, archived: !s.archived } : s))
-    );
-    const chat = sessions.find((s) => s.id === id);
-    showToast(chat?.archived ? 'Chat restored.' : 'Chat archived.', 'success');
-  };
-
-  const handleDuplicateChat = async (id: string) => {
-    const chatToDuplicate = sessions.find(s => s.id === id);
-    if (!chatToDuplicate) return;
-    
-    try {
-      const data = await fetchApi('/chat/sessions', {
-        method: 'POST',
-        body: JSON.stringify({ title: `${chatToDuplicate.title} (Copy)` }),
-      });
-      const newSession: ChatSession = {
-        id: String(data.id),
-        title: data.title,
-        lastUpdated: 'Just now',
-        timestamp: Date.now(),
-      };
-      setSessions((prev) => [newSession, ...prev]);
-      setMessagesMap((prev) => ({ ...prev, [String(data.id)]: [] }));
-      setActiveChatId(String(data.id));
-      showToast('Chat duplicated successfully.', 'success');
-    } catch {
-      showToast('Could not duplicate chat.', 'error');
-    }
-  };
-
   const handleSendMessage = async (customPrompt?: string | any, source: 'text' | 'voice' = 'text') => {
     let textToSend = promptInput;
     if (typeof customPrompt === 'string') {
       textToSend = customPrompt;
-      setPromptInput(customPrompt); // Populate input temporarily
+      setPromptInput(customPrompt);
     }
     textToSend = textToSend.trim();
     if (!textToSend || isGenerating) return;
 
-    // Shut up any active speech synthesis and change state
     stopSpeech();
     setAssistantState('PROCESSING');
 
@@ -259,12 +163,10 @@ export default function DashboardPage() {
           body: JSON.stringify({ title }),
         });
         sessionId = String(data.id);
-        const newSession: ChatSession = { id: sessionId, title: data.title, lastUpdated: 'Just now', timestamp: Date.now() };
-        setSessions((prev) => [newSession, ...prev]);
+        addSession({ id: sessionId, title: data.title, lastUpdated: 'Just now', timestamp: Date.now() });
         setMessagesMap((prev) => ({ ...prev, [sessionId!]: [] }));
         setActiveChatId(sessionId);
       } catch (err) {
-        console.error("Failed to start new session. Error:", err);
         showToast('Could not start a new session.', 'error');
         setAssistantState(voiceSettings.handsFree ? 'WAKING' : 'IDLE');
         return;
@@ -275,7 +177,7 @@ export default function DashboardPage() {
     const tempUserId = `u-${Date.now()}`;
     const userMsg: ChatMessageData = { id: tempUserId, role: 'user', text: textToSend, timestamp };
     const currentMsgs = messagesMap[sessionId!] || [];
-    
+
     setMessagesMap((prev) => {
       const msgs = prev[sessionId!] || [];
       if (msgs.length === 0) {
@@ -307,19 +209,12 @@ export default function DashboardPage() {
         signal: abortControllerRef.current.signal,
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch stream');
-      }
+      if (!response.ok) throw new Error('Failed to fetch stream');
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder('utf-8');
-      
       let fullText = '';
       const assistantMsgId = `a-${Date.now()}`;
-      const timestamp = getCurrentTimeString();
-
-      // Create a TTS stream handle — speech starts on first complete sentence
-      const ttsStream = source === 'voice' ? speakTextStream(voiceSettings) : null;
 
       if (reader) {
         while (true) {
@@ -334,8 +229,6 @@ export default function DashboardPage() {
                 const data = JSON.parse(dataStr);
                 if (data.text) {
                   fullText += data.text;
-                  // Push chunk to TTS stream — speech starts after first sentence boundary
-                  ttsStream?.push(data.text);
                   const streamedMsg: ChatMessageData = {
                     id: assistantMsgId,
                     role: 'assistant',
@@ -345,17 +238,15 @@ export default function DashboardPage() {
                   };
                   setMessagesMap((prev) => ({ ...prev, [sessionId!]: [...currentMsgs, userMsg, streamedMsg] }));
                 }
-              } catch (e) {
-                // Ignore parse errors on incomplete chunks
+              } catch {
+                // Ignore incomplete SSE chunks
               }
             }
           }
         }
-        // Flush any remaining sentence buffer
-        ttsStream?.flush();
       }
 
-      // Stream complete — finalize message
+      // Stream complete — mark message as final
       setMessagesMap((prev) => {
         const msgs = prev[sessionId!] || [];
         const lastMsg = msgs[msgs.length - 1];
@@ -365,10 +256,10 @@ export default function DashboardPage() {
         return prev;
       });
       setIsGenerating(false);
-      
-      // For text source (non-voice), just update state
-      // For voice, the ttsStream already handled speaking sentence-by-sentence
-      if (source !== 'voice') {
+
+      if (voiceSettings.autoSpeak) {
+        speakText(fullText, assistantMsgId);
+      } else {
         setAssistantState(voiceSettings.handsFree ? 'WAKING' : 'IDLE');
       }
 
@@ -398,14 +289,11 @@ export default function DashboardPage() {
         isStreaming: currentLength < fullText.length,
       };
       setMessagesMap((prev) => ({ ...prev, [sessionId]: [...baseMessages, streamedMsg] }));
-      
       if (currentLength >= fullText.length) {
         clearInterval(interval);
         setIsGenerating(false);
-        
-        // Auto-speak the AI response if enabled and it's a voice message
-        if (source === 'voice') {
-          speakText(fullText);
+        if (voiceSettings.autoSpeak) {
+          speakText(fullText, assistantMsgId);
         } else {
           setAssistantState(voiceSettings.handsFree ? 'WAKING' : 'IDLE');
         }
@@ -426,18 +314,14 @@ export default function DashboardPage() {
 
   const handleMessageReaction = async (id: string, reaction: 'like' | 'dislike') => {
     if (!activeChatId) return;
-    
-    // Find message to see if we are toggling off
-    const msg = messagesMap[activeChatId]?.find(m => m.id === id);
+    const msg = (messagesMap[activeChatId] || []).find((m) => m.id === id);
     const newReaction = msg?.reaction === reaction ? null : reaction;
-    
     setMessagesMap((prev) => ({
       ...prev,
       [activeChatId]: (prev[activeChatId] || []).map((m) =>
         m.id === id ? { ...m, reaction: newReaction } : m
       ),
     }));
-
     try {
       if (!id.startsWith('a-') && !id.startsWith('u-')) {
         await fetchApi(`/chat/sessions/${activeChatId}/messages/${id}/reaction`, {
@@ -468,186 +352,134 @@ export default function DashboardPage() {
     showToast('Message deleted.', 'info');
   };
 
-  const handleToggleSpeakBubble = (text: string) => {
+  const handleToggleSpeakBubble = (text: string, messageId: string) => {
     if (spokenText === text && isPlayingSpeech) {
       stopSpeech();
     } else {
-      speakText(text);
+      setSpokenText('');
+      speakText(text, messageId);
     }
   };
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // Render — Chat content only (no Sidebar, no Header, no ProfileDrawer)
+  // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#F8FAFC] dark:bg-slate-950 text-[#1F2937] dark:text-slate-100 transition-colors duration-300">
-      <Sidebar
-        conversations={sessions}
-        activeChatId={activeChatId || ''}
-        onSelectChat={handleSelectChat}
-        onNewChat={handleNewChat}
-        onRenameChat={handleRenameChat}
-        onDeleteChat={handleDeleteChat}
-        onPinChat={handlePinChat}
-        onArchiveChat={handleArchiveChat}
-        onDuplicateChat={handleDuplicateChat}
-        onExportChat={() => setIsExportOpen(true)}
-      />
+    <main className="flex flex-1 flex-col overflow-hidden bg-white dark:bg-[#0F172A] shadow-xs relative w-full">
 
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <HeaderBar
-          currentChatTitle={currentSession?.title || 'CollegeMate AI'}
-          onOpenProfile={() => setIsProfileOpen(true)}
-          onOpenLogin={() => {}}
-          isLoggedIn={!!user}
-        />
+      {/* Voice HUD Overlay */}
+      <div className="absolute top-0 left-0 right-0 z-10 w-full max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto px-4 pt-4 space-y-2 pointer-events-none">
+        <div className="pointer-events-auto">
+          <WakeStatusBanner
+            state={assistantState}
+            onStopListening={() => {
+              stopSpeech();
+              handleVoiceSettingsChange({ ...voiceSettings, handsFree: false });
+            }}
+          />
+        </div>
 
-        <div className="flex flex-1 overflow-hidden">
-          <main className="flex flex-1 flex-col overflow-hidden bg-white dark:bg-slate-900 shadow-xs relative">
-            
-            {/* Voice HUD Overlay */}
-            <div className="absolute top-0 left-0 right-0 z-10 w-full max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto px-4 pt-4 space-y-2 pointer-events-none">
-              <div className="pointer-events-auto">
-                <AnimatePresence>
-                  {isPlayingSpeech && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                    >
-                      <VoicePlayer
-                        isPlaying={isPlayingSpeech}
-                        isPaused={isPausedSpeech}
-                        text={spokenText}
-                        volume={voiceSettings.volume}
-                        speed={voiceSettings.speed}
-                        onPlay={resumeSpeech}
-                        onPause={pauseSpeech}
-                        onStop={stopSpeech}
-                        onVolumeChange={(v) => handleVoiceSettingsChange({ ...voiceSettings, volume: v })}
-                        onSpeedChange={(s) => handleVoiceSettingsChange({ ...voiceSettings, speed: s })}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              <div className="pointer-events-auto">
-                <WakeStatusBanner 
-                  state={assistantState}
-                  onStopListening={() => {
-                    stopSpeech();
-                    handleVoiceSettingsChange({ ...voiceSettings, handsFree: false });
-                  }}
-                />
-              </div>
-
-              {voiceError && (
-                <div className="pointer-events-auto flex items-center justify-between p-3.5 rounded-xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/25 text-red-700 dark:text-red-300 text-xs font-semibold shadow-sm">
-                  <div className="flex items-center gap-2">
-                    <AlertCircle size={14} className="shrink-0" />
-                    <span>{voiceError}</span>
-                  </div>
-                  <button onClick={() => showVoiceError(null as any)} className="text-red-400 hover:text-red-700 dark:hover:text-white">
-                    <X size={14} />
-                  </button>
-                </div>
-              )}
+        {voiceError && (
+          <div className="pointer-events-auto flex items-center justify-between p-3.5 rounded-xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/25 text-red-700 dark:text-red-300 text-xs font-semibold shadow-sm">
+            <div className="flex items-center gap-2">
+              <AlertCircle size={14} className="shrink-0" />
+              <span>{voiceError}</span>
             </div>
+            <button onClick={() => showVoiceError(null as any)} className="text-red-400 hover:text-red-700 dark:hover:text-white">
+              <X size={14} />
+            </button>
+          </div>
+        )}
+      </div>
 
-            <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-3 sm:px-6 py-4">
-              {sessionsLoading ? (
-                <div className="flex items-center justify-center h-full">
-                  <div className="w-10 h-10 rounded-full border-4 border-primary dark:border-secondary border-t-transparent animate-spin"></div>
-                </div>
-              ) : activeMessages.length === 0 ? (
-                <SuggestedQuestions onSelectQuestion={(q) => handleSendMessage(q)} />
-              ) : (
-                <div className="w-full max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto space-y-4 pt-2 transition-all duration-300 ease-in-out">
-                  {activeMessages.map((msg) => (
-                    <ChatMessage
-                      key={msg.id}
-                      message={msg}
-                      onRegenerate={handleRegenerate}
-                      onSpeak={msg.role === 'assistant' ? () => handleToggleSpeakBubble(msg.text) : undefined}
-                      onStopSpeak={stopSpeech}
-                      isSpeakingThis={isPlayingSpeech && spokenText === msg.text}
-                      onReact={handleMessageReaction}
-                      onEdit={handleEditMessage}
-                      onDelete={handleDeleteMessage}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="border-t border-[#E2E8F0] dark:border-slate-800 bg-white dark:bg-slate-900 p-3 sm:p-4 relative">
-              <div className="w-full max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto relative transition-all duration-300 ease-in-out">
-                
-                <VoiceInputBar
-                  promptInput={promptInput}
-                  setPromptInput={setPromptInput}
-                  onSendMessage={handleSendMessage}
-                  isGenerating={isGenerating}
-                  onStopGeneration={handleStopGeneration}
-                  isSettingsOpen={isSettingsOpen}
-                  setIsSettingsOpen={setIsSettingsOpen}
-                  language={voiceSettings.language}
-                  onError={(err) => {
-                    showVoiceError(err);
-                    setAssistantState(voiceSettings.handsFree ? 'WAKING' : 'IDLE');
-                  }}
-                />
-
-                <div className="mt-2 flex items-center justify-between text-[11px] font-medium text-[#94A3B8] dark:text-slate-500">
-                  <div className="flex items-center gap-1">
-                    <Info className="h-3 w-3 text-accent dark:text-secondary" />
-                    <span>CollegeMate AI displays verified college information.</span>
-                  </div>
-                  {activeMessages.length > 0 && (
-                    <button
-                      onClick={() => setIsExportOpen(true)}
-                      className="flex items-center gap-1 text-accent dark:text-secondary hover:underline"
-                    >
-                      <Download className="h-3 w-3" />
-                      <span>Export Chat</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </main>
-
-          {isSettingsOpen && (
-            <div className="fixed inset-0 z-50 overflow-hidden md:relative md:z-auto md:w-80 md:shrink-0 flex justify-end">
-              {/* Backdrop for Mobile */}
-              <div
-                onClick={() => setIsSettingsOpen(false)}
-                className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs md:hidden"
+      {/* Chat Message List */}
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-3 sm:px-6 py-4">
+        {sessionsLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="w-10 h-10 rounded-full border-4 border-primary dark:border-secondary border-t-transparent animate-spin" />
+          </div>
+        ) : activeMessages.length === 0 ? (
+          <SuggestedQuestions
+            onSelectQuestion={(q) => handleSendMessage(q)}
+            onStartVoice={() => voiceButtonRef.current?.click()}
+          />
+        ) : (
+          <div className="w-full max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto space-y-4 pt-2 transition-all duration-300 ease-in-out">
+            {activeMessages.map((msg) => (
+              <ChatMessage
+                key={msg.id}
+                message={msg}
+                onRegenerate={handleRegenerate}
+                onSpeak={msg.role === 'assistant' ? () => handleToggleSpeakBubble(msg.text, msg.id) : undefined}
+                onStopSpeak={stopSpeech}
+                isSpeakingThis={isPlayingSpeech && spokenText === msg.text}
+                onReact={handleMessageReaction}
+                onEdit={handleEditMessage}
+                onDelete={handleDeleteMessage}
               />
+            ))}
+          </div>
+        )}
+      </div>
 
-              {/* Drawer Container */}
-              <aside className="relative z-10 h-full w-full max-w-sm border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4 shadow-2xl md:w-80 md:max-w-none md:shadow-none flex flex-col">
-                <VoiceSettingsPanel
-                  settings={voiceSettings}
-                  onChange={handleVoiceSettingsChange}
-                  onClose={() => setIsSettingsOpen(false)}
-                />
-              </aside>
+      {/* Input Bar */}
+      <div className="border-t border-[#E2E8F0] dark:border-slate-800 bg-white dark:bg-slate-900 p-3 sm:p-4 relative">
+        <div className="w-full max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto relative transition-all duration-300 ease-in-out">
+          <VoiceInputBar
+            promptInput={promptInput}
+            setPromptInput={setPromptInput}
+            onSendMessage={handleSendMessage}
+            isGenerating={isGenerating}
+            onStopGeneration={handleStopGeneration}
+            isSettingsOpen={isSettingsOpen}
+            setIsSettingsOpen={setIsSettingsOpen}
+            language={voiceSettings.language}
+            onError={(err) => {
+              showVoiceError(err);
+              setAssistantState(voiceSettings.handsFree ? 'WAKING' : 'IDLE');
+            }}
+          />
+
+          <div className="mt-2 flex items-center justify-between text-[11px] font-medium text-[#94A3B8] dark:text-slate-500">
+            <div className="flex items-center gap-1">
+              <Info className="h-3 w-3 text-accent dark:text-secondary" />
+              <span>CollegeMate AI displays verified college information.</span>
             </div>
-          )}
+            {activeMessages.length > 0 && (
+              <button
+                onClick={() => setIsExportOpen(true)}
+                className="flex items-center gap-1 text-accent dark:text-secondary hover:underline"
+              >
+                <Download className="h-3 w-3" />
+                <span>Export Chat</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
-      <ProfileDrawer
-        isOpen={isProfileOpen}
-        onClose={() => setIsProfileOpen(false)}
-        onLogout={logout}
-      />
+      {/* Voice Settings Drawer */}
+      {isSettingsOpen && (
+        <>
+          <div
+            onClick={() => setIsSettingsOpen(false)}
+            className="fixed inset-0 z-[99998] bg-slate-900/40 backdrop-blur-xs"
+          />
+          <VoiceSettingsPanel
+            settings={voiceSettings}
+            onChange={handleVoiceSettingsChange}
+            onClose={() => setIsSettingsOpen(false)}
+          />
+        </>
+      )}
 
+      {/* Export Modal */}
       <ExportModal
         isOpen={isExportOpen}
         onClose={() => setIsExportOpen(false)}
         chatTitle={currentSession?.title || 'Conversation'}
         messages={activeMessages}
       />
-    </div>
+    </main>
   );
 }

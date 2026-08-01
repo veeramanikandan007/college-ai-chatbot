@@ -2,7 +2,8 @@
  * ttsService.ts — High-Performance VoiceManager Singleton for CampusMate
  */
 
-export type TTSProvider = 'google' | 'azure' | 'responsivevoice' | 'browser';
+export type TTSProvider = 'google' | 'azure' | 'responsivevoice' | 'browser' | 'gemini';
+export type VoiceState = 'idle' | 'loading' | 'speaking' | 'paused' | 'cancelled' | 'finished' | 'error';
 
 export interface TTSStatus {
   english: { provider: string; ready: boolean };
@@ -10,38 +11,13 @@ export interface TTSStatus {
 }
 
 export interface TTSOptions {
-<<<<<<< HEAD
-  speed?: number;  // 0.5 – 2.0
-  pitch?: number;  // 0.5 – 2.0
-  volume?: number; // 0.0 – 1.0
-  language?: string; // e.g. 'en-IN', 'ta-IN'
-  voiceURI?: string;
-=======
   speed?: number;
+  pitch?: number;
   volume?: number;
   language?: string;
->>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
+  voiceURI?: string;
 }
 
-// ─── Performance Logger ───────────────────────────────────────────────────────
-class PerfTimer {
-  private marks: Record<string, number> = {};
-  private start = performance.now();
-
-  mark(label: string) {
-    this.marks[label] = performance.now() - this.start;
-  }
-
-  report() {
-    const total = performance.now() - this.start;
-    const lines = Object.entries(this.marks)
-      .map(([k, v]) => `  ${k}: ${v.toFixed(0)}ms`)
-      .join('\n');
-    console.log(`[VoiceManager Perf] Total: ${total.toFixed(0)}ms\n${lines}`);
-  }
-}
-
-// ─── Gen-Z Tanglish Phonetic Dictionary ────────────────────────────────────────
 const TAMLISH_DICT: Record<string, string> = {
   'mapla': 'maapplai',
   'macha': 'machaa',
@@ -100,16 +76,35 @@ function normalizeTanglishLocal(text: string): string {
   return normalized;
 }
 
-// ─── Text Utilities ───────────────────────────────────────────────────────────
 export function cleanForTTS(text: string): string {
+  if (!text) return '';
   return text
+    // Remove code blocks ```...```
+    .replace(/```[\s\S]*?```/g, '')
+    // Remove inline code `...`
+    .replace(/`[^`]*`/g, '')
+    // Remove HTML tags
+    .replace(/<[^>]*>/g, '')
+    // Remove JSON-like structures
+    .replace(/\{[\s\S]*?\}/g, '')
+    // Remove URLs
+    .replace(/https?:\/\/\S+|www\.\S+/gi, '')
+    // Remove Markdown links [text](url) -> text
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    // Remove citation numbers [1], [2], [1, 2]
+    .replace(/\[\d+(?:,\s*\d+)*\]/g, '')
+    // Remove file extensions/names like image.png, document.pdf
+    .replace(/\b[\w-]+\.(?:pdf|png|jpg|jpeg|docx?|xlsx?|txt|csv|zip)\b/gi, '')
+    // Remove markdown symbols headers/bold/italic/strikethrough/lists
+    .replace(/^#+\s+/gm, '')
     .replace(/[*_~`>#]/g, '')
+    // Remove emojis and non-standard symbols
     .replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '')
+    // Remove bullets and dividers
     .replace(/•/g, ' ')
-    .replace(/---+/g, '')
     .replace(/-{2,}/g, ' ')
-    .replace(/\n{3,}/g, '\n\n')
+    // Normalize newlines and duplicate spaces
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
@@ -127,8 +122,6 @@ export function detectTextLanguage(text: string): 'ta' | 'en' | 'tanglish' {
   return count > 0 ? 'tanglish' : 'en';
 }
 
-// ─── VoiceManager Singleton ───────────────────────────────────────────────────
-
 interface QueueItem {
   text: string;
   opts: TTSOptions;
@@ -142,28 +135,23 @@ export class VoiceManager {
   private queue: QueueItem[] = [];
   private queueRunning = false;
   private queueId = 0;
+  private streamClosed = true;
   private cachedVoices: SpeechSynthesisVoice[] = [];
   private rvReady = false;
   private rvLoadPromise: Promise<boolean> | null = null;
   private activeAudio: HTMLAudioElement | null = null;
   private activeUtterance: SpeechSynthesisUtterance | null = null;
 
-  // React event subscribers
-  public onStart?: () => void;
-  public onEnd?: () => void;
-  public onError?: () => void;
-  public onPause?: () => void;
-  public onResume?: () => void;
-  private isSpeakingSession = false;
+  private _state: VoiceState = 'idle';
+  public onStateChange?: (state: VoiceState) => void;
 
   private constructor() {
     this.initVoices();
     this.preloadResponsiveVoice();
-    
-    // Auto-resume AudioContext on first user interaction if locked
+
     const unlockAudio = () => {
       if (this.activeAudio) {
-        this.activeAudio.play().catch(() => {});
+        this.activeAudio.play().catch(() => { });
       }
       if ('speechSynthesis' in window) {
         const u = new SpeechSynthesisUtterance('');
@@ -186,20 +174,35 @@ export class VoiceManager {
     return VoiceManager.instance;
   }
 
+  private setState(newState: VoiceState) {
+    if (this._state !== newState) {
+      this._state = newState;
+      this.onStateChange?.(newState);
+
+      // Auto transition away from terminal states to idle to allow re-triggering
+      if (newState === 'finished' || newState === 'cancelled' || newState === 'error') {
+        setTimeout(() => {
+          if (this._state === newState) this.setState('idle');
+        }, 100);
+      }
+    }
+  }
+
+  public getState(): VoiceState {
+    return this._state;
+  }
+
   private initVoices() {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      console.log("[Voice] Initializing");
       this.cachedVoices = window.speechSynthesis.getVoices();
       if (this.cachedVoices.length > 0) {
-        console.log(`[Voice] Voices Loaded (${this.cachedVoices.length})`);
+        console.log(`Voice initialized`);
       }
-      
-      if (this.cachedVoices.length === 0) {
-        window.speechSynthesis.onvoiceschanged = () => {
-          this.cachedVoices = window.speechSynthesis.getVoices();
-          console.log(`[Voice] Voices Loaded on voiceschanged (${this.cachedVoices.length})`);
-        };
-      }
+
+      window.speechSynthesis.onvoiceschanged = () => {
+        this.cachedVoices = window.speechSynthesis.getVoices();
+        console.log(`Voice initialized`);
+      };
     }
   }
 
@@ -207,17 +210,6 @@ export class VoiceManager {
     if (this.rvReady) return Promise.resolve(true);
     if (this.rvLoadPromise) return this.rvLoadPromise;
 
-<<<<<<< HEAD
-    const body = {
-      input: { text },
-      voice: { languageCode: language.startsWith('ta') ? 'ta-IN' : 'en-IN', name: voiceName },
-      audioConfig: {
-        audioEncoding: 'MP3',
-        speakingRate: opts.speed ?? 1.0,
-        pitch: (opts.pitch ?? 1.0) * 4 - 4,
-        volumeGainDb: opts.volume !== undefined ? (opts.volume - 1) * 6 : 0,
-      },
-=======
     this.rvLoadPromise = new Promise((resolve) => {
       if ((window as any).responsiveVoice) {
         this.rvReady = true;
@@ -235,19 +227,18 @@ export class VoiceManager {
 
   private getVoicesOnce(): SpeechSynthesisVoice[] {
     if (this.cachedVoices.length > 0) return this.cachedVoices;
-    this.cachedVoices = window.speechSynthesis.getVoices();
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      this.cachedVoices = window.speechSynthesis.getVoices();
+    }
     return this.cachedVoices;
   }
 
-  // ─── Public API ───
-
   public cancelAllSpeech(): void {
-    console.log("[VoiceManager] Canceling all speech");
     this.queueId++;
     this.queue.length = 0;
     this.queueRunning = false;
-    this.isSpeakingSession = false;
-    
+    this.streamClosed = true;
+
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
     }
@@ -260,33 +251,32 @@ export class VoiceManager {
       this.activeAudio = null;
     }
     this.activeUtterance = null;
-    this.onEnd?.();
+
+    console.log("Voice Cancelled");
+    console.log("Queue Cleared");
+    this.setState('cancelled');
   }
 
   public pauseAllSpeech(): void {
     if ('speechSynthesis' in window) window.speechSynthesis.pause();
     if ((window as any).responsiveVoice?.isPlaying?.()) (window as any).responsiveVoice.pause();
     if (this.activeAudio) this.activeAudio.pause();
+    this.setState('paused');
   }
 
   public resumeAllSpeech(): void {
     if ('speechSynthesis' in window) window.speechSynthesis.resume();
     if ((window as any).responsiveVoice) (window as any).responsiveVoice.resume();
     if (this.activeAudio) this.activeAudio.play();
+    this.setState('speaking');
   }
 
   public async getStatus(): Promise<TTSStatus> {
-    const provider = (import.meta.env.VITE_TTS_PROVIDER || 'responsivevoice') as TTSProvider;
-    const hasGoogle = !!import.meta.env.VITE_GOOGLE_TTS_KEY;
-    const hasAzure = !!import.meta.env.VITE_AZURE_TTS_KEY;
     const voices = this.getVoicesOnce();
     const hasEnglishNative = voices.some(v => v.lang.startsWith('en'));
 
     let englishProvider = hasEnglishNative ? 'Browser Native' : 'ResponsiveVoice (Cloud)';
     let tamilProvider = this.rvReady ? 'ResponsiveVoice (Cloud)' : 'Loading…';
-
-    if (provider === 'google' && hasGoogle) { englishProvider = 'Google Neural (en-IN)'; tamilProvider = 'Google Neural (ta-IN)'; }
-    else if (provider === 'azure' && hasAzure) { englishProvider = 'Azure NeerjaNeural'; tamilProvider = 'Azure PallaviNeural (ta-IN)'; }
 
     return {
       english: { provider: englishProvider, ready: true },
@@ -296,14 +286,13 @@ export class VoiceManager {
 
   public async speak(rawText: string, opts: TTSOptions = {}): Promise<void> {
     if (!rawText?.trim()) return;
-    const perf = new PerfTimer();
-    
+
     this.cancelAllSpeech();
     const myId = this.queueId;
-    perf.mark('queue_cleared');
+    this.streamClosed = true;
+    this.setState('loading');
 
     const detectedLang = detectTextLanguage(rawText);
-    perf.mark('lang_detected');
 
     let textToSpeak = rawText;
     let language = opts.language ?? (detectedLang === 'en' ? 'en-IN' : 'ta-IN');
@@ -313,22 +302,23 @@ export class VoiceManager {
       textToSpeak = normalizeTanglishLocal(rawText);
       isTamil = true;
       language = 'ta-IN';
-      perf.mark('tanglish_normalized');
     }
 
     const cleaned = cleanForTTS(textToSpeak);
-    if (!cleaned) return;
-
-    this.startSession();
-    perf.mark('speech_started');
+    if (!cleaned) {
+      this.setState('finished');
+      return;
+    }
 
     this.queue.push({ text: cleaned, opts, isTamil, language, queueId: myId });
-    await this.processQueue(perf);
+    await this.processQueue();
   }
 
   public speakStream(opts: TTSOptions = {}): { push: (chunk: string) => void; flush: () => void; cancel: () => void } {
     this.cancelAllSpeech();
     const myId = this.queueId;
+    this.streamClosed = false;
+    this.setState('loading');
 
     let pendingBuffer = '';
 
@@ -348,13 +338,11 @@ export class VoiceManager {
       const cleaned = cleanForTTS(textToSpeak);
       if (!cleaned || myId !== this.queueId) return;
 
-      this.startSession();
       this.queue.push({ text: cleaned, opts, isTamil, language, queueId: myId });
 
       if (!this.queueRunning) {
-        this.processQueue(new PerfTimer());
+        this.processQueue();
       }
->>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
     };
 
     return {
@@ -369,9 +357,14 @@ export class VoiceManager {
         }
       },
       flush: () => {
+        if (myId !== this.queueId) return;
         if (pendingBuffer.trim()) {
           enqueue(pendingBuffer.trim());
           pendingBuffer = '';
+        }
+        this.streamClosed = true;
+        if (!this.queueRunning && this.queue.length === 0) {
+          this.setState('finished');
         }
       },
       cancel: () => {
@@ -380,51 +373,26 @@ export class VoiceManager {
     };
   }
 
-  // ─── Internal Processing ───
-
-  private startSession() {
-    if (!this.isSpeakingSession) {
-      this.isSpeakingSession = true;
-      this.onStart?.();
-    }
-  }
-
-  private endSession() {
-    if (this.isSpeakingSession) {
-      this.isSpeakingSession = false;
-      this.onEnd?.();
-    }
-  }
-
-<<<<<<< HEAD
-    const ssml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='${language.startsWith('ta') ? 'ta-IN' : 'en-IN'}'>
-      <voice name='${voiceName}'>
-        <prosody rate='${(opts.speed ?? 1.0) * 100}%' pitch='${Math.round(((opts.pitch ?? 1.0) - 1.0) * 50)}%' volume='${Math.round((opts.volume ?? 1.0) * 100)}'>
-          ${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
-        </prosody>
-      </voice>
-    </speak>`;
-=======
-  private async processQueue(perf: PerfTimer) {
+  private async processQueue() {
     if (this.queueRunning) return;
     this.queueRunning = true;
->>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
 
     while (this.queue.length > 0) {
+      if (this._state === 'cancelled' || this._state === 'error') break;
       const item = this.queue.shift()!;
       if (item.queueId !== this.queueId) continue;
       await this.speakOne(item, 0);
     }
 
     this.queueRunning = false;
-    perf.mark('queue_exhausted');
-    perf.report();
-    this.endSession();
+    if (this.streamClosed && this.queue.length === 0 && this._state !== 'cancelled' && this._state !== 'error') {
+      this.setState('finished');
+    }
   }
 
   private speakOne(item: QueueItem, retryCount: number = 0): Promise<void> {
     return new Promise<void>((resolve) => {
-      if (item.queueId !== this.queueId) return resolve();
+      if (item.queueId !== this.queueId || this._state === 'cancelled') return resolve();
 
       let isDone = false;
       let safetyTimeout: ReturnType<typeof setTimeout>;
@@ -440,431 +408,180 @@ export class VoiceManager {
         if (isDone) return;
         isDone = true;
         clearTimeout(safetyTimeout);
-        console.error("[Voice] Speech Error for:", item.text);
-        
-        // Auto-Retry Logic (max 3 times)
-        if (retryCount < 3 && item.queueId === this.queueId) {
-          console.log(`[Voice] Retry (${retryCount + 1}/3)`);
+        console.warn("Speech error");
+
+        if (retryCount < 2 && item.queueId === this.queueId && this._state !== 'cancelled') {
           this.speakOne(item, retryCount + 1).then(resolve);
           return;
         }
-        
-        console.error("[Voice] Failed entirely after retries:", item.text);
-        this.onError?.();
+
+        this.setState('error');
         resolve();
       };
 
-      // 30-second absolute safety timeout to prevent permanent hanging
+      // Safety timeout is strictly for preventing stuck states. It does not hide the bar directly.
       safetyTimeout = setTimeout(() => {
-        console.warn("[VoiceManager] Absolute safety timeout triggered for:", item.text);
-        this.activeUtterance = null;
-        if (this.activeAudio) {
-          this.activeAudio.pause();
-          this.activeAudio = null;
+        if (!isDone && this._state !== 'cancelled') {
+          this.activeUtterance = null;
+          if (this.activeAudio) {
+            this.activeAudio.pause();
+            this.activeAudio = null;
+          }
+          onFail();
         }
-        onFail();
       }, 30000);
 
-      const provider = (import.meta.env.VITE_TTS_PROVIDER || 'responsivevoice') as TTSProvider;
+      const tryFallbackChain = async () => {
+        const voices = this.getVoicesOnce();
 
-      const tryCloud = async (): Promise<boolean> => {
-        if (provider === 'google' && import.meta.env.VITE_GOOGLE_TTS_KEY) {
-          return this.speakWithGoogle(item.text, item.language, item.opts, onDone, onFail);
-        }
-        if (provider === 'azure' && import.meta.env.VITE_AZURE_TTS_KEY) {
-          return this.speakWithAzure(item.text, item.language, item.opts, onDone, onFail);
-        }
-        return false;
-      };
-
-      const race = async () => {
-        const cloudPromise = tryCloud();
-        const timeout = new Promise<false>((r) => setTimeout(() => r(false), 2000));
-        const cloudOk = await Promise.race([cloudPromise, timeout]);
-        if (cloudOk) return;
-
-        // Browser Native for English (Priority 1)
-        if (!item.isTamil && provider !== 'responsivevoice') {
-          const nativeSuccess = this.speakWithBrowser(item.text, item.language, item.isTamil, item.opts, onDone, onFail);
+        // 1. Browser Speech Synthesis
+        if ('speechSynthesis' in window && voices.length > 0) {
+          const nativeSuccess = await new Promise<boolean>((resolveNative) => {
+            this.speakWithBrowser(item.text, item.language, item.isTamil, item.opts,
+              () => resolveNative(true),
+              () => resolveNative(false)
+            );
+          });
           if (nativeSuccess) return;
         }
 
-        // ResponsiveVoice fallback (Primary for Tamil)
+        // 2. ResponsiveVoice
         if (this.rvReady && (window as any).responsiveVoice) {
-          const voice = item.isTamil ? 'Tamil Female' : 'Indian English Female';
-          (window as any).responsiveVoice.speak(item.text, voice, {
-            rate: item.opts.speed ?? 1.0,
-            volume: item.opts.volume ?? 1.0,
-            onend: onDone,
-            onerror: () => {
-              // Final fallback to browser native
-              this.speakWithBrowser(item.text, item.language, item.isTamil, item.opts, onDone, onFail);
-            },
+          const rvSuccess = await new Promise<boolean>((resolveRV) => {
+            const voice = item.isTamil ? 'Tamil Female' : 'UK English Female';
+            (window as any).responsiveVoice.speak(item.text, voice, {
+              rate: item.opts.speed ?? 1.0,
+              volume: item.opts.volume ?? 1.0,
+              pitch: item.opts.pitch ?? 1.0,
+              onstart: () => {
+                this.setState('speaking');
+                console.log("Voice started");
+              },
+              onend: () => {
+                console.log("Voice finished");
+                resolveRV(true);
+              },
+              onerror: () => resolveRV(false),
+            });
+            // Manual fallback if responsive voice doesn't have onstart/onend natively correctly working
+            if (!(window as any).responsiveVoice.isPlaying()) {
+              this.setState('speaking');
+              console.log("Voice started");
+            }
+            const checkEnd = setInterval(() => {
+              if (!(window as any).responsiveVoice.isPlaying()) {
+                clearInterval(checkEnd);
+                resolveRV(true);
+              }
+            }, 500);
           });
-          return;
+          if (rvSuccess) return;
         }
 
-        // Last resort Browser Native
-        this.speakWithBrowser(item.text, item.language, item.isTamil, item.opts, onDone, onFail);
+        // 3. Gemini TTS API (Fallback if configured)
+        if (import.meta.env.VITE_GEMINI_TTS_KEY) {
+          const geminiSuccess = await this.speakWithGemini(item.text, item.language, item.opts, onDone, onFail);
+          if (geminiSuccess) return;
+        }
+
+        throw new Error("All TTS providers failed");
       };
 
-      race().catch(onFail);
+      tryFallbackChain().catch(onFail);
     });
   }
 
-  private async speakWithGoogle(text: string, language: string, opts: TTSOptions, onEnd: () => void, onError: () => void): Promise<boolean> {
-    const key = import.meta.env.VITE_GOOGLE_TTS_KEY;
+  private async speakWithGemini(text: string, language: string, opts: TTSOptions, onEnd: () => void, onError: () => void): Promise<boolean> {
+    const key = import.meta.env.VITE_GEMINI_TTS_KEY;
     if (!key) return false;
     try {
-      const res = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${key}`, {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/tts-model:synthesize?key=${key}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          input: { text },
-          voice: {
-            languageCode: language.startsWith('ta') ? 'ta-IN' : 'en-IN',
-            name: language.startsWith('ta') ? 'ta-IN-Neural2-A' : 'en-IN-Neural2-A',
-          },
-          audioConfig: {
-            audioEncoding: 'MP3',
-            speakingRate: opts.speed ?? 1.0,
-            volumeGainDb: opts.volume !== undefined ? (opts.volume - 1) * 6 : 0,
-          },
+          text: text,
+          language: language
         }),
       });
       if (!res.ok) return false;
       const data = await res.json();
+      if (!data.audioContent) return false;
+
       const audio = new Audio(`data:audio/mp3;base64,${data.audioContent}`);
       this.activeAudio = audio;
       audio.volume = opts.volume ?? 1.0;
       audio.playbackRate = opts.speed ?? 1.0;
-      audio.onended = () => { this.activeAudio = null; onEnd(); };
-      audio.onerror = () => { this.activeAudio = null; onError(); };
+
+      audio.onplay = () => { this.setState('speaking'); console.log("Voice started"); };
+      audio.onended = () => { console.log("Voice finished"); this.activeAudio = null; onEnd(); };
+      audio.onerror = () => { console.warn("Speech error"); this.activeAudio = null; onError(); };
+
       await audio.play();
       return true;
     } catch { return false; }
   }
 
-  private async speakWithAzure(text: string, language: string, opts: TTSOptions, onEnd: () => void, onError: () => void): Promise<boolean> {
-    const key = import.meta.env.VITE_AZURE_TTS_KEY;
-    const region = import.meta.env.VITE_AZURE_TTS_REGION || 'eastus';
-    if (!key) return false;
-    try {
-      const voice = language.startsWith('ta') ? 'ta-IN-PallaviNeural' : 'en-IN-NeerjaNeural';
-      const ssml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='${language.startsWith('ta') ? 'ta-IN' : 'en-IN'}'><voice name='${voice}'><prosody rate='${(opts.speed ?? 1.0) * 100}%'>${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</prosody></voice></speak>`;
-      const res = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
-        method: 'POST',
-        headers: {
-          'Ocp-Apim-Subscription-Key': key,
-          'Content-Type': 'application/ssml+xml',
-          'X-Microsoft-OutputFormat': 'audio-24khz-48kbitrate-mono-mp3',
-        },
-        body: ssml,
-      });
-      if (!res.ok) return false;
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      this.activeAudio = audio;
-      audio.volume = opts.volume ?? 1.0;
-      audio.onended = () => { this.activeAudio = null; URL.revokeObjectURL(url); onEnd(); };
-      audio.onerror = () => { this.activeAudio = null; URL.revokeObjectURL(url); onError(); };
-      await audio.play();
-      return true;
-    } catch { return false; }
-  }
+  private speakWithBrowser(text: string, language: string, isTamil: boolean, opts: TTSOptions, onEnd: () => void, onError: () => void): void {
+    if (!('speechSynthesis' in window)) { onError(); return; }
 
-  private speakWithBrowser(text: string, language: string, isTamil: boolean, opts: TTSOptions, onEnd: () => void, onError: () => void): boolean {
-    if (!('speechSynthesis' in window)) { onError(); return false; }
-    
-    // Clear any stuck state safely before speaking
     window.speechSynthesis.cancel();
-    
     const voices = this.getVoicesOnce();
-    // Priority: local tamil -> fallback -> default
-    let voice = voices.find(v => v.lang === language);
-    if (!voice) voice = voices.find(v => v.lang.startsWith(isTamil ? 'ta' : 'en'));
-    
+
+    if (voices.length === 0) {
+      onError();
+      return;
+    }
+
+    let voice: SpeechSynthesisVoice | undefined = undefined;
+
+    if (opts.voiceURI) {
+      voice = voices.find(v => v.voiceURI === opts.voiceURI);
+    }
+
+    if (!voice) {
+      const prefs = isTamil ? ['Google Tamil', 'Tamil', 'ta-IN'] : ['Microsoft David', 'Microsoft Zira', 'Google US English', 'Google UK English'];
+      for (const pref of prefs) {
+        voice = voices.find(v => v.name.includes(pref));
+        if (voice) break;
+      }
+      if (!voice) voice = voices.find(v => v.lang === language);
+      if (!voice) voice = voices.find(v => v.lang.startsWith(isTamil ? 'ta' : 'en'));
+    }
+
     const utterance = new SpeechSynthesisUtterance(text);
-    this.activeUtterance = utterance; // Prevent garbage collection mid-speech
-    
+    this.activeUtterance = utterance;
+
     if (voice) {
       utterance.voice = voice;
-      console.log(`[Voice] Selected Voice: ${voice.name} (${voice.lang})`);
+      console.log(`Voice selected: ${voice.name}`);
     } else {
-      console.log(`[Voice] Selected Voice: Browser Default`);
+      console.log(`Voice selected: Browser Default`);
     }
-    
+
     utterance.lang = language;
     utterance.rate = opts.speed ?? 1.0;
     utterance.volume = opts.volume ?? 1.0;
-    
-    let startTimeout: ReturnType<typeof setTimeout>;
+    utterance.pitch = opts.pitch ?? 1.0;
 
     utterance.onstart = () => {
-      clearTimeout(startTimeout);
-      console.log("[Voice] Speech Started");
+      this.setState('speaking');
+      console.log("Voice started");
     };
 
     utterance.onend = () => {
-      clearTimeout(startTimeout);
-      console.log("[Voice] Speech Finished");
+      console.log("Voice finished");
       this.activeUtterance = null;
       onEnd();
     };
 
     utterance.onerror = (e) => {
-      clearTimeout(startTimeout);
-      console.warn("[Voice] Speech Error:", e);
+      console.warn("Speech error");
       this.activeUtterance = null;
       onError();
     };
-
-    utterance.onpause = () => {
-      this.onPause?.();
-    };
-
-    utterance.onresume = () => {
-      this.onResume?.();
-    };
-    
-    // Safety timeout: If speech doesn't start in 5 seconds, cancel and trigger error (which triggers retry)
-    startTimeout = setTimeout(() => {
-      console.warn("[Voice] Speech failed to start within 5s. Canceling and retrying...");
-      window.speechSynthesis.cancel();
-      this.activeUtterance = null;
-      onError();
-    }, 5000);
 
     window.speechSynthesis.speak(utterance);
-    return true;
   }
 }
 
-<<<<<<< HEAD
-async function speakWithResponsiveVoice(
-  text: string,
-  isTamil: boolean,
-  opts: TTSOptions,
-  onEnd: () => void,
-  onError: () => void
-): Promise<boolean> {
-  const ok = await loadRV();
-  if (!ok || !(window as any).responsiveVoice) return false;
-
-  const voice = isTamil ? 'Tamil Female' : 'Indian English Female';
-  (window as any).responsiveVoice.speak(text, voice, {
-    rate: opts.speed ?? 1.0,
-    pitch: opts.pitch ?? 1.0,
-    volume: opts.volume ?? 1.0,
-    onend: onEnd,
-    onerror: onError,
-  });
-  return true;
-}
-
-// ─── Provider: Browser Native SpeechSynthesis ─────────────────────────────────
-
-// ─── Provider: Browser Native SpeechSynthesis ─────────────────────────────────
-
-let speechKeepAliveInterval: any = null;
-
-function clearKeepAlive() {
-  if (speechKeepAliveInterval) {
-    clearInterval(speechKeepAliveInterval);
-    speechKeepAliveInterval = null;
-  }
-}
-
-function speakWithBrowser(
-  text: string,
-  language: string,
-  isTamil: boolean,
-  opts: TTSOptions,
-  onStart: () => void,
-  onEnd: () => void,
-  onError: () => void
-): void {
-  if (!('speechSynthesis' in window)) {
-    onError();
-    return;
-  }
-
-  const doSpeak = () => {
-    try {
-      window.speechSynthesis.cancel();
-      clearKeepAlive();
-
-      const available = window.speechSynthesis.getVoices();
-      let voice = opts.voiceURI ? available.find(v => v.voiceURI === opts.voiceURI) : undefined;
-      if (!voice) voice = available.find(v => v.lang === language);
-      if (!voice) voice = available.find(v => v.lang.startsWith(isTamil ? 'ta' : 'en'));
-      if (!voice && available.length > 0) voice = available[0];
-
-      const utterance = new SpeechSynthesisUtterance(text);
-      if (voice) utterance.voice = voice;
-      utterance.lang = language || (isTamil ? 'ta-IN' : 'en-US');
-      utterance.rate = opts.speed ?? 1.0;
-      utterance.pitch = opts.pitch ?? 1.0;
-      utterance.volume = opts.volume ?? 1.0;
-
-      utterance.onstart = () => {
-        onStart();
-        // Chrome keepalive timer to prevent pause on long text (>15s)
-        clearKeepAlive();
-        speechKeepAliveInterval = setInterval(() => {
-          if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
-            window.speechSynthesis.pause();
-            window.speechSynthesis.resume();
-          } else {
-            clearKeepAlive();
-          }
-        }, 12000);
-      };
-
-      utterance.onend = () => {
-        clearKeepAlive();
-        onEnd();
-      };
-
-      utterance.onerror = (e) => {
-        console.error('SpeechSynthesis error:', e);
-        clearKeepAlive();
-        onError();
-      };
-
-      window.speechSynthesis.speak(utterance);
-    } catch (err) {
-      console.error('Failed in speakWithBrowser:', err);
-      clearKeepAlive();
-      onError();
-    }
-  };
-
-  const voices = window.speechSynthesis.getVoices();
-  if (voices.length === 0) {
-    window.speechSynthesis.onvoiceschanged = () => {
-      window.speechSynthesis.onvoiceschanged = null;
-      doSpeak();
-    };
-    // Fallback trigger if onvoiceschanged doesn't fire
-    setTimeout(doSpeak, 250);
-  } else {
-    doSpeak();
-  }
-}
-
-
-// ─── Public API: cancelSpeech ─────────────────────────────────────────────────
-
-export function cancelAllSpeech(): void {
-  clearKeepAlive();
-  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-  if ((window as any).responsiveVoice?.isPlaying?.()) {
-    (window as any).responsiveVoice.cancel();
-  }
-}
-
-export function pauseAllSpeech(): void {
-  if ('speechSynthesis' in window) window.speechSynthesis.pause();
-  if ((window as any).responsiveVoice?.isPlaying?.()) {
-    (window as any).responsiveVoice.pause();
-  }
-}
-
-export function resumeAllSpeech(): void {
-  if ('speechSynthesis' in window) window.speechSynthesis.resume();
-  if ((window as any).responsiveVoice) {
-    (window as any).responsiveVoice.resume();
-  }
-}
-
-// ─── Public API: getTTSStatus ─────────────────────────────────────────────────
-
-export async function getTTSStatus(): Promise<TTSStatus> {
-  const provider = (import.meta.env.VITE_TTS_PROVIDER || 'browser') as TTSProvider;
-  const hasGoogle = !!import.meta.env.VITE_GOOGLE_TTS_KEY;
-  const hasAzure = !!import.meta.env.VITE_AZURE_TTS_KEY;
-  const nativeVoices = 'speechSynthesis' in window ? window.speechSynthesis.getVoices() : [];
-  const hasTamilNative = nativeVoices.some(v => v.lang.startsWith('ta'));
-  const hasEnglishNative = nativeVoices.some(v => v.lang.startsWith('en'));
-
-  let englishProvider = 'Browser Native';
-  let tamilProvider = hasTamilNative ? 'Browser Native (Tamil)' : 'ResponsiveVoice / Native Fallback';
-
-  if (provider === 'google' && hasGoogle) { englishProvider = 'Google Neural (en-IN)'; tamilProvider = 'Google Neural (ta-IN)'; }
-  else if (provider === 'azure' && hasAzure) { englishProvider = 'Azure Pallavi Neural'; tamilProvider = 'Azure Pallavi Neural (ta-IN)'; }
-
-  return {
-    english: { provider: englishProvider, ready: true },
-    tamil: { provider: tamilProvider, ready: true },
-  };
-}
-
-// ─── Public API: speak ────────────────────────────────────────────────────────
-
-export async function speak(
-  rawText: string,
-  opts: TTSOptions = {},
-  callbacks: {
-    onStart?: () => void;
-    onEnd?: () => void;
-    onError?: () => void;
-  } = {}
-): Promise<void> {
-  if (!rawText?.trim()) return;
-
-  const onStart = callbacks.onStart ?? (() => {});
-  const onEnd = callbacks.onEnd ?? (() => {});
-  const onError = callbacks.onError ?? (() => {});
-
-  // 1. Cancel any ongoing speech
-  cancelAllSpeech();
-
-  // 2. Detect language
-  const detectedLang = detectTextLanguage(rawText);
-
-  // 3. Normalize Tanglish via backend or use rawText directly
-  let textToSpeak = rawText;
-  let language = opts.language ?? (detectedLang === 'en' ? 'en-IN' : 'ta-IN');
-  let isTamil = detectedLang !== 'en';
-
-  if (detectedLang === 'tanglish') {
-    const normalized = await normalizeTanglish(rawText);
-    textToSpeak = normalized.text;
-    language = normalized.language;
-    isTamil = language.startsWith('ta');
-  } else if (detectedLang === 'ta') {
-    isTamil = true;
-  }
-
-  // 4. Clean text
-  const cleaned = cleanForTTS(textToSpeak);
-  if (!cleaned) return;
-
-  onStart();
-
-  // 5. Try providers in priority order
-  const provider = (import.meta.env.VITE_TTS_PROVIDER || 'browser') as TTSProvider;
-
-  if (provider === 'google') {
-    const ok = await speakWithGoogle(cleaned, language, opts, onEnd, onError);
-    if (ok) return;
-  }
-
-  if (provider === 'azure') {
-    const ok = await speakWithAzure(cleaned, language, opts, onEnd, onError);
-    if (ok) return;
-  }
-
-  if (provider === 'responsivevoice') {
-    const ok = await speakWithResponsiveVoice(cleaned, isTamil, opts, onEnd, onError);
-    if (ok) return;
-  }
-
-  // Primary default / robust fallback: browser native speech synthesis
-  speakWithBrowser(cleaned, language, isTamil, opts, onStart, onEnd, onError);
-}
-=======
 export const voiceManager = VoiceManager.getInstance();
->>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9

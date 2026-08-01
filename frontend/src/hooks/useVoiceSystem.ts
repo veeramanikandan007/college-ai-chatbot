@@ -1,18 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { voiceManager } from '../services/ttsService';
-import type { TTSOptions } from '../services/ttsService';
+import { useVoiceStore } from '../store/useVoiceStore';
 
 export type AssistantVoiceState = 'IDLE' | 'WAKING' | 'LISTENING' | 'PROCESSING' | 'SPEAKING';
-
-export interface VoiceSettings {
-  voiceURI: string;
-  language: 'en-US' | 'ta-IN';
-  speed: number;
-  pitch: number;
-  volume: number;
-  autoSpeak: boolean;
-  handsFree: boolean;
-}
 
 export function useVoiceSystem() {
   const [assistantState, setAssistantState] = useState<AssistantVoiceState>('IDLE');
@@ -21,43 +10,12 @@ export function useVoiceSystem() {
   const [recordingDuration, setRecordingDuration] = useState(0);
   const [voiceError, setVoiceError] = useState<string | null>(null);
   
-  const [spokenText, setSpokenText] = useState('');
-  const [isPlayingSpeech, setIsPlayingSpeech] = useState(false);
-  const [isPausedSpeech, setIsPausedSpeech] = useState(false);
-
   const voiceButtonRef = useRef<any>(null);
   const wakeRecognitionRef = useRef<any>(null);
 
-  const [voiceSettings, setVoiceSettings] = useState<VoiceSettings>(() => {
-    const saved = localStorage.getItem('voice_settings');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) { }
-    }
-    return {
-      voiceURI: '',
-      language: 'en-US',
-      speed: 1.0,
-      pitch: 1.0,
-      volume: 1.0,
-      autoSpeak: true,
-      handsFree: false,
-    };
-  });
+  const { settings: voiceSettings, voiceState, stop } = useVoiceStore();
 
-  const handleVoiceSettingsChange = (newSettings: VoiceSettings) => {
-    const requiresRestart = 
-      newSettings.speed !== voiceSettings.speed ||
-      newSettings.volume !== voiceSettings.volume ||
-      newSettings.voiceURI !== voiceSettings.voiceURI ||
-      newSettings.language !== voiceSettings.language;
 
-    setVoiceSettings(newSettings);
-    localStorage.setItem('voice_settings', JSON.stringify(newSettings));
-    
-    if (isPlayingSpeech && requiresRestart) {
-      speakText(spokenText, newSettings);
-    }
-  };
 
   useEffect(() => {
     if (voiceSettings.handsFree) {
@@ -107,28 +65,37 @@ export function useVoiceSystem() {
       wakeRec.lang = 'en-US';
 
       wakeRec.onresult = (event: any) => {
+        let currentText = '';
         let wakeWordDetected = false;
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           const transcript = event.results[i][0].transcript.toLowerCase();
+          currentText += transcript;
           if (
             transcript.includes('hey campusmate') || 
             transcript.includes('hello campusmate') ||
             transcript.includes('hey campus mate') ||
             transcript.includes('hello campus mate') ||
             transcript.includes('campusmate') ||
-            transcript.includes('campus mate')
+            transcript.includes('campus mate') ||
+            transcript.includes('collegemate') ||
+            transcript.includes('college mate')
           ) {
             wakeWordDetected = true;
             break;
           }
         }
+        
+        if (currentText.trim()) {
+           console.log(`Recognition result: ${currentText}`);
+        }
+
         if (wakeWordDetected) {
           playChime();
           setAssistantState('LISTENING');
         }
       };
 
-      wakeRec.onerror = (event: any) => { };
+      wakeRec.onerror = (event: any) => { console.warn("Wake mic error", event.error); };
 
       wakeRec.onend = () => {
         if (assistantState === 'WAKING') {
@@ -137,12 +104,16 @@ export function useVoiceSystem() {
       };
 
       wakeRecognitionRef.current = wakeRec;
+      console.log("Microphone started");
       wakeRec.start();
     } catch (e) { }
 
     return () => {
       if (wakeRecognitionRef.current) {
-        try { wakeRecognitionRef.current.abort(); } catch (e) {}
+        try { 
+          wakeRecognitionRef.current.abort(); 
+          console.log("Microphone stopped");
+        } catch (e) {}
       }
     };
   }, [assistantState]);
@@ -159,96 +130,19 @@ export function useVoiceSystem() {
     }
   }, [assistantState]);
 
-  // Subscribe to VoiceManager events
+  // Sync assistant state with global voice state
   useEffect(() => {
-    voiceManager.onStart = () => {
-      setIsPlayingSpeech(true);
-      setAssistantState('SPEAKING');
-    };
-    voiceManager.onEnd = () => {
-      setIsPlayingSpeech(false);
-      setIsPausedSpeech(false);
-      setSpokenText('');
-      setAssistantState(prev => prev === 'SPEAKING' ? (voiceSettings.handsFree ? 'WAKING' : 'IDLE') : prev);
-    };
-    voiceManager.onError = () => {
-      setIsPlayingSpeech(false);
-      setIsPausedSpeech(false);
-      setSpokenText('');
-      setAssistantState(prev => prev === 'SPEAKING' ? (voiceSettings.handsFree ? 'WAKING' : 'IDLE') : prev);
-    };
-    voiceManager.onPause = () => {
-      setIsPausedSpeech(true);
-    };
-    voiceManager.onResume = () => {
-      setIsPausedSpeech(false);
-    };
-    
-    return () => {
-      voiceManager.onStart = undefined;
-      voiceManager.onEnd = undefined;
-      voiceManager.onError = undefined;
-      voiceManager.onPause = undefined;
-      voiceManager.onResume = undefined;
-    };
-  }, [voiceSettings.handsFree]);
+    if (voiceState === 'speaking') {
+       setAssistantState('SPEAKING');
+    } else if (voiceState === 'idle' || voiceState === 'cancelled' || voiceState === 'finished' || voiceState === 'error') {
+       setAssistantState(prev => prev === 'SPEAKING' ? (voiceSettings.handsFree ? 'WAKING' : 'IDLE') : prev);
+    }
+  }, [voiceState, voiceSettings.handsFree]);
 
   const stopSpeech = useCallback(() => {
-    voiceManager.cancelAllSpeech();
-    setIsPlayingSpeech(false);
-    setIsPausedSpeech(false);
-    setSpokenText('');
+    stop();
     setAssistantState(voiceSettings.handsFree ? 'WAKING' : 'IDLE');
-  }, [voiceSettings.handsFree]);
-
-  const pauseSpeech = useCallback(() => {
-    voiceManager.pauseAllSpeech();
-    setIsPausedSpeech(true);
-  }, []);
-
-  const resumeSpeech = useCallback(() => {
-    voiceManager.resumeAllSpeech();
-    setIsPausedSpeech(false);
-  }, []);
-
-  const speakText = useCallback(async (text: string, settingsToUse = voiceSettings) => {
-    if (!text?.trim()) return;
-
-    setSpokenText(text);
-    // State updates now handled by voiceManager events natively
-    await voiceManager.speak(text, { speed: settingsToUse.speed, volume: settingsToUse.volume });
-  }, [voiceSettings]);
-
-<<<<<<< HEAD
-    await speak(text, { speed: settingsToUse.speed, pitch: settingsToUse.pitch, volume: settingsToUse.volume, voiceURI: settingsToUse.voiceURI }, {
-      onStart: () => {
-        setIsPlayingSpeech(true);
-        setAssistantState('SPEAKING');
-      },
-      onEnd: () => {
-        setIsPlayingSpeech(false);
-        setIsPausedSpeech(false);
-        setSpokenText('');
-        setAssistantState(settingsToUse.handsFree ? 'WAKING' : 'IDLE');
-      },
-      onError: () => {
-        setIsPlayingSpeech(false);
-        setIsPausedSpeech(false);
-        setSpokenText('');
-        setAssistantState(settingsToUse.handsFree ? 'WAKING' : 'IDLE');
-      },
-    });
-=======
-  /**
-   * speakTextStream — for streaming AI responses.
-   * Returns a stream handle with push(chunk), flush(), cancel().
-   * Call push() on each sentence as the LLM streams, then flush() at end.
-   */
-  const speakTextStream = useCallback((settingsToUse = voiceSettings) => {
-    const opts: TTSOptions = { speed: settingsToUse.speed, volume: settingsToUse.volume };
-    return voiceManager.speakStream(opts);
->>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
-  }, [voiceSettings]);
+  }, [voiceSettings.handsFree, stop]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -298,16 +192,7 @@ export function useVoiceSystem() {
     setRecordingDuration,
     voiceError,
     showVoiceError,
-    spokenText,
-    isPlayingSpeech,
-    isPausedSpeech,
-    voiceSettings,
-    handleVoiceSettingsChange,
     voiceButtonRef,
     stopSpeech,
-    pauseSpeech,
-    resumeSpeech,
-    speakText,
-    speakTextStream,
   };
 }

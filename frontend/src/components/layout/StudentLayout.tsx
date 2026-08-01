@@ -10,7 +10,7 @@ export default function StudentLayout() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#F8FAFC] text-[#1F2937] dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300">
+    <div className="flex h-screen w-screen overflow-hidden bg-[#F5F7FB] text-[#1F2937] dark:bg-[#0F172A] dark:text-[#F8FAFC] transition-colors duration-300">
       <Sidebar />
 
       <div className="flex flex-1 flex-col overflow-hidden">

@@ -3,11 +3,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   GraduationCap,
-  MessageSquareText,
-  BarChart3,
   BookOpen,
   Sparkles,
-  ShieldCheck,
   ArrowRight,
   Bot,
   CheckCircle2,
@@ -37,51 +34,59 @@ const categoryPills = [
 const quickActions = [
   {
     icon: BookOpen,
-    title: 'Academics',
+    category: 'Academics',
+    title: 'Academics Portal',
     desc: 'Syllabus, courses, and department details',
-    color: 'text-blue-600 bg-blue-50 border-blue-200',
+    color: 'text-[#1E4DB7] dark:text-[#60A5FA] bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800',
   },
   {
     icon: CheckCircle2,
-    title: 'Attendance',
+    category: 'Attendance',
+    title: 'Attendance Tracker',
     desc: 'Percentage tracking and condonation rules',
-    color: 'text-emerald-600 bg-emerald-50 border-emerald-200',
+    color: 'text-[#22C55E] dark:text-[#4ADE80] bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800',
   },
   {
     icon: CreditCard,
-    title: 'Fees',
+    category: 'Fees',
+    title: 'Fee Payments',
     desc: 'Tuition fees, dues, and payment receipts',
-    color: 'text-rose-600 bg-rose-50 border-rose-200',
+    color: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800',
   },
   {
     icon: Calendar,
-    title: 'Exams',
+    category: 'Exams',
+    title: 'Exam Schedules',
     desc: 'CIA test dates and semester schedules',
-    color: 'text-purple-600 bg-purple-50 border-purple-200',
+    color: 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-800',
   },
   {
     icon: Bus,
-    title: 'Transport',
+    category: 'Transport',
+    title: 'Bus Transport',
     desc: 'College bus routes and departure timings',
-    color: 'text-amber-600 bg-amber-50 border-amber-200',
+    color: 'text-[#D9A441] dark:text-[#FBBF24] bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800',
   },
   {
     icon: Library,
-    title: 'Library',
+    category: 'Library',
+    title: 'Digital Library',
     desc: 'Digital catalogue, hours, and book issue limits',
-    color: 'text-teal-600 bg-teal-50 border-teal-200',
+    color: 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 border-teal-200 dark:border-teal-800',
   },
   {
     icon: Briefcase,
-    title: 'Placements',
+    category: 'Placements',
+    title: 'Placements Cell',
     desc: 'Campus recruitment drives and CTC stats',
-    color: 'text-indigo-600 bg-indigo-50 border-indigo-200',
+    color: 'text-[#1E4DB7] dark:text-[#60A5FA] bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-800',
   },
   {
     icon: Home,
-    title: 'Hostel',
+    category: 'Hostel',
+    title: 'Hostel & Mess',
     desc: 'Room allocation, mess menu, and warden info',
-    color: 'text-cyan-600 bg-cyan-50 border-cyan-200',
+    color: 'text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950/40 border-cyan-200 dark:border-cyan-800',
   },
 ];
 
@@ -119,26 +124,26 @@ export default function HomePage() {
   }, [text, isDeleting, phraseIndex]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#F8FAFC] via-white to-[#F8FAFC] text-[#1F2937] select-none">
-      {/* Header Bar */}
-      <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
-        <div className="flex h-16 w-full items-center justify-between px-4 sm:px-8">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0A2A6A] text-white shadow-xs">
-              <GraduationCap size={22} strokeWidth={1.75} />
+    <div className="min-h-screen flex flex-col bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] select-none transition-colors duration-300 font-body">
+      {/* Header Bar — Height 68px */}
+      <header className="sticky top-0 z-30 border-b border-[#E2E8F0] dark:border-[#334155] bg-white/90 dark:bg-[#111827]/90 backdrop-blur-md">
+        <div className="flex h-[68px] w-full items-center justify-between px-4 sm:px-8">
+          <div className="flex items-center gap-3">
+            <div className="flex h-[40px] w-[40px] items-center justify-center rounded-[14px] bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white shadow-xs border border-[#D9A441]/30">
+              <GraduationCap size={20} strokeWidth={1.75} />
             </div>
-            <span className="font-heading text-lg font-bold tracking-tight text-[#0A2A6A]">{APP_NAME}</span>
+            <span className="font-heading font-extrabold text-[18px] tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">{APP_NAME}</span>
           </div>
           <nav className="flex items-center gap-3">
             <Link
               to="/login"
-              className="ty-btn px-4 py-2 text-slate-700 hover:text-[#0A2A6A] transition rounded-xl hover:bg-slate-100"
+              className="h-[44px] px-4 inline-flex items-center justify-center text-[15px] font-semibold text-[#475569] dark:text-[#CBD5E1] hover:text-[#0E2A6D] dark:hover:text-white transition rounded-[14px] hover:bg-[#E2E8F0] dark:hover:bg-[#1E293B]"
             >
               Sign in
             </Link>
             <Link
               to="/register"
-              className="ty-btn px-4 py-2 text-white bg-[#0A2A6A] rounded-xl hover:bg-[#163D8C] transition shadow-md shadow-[#0A2A6A]/20"
+              className="h-[44px] px-5 inline-flex items-center justify-center text-[15px] font-semibold text-white bg-[#0E2A6D] hover:bg-[#153B8A] rounded-[14px] transition shadow-xs"
             >
               Get started
             </Link>
@@ -146,86 +151,88 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="flex-1 flex flex-col items-center justify-center text-center px-4 py-12 sm:py-16 relative overflow-hidden">
-        {/* Soft Radial Background Blur Circles */}
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-gradient-to-tr from-[#0A2A6A]/10 to-[#163D8C]/15 blur-3xl pointer-events-none rounded-full" />
+      {/* Hero Section — Positioned lower with pt-16 / pt-20 and increased vertical gaps (32px / 48px) */}
+      <section className="flex-1 flex flex-col items-center justify-center text-center px-4 pt-16 pb-12 sm:pt-20 sm:pb-16 relative overflow-hidden">
+        {/* Soft Background Radial Gradient */}
+        <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-gradient-to-tr from-[#0E2A6D]/15 to-[#1E4DB7]/20 blur-3xl pointer-events-none rounded-full" />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative z-10 max-w-4xl mx-auto flex flex-col items-center"
+          className="relative z-10 max-w-4xl mx-auto flex flex-col items-center gap-4"
         >
-          {/* Floating Pulse AI Logo */}
+          {/* Bot Logo — 48px Container */}
           <motion.div
-            animate={{ y: [0, -10, 0] }}
+            animate={{ y: [0, -8, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-tr from-[#0A2A6A] via-[#163D8C] to-[#0A2A6A] text-white shadow-2xl shadow-[#0A2A6A]/30 border border-white/30 relative"
+            className="mb-2 flex h-[48px] w-[48px] items-center justify-center rounded-[14px] bg-gradient-to-tr from-[#0E2A6D] via-[#1E4DB7] to-[#0E2A6D] text-white shadow-md border border-[#D9A441]/40 relative"
           >
-            <Bot size={40} strokeWidth={1.75} />
-            <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-emerald-400 border-2 border-white animate-pulse" />
+            <Bot size={24} strokeWidth={1.75} />
+            <div className="absolute -top-1 -right-1 h-3.5 w-3.5 rounded-full bg-[#22C55E] border-2 border-white dark:border-[#0F172A] animate-pulse" />
           </motion.div>
 
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-[#0A2A6A] text-xs font-bold mb-4 shadow-xs">
-            <Sparkles size={14} className="text-[#E8B24D]" />
-            <span>Next-Gen RAG AI Assistant</span>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1E4DB7]/10 dark:bg-[#1E4DB7]/20 border border-[#1E4DB7]/30 text-[#0E2A6D] dark:text-[#60A5FA] text-[13px] font-semibold shadow-xs">
+            <Sparkles size={14} className="text-[#D9A441]" />
+            <span>Next-Gen Enterprise Campus AI Platform</span>
           </div>
 
-          <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-bold text-[#0A2A6A] leading-tight tracking-tight">
+          {/* Heading — League Spartan 48px 800 */}
+          <h1 className="font-heading text-[48px] font-extrabold tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC] leading-tight mt-2">
             {APP_NAME}
           </h1>
 
-          <p className="mt-3 text-base sm:text-lg font-semibold text-[#163D8C] max-w-2xl mx-auto">
+          {/* Subheading — League Spartan 18px 700 */}
+          <p className="font-heading font-bold text-[18px] tracking-[0.02em] text-[#1E4DB7] dark:text-[#D9A441] max-w-2xl mx-auto">
             Your AI Assistant for {COLLEGE_NAME}
           </p>
 
           {/* Category Tag Pills */}
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-1.5 max-w-3xl">
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 max-w-3xl font-body">
             {categoryPills.map((pill) => (
               <span
                 key={pill}
-                className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-white border border-slate-200 text-slate-700 shadow-xs hover:border-[#163D8C] transition"
+                className="px-3 py-1 text-[13px] font-medium rounded-xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] text-[#475569] dark:text-[#CBD5E1] shadow-xs hover:border-[#1E4DB7] transition"
               >
                 • {pill}
               </span>
             ))}
           </div>
 
-          {/* Typewriter Prompt Display */}
-          <div className="mt-6 h-8 flex items-center justify-center text-sm sm:text-base font-mono font-medium text-slate-600">
+          {/* Typewriter Prompt Display — 16px Inter */}
+          <div className="mt-4 h-8 flex items-center justify-center font-body text-[16px] font-medium text-[#64748B] dark:text-[#94A3B8]">
             <span>{text}</span>
-            <span className="w-0.5 h-5 ml-1 bg-[#0A2A6A] animate-pulse" />
+            <span className="w-0.5 h-5 ml-1 bg-[#0E2A6D] dark:bg-[#D9A441] animate-pulse" />
           </div>
 
-          {/* CTA Buttons */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          {/* CTA Buttons — Height 44px, Radius 14px, Gap 16px */}
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
             <Link
               to="/dashboard"
-              className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#0A2A6A] text-white font-bold text-sm rounded-2xl shadow-xl shadow-[#0A2A6A]/20 hover:bg-[#163D8C] hover:-translate-y-0.5 transition-all"
+              className="h-[44px] inline-flex items-center gap-2 px-6 bg-[#0E2A6D] hover:bg-[#153B8A] text-white font-heading font-bold text-[15px] tracking-[0.02em] rounded-[14px] shadow-md hover:-translate-y-0.5 transition-all"
             >
-              <Bot size={18} />
+              <Bot size={18} strokeWidth={1.75} />
               <span>Launch CollegeMate AI</span>
-              <ArrowRight size={16} />
+              <ArrowRight size={18} strokeWidth={1.75} />
             </Link>
             <Link
               to="/register"
-              className="inline-flex items-center gap-2 px-6 py-3.5 bg-white border border-slate-300 text-slate-800 font-bold text-sm rounded-2xl hover:border-[#0A2A6A] hover:bg-slate-50 transition-all shadow-xs"
+              className="h-[44px] inline-flex items-center gap-2 px-6 bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] text-[#1F2937] dark:text-[#F8FAFC] font-heading font-bold text-[15px] tracking-[0.02em] rounded-[14px] hover:border-[#1E4DB7] hover:bg-[#F5F7FB] dark:hover:bg-[#111827] transition-all shadow-xs"
             >
               <span>Create Free Account</span>
             </Link>
           </div>
         </motion.div>
 
-        {/* Quick Action Cards Grid */}
-        <div className="mt-14 w-full max-w-5xl mx-auto relative z-10 px-2">
-          <div className="text-center mb-6">
-            <h3 className="text-xs font-extrabold uppercase tracking-widest text-[#0A2A6A]">
+        {/* Quick Action Cards Grid (Height 150px, Padding 24px, Border Radius 18px, Gap 16px) */}
+        <div className="mt-16 w-full max-w-5xl mx-auto relative z-10 px-2">
+          <div className="text-center mb-8">
+            <h3 className="font-heading text-[24px] font-bold tracking-[0.02em] text-[#0E2A6D] dark:text-[#D9A441]">
               Instant Campus Assistance Categories
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {quickActions.map((card, i) => {
               const IconComp = card.icon;
               return (
@@ -234,18 +241,28 @@ export default function HomePage() {
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: i * 0.04 }}
-                  whileHover={{ y: -5, scale: 1.02 }}
-                  className="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-xs transition-all hover:border-[#163D8C] hover:shadow-xl hover:shadow-[#0A2A6A]/5 group"
+                  whileHover={{ y: -4, scale: 1.02 }}
+                  className="h-[150px] rounded-[18px] border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] p-[24px] text-left shadow-xs transition-all hover:border-[#1E4DB7] dark:hover:border-[#D9A441] hover:shadow-md flex flex-col justify-between group cursor-pointer"
                 >
-                  <div className={`w-10 h-10 rounded-xl ${card.color} flex items-center justify-center mb-3 border`}>
-                    <IconComp size={22} strokeWidth={1.75} />
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className={`w-8 h-8 rounded-xl ${card.color} flex items-center justify-center border`}>
+                        <IconComp size={20} strokeWidth={1.75} />
+                      </div>
+                      {/* Badge: 13px Inter */}
+                      <span className="rounded-full bg-[#F5F7FB] dark:bg-[#111827] px-2.5 py-0.5 font-body text-[13px] font-semibold text-[#0E2A6D] dark:text-[#D9A441]">
+                        {card.category}
+                      </span>
+                    </div>
+                    {/* Title: 16px League Spartan */}
+                    <h4 className="font-heading font-bold text-[16px] text-[#1F2937] dark:text-[#F8FAFC] truncate mb-0.5 group-hover:text-[#0E2A6D] dark:group-hover:text-[#60A5FA]">
+                      {card.title}
+                    </h4>
+                    {/* Body: 14px Inter */}
+                    <p className="font-body text-[14px] text-[#64748B] dark:text-[#94A3B8] leading-snug line-clamp-1">
+                      {card.desc}
+                    </p>
                   </div>
-                  <h4 className="font-bold text-slate-900 text-sm mb-1 group-hover:text-[#0A2A6A]">
-                    {card.title}
-                  </h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    {card.desc}
-                  </p>
                 </motion.div>
               );
             })}
@@ -254,10 +271,9 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-6 text-center text-xs font-semibold text-slate-500 border-t border-slate-200 bg-white">
-        © {new Date().getFullYear()} {COLLEGE_NAME} · {APP_NAME}
+      <footer className="py-6 text-center font-body text-[13px] text-[#64748B] dark:text-[#94A3B8] border-t border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#111827]">
+        © {new Date().getFullYear()} <span className="font-heading font-bold text-[#0E2A6D] dark:text-[#D9A441]">{COLLEGE_NAME}</span> · {APP_NAME}
       </footer>
     </div>
   );
 }
-

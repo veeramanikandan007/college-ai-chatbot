@@ -32,6 +32,7 @@ export default function VoiceInputBar({
 
   const recognitionRef = useRef<any>(null);
   const timerRef = useRef<number | null>(null);
+  const isIntendedStopRef = useRef(false);
 
   // Check browser support for SpeechRecognition
   useEffect(() => {
@@ -64,6 +65,7 @@ export default function VoiceInputBar({
       }
       recognitionRef.current = null;
     }
+    console.log("Microphone stopped");
     setIsRecording(false);
     setRecordingDuration(0);
     setInterimTranscript('');
@@ -76,6 +78,7 @@ export default function VoiceInputBar({
     }
     if (isGenerating || isRecording) return;
 
+    isIntendedStopRef.current = false;
     cleanupState();
 
     const SpeechRecognitionClass =
@@ -88,6 +91,7 @@ export default function VoiceInputBar({
       rec.lang = language;
 
       rec.onstart = () => {
+        console.log("Microphone started");
         setIsRecording(true);
         setRecordingDuration(0);
         setInterimTranscript('');
@@ -105,6 +109,7 @@ export default function VoiceInputBar({
         }
         if (currentText) {
           setInterimTranscript(currentText);
+          console.log(`Recognition result: ${currentText}`);
         }
       };
 
@@ -123,7 +128,12 @@ export default function VoiceInputBar({
       };
 
       rec.onend = () => {
-        // Auto-end handling if ended externally
+        if (!isIntendedStopRef.current && isRecording) {
+            console.log("Microphone stopped unexpectedly. Restarting...");
+            try { rec.start(); } catch (e) {}
+        } else {
+            console.log("Microphone stopped");
+        }
       };
 
       recognitionRef.current = rec;
@@ -136,11 +146,13 @@ export default function VoiceInputBar({
 
   // Action 1: Cancel Recording (Clears everything, aborts mic, resets state)
   const handleCancelRecording = () => {
+    isIntendedStopRef.current = true;
     cleanupState();
   };
 
   // Action 2: Stop Recording (Stops mic, keeps current transcript in prompt)
   const handleStopRecording = () => {
+    isIntendedStopRef.current = true;
     if (interimTranscript.trim()) {
       setPromptInput((prev) => (prev ? `${prev} ${interimTranscript.trim()}` : interimTranscript.trim()));
     }
@@ -149,6 +161,7 @@ export default function VoiceInputBar({
 
   // Action 3: Confirm Recording (Appends transcript, exits recording mode)
   const handleConfirmRecording = () => {
+    isIntendedStopRef.current = true;
     if (interimTranscript.trim()) {
       setPromptInput((prev) => (prev ? `${prev} ${interimTranscript.trim()}` : interimTranscript.trim()));
     }
@@ -268,35 +281,35 @@ export default function VoiceInputBar({
           </motion.div>
         ) : (
           /* ==========================================
-             IDLE STATE (56px Glassmorphic Input Bar)
+             IDLE STATE (48px Glassmorphic Input Bar)
              ========================================== */
           <motion.form
             key="idle-bar"
             initial={{ opacity: 0, scale: 0.98, y: -6 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 6 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
             onSubmit={(e) => {
               e.preventDefault();
               if (promptInput.trim() && !isGenerating) {
                 onSendMessage();
               }
             }}
-            className="relative flex h-[56px] w-full items-center rounded-2xl border border-slate-200/90 dark:border-slate-700/90 bg-white/90 dark:bg-slate-900/90 p-2 shadow-md backdrop-blur-xl transition-all duration-300 focus-within:border-[#0A2A6A] dark:focus-within:border-secondary focus-within:ring-2 focus-within:ring-[#0A2A6A]/10"
+            className="relative flex h-[48px] w-full items-center rounded-[12px] border border-[#E2E8F0] dark:border-[#334155] bg-white/95 dark:bg-[#1E293B]/95 px-2 shadow-xs backdrop-blur-xl transition-all duration-180 focus-within:border-[#1E4DB7] dark:focus-within:border-[#D9A441] focus-within:ring-2 focus-within:ring-[#1E4DB7]/10"
           >
-            {/* Input Text Box */}
+            {/* Input Text Box — Inter 14px */}
             <input
               type="text"
               value={promptInput}
               onChange={(e) => setPromptInput(e.target.value)}
               placeholder="Ask CollegeMate AI about rules, timetables, fees, library..."
-              className="flex-1 bg-transparent px-3 text-sm text-[#1F2937] dark:text-white outline-none placeholder:text-[#94A3B8] dark:placeholder:text-slate-500"
+              className="flex-1 bg-transparent px-3 text-[14px] font-body text-[#1F2937] dark:text-[#F8FAFC] outline-none placeholder:text-[#64748B] dark:placeholder:text-[#94A3B8]"
               disabled={isGenerating}
             />
 
-            {/* Action Icon Group */}
+            {/* Action Icon Group — Buttons 40x40px, Icons 16px */}
             <div className="flex items-center gap-1.5 shrink-0">
-              {/* Mic Recording Button */}
+              {/* Mic Recording Button (40x40px) */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -304,21 +317,21 @@ export default function VoiceInputBar({
                 onClick={startRecording}
                 disabled={isGenerating}
                 title="Start Voice Input"
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-[#0A2A6A] dark:hover:text-secondary transition disabled:opacity-40"
+                className="flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-[#64748B] dark:text-[#94A3B8] hover:bg-[#E2E8F0] dark:hover:bg-[#334155] hover:text-[#0E2A6D] dark:hover:text-[#60A5FA] transition disabled:opacity-40 shrink-0"
               >
-                <Mic size={17} />
+                <Mic size={16} strokeWidth={1.75} />
               </motion.button>
 
-              {/* Stop Generation or Send Button */}
+              {/* Stop Generation or Send Button (40px height) */}
               {isGenerating ? (
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   type="button"
                   onClick={onStopGeneration}
-                  className="flex h-9 items-center gap-1.5 rounded-xl bg-rose-600 px-4 text-xs font-bold text-white shadow-md hover:bg-rose-700 transition"
+                  className="flex h-10 items-center gap-2 rounded-[12px] bg-[#EF4444] px-3.5 font-body text-[14px] font-semibold text-white shadow-xs hover:bg-rose-700 transition shrink-0"
                 >
-                  <Square size={13} className="fill-current" />
+                  <Square size={16} strokeWidth={1.75} className="fill-current" />
                   <span className="hidden sm:inline">Stop</span>
                 </motion.button>
               ) : (
@@ -327,27 +340,27 @@ export default function VoiceInputBar({
                   whileTap={{ scale: 0.96 }}
                   type="submit"
                   disabled={!promptInput.trim()}
-                  className="flex h-9 items-center gap-1.5 rounded-xl bg-[#0A2A6A] dark:bg-secondary px-4 text-xs font-bold text-white dark:text-slate-900 shadow-md transition hover:bg-[#163D8C] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  className="flex h-10 items-center gap-2 rounded-[12px] bg-[#0E2A6D] hover:bg-[#153B8A] px-3.5 font-body text-[14px] font-semibold text-white shadow-xs transition disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 shrink-0"
                 >
                   <span className="hidden sm:inline">Send</span>
-                  <SendHorizontal size={18} strokeWidth={1.75} />
+                  <SendHorizontal size={16} strokeWidth={1.75} />
                 </motion.button>
               )}
 
-              {/* Voice Settings Button */}
+              {/* Voice Settings Button (40x40px) */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 type="button"
                 onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
+                className={`flex h-10 w-10 items-center justify-center rounded-[12px] transition shrink-0 ${
                   isSettingsOpen
-                    ? 'bg-slate-200 dark:bg-slate-700 text-[#0A2A6A] dark:text-secondary'
-                    : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300'
+                    ? 'bg-[#F5F7FB] dark:bg-[#0F172A] text-[#0E2A6D] dark:text-[#60A5FA]'
+                    : 'text-[#64748B] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] hover:text-[#1F2937] dark:hover:text-[#F8FAFC]'
                 }`}
                 title="Voice Settings"
               >
-                <Settings2 size={17} />
+                <Settings2 size={16} strokeWidth={1.75} />
               </motion.button>
             </div>
           </motion.form>

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -8,26 +8,22 @@ import {
   Edit2,
   Trash2,
   Pin,
-  Archive,
-  ArchiveRestore,
   Copy,
-  Download,
   GraduationCap,
-  Sparkles,
-  MessageSquareMore,
-  History,
-  LayoutDashboard,
+  MessageSquare,
+  BookOpen,
+  FileText,
+  Settings,
   LogOut,
   X,
   PanelLeftClose,
   PanelLeftOpen,
-  Settings,
-  Tag,
-  BarChart2,
+  UserRound,
 } from 'lucide-react';
 
 import { useSidebar } from '../context/SidebarContext';
 import { useAuth } from '../hooks/useAuth';
+import UserAvatar from './UserAvatar';
 
 export type ChatCategory =
   | 'Admissions'
@@ -66,33 +62,183 @@ interface SidebarProps {
   onChangeCategory?: (id: string, category: ChatCategory) => void;
 }
 
-// Category badge color helper
-export function getCategoryBadgeStyle(cat?: ChatCategory) {
-  switch (cat) {
-    case 'Admissions':
-      return 'bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border-blue-200 dark:border-blue-800';
-    case 'Examinations':
-      return 'bg-purple-50 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border-purple-200 dark:border-purple-800';
-    case 'Attendance':
-      return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800';
-    case 'Library':
-      return 'bg-amber-50 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-amber-200 dark:border-amber-800';
-    case 'Placements':
-      return 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800';
-    case 'Fees':
-      return 'bg-rose-50 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 border-rose-200 dark:border-rose-800';
-    case 'Hostel':
-      return 'bg-teal-50 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300 border-teal-200 dark:border-teal-800';
-    case 'Academics':
-      return 'bg-cyan-50 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800';
-    default:
-      return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700';
-  }
+// Text match highlighter for live search
+function HighlightedText({ text, query }: { text: string; query: string }) {
+  if (!query.trim()) return <>{text}</>;
+  const parts = text.split(new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'));
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === query.toLowerCase() ? (
+          <mark
+            key={i}
+            className="bg-[#D9A441]/30 text-[#0E2A6D] dark:text-[#D9A441] rounded px-0.5 font-bold"
+          >
+            {part}
+          </mark>
+        ) : (
+          part
+        )
+      )}
+    </>
+  );
 }
+
+// Memoized Chat History Item Component — Height 56px, Padding 14px (px-[14px]), Icon 18px
+interface ChatItemProps {
+  chat: ChatSession;
+  isActive: boolean;
+  searchTerm: string;
+  editingId: string | null;
+  editingTitle: string;
+  openMenuId: string | null;
+  contextMenuId: string | null;
+  onSelect: (id: string) => void;
+  onRenameStart: (chat: ChatSession) => void;
+  onRenameSave: (id: string) => void;
+  onRenameCancel: () => void;
+  setEditingTitle: (val: string) => void;
+  onToggleMenu: (id: string, e: React.MouseEvent) => void;
+  onContextMenu: (id: string, e: React.MouseEvent) => void;
+  onPin: (id: string) => void;
+  onDuplicate: (id: string) => void;
+  onExport: (id: string) => void;
+  onDelete: (id: string) => void;
+}
+
+const ChatItem = React.memo(function ChatItem({
+  chat,
+  isActive,
+  searchTerm,
+  editingId,
+  editingTitle,
+  openMenuId,
+  contextMenuId,
+  onSelect,
+  onRenameStart,
+  onRenameSave,
+  onRenameCancel,
+  setEditingTitle,
+  onToggleMenu,
+  onContextMenu,
+  onPin,
+  onDuplicate,
+  onExport,
+  onDelete,
+}: ChatItemProps) {
+  const isMenuOpen = openMenuId === chat.id || contextMenuId === chat.id;
+  const isEditing = editingId === chat.id;
+
+  return (
+    <div
+      onContextMenu={(e) => onContextMenu(chat.id, e)}
+      className="relative group my-[8px]"
+    >
+      <div
+        onClick={() => onSelect(chat.id)}
+        className={`flex h-[56px] items-center justify-between rounded-[14px] px-[14px] transition-all duration-200 cursor-pointer select-none border font-body ${
+          isActive
+            ? 'bg-[#1E4DB7]/10 dark:bg-[#1E4DB7]/20 text-[#1E4DB7] dark:text-[#60A5FA] border-[#1E4DB7]/30 dark:border-[#60A5FA]/30 border-l-4 border-l-[#1E4DB7] font-semibold shadow-xs'
+            : 'text-[#475569] dark:text-[#CBD5E1] border-transparent hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] hover:scale-[1.01]'
+        }`}
+      >
+        <div className="flex items-center gap-[12px] min-w-0 flex-1 pr-1">
+          <MessageSquare
+            size={18}
+            strokeWidth={1.75}
+            className={`shrink-0 ${
+              isActive ? 'text-[#1E4DB7] dark:text-[#60A5FA]' : 'text-[#64748B] dark:text-[#94A3B8]'
+            }`}
+          />
+
+          {isEditing ? (
+            <input
+              type="text"
+              autoFocus
+              value={editingTitle}
+              onChange={(e) => setEditingTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') onRenameSave(chat.id);
+                if (e.key === 'Escape') onRenameCancel();
+              }}
+              onBlur={() => onRenameSave(chat.id)}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full bg-white dark:bg-[#0F172A] border border-[#1E4DB7] text-[15px] font-medium text-[#1F2937] dark:text-[#F8FAFC] rounded-lg px-2 py-1 outline-none"
+            />
+          ) : (
+            <div className="flex flex-col min-w-0">
+              <span className="truncate text-[15px] font-medium leading-snug">
+                <HighlightedText text={chat.title} query={searchTerm} />
+              </span>
+              <span className="text-[13px] text-[#64748B] dark:text-[#94A3B8] truncate leading-tight">
+                {chat.lastUpdated}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Action Menu Toggle Button */}
+        {!isEditing && (
+          <button
+            onClick={(e) => onToggleMenu(chat.id, e)}
+            className={`p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-[#E2E8F0] dark:hover:bg-[#334155] text-[#64748B] dark:text-[#94A3B8] transition-opacity shrink-0 ${
+              isMenuOpen ? 'opacity-100 bg-[#E2E8F0] dark:bg-[#334155]' : ''
+            }`}
+            title="Options"
+          >
+            <MoreVertical size={18} strokeWidth={1.75} />
+          </button>
+        )}
+      </div>
+
+      {/* Dropdown Options Menu */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: -4 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -4 }}
+            transition={{ duration: 0.12 }}
+            className="absolute right-2 top-[52px] z-50 w-44 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] p-1.5 shadow-lg select-none font-body text-[13px]"
+          >
+            <button
+              onClick={() => onPin(chat.id)}
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] transition"
+            >
+              <Pin size={16} strokeWidth={1.75} />
+              <span>{chat.pinned ? 'Unpin Chat' : 'Pin Chat'}</span>
+            </button>
+            <button
+              onClick={() => onRenameStart(chat)}
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] transition"
+            >
+              <Edit2 size={16} strokeWidth={1.75} />
+              <span>Rename</span>
+            </button>
+            <button
+              onClick={() => onDuplicate(chat.id)}
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] transition"
+            >
+              <Copy size={16} strokeWidth={1.75} />
+              <span>Duplicate</span>
+            </button>
+            <button
+              onClick={() => onDelete(chat.id)}
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[#EF4444] hover:bg-rose-50 dark:hover:bg-rose-900/20 transition"
+            >
+              <Trash2 size={16} strokeWidth={1.75} />
+              <span>Delete</span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+});
 
 export default function Sidebar({
   conversations = [],
-  activeChatId = '',
+  activeChatId,
   onSelectChat = () => {},
   onNewChat = () => {},
   onRenameChat = () => {},
@@ -101,476 +247,568 @@ export default function Sidebar({
   onArchiveChat = () => {},
   onDuplicateChat = () => {},
   onExportChat = () => {},
-  onChangeCategory = () => {},
 }: SidebarProps) {
-  const { isOpen, isPinned, setIsOpen, togglePin } = useSidebar();
-  const { logout, user } = useAuth();
-  const navigate = useNavigate();
+  const { isCollapsed, setIsCollapsed, toggleCollapse, isOpen, setIsOpen } = useSidebar();
+  const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState<'all' | 'archived'>('all');
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
-  const [showStats, setShowStats] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [contextMenuId, setContextMenuId] = useState<string | null>(null);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const desktopRef = useRef<HTMLDivElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
 
-  // Keyboard shortcut: Ctrl + K (or Cmd + K) to focus search input
+  // Keyboard shortcut Ctrl+\ or Ctrl+B to toggle collapse
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      if ((e.ctrlKey || e.metaKey) && (e.key === '\\' || e.key.toLowerCase() === 'b')) {
         e.preventDefault();
-        searchInputRef.current?.focus();
+        toggleCollapse();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (isCollapsed) setIsCollapsed(false);
+        setTimeout(() => searchInputRef.current?.focus(), 150);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [isCollapsed, setIsCollapsed, toggleCollapse]);
 
+  // Click outside menu dismiss
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        desktopRef.current && !desktopRef.current.contains(target) &&
+        drawerRef.current && !drawerRef.current.contains(target)
+      ) {
         setOpenMenuId(null);
+        setContextMenuId(null);
       }
-    }
+    };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleAction = () => {
-    if (!isPinned) {
-      setIsOpen(false);
-    }
-  };
+  // Live search filtering
+  const filteredChats = useMemo(() => {
+    if (!searchTerm.trim()) return conversations;
+    return conversations.filter((c) =>
+      c.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [conversations, searchTerm]);
 
-  // Filter based on search term & tab (all vs archived)
-  const tabFiltered = conversations.filter((c) =>
-    activeTab === 'archived' ? !!c.archived : !c.archived
-  );
+  // Categorize Conversations into Date Groups
+  const groupedChats = useMemo(() => {
+    const now = Date.now();
+    const oneDay = 24 * 60 * 60 * 1000;
 
-  const searchFiltered = tabFiltered.filter((c) =>
-    c.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    const pinned: ChatSession[] = [];
+    const today: ChatSession[] = [];
+    const yesterday: ChatSession[] = [];
+    const prev7Days: ChatSession[] = [];
+    const prev30Days: ChatSession[] = [];
+    const older: ChatSession[] = [];
 
-  const pinnedChats = searchFiltered.filter((c) => c.pinned);
-  const unpinnedChats = searchFiltered.filter((c) => !c.pinned);
+    filteredChats.forEach((c) => {
+      if (c.pinned) {
+        pinned.push(c);
+        return;
+      }
+      const diff = now - c.timestamp;
+      if (diff < oneDay) {
+        today.push(c);
+      } else if (diff < 2 * oneDay) {
+        yesterday.push(c);
+      } else if (diff < 7 * oneDay) {
+        prev7Days.push(c);
+      } else if (diff < 30 * oneDay) {
+        prev30Days.push(c);
+      } else {
+        older.push(c);
+      }
+    });
 
-  // Date Grouping logic for unpinned chats
-  const now = new Date().getTime();
-  const oneDayMs = 24 * 60 * 60 * 1000;
+    return { pinned, today, yesterday, prev7Days, prev30Days, older };
+  }, [filteredChats]);
 
-  const todayChats = unpinnedChats.filter((c) => now - c.timestamp < oneDayMs);
-  const yesterdayChats = unpinnedChats.filter(
-    (c) => now - c.timestamp >= oneDayMs && now - c.timestamp < 2 * oneDayMs
-  );
-  const prev7DaysChats = unpinnedChats.filter(
-    (c) => now - c.timestamp >= 2 * oneDayMs && now - c.timestamp < 7 * oneDayMs
-  );
-  const olderChats = unpinnedChats.filter((c) => now - c.timestamp >= 7 * oneDayMs);
-
-  const startRename = (chat: ChatSession) => {
+  const handleStartRename = useCallback((chat: ChatSession) => {
     setEditingId(chat.id);
     setEditingTitle(chat.title);
     setOpenMenuId(null);
-  };
+    setContextMenuId(null);
+  }, []);
 
-  const saveRename = (id: string) => {
+  const handleSaveRename = useCallback((id: string) => {
     if (editingTitle.trim()) {
       onRenameChat(id, editingTitle.trim());
     }
     setEditingId(null);
-  };
+  }, [editingTitle, onRenameChat]);
 
-  const renderGroup = (groupTitle: string, groupChats: ChatSession[]) => {
-    if (groupChats.length === 0) return null;
-    return (
-      <div className="mb-4">
-        <div className="flex items-center justify-between px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
-          <span>{groupTitle}</span>
-          <span className="font-code text-[9px] font-normal">({groupChats.length})</span>
-        </div>
-        <div className="mt-1 space-y-1">
-          {groupChats.map((chat) => {
-            const isActive = chat.id === activeChatId;
-            const isMenuOpen = openMenuId === chat.id;
+  const handleCancelRename = useCallback(() => {
+    setEditingId(null);
+  }, []);
 
-            return (
-              <div key={chat.id} className="relative group">
-                <div
-                  onClick={() => {
-                    onSelectChat(chat.id);
-                    handleAction();
-                  }}
-                  className={`flex items-center justify-between rounded-xl px-3 py-2 transition cursor-pointer ${
-                    isActive
-                      ? 'ty-sidebar-active bg-[#0A2A6A]/10 dark:bg-slate-800 text-[#0A2A6A] dark:text-slate-100 border border-[#0A2A6A]/20'
-                      : 'ty-sidebar text-slate-700 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/50'
-                  }`}
-                >
-                  <div className="flex flex-col min-w-0 flex-1 pr-2">
-                    {editingId === chat.id ? (
-                      <input
-                        autoFocus
-                        value={editingTitle}
-                        onChange={(e) => setEditingTitle(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') saveRename(chat.id);
-                          if (e.key === 'Escape') setEditingId(null);
-                        }}
-                        onBlur={() => saveRename(chat.id)}
-                        className="w-full rounded bg-white dark:bg-slate-900 border border-[#0A2A6A] px-2 py-0.5 text-xs text-slate-900 dark:text-white outline-none"
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    ) : (
-                      <>
-                        <div className="flex items-center gap-1.5 min-w-0">
-                          <MessageSquareMore size={16} strokeWidth={1.75} className="shrink-0 text-[#163D8C] dark:text-secondary opacity-70" />
-                          <p className="truncate text-slate-900 dark:text-slate-100">
-                            {chat.title}
-                          </p>
-                        </div>
-                        {chat.category && (
-                          <div className="mt-1 flex items-center gap-1">
-                            <span
-                              className={`inline-block px-1.5 py-0.5 text-[9px] font-bold rounded-md border ${getCategoryBadgeStyle(
-                                chat.category
-                              )}`}
-                            >
-                              {chat.category}
-                            </span>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
+  const handleToggleMenu = useCallback((id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setContextMenuId(null);
+    setOpenMenuId((prev) => (prev === id ? null : id));
+  }, []);
 
-                  {/* Options Button */}
-                  <div className="relative shrink-0">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setOpenMenuId(isMenuOpen ? null : chat.id);
-                      }}
-                      className={`rounded-lg p-1 transition opacity-0 group-hover:opacity-100 ${
-                        isMenuOpen
-                          ? 'opacity-100 bg-slate-200 dark:bg-slate-700'
-                          : 'hover:bg-slate-200 dark:hover:bg-slate-700'
-                      }`}
-                    >
-                      <MoreVertical className="h-4 w-4" />
-                    </button>
-
-                    {/* Dropdown Menu */}
-                    {isMenuOpen && (
-                      <div
-                        ref={menuRef}
-                        className="absolute right-0 top-7 z-50 w-44 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1.5 shadow-xl select-none"
-                      >
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            startRename(chat);
-                          }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
-                        >
-                          <Edit2 className="h-3.5 w-3.5" />
-                          <span>Rename</span>
-                        </button>
-
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onPinChat(chat.id);
-                            setOpenMenuId(null);
-                          }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
-                        >
-                          <Pin className="h-3.5 w-3.5" />
-                          <span>{chat.pinned ? 'Unpin' : 'Pin'}</span>
-                        </button>
-
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onArchiveChat(chat.id);
-                            setOpenMenuId(null);
-                          }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
-                        >
-                          {chat.archived ? (
-                            <>
-                              <ArchiveRestore className="h-3.5 w-3.5 text-emerald-600" />
-                              <span>Unarchive</span>
-                            </>
-                          ) : (
-                            <>
-                              <Archive className="h-3.5 w-3.5 text-amber-600" />
-                              <span>Archive</span>
-                            </>
-                          )}
-                        </button>
-
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onExportChat(chat.id);
-                            setOpenMenuId(null);
-                          }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
-                        >
-                          <Download className="h-3.5 w-3.5" />
-                          <span>Export</span>
-                        </button>
-
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onDeleteChat(chat.id);
-                            setOpenMenuId(null);
-                          }}
-                          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                          <span>Delete</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
+  const handleContextMenu = useCallback((id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setOpenMenuId(null);
+    setContextMenuId((prev) => (prev === id ? null : id));
+  }, []);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
-  const activeCount = conversations.filter((c) => !c.archived).length;
-  const archivedCount = conversations.filter((c) => !!c.archived).length;
+  const renderGroupSection = (
+    groupTitle: string,
+    chats: ChatSession[],
+    onSelectCb?: (id: string) => void,
+    isPinnedSection?: boolean
+  ) => {
+    if (chats.length === 0) return null;
+    return (
+      <div className="mb-3">
+        <div className="flex items-center gap-2 px-[14px] py-1 font-body text-[12px] font-semibold uppercase tracking-[0.08em] text-[#64748B] dark:text-[#94A3B8]">
+          {isPinnedSection ? (
+            <>
+              <Pin size={16} strokeWidth={1.75} className="text-[#EF4444] shrink-0" />
+              <span className="text-[#EF4444]">PINNED</span>
+            </>
+          ) : (
+            <span>{groupTitle}</span>
+          )}
+        </div>
+        <div className="mt-1">
+          {chats.map((chat) => (
+            <ChatItem
+              key={chat.id}
+              chat={chat}
+              isActive={chat.id === activeChatId}
+              searchTerm={searchTerm}
+              editingId={editingId}
+              editingTitle={editingTitle}
+              openMenuId={openMenuId}
+              contextMenuId={contextMenuId}
+              onSelect={(id) => {
+                onSelectChat(id);
+                if (onSelectCb) onSelectCb(id);
+              }}
+              onRenameStart={handleStartRename}
+              onRenameSave={handleSaveRename}
+              onRenameCancel={handleCancelRename}
+              setEditingTitle={setEditingTitle}
+              onToggleMenu={handleToggleMenu}
+              onContextMenu={handleContextMenu}
+              onPin={(id) => { onPinChat(id); setOpenMenuId(null); setContextMenuId(null); }}
+              onDuplicate={(id) => { onDuplicateChat(id); setOpenMenuId(null); setContextMenuId(null); }}
+              onExport={(id) => { onExportChat(id); setOpenMenuId(null); setContextMenuId(null); }}
+              onDelete={(id) => { onDeleteChat(id); setOpenMenuId(null); setContextMenuId(null); }}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div
-          className={`fixed inset-y-0 left-0 z-50 flex ${
-            isPinned ? 'md:static md:z-0 md:h-screen' : ''
-          }`}
-        >
-          {/* Backdrop */}
-          {!isPinned && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
-              className={`fixed inset-0 bg-black/40 backdrop-blur-xs ${
-                isPinned ? 'md:hidden' : ''
-              }`}
-            />
-          )}
-
-          {/* Sidebar Panel */}
-          <motion.div
-            initial={{ x: '-100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '-100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="relative flex h-full w-[280px] max-w-[85vw] flex-col border-r border-slate-200 dark:border-slate-800 bg-[#F9F9F9] dark:bg-slate-950 shadow-xl md:shadow-none select-none"
-          >
-            {/* Header: Logo & Branding */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200/80 dark:border-slate-800/80">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0A2A6A] to-[#163D8C] text-white shadow-xs">
-                  <GraduationCap className="h-5 w-5" />
-                </div>
-                <span className="font-bold text-[#0A2A6A] dark:text-slate-100">CollegeMate AI</span>
-              </div>
-              <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
-                <button
-                  onClick={togglePin}
-                  className="hidden md:flex h-8 w-8 items-center justify-center rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition"
-                  title={isPinned ? 'Unpin sidebar' : 'Pin sidebar'}
+    <>
+      {/* ========================================================================= */}
+      {/* 1. DESKTOP PERSISTENT SIDEBAR (>= 1024px)                                  */}
+      {/* Width: 260px expanded, 72px collapsed                                    */}
+      {/* ========================================================================= */}
+      <motion.aside
+        ref={desktopRef}
+        initial={false}
+        animate={{ width: isCollapsed ? 72 : 260 }}
+        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+        className="hidden lg:flex flex-col h-screen shrink-0 border-r border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#111827] relative z-40 overflow-hidden select-none py-[16px] px-[12px] box-border justify-between"
+      >
+        {/* Logo Section — Height 72px */}
+        <div className="flex items-center shrink-0 mb-4 h-[72px] px-1 select-none">
+          {!isCollapsed ? (
+            <div className="flex w-full items-center justify-between">
+              <Link to="/" className="flex items-center gap-[12px] min-w-0">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.25 }}
+                  className="w-[40px] h-[40px] rounded-xl flex items-center justify-center shrink-0 bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white shadow-xs border border-[#D9A441]/30"
                 >
-                  {isPinned ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
-                </button>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="md:hidden h-8 w-8 flex items-center justify-center rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-
-            {/* Navigation Actions */}
-            <div className="px-3 py-2 space-y-1">
-              <button
-                onClick={() => {
-                  if (location.pathname !== '/dashboard') {
-                    navigate('/dashboard?newChat=true');
-                  } else {
-                    onNewChat();
-                  }
-                  handleAction();
-                }}
-                className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-bold transition bg-[#0A2A6A] text-white shadow-xs hover:bg-[#163D8C]"
-              >
-                <div className="flex items-center gap-2">
-                  <SquarePen size={18} strokeWidth={1.75} />
-                  <span>New Chat</span>
-                </div>
-                <span className="text-[10px] font-normal opacity-80">Ctrl + N</span>
-              </button>
-
-              {/* Statistics Summary Toggle */}
-              <button
-                onClick={() => setShowStats(!showStats)}
-                className="flex w-full items-center justify-between rounded-xl px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition"
-              >
-                <div className="flex items-center gap-2">
-                  <BarChart2 className="h-3.5 w-3.5 text-[#163D8C] dark:text-secondary" />
-                  <span>Chat Stats</span>
-                </div>
-                <span className="text-[10px] font-mono bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded">
-                  {conversations.length} total
+                  <GraduationCap size={20} strokeWidth={1.75} />
+                </motion.div>
+                <span className="font-heading font-bold text-[18px] tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC] truncate">
+                  CollegeMate AI
                 </span>
-              </button>
+              </Link>
 
-              {showStats && (
-                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5 text-[11px] space-y-1 text-slate-600 dark:text-slate-300">
-                  <div className="flex justify-between">
-                    <span>Active Conversations:</span>
-                    <span className="font-bold text-[#0A2A6A] dark:text-white">{activeCount}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Archived Conversations:</span>
-                    <span className="font-bold text-amber-600">{archivedCount}</span>
-                  </div>
-                </div>
-              )}
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleCollapse();
+                }}
+                className="w-[40px] h-[40px] rounded-xl flex items-center justify-center shrink-0 text-[#64748B] dark:text-[#94A3B8] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 cursor-pointer pointer-events-auto z-50"
+                title="Collapse sidebar (Ctrl + \)"
+              >
+                <PanelLeftClose size={18} strokeWidth={1.75} />
+              </motion.button>
             </div>
+          ) : (
+            <div className="flex w-full items-center justify-center">
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleCollapse();
+                }}
+                className="w-[40px] h-[40px] rounded-xl flex items-center justify-center shrink-0 bg-[#F5F7FB] dark:bg-[#1E293B] text-[#0E2A6D] dark:text-[#60A5FA] hover:bg-[#E2E8F0] dark:hover:bg-[#334155] transition-all duration-250 cursor-pointer pointer-events-auto z-50 border border-[#E2E8F0] dark:border-[#334155]"
+                title="Expand sidebar (Ctrl + \)"
+              >
+                <PanelLeftOpen size={18} strokeWidth={1.75} />
+              </motion.button>
+            </div>
+          )}
+        </div>
 
-            {/* ALWAYS-VISIBLE SEARCH BAR */}
-            <div className="px-3 py-1.5">
-              <div className="relative">
+        {/* Navigation Buttons & Chat History (8px vertical spacing) */}
+        <div className="flex-1 flex flex-col min-h-0 gap-[8px]">
+          
+          {/* Navigation Buttons List */}
+          <div className="flex flex-col gap-[8px] shrink-0">
+            
+            {/* New Chat Button — Height 40px, Icon 16px, Text 14px, Gap 10px */}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.25 }}
+              onClick={() => {
+                if (location.pathname !== '/dashboard') {
+                  navigate('/dashboard?newChat=true');
+                } else {
+                  onNewChat();
+                }
+              }}
+              className={`h-[40px] rounded-[12px] font-body font-semibold text-[14px] transition-all duration-250 bg-[#0E2A6D] hover:bg-[#153B8A] text-white shadow-xs flex items-center shrink-0 ${
+                isCollapsed ? 'w-[40px] justify-center mx-auto' : 'w-full justify-between px-3'
+              }`}
+              title="New Chat (Ctrl + N)"
+            >
+              <div className="flex items-center gap-[10px]">
+                <SquarePen size={16} strokeWidth={1.75} className="shrink-0" />
+                {!isCollapsed && <span>New Chat</span>}
+              </div>
+              {!isCollapsed && <span className="font-body text-[11px] opacity-80">Ctrl+N</span>}
+            </motion.button>
+
+            {/* Search Button (Collapsed mode) */}
+            {isCollapsed && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.25 }}
+                onClick={() => {
+                  setIsCollapsed(false);
+                  setTimeout(() => searchInputRef.current?.focus(), 150);
+                }}
+                className="w-[40px] h-[40px] rounded-[12px] flex items-center justify-center shrink-0 mx-auto text-[#64748B] dark:text-[#94A3B8] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250"
+                title="Search Conversations (Ctrl + K)"
+              >
+                <Search size={16} strokeWidth={1.75} />
+              </motion.button>
+            )}
+
+            {/* AI Document Hub — Height 40px, Icon 16px, Text 14px, Gap 10px */}
+            <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.25 }}>
+              <Link
+                to="/documents"
+                className={`h-[40px] rounded-[12px] font-body font-semibold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center shrink-0 ${
+                  location.pathname === '/documents'
+                    ? 'bg-[#1E4DB7]/10 dark:bg-[#1E4DB7]/20 text-[#1E4DB7] dark:text-[#60A5FA]'
+                    : ''
+                } ${isCollapsed ? 'w-[40px] justify-center mx-auto' : 'w-full gap-[10px] px-3'}`}
+                title="AI Document Hub"
+              >
+                <FileText size={16} strokeWidth={1.75} className="text-[#D9A441] shrink-0" />
+                {!isCollapsed && <span>AI Document Hub</span>}
+              </Link>
+            </motion.div>
+
+            {/* Knowledge Base — Height 40px, Icon 16px, Text 14px, Gap 10px */}
+            <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.25 }}>
+              <Link
+                to="/notes"
+                className={`h-[40px] rounded-[12px] font-body font-semibold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center shrink-0 ${
+                  isCollapsed ? 'w-[40px] justify-center mx-auto' : 'w-full gap-[10px] px-3'
+                }`}
+                title="Knowledge Base"
+              >
+                <BookOpen size={16} strokeWidth={1.75} className="text-[#1E4DB7] dark:text-[#60A5FA] shrink-0" />
+                {!isCollapsed && <span>Knowledge Base</span>}
+              </Link>
+            </motion.div>
+
+            {/* Settings — Height 40px, Icon 16px, Text 14px, Gap 10px */}
+            <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.25 }}>
+              <Link
+                to="/settings"
+                className={`h-[40px] rounded-[12px] font-body font-semibold text-[14px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center shrink-0 ${
+                  isCollapsed ? 'w-[40px] justify-center mx-auto' : 'w-full gap-[10px] px-3'
+                }`}
+                title="Settings"
+              >
+                <Settings size={16} strokeWidth={1.75} className="text-[#64748B] dark:text-[#94A3B8] shrink-0" />
+                {!isCollapsed && <span>Settings</span>}
+              </Link>
+            </motion.div>
+          </div>
+
+          {/* Search Input & Scrollable History — Height 40px, Icon 16px */}
+          {!isCollapsed && (
+            <div className="flex-1 flex flex-col min-h-0 gap-[8px] mt-1">
+              <div className="relative flex items-center shrink-0">
+                <Search size={16} strokeWidth={1.75} className="absolute left-3 text-[#64748B] pointer-events-none" />
                 <input
                   ref={searchInputRef}
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search chats... (Ctrl + K)"
-                  className="w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 py-2 pl-8 pr-7 text-xs text-slate-800 dark:text-slate-200 outline-none focus:ring-1 focus:ring-[#0A2A6A] dark:focus:ring-secondary placeholder:text-slate-400"
+                  className="w-full h-[40px] rounded-[12px] bg-[#F5F7FB] dark:bg-[#1E293B] border border-transparent py-2 pl-9 pr-8 text-[14px] font-body text-[#1F2937] dark:text-[#F8FAFC] outline-none focus:border-[#1E4DB7] placeholder:text-[#64748B] transition"
                 />
-                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
                 {searchTerm && (
                   <button
                     onClick={() => setSearchTerm('')}
-                    className="absolute right-2 top-2.5 p-0.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                    className="absolute right-2.5 p-1 rounded-full text-[#64748B] hover:text-[#1F2937] dark:hover:text-[#F8FAFC]"
                   >
-                    <X className="h-3 w-3" />
+                    <X size={14} />
                   </button>
                 )}
               </div>
-            </div>
 
-            {/* Active vs Archived Filter Tabs */}
-            <div className="px-3 py-1 flex items-center gap-1 border-b border-slate-200/80 dark:border-slate-800/80">
-              <button
-                onClick={() => setActiveTab('all')}
-                className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition text-center ${
-                  activeTab === 'all'
-                    ? 'bg-slate-200 dark:bg-slate-800 text-[#0A2A6A] dark:text-slate-100 shadow-xs'
-                    : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-              >
-                Chats ({activeCount})
-              </button>
-              <button
-                onClick={() => setActiveTab('archived')}
-                className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition text-center ${
-                  activeTab === 'archived'
-                    ? 'bg-slate-200 dark:bg-slate-800 text-[#0A2A6A] dark:text-slate-100 shadow-xs'
-                    : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-              >
-                Archived ({archivedCount})
-              </button>
+              {/* Chat History List */}
+              <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar">
+                {filteredChats.length === 0 ? (
+                  <div className="py-10 text-center text-caption text-[#64748B] flex flex-col items-center gap-2">
+                    <Search size={18} strokeWidth={1.75} className="opacity-40" />
+                    <p className="font-semibold text-[#475569] dark:text-[#CBD5E1]">No chats found</p>
+                  </div>
+                ) : (
+                  <>
+                    {renderGroupSection('Pinned', groupedChats.pinned, undefined, true)}
+                    {renderGroupSection('Today', groupedChats.today)}
+                    {renderGroupSection('Yesterday', groupedChats.yesterday)}
+                    {renderGroupSection('Previous 7 Days', groupedChats.prev7Days)}
+                    {renderGroupSection('Previous 30 Days', groupedChats.prev30Days)}
+                    {renderGroupSection('Older', groupedChats.older)}
+                  </>
+                )}
+              </div>
             </div>
+          )}
+        </div>
 
-            {/* Chat History Section */}
-            <div className="flex-1 overflow-y-auto px-3 py-2 custom-scrollbar">
-              {searchFiltered.length === 0 ? (
-                <div className="py-10 text-center text-xs text-slate-500 dark:text-slate-400 flex flex-col items-center gap-2">
-                  <Search className="h-6 w-6 text-slate-400 opacity-60" />
-                  <p className="font-semibold text-slate-700 dark:text-slate-300">No conversations found</p>
-                  <p className="text-[11px] text-slate-400">
-                    {searchTerm
-                      ? `No titles match "${searchTerm}"`
-                      : activeTab === 'archived'
-                      ? 'No archived conversations.'
-                      : 'No active conversations.'}
-                  </p>
+        {/* Profile Footer Section — Avatar 36px, Name 15px, Role 13px, Logout Icon 18px */}
+        <div className="flex shrink-0 flex-col gap-4 pt-3 border-t border-[#E2E8F0] dark:border-[#334155]">
+          <div
+            className={`flex items-center rounded-[14px] p-1.5 bg-transparent ${
+              isCollapsed ? 'justify-center flex-col gap-3' : 'justify-between gap-2'
+            }`}
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <UserAvatar user={user} size="sm" />
+              {!isCollapsed && (
+                <div className="flex flex-col min-w-0">
+                  <span className="truncate text-[15px] font-semibold text-[#1F2937] dark:text-[#F8FAFC]">
+                    {user?.name || 'Student Account'}
+                  </span>
+                  <span className="truncate text-[13px] text-[#64748B] dark:text-[#94A3B8]">
+                    {user?.role === 'admin' ? 'Administrator' : 'Student'}
+                  </span>
                 </div>
-              ) : (
-                <>
-                  {renderGroup('📌 Pinned', pinnedChats)}
-                  {renderGroup('Today', todayChats)}
-                  {renderGroup('Yesterday', yesterdayChats)}
-                  {renderGroup('Previous 7 Days', prev7DaysChats)}
-                  {renderGroup('Older', olderChats)}
-                </>
               )}
             </div>
 
-            {/* Bottom Footer Section */}
-            <div className="p-3 border-t border-slate-200 dark:border-slate-800">
-              <div className="flex flex-col gap-1">
-                <Link
-                  to="/settings"
-                  onClick={handleAction}
-                  className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition"
-                >
-                  <Settings className="h-4 w-4 text-[#163D8C] dark:text-secondary" />
-                  <span>Settings</span>
-                </Link>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.25 }}
+              onClick={handleLogout}
+              title="Log out"
+              className="w-[36px] h-[36px] rounded-xl flex items-center justify-center shrink-0 text-[#64748B] dark:text-[#94A3B8] hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-[#EF4444] transition-all duration-250"
+            >
+              <LogOut size={18} strokeWidth={1.75} />
+            </motion.button>
+          </div>
+        </div>
+      </motion.aside>
 
-                <div className="mt-1 flex items-center justify-between rounded-xl bg-white dark:bg-slate-900 p-2.5 shadow-xs border border-slate-200 dark:border-slate-800">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#E8B24D] font-bold text-[#0A2A6A] shadow-xs">
-                      {user?.name?.charAt(0).toUpperCase() || 'U'}
-                    </div>
+      {/* ========================================================================= */}
+      {/* 2. TABLET & MOBILE DRAWER (< 1024px)                                     */}
+      {/* ========================================================================= */}
+      <AnimatePresence>
+        {isOpen && (
+          <div className="fixed inset-0 z-50 flex lg:hidden select-none">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 bg-[#0F172A]/60 backdrop-blur-xs"
+            />
+
+            {/* Mobile Drawer (Always 260px) */}
+            <motion.div
+              ref={drawerRef}
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+              className="relative flex h-full w-[260px] max-w-[85vw] flex-col border-r border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#111827] shadow-2xl z-10 overflow-hidden py-[16px] px-[12px] box-border justify-between"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between shrink-0 mb-4 h-[72px]">
+                <div className="flex items-center gap-3">
+                  <div className="w-[40px] h-[40px] rounded-xl flex items-center justify-center shrink-0 bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white shadow-xs border border-[#D9A441]/30">
+                    <GraduationCap size={20} strokeWidth={1.75} />
+                  </div>
+                  <span className="font-heading font-bold text-[18px] tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">
+                    CollegeMate AI
+                  </span>
+                </div>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="w-[40px] h-[40px] rounded-xl flex items-center justify-center shrink-0 text-[#64748B] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition"
+                  title="Close Menu"
+                >
+                  <X size={18} strokeWidth={1.75} />
+                </button>
+              </div>
+
+              {/* Navigation Actions */}
+              <div className="flex flex-col gap-[8px] shrink-0 mb-3">
+                <button
+                  onClick={() => {
+                    if (location.pathname !== '/dashboard') {
+                      navigate('/dashboard?newChat=true');
+                    } else {
+                      onNewChat();
+                    }
+                    setIsOpen(false);
+                  }}
+                  className="h-[44px] w-full rounded-[14px] font-heading font-bold text-[15px] tracking-[0.02em] transition-all duration-250 bg-[#0E2A6D] text-white shadow-xs flex items-center justify-between px-3.5"
+                >
+                  <div className="flex items-center gap-[12px]">
+                    <SquarePen size={18} strokeWidth={1.75} />
+                    <span>New Chat</span>
+                  </div>
+                </button>
+
+                <div className="relative flex items-center">
+                  <Search size={18} strokeWidth={1.75} className="absolute left-3.5 text-[#64748B] pointer-events-none" />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search conversations..."
+                    className="w-full h-[44px] rounded-[14px] bg-[#F5F7FB] dark:bg-[#1E293B] border border-transparent py-2 pl-10 pr-7 text-[15px] text-[#1F2937] dark:text-[#F8FAFC] outline-none focus:border-[#1E4DB7] placeholder:text-[#64748B] transition"
+                  />
+                  {searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="absolute right-2.5 p-1 rounded-full text-[#64748B] hover:text-[#1F2937] dark:hover:text-[#F8FAFC]"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+
+                <div className="space-y-1">
+                  <Link
+                    to="/notes"
+                    onClick={() => setIsOpen(false)}
+                    className="h-[44px] rounded-[14px] font-heading font-bold text-[15px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center gap-[12px] px-3.5"
+                  >
+                    <BookOpen size={18} strokeWidth={1.75} className="text-[#1E4DB7] shrink-0" />
+                    <span>Knowledge Base</span>
+                  </Link>
+
+                  <Link
+                    to="/settings"
+                    onClick={() => setIsOpen(false)}
+                    className="h-[44px] rounded-[14px] font-heading font-bold text-[15px] text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 flex items-center gap-[12px] px-3.5"
+                  >
+                    <Settings size={18} strokeWidth={1.75} className="text-[#64748B] shrink-0" />
+                    <span>Settings</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Chat History */}
+              <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar min-h-0">
+                {filteredChats.length === 0 ? (
+                  <div className="py-10 text-center text-caption text-[#64748B] flex flex-col items-center gap-2">
+                    <Search size={18} strokeWidth={1.75} className="opacity-40" />
+                    <p className="font-semibold text-[#475569] dark:text-[#CBD5E1]">No chats found</p>
+                  </div>
+                ) : (
+                  <>
+                    {renderGroupSection('Pinned', groupedChats.pinned, () => setIsOpen(false), true)}
+                    {renderGroupSection('Today', groupedChats.today, () => setIsOpen(false))}
+                    {renderGroupSection('Yesterday', groupedChats.yesterday, () => setIsOpen(false))}
+                    {renderGroupSection('Previous 7 Days', groupedChats.prev7Days, () => setIsOpen(false))}
+                    {renderGroupSection('Previous 30 Days', groupedChats.prev30Days, () => setIsOpen(false))}
+                    {renderGroupSection('Older', groupedChats.older, () => setIsOpen(false))}
+                  </>
+                )}
+              </div>
+
+              {/* Safe Area Profile Bottom Bar */}
+              <div className="flex shrink-0 flex-col gap-4 pt-3 border-t border-[#E2E8F0] dark:border-[#334155]">
+                <div className="flex items-center justify-between gap-2 rounded-[14px] p-1.5 bg-transparent">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <UserAvatar user={user} size="sm" />
                     <div className="flex flex-col min-w-0">
-                      <span className="truncate text-xs font-bold text-slate-800 dark:text-slate-100">
-                        {user?.name || 'User'}
+                      <span className="truncate text-[15px] font-semibold text-[#1F2937] dark:text-[#F8FAFC]">
+                        {user?.name || 'Student Account'}
                       </span>
-                      <span className="truncate text-[10px] text-slate-500 dark:text-slate-400">
+                      <span className="truncate text-[13px] text-[#64748B] dark:text-[#94A3B8]">
                         {user?.role === 'admin' ? 'Administrator' : 'Student'}
                       </span>
                     </div>
                   </div>
 
                   <button
-                    onClick={handleLogout}
+                    onClick={() => {
+                      setIsOpen(false);
+                      handleLogout();
+                    }}
                     title="Log out"
-                    className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition"
+                    className="w-[36px] h-[36px] rounded-xl flex items-center justify-center shrink-0 text-[#64748B] dark:text-[#94A3B8] hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-[#EF4444] transition-all duration-250"
                   >
-                    <LogOut className="h-4 w-4" />
+                    <LogOut size={18} strokeWidth={1.75} />
                   </button>
                 </div>
               </div>
-            </div>
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
+
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
-

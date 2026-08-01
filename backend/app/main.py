@@ -40,20 +40,26 @@ app.add_middleware(
 app.include_router(api_router, prefix=settings.API_V1_STR)
 app.include_router(rag_router)
 
+@app.get("/")
+async def root():
+    return {
+        "status": "online",
+        "app": settings.APP_NAME,
+        "version": "1.0.0",
+        "docs": "/docs",
+        "health": f"{settings.API_V1_STR}/health"
+    }
+
 @app.on_event("startup")
 def startup_event():
     # Initialize SQLite DB (creates tables, seeds admin)
     init_db()
 
-<<<<<<< HEAD
-    # Ensure required storage directories exist
-=======
     # Validate Groq API key once at startup
     from app.services.groq_client import validate_at_startup
     validate_at_startup()
 
-    # Ensure directories exist
->>>>>>> d97d820d3971d9c550c190a6427c639a119b7de9
+    # Ensure required storage directories exist
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     os.makedirs(settings.DOCUMENTS_DIR, exist_ok=True)
     os.makedirs(settings.VECTOR_DB_DIR, exist_ok=True)

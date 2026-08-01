@@ -7,6 +7,7 @@ interface AuthContextType {
   login: (token: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
+  updateUser: (fields: Partial<User>) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -15,6 +16,7 @@ export const AuthContext = createContext<AuthContextType>({
   login: async () => {},
   logout: () => {},
   refreshUser: async () => {},
+  updateUser: () => {},
 });
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -26,6 +28,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (token) {
       try {
         const userData = await getMe();
+        // Preserve local avatar override if present in localStorage
+        const storedAvatar = localStorage.getItem('user_avatar_url');
+        if (storedAvatar && !userData.avatar_url) {
+          userData.avatar_url = storedAvatar;
+        }
         setUser(userData);
       } catch (error) {
         console.error('Failed to authenticate:', error);
@@ -52,14 +59,29 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user_avatar_url');
     setUser(null);
     window.location.href = '/login';
   };
 
+  const updateUser = (fields: Partial<User>) => {
+    setUser((prev) => {
+      if (!prev) return null;
+      const updated = { ...prev, ...fields };
+      if (fields.avatar_url !== undefined) {
+        if (fields.avatar_url) {
+          localStorage.setItem('user_avatar_url', fields.avatar_url);
+        } else {
+          localStorage.removeItem('user_avatar_url');
+        }
+      }
+      return updated;
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser: fetchUser }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser: fetchUser, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
 };
-

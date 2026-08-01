@@ -10,10 +10,10 @@ import { useAuth } from '../hooks/useAuth';
 
 // ── Mock data ────────────────────────────────────────────────
 const mockStats = [
-  { label: 'Total Students', value: 128, icon: Users, color: 'from-[#0A2A6A] to-[#163D8C]', trend: '+12 this month' },
-  { label: 'Chat Sessions', value: 3_842, icon: MessageSquare, color: 'from-emerald-600 to-emerald-500', trend: '+234 this week' },
-  { label: 'Documents Indexed', value: 47, icon: FileText, color: 'from-[#E8B24D] to-amber-400', trend: '3 pending rebuild' },
-  { label: 'Broadcasts Sent', value: 19, icon: Bell, color: 'from-violet-600 to-purple-500', trend: 'Last: 2 days ago' },
+  { label: 'Total Students', value: 128, icon: Users, color: 'from-[#0E2A6D] to-[#1E4DB7]', trend: '+12 this month' },
+  { label: 'Chat Sessions', value: 3_842, icon: MessageSquare, color: 'from-[#22C55E] to-emerald-600', trend: '+234 this week' },
+  { label: 'Documents Indexed', value: 47, icon: FileText, color: 'from-[#D9A441] to-amber-500', trend: '3 pending rebuild' },
+  { label: 'Broadcasts Sent', value: 19, icon: Bell, color: 'from-[#1E4DB7] to-indigo-600', trend: 'Last: 2 days ago' },
 ];
 
 const mockStudents = [
@@ -71,17 +71,17 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100">
+    <div className="flex h-screen w-screen overflow-hidden bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] font-body">
       {/* Admin Sidebar */}
-      <aside className="hidden md:flex w-64 shrink-0 flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 select-none">
+      <aside className="hidden md:flex w-64 shrink-0 flex-col bg-white dark:bg-[#111827] border-r border-[#E2E8F0] dark:border-[#334155] p-4 select-none">
         {/* Brand */}
         <div className="flex items-center gap-3 mb-8">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0A2A6A] to-[#163D8C] text-white shadow-md">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white shadow-xs border border-[#D9A441]/30">
             <GraduationCap className="h-6 w-6" />
           </div>
           <div>
-            <h2 className="text-base font-bold tracking-tight text-[#0A2A6A] dark:text-white">CollegeMate</h2>
-            <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-rose-500">
+            <h2 className="font-heading font-extrabold text-nav tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">CollegeMate AI</h2>
+            <div className="flex items-center gap-1 font-heading text-caption font-bold uppercase tracking-[0.02em] text-[#EF4444]">
               <ShieldAlert className="h-3 w-3" />
               <span>Admin Portal</span>
             </div>
@@ -97,13 +97,13 @@ export default function AdminDashboardPage() {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-heading text-nav font-bold tracking-[0.02em] transition-colors ${
                   active
-                    ? 'bg-[#0A2A6A] text-white shadow-md shadow-[#0A2A6A]/20'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'bg-[#0E2A6D] text-white shadow-xs'
+                    : 'text-[#64748B] dark:text-[#94A3B8] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B]'
                 }`}
               >
-                <Icon className={`h-4 w-4 ${active ? 'text-[#E8B24D]' : 'text-slate-400'}`} />
+                <Icon className={`h-4 w-4 ${active ? 'text-[#D9A441]' : 'text-[#64748B]'}`} />
                 {item.label}
               </button>
             );
@@ -111,17 +111,17 @@ export default function AdminDashboardPage() {
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-slate-200 dark:border-slate-800 pt-4 space-y-2">
+        <div className="border-t border-[#E2E8F0] dark:border-[#334155] pt-4 space-y-2">
           <Link
             to="/dashboard"
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-heading text-nav font-bold tracking-[0.02em] text-[#64748B] dark:text-[#94A3B8] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-colors"
           >
-            <Sparkles className="h-4 w-4 text-slate-400" />
+            <Sparkles className="h-4 w-4 text-[#D9A441]" />
             Student View
           </Link>
           <button
             onClick={logout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-heading text-nav font-bold tracking-[0.02em] text-[#EF4444] hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors"
           >
             <LogOut className="h-4 w-4" />
             Logout
@@ -135,123 +135,100 @@ export default function AdminDashboardPage() {
         {activeTab === 'overview' && (
           <div>
             <div className="mb-8">
-              <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Admin Dashboard</h1>
-              <p className="text-sm text-slate-500 mt-1">Welcome back, <span className="font-semibold text-[#163D8C]">{user?.name}</span>. Here's your campus overview.</p>
+              <h1 className="font-heading font-bold text-page tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">Admin Dashboard</h1>
+              <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-1">Welcome back, <span className="font-semibold text-[#0E2A6D] dark:text-[#D9A441]">{user?.name}</span>. Here's your Mount Zion campus overview.</p>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4 mb-10">
               {mockStats.map(stat => {
                 const Icon = stat.icon;
                 return (
-                  <div key={stat.label} className={`rounded-2xl bg-gradient-to-br ${stat.color} text-white p-6 shadow-md relative overflow-hidden`}>
+                  <div key={stat.label} className={`rounded-xl bg-gradient-to-br ${stat.color} text-white p-6 shadow-xs relative overflow-hidden border border-[#D9A441]/30`}>
                     <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
                     <div className="flex items-start justify-between mb-4">
                       <Icon className="h-7 w-7 opacity-90" />
                     </div>
-                    <p className="text-4xl font-black mb-1">{stat.value.toLocaleString()}</p>
-                    <p className="text-sm font-medium opacity-90">{stat.label}</p>
-                    <p className="text-xs opacity-60 mt-1">{stat.trend}</p>
+                    <p className="font-heading text-caption font-bold uppercase tracking-[0.02em] opacity-80">{stat.label}</p>
+                    <p className="font-heading text-hero font-extrabold mt-1">{stat.value.toLocaleString()}</p>
+                    <p className="text-caption mt-2 opacity-90">{stat.trend}</p>
                   </div>
                 );
               })}
             </div>
 
+            {/* Quick overview panels */}
             <div className="grid gap-6 md:grid-cols-2">
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 shadow-sm">
-                <h3 className="font-bold text-slate-800 dark:text-white mb-4">Recent Students</h3>
-                <div className="space-y-3">
-                  {students.slice(0, 3).map(s => (
-                    <div key={s.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-[#163D8C] text-white flex items-center justify-center text-xs font-bold">{s.name[0]}</div>
-                        <div>
-                          <p className="text-sm font-semibold text-slate-800 dark:text-white">{s.name}</p>
-                          <p className="text-xs text-slate-500">{s.dept}</p>
-                        </div>
-                      </div>
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${s.active ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-600'}`}>
-                        {s.active ? 'Active' : 'Disabled'}
-                      </span>
-                    </div>
-                  ))}
+              <div className="bg-white dark:bg-[#1E293B] rounded-xl p-6 shadow-xs border border-[#E2E8F0] dark:border-[#334155]">
+                <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] mb-4">System Health</h3>
+                <div className="space-y-3 font-body text-small">
+                  <div className="flex items-center justify-between p-3 bg-[#F5F7FB] dark:bg-[#0F172A] rounded-xl">
+                    <span className="font-semibold">RAG Vector Store</span>
+                    <span className="text-[#22C55E] font-bold flex items-center gap-1"><CheckCircle2 size={16} /> Operational</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-[#F5F7FB] dark:bg-[#0F172A] rounded-xl">
+                    <span className="font-semibold">Chat API Service</span>
+                    <span className="text-[#22C55E] font-bold flex items-center gap-1"><CheckCircle2 size={16} /> Operational</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-[#F5F7FB] dark:bg-[#0F172A] rounded-xl">
+                    <span className="font-semibold">TTS Voice Engine</span>
+                    <span className="text-[#22C55E] font-bold flex items-center gap-1"><CheckCircle2 size={16} /> Operational</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 shadow-sm">
-                <h3 className="font-bold text-slate-800 dark:text-white mb-4">Quick Actions</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { label: 'Manage Students', icon: Users, tab: 'students' },
-                    { label: 'Upload Document', icon: Upload, tab: 'documents' },
-                    { label: 'Rebuild Index', icon: RefreshCw, tab: 'rag' },
-                    { label: 'Send Broadcast', icon: Bell, tab: 'broadcast' },
-                  ].map(action => {
-                    const Icon = action.icon;
-                    return (
-                      <button
-                        key={action.label}
-                        onClick={() => setActiveTab(action.tab as AdminTab)}
-                        className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-[#0A2A6A] hover:text-white dark:hover:bg-[#0A2A6A] transition-colors group"
-                      >
-                        <Icon className="h-5 w-5 text-[#163D8C] group-hover:text-[#E8B24D] transition-colors" />
-                        <span className="text-center text-xs">{action.label}</span>
-                      </button>
-                    );
-                  })}
+              <div className="bg-white dark:bg-[#1E293B] rounded-xl p-6 shadow-xs border border-[#E2E8F0] dark:border-[#334155]">
+                <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] mb-4">Recent Activity</h3>
+                <div className="space-y-3 font-body text-small">
+                  <div className="p-3 bg-[#F5F7FB] dark:bg-[#0F172A] rounded-xl">
+                    <p className="font-semibold text-[#1F2937] dark:text-[#F8FAFC]">Indexed 12 new handbook PDFs</p>
+                    <p className="text-caption text-[#64748B] dark:text-[#94A3B8]">2 hours ago</p>
+                  </div>
+                  <div className="p-3 bg-[#F5F7FB] dark:bg-[#0F172A] rounded-xl">
+                    <p className="font-semibold text-[#1F2937] dark:text-[#F8FAFC]">Sent broadcast notification: Exam Timetable</p>
+                    <p className="text-caption text-[#64748B] dark:text-[#94A3B8]">Yesterday</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Students */}
+        {/* Students Tab */}
         {activeTab === 'students' && (
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">Student Management</h1>
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs uppercase bg-slate-50 dark:bg-slate-800/80 text-slate-500 border-b border-slate-200 dark:border-slate-700">
+            <div className="mb-8">
+              <h1 className="font-heading font-bold text-page tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">Student Management</h1>
+              <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-1">Manage active student accounts across departments.</p>
+            </div>
+            <div className="bg-white dark:bg-[#1E293B] rounded-xl shadow-xs border border-[#E2E8F0] dark:border-[#334155] overflow-hidden">
+              <table className="w-full text-left text-body">
+                <thead className="text-caption font-heading font-bold uppercase bg-[#F5F7FB] dark:bg-[#111827] text-[#64748B] dark:text-[#94A3B8] border-b border-[#E2E8F0] dark:border-[#334155]">
                   <tr>
-                    <th className="px-6 py-4 font-medium">Student</th>
-                    <th className="px-6 py-4 font-medium">Department</th>
-                    <th className="px-6 py-4 font-medium">Status</th>
-                    <th className="px-6 py-4 font-medium text-right">Actions</th>
+                    <th className="p-4">Name</th>
+                    <th className="p-4">Email</th>
+                    <th className="p-4">Department</th>
+                    <th className="p-4">Status</th>
+                    <th className="p-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#334155]">
                   {students.map(s => (
-                    <tr key={s.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-[#163D8C] text-white flex items-center justify-center font-bold">{s.name[0]}</div>
-                          <div>
-                            <p className="font-semibold text-slate-800 dark:text-white">{s.name}</p>
-                            <p className="text-xs text-slate-500">{s.email}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 font-medium text-slate-600 dark:text-slate-400">{s.dept}</td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full ${s.active ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400'}`}>
-                          {s.active ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
+                    <tr key={s.id} className="hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A]">
+                      <td className="p-4 font-bold text-[#1F2937] dark:text-[#F8FAFC]">{s.name}</td>
+                      <td className="p-4 text-[#64748B] dark:text-[#94A3B8]">{s.email}</td>
+                      <td className="p-4 font-semibold">{s.dept}</td>
+                      <td className="p-4">
+                        <span className={`px-2.5 py-1 rounded-full text-caption font-bold ${s.active ? 'bg-[#22C55E]/10 text-[#22C55E]' : 'bg-[#EF4444]/10 text-[#EF4444]'}`}>
                           {s.active ? 'Active' : 'Disabled'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            onClick={() => handleToggleActive(s.id)}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${s.active ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'}`}
-                          >
-                            {s.active ? 'Disable' : 'Enable'}
-                          </button>
-                          <button
-                            onClick={() => handleDeleteStudent(s.id)}
-                            className="p-2 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
+                      <td className="p-4 text-right space-x-2">
+                        <button onClick={() => handleToggleActive(s.id)} className="px-3 py-1 bg-[#F5F7FB] dark:bg-[#0F172A] rounded-lg text-caption font-bold text-[#0E2A6D] dark:text-[#60A5FA]">
+                          {s.active ? 'Disable' : 'Enable'}
+                        </button>
+                        <button onClick={() => handleDeleteStudent(s.id)} className="p-1.5 text-[#EF4444] hover:bg-rose-50 rounded-lg">
+                          <Trash2 size={16} />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -261,178 +238,73 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* Documents */}
+        {/* Documents Tab */}
         {activeTab === 'documents' && (
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">Document Management</h1>
-            <div className="mb-6 p-6 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-center gap-3 bg-white dark:bg-slate-800 hover:border-[#163D8C] transition-colors cursor-pointer">
-              <div className="w-14 h-14 rounded-full bg-[#163D8C]/10 flex items-center justify-center">
-                <Upload className="h-7 w-7 text-[#163D8C]" />
-              </div>
-              <div>
-                <h3 className="font-bold text-slate-800 dark:text-white">Upload a new PDF</h3>
-                <p className="text-sm text-slate-500 mt-1">Click to browse, or drag and drop your PDF here.</p>
-              </div>
-              <button className="bg-[#0A2A6A] hover:bg-[#163D8C] text-white text-sm font-bold px-5 py-2 rounded-xl transition-colors shadow-sm">
-                Choose File
-              </button>
+            <div className="mb-8">
+              <h1 className="font-heading font-bold text-page tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">Knowledge Base Documents</h1>
+              <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-1">Upload and manage RAG index files.</p>
             </div>
-
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 flex items-center justify-between">
-                <h2 className="font-semibold text-slate-800 dark:text-white">Indexed Documents ({documents.length})</h2>
-              </div>
-              <div className="divide-y divide-slate-100 dark:divide-slate-700">
-                {documents.map((doc, idx) => (
-                  <div key={idx} className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                    <div className="w-10 h-10 rounded-lg bg-rose-100 dark:bg-rose-500/20 flex items-center justify-center shrink-0">
-                      <FileText className="h-5 w-5 text-rose-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-slate-800 dark:text-white truncate">{doc.name}</p>
-                      <p className="text-xs text-slate-500">{doc.size}</p>
-                    </div>
-                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${doc.indexed ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400'}`}>
-                      {doc.indexed ? '✓ Indexed' : '⏳ Pending'}
-                    </span>
-                    <button className="p-2 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors">
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                ))}
+            <div className="bg-white dark:bg-[#1E293B] rounded-xl p-6 shadow-xs border border-[#E2E8F0] dark:border-[#334155] mb-6">
+              <div className="border-2 border-dashed border-[#E2E8F0] dark:border-[#334155] rounded-xl p-8 text-center cursor-pointer hover:border-[#1E4DB7]">
+                <Upload size={32} className="mx-auto text-[#0E2A6D] dark:text-[#60A5FA] mb-2" />
+                <p className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Click to upload campus PDF documents</p>
+                <p className="text-caption text-[#64748B] dark:text-[#94A3B8] mt-1">Syllabus, circulars, handbooks, timetables</p>
               </div>
             </div>
           </div>
         )}
 
-        {/* RAG Engine */}
+        {/* RAG Engine Tab */}
         {activeTab === 'rag' && (
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">RAG Engine Control</h1>
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-8 shadow-sm flex flex-col items-center text-center">
-                <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${isRebuilding ? 'bg-amber-100' : 'bg-emerald-100 dark:bg-emerald-500/20'}`}>
-                  <RefreshCw className={`h-8 w-8 ${isRebuilding ? 'text-amber-500 animate-spin' : 'text-emerald-600'}`} />
-                </div>
-                <h3 className="font-bold text-slate-800 dark:text-white text-lg mb-2">
-                  {isRebuilding ? 'Rebuilding Index…' : 'Rebuild RAG Index'}
-                </h3>
-                <p className="text-sm text-slate-500 mb-6 max-w-sm">
-                  Re-processes all uploaded PDF documents and rebuilds the ChromaDB vector store. This may take a few minutes.
-                </p>
-                <button
-                  onClick={handleRebuild}
-                  disabled={isRebuilding}
-                  className="bg-[#0A2A6A] hover:bg-[#163D8C] text-white font-bold px-8 py-3 rounded-xl shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isRebuilding ? 'Processing…' : 'Start Rebuild'}
-                </button>
-              </div>
-
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 shadow-sm">
-                <h3 className="font-bold text-slate-800 dark:text-white mb-4">Index Status</h3>
-                <div className="space-y-4">
-                  {[
-                    { label: 'Total Documents', value: '47 PDFs', color: 'text-[#163D8C]' },
-                    { label: 'Total Chunks', value: '12,381', color: 'text-emerald-600' },
-                    { label: 'Embedding Model', value: 'models/embedding-001', color: 'text-violet-600' },
-                    { label: 'Vector Store', value: 'ChromaDB (local)', color: 'text-amber-600' },
-                    { label: 'Last Rebuilt', value: '2 hours ago', color: 'text-slate-600' },
-                  ].map(item => (
-                    <div key={item.label} className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
-                      <span className="text-sm text-slate-500">{item.label}</span>
-                      <span className={`text-sm font-bold ${item.color} dark:opacity-80`}>{item.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <div className="mb-8">
+              <h1 className="font-heading font-bold text-page tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">RAG Vector Index</h1>
+              <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-1">Rebuild vector embeddings for Mount Zion database.</p>
+            </div>
+            <div className="bg-white dark:bg-[#1E293B] rounded-xl p-6 shadow-xs border border-[#E2E8F0] dark:border-[#334155]">
+              <button onClick={handleRebuild} disabled={isRebuilding} className="px-6 py-3 bg-[#0E2A6D] hover:bg-[#153B8A] text-white font-btn rounded-xl shadow-xs flex items-center gap-2">
+                <RefreshCw size={18} className={isRebuilding ? 'animate-spin' : ''} />
+                <span>{isRebuilding ? 'Rebuilding Index...' : 'Rebuild RAG Vector Store'}</span>
+              </button>
             </div>
           </div>
         )}
 
-        {/* Broadcast */}
+        {/* Broadcast Tab */}
         {activeTab === 'broadcast' && (
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">Send Broadcast</h1>
-            <div className="max-w-2xl">
-              {broadcastSent && (
-                <div className="flex items-center gap-3 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-400 px-4 py-3 rounded-xl mb-6 text-sm font-semibold">
-                  <CheckCircle2 size={18} />
-                  <span>Broadcast sent to all active students!</span>
-                </div>
-              )}
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 shadow-sm space-y-5">
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Notification Title</label>
-                  <input
-                    type="text"
-                    value={broadcastTitle}
-                    onChange={e => setBroadcastTitle(e.target.value)}
-                    placeholder="e.g. Exam Schedule Updated"
-                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-4 py-2.5 text-sm text-slate-800 dark:text-white outline-none focus:border-[#163D8C] transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Message</label>
-                  <textarea
-                    value={broadcastMessage}
-                    onChange={e => setBroadcastMessage(e.target.value)}
-                    rows={5}
-                    placeholder="Write your message to all students here…"
-                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-4 py-2.5 text-sm text-slate-800 dark:text-white outline-none focus:border-[#163D8C] transition-colors resize-none"
-                  />
-                </div>
-                <div className="flex items-center gap-3 p-3 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-xl text-xs text-amber-700 dark:text-amber-400">
-                  <AlertCircle size={16} className="shrink-0" />
-                  <span>This notification will be sent to <strong>all 128 active students</strong>.</span>
-                </div>
-                <button
-                  onClick={handleBroadcast}
-                  disabled={!broadcastTitle.trim() || !broadcastMessage.trim()}
-                  className="flex items-center gap-2 bg-[#0A2A6A] hover:bg-[#163D8C] text-white font-bold px-6 py-3 rounded-xl shadow-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  <Bell size={18} />
-                  Send to All Students
-                </button>
+            <div className="mb-8">
+              <h1 className="font-heading font-bold text-page tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">Campus Broadcast</h1>
+              <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-1">Send announcements to all registered students.</p>
+            </div>
+            <div className="bg-white dark:bg-[#1E293B] rounded-xl p-6 shadow-xs border border-[#E2E8F0] dark:border-[#334155] space-y-4 max-w-xl">
+              <div>
+                <label className="ty-label text-[#1F2937] dark:text-[#F8FAFC]">Title</label>
+                <input type="text" value={broadcastTitle} onChange={e => setBroadcastTitle(e.target.value)} placeholder="e.g. Exam Schedule Release" className="w-full h-11 px-3.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body mt-1" />
               </div>
+              <div>
+                <label className="ty-label text-[#1F2937] dark:text-[#F8FAFC]">Message</label>
+                <textarea rows={4} value={broadcastMessage} onChange={e => setBroadcastMessage(e.target.value)} placeholder="Type announcement here..." className="w-full p-3.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body mt-1" />
+              </div>
+              <button onClick={handleBroadcast} className="px-6 py-3 bg-[#0E2A6D] hover:bg-[#153B8A] text-white font-btn rounded-xl shadow-xs">
+                Send Announcement
+              </button>
+              {broadcastSent && <p className="text-small text-[#22C55E] font-bold">Broadcast successfully sent to all students!</p>}
             </div>
           </div>
         )}
 
-        {/* Analytics */}
+        {/* Analytics Tab */}
         {activeTab === 'analytics' && (
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">Analytics</h1>
-            <div className="grid gap-6 md:grid-cols-3 mb-8">
-              {[
-                { label: 'Avg. Sessions / Day', value: '54', delta: '+8%' },
-                { label: 'Avg. Msgs / Session', value: '6.4', delta: '+2%' },
-                { label: 'RAG Hit Rate', value: '87%', delta: '+3%' },
-              ].map(stat => (
-                <div key={stat.label} className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 shadow-sm">
-                  <h3 className="text-sm text-slate-500 mb-1">{stat.label}</h3>
-                  <p className="text-4xl font-black text-slate-800 dark:text-white">{stat.value}</p>
-                  <span className="text-xs font-bold text-emerald-600 bg-emerald-100 dark:bg-emerald-500/20 dark:text-emerald-400 px-2 py-0.5 rounded-full mt-2 inline-block">
-                    {stat.delta} this week
-                  </span>
-                </div>
-              ))}
+            <div className="mb-8">
+              <h1 className="font-heading font-bold text-page tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">Usage Analytics</h1>
+              <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-1">Platform query trends and engagement metrics.</p>
             </div>
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 shadow-sm">
-              <h3 className="font-bold text-slate-800 dark:text-white mb-6">Daily Chat Sessions — Last 7 Days</h3>
-              <div className="flex items-end gap-3 h-40">
-                {[38, 52, 47, 61, 55, 70, 54].map((val, i) => (
-                  <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                    <div
-                      className="w-full bg-[#163D8C] dark:bg-[#0A2A6A] rounded-t-lg transition-all hover:bg-[#E8B24D] dark:hover:bg-[#E8B24D]"
-                      style={{ height: `${(val / 70) * 100}%` }}
-                    />
-                    <span className="text-[10px] text-slate-400">
-                      {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i]}
-                    </span>
-                  </div>
-                ))}
-              </div>
+            <div className="bg-white dark:bg-[#1E293B] rounded-xl p-6 shadow-xs border border-[#E2E8F0] dark:border-[#334155]">
+              <p className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Total Queries Handled Today: 482</p>
+              <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-2">Most frequent categories: Attendance, Exam Timetables, Fee Receipts.</p>
             </div>
           </div>
         )}

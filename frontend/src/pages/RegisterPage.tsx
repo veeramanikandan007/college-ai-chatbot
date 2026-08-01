@@ -50,28 +50,28 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] transition-colors duration-200 font-body">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-[#0A2A6A] flex items-center justify-center shadow-lg mb-4">
-            <GraduationCap className="w-9 h-9 text-[#E8B24D]" />
+          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] flex items-center justify-center shadow-md mb-4 border border-[#D9A441]/30">
+            <GraduationCap className="w-8 h-8 text-white" />
           </div>
-          <h1 className="font-heading text-2xl font-bold tracking-tight text-[#0A2A6A]">{APP_NAME}</h1>
-          <p className="text-sm text-slate-500 mt-1">{COLLEGE_NAME}</p>
+          <h1 className="font-heading text-section font-extrabold tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">{APP_NAME}</h1>
+          <p className="font-heading text-caption font-bold tracking-[0.02em] uppercase text-[#64748B] dark:text-[#94A3B8] mt-1">{COLLEGE_NAME}</p>
         </div>
 
         {/* Card */}
-        <div className="glass-panel rounded-2xl p-8 soft-ring">
-          <h2 className="text-xl font-semibold text-slate-800 mb-1">Create your account</h2>
-          <p className="text-sm text-slate-500 mb-6">Join CollegeMate AI — your smart campus companion.</p>
+        <div className="bg-white dark:bg-[#1E293B] rounded-xl p-8 border border-[#E2E8F0] dark:border-[#334155] shadow-xs transition-colors duration-200">
+          <h2 className="font-heading text-card font-bold tracking-[0.02em] text-[#1F2937] dark:text-[#F8FAFC] mb-1">Create your account</h2>
+          <p className="text-small text-[#64748B] dark:text-[#94A3B8] mb-6">Join CollegeMate AI — your smart campus companion.</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}
             <div className="space-y-1.5">
-              <label htmlFor="reg-name" className="block text-sm font-medium text-slate-700">Full name</label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <label htmlFor="reg-name" className="ty-label text-[#1F2937] dark:text-[#F8FAFC]">Full name</label>
+              <div className="relative flex items-center">
+                <User className="absolute left-3.5 w-4 h-4 text-[#64748B] pointer-events-none" />
                 <input
                   id="reg-name"
                   type="text"
@@ -79,7 +79,7 @@ export default function RegisterPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Jane Doe"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 text-sm outline-none transition focus:border-[#0A2A6A] focus:ring-2 focus:ring-[#0A2A6A]/10"
+                  className="w-full h-11 pl-11 pr-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] text-body outline-none transition duration-180 focus:border-[#1E4DB7] focus:ring-2 focus:ring-[#1E4DB7]/10"
                   required
                 />
               </div>
@@ -87,9 +87,9 @@ export default function RegisterPage() {
 
             {/* Email */}
             <div className="space-y-1.5">
-              <label htmlFor="reg-email" className="block text-sm font-medium text-slate-700">Email address</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <label htmlFor="reg-email" className="ty-label text-[#1F2937] dark:text-[#F8FAFC]">Email address</label>
+              <div className="relative flex items-center">
+                <Mail className="absolute left-3.5 w-4 h-4 text-[#64748B] pointer-events-none" />
                 <input
                   id="reg-email"
                   type="email"
@@ -97,7 +97,7 @@ export default function RegisterPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@mzce.edu"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 text-sm outline-none transition focus:border-[#0A2A6A] focus:ring-2 focus:ring-[#0A2A6A]/10"
+                  className="w-full h-11 pl-11 pr-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] text-body outline-none transition duration-180 focus:border-[#1E4DB7] focus:ring-2 focus:ring-[#1E4DB7]/10"
                   required
                 />
               </div>
@@ -105,9 +105,9 @@ export default function RegisterPage() {
 
             {/* Password */}
             <div className="space-y-1.5">
-              <label htmlFor="reg-password" className="block text-sm font-medium text-slate-700">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <label htmlFor="reg-password" className="ty-label text-[#1F2937] dark:text-[#F8FAFC]">Password</label>
+              <div className="relative flex items-center">
+                <Lock className="absolute left-3.5 w-4 h-4 text-[#64748B] pointer-events-none" />
                 <input
                   id="reg-password"
                   type={showPassword ? 'text' : 'password'}
@@ -115,13 +115,13 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Minimum 6 characters"
-                  className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 text-sm outline-none transition focus:border-[#0A2A6A] focus:ring-2 focus:ring-[#0A2A6A]/10"
+                  className="w-full h-11 pl-11 pr-10 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] text-body outline-none transition duration-180 focus:border-[#1E4DB7] focus:ring-2 focus:ring-[#1E4DB7]/10"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition"
+                  className="absolute right-3.5 text-[#64748B] hover:text-[#1F2937] dark:hover:text-[#F8FAFC] transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -130,9 +130,9 @@ export default function RegisterPage() {
 
             {/* Confirm Password */}
             <div className="space-y-1.5">
-              <label htmlFor="reg-confirm" className="block text-sm font-medium text-slate-700">Confirm password</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <label htmlFor="reg-confirm" className="ty-label text-[#1F2937] dark:text-[#F8FAFC]">Confirm password</label>
+              <div className="relative flex items-center">
+                <Lock className="absolute left-3.5 w-4 h-4 text-[#64748B] pointer-events-none" />
                 <input
                   id="reg-confirm"
                   type={showPassword ? 'text' : 'password'}
@@ -140,7 +140,7 @@ export default function RegisterPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Re-enter password"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 text-sm outline-none transition focus:border-[#0A2A6A] focus:ring-2 focus:ring-[#0A2A6A]/10"
+                  className="w-full h-11 pl-11 pr-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] text-body outline-none transition duration-180 focus:border-[#1E4DB7] focus:ring-2 focus:ring-[#1E4DB7]/10"
                   required
                 />
               </div>
@@ -150,16 +150,16 @@ export default function RegisterPage() {
               id="register-submit"
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#0A2A6A] text-white font-semibold text-sm shadow-md shadow-[#0A2A6A]/20 hover:bg-[#163D8C] transition active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full h-11 flex items-center justify-center gap-2 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white font-btn shadow-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               {loading ? 'Creating account…' : 'Create account'}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-500">
+          <p className="mt-6 text-center text-small text-[#64748B] dark:text-[#94A3B8]">
             Already have an account?{' '}
-            <Link to="/login" className="font-semibold text-[#0A2A6A] hover:text-[#163D8C] transition">
+            <Link to="/login" className="font-semibold text-[#0E2A6D] dark:text-[#D9A441] hover:underline transition-colors">
               Sign in
             </Link>
           </p>
