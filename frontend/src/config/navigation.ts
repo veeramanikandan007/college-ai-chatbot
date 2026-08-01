@@ -3,6 +3,7 @@ import {
   FileText,
   Brain,
   Briefcase,
+  Calendar,
   BookOpen,
   Settings,
   LucideIcon,
@@ -49,6 +50,14 @@ export const mainNavItems: NavItem[] = [
     icon: Briefcase,
     colorClass: 'text-[#D9A441]',
     matchPaths: ['/placement', '/placement-hub'],
+  },
+  {
+    id: 'timetable',
+    label: 'Smart Timetable',
+    path: '/timetable',
+    icon: Calendar,
+    colorClass: 'text-[#10B981] dark:text-[#34D399]',
+    matchPaths: ['/timetable'],
   },
   {
     id: 'notes',

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1 import auth, chat, chat_stream, students, admin, health, notifications, voice, rag_router, documents, quiz, attendance, placement
+from app.api.v1 import auth, chat, chat_stream, students, admin, health, notifications, voice, rag_router, documents, quiz, attendance, placement, timetable
 
 api_router = APIRouter()
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
@@ -14,5 +14,6 @@ api_router.include_router(documents.router, prefix="/documents", tags=["document
 api_router.include_router(quiz.router, prefix="/quiz", tags=["quiz"])
 api_router.include_router(attendance.router, prefix="/attendance", tags=["attendance"])
 api_router.include_router(placement.router, prefix="/placement", tags=["placement"])
+api_router.include_router(timetable.router, prefix="/timetable", tags=["timetable"])
 api_router.include_router(rag_router.router, tags=["RAG"])
 
