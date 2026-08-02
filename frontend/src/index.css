@@ -1,0 +1,385 @@
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ *  CollegeMate AI — Enterprise Design System Architecture & UI Audit
+ *  Mount Zion College of Engineering and Technology
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@700;800&family=Montserrat:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ══════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — LIGHT MODE
+   ══════════════════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — LIGHT MODE
+   ══════════════════════════════════════════════════════════════════════════ */
+:root {
+  color-scheme: light;
+
+  /* ── Layout Dimensions ──────────────────────────────────────────────── */
+  --header-height:     64px;
+  --sidebar-width:      260px;
+  --sidebar-collapsed:  72px;
+
+  /* ── Font Family Definitions ────────────────────────────────────────── */
+  --font-heading: 'League Spartan', ui-sans-serif, system-ui, sans-serif;
+  --font-body:    'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-code:    'JetBrains Mono', 'Fira Code', monospace;
+
+  /* ── Typography Scale (Exact Audit Requirements) ───────────────────── */
+  --text-hero:    2.625rem;  /* 42px — Hero Title    */
+  --text-page:    1.875rem;  /* 30px — Page Title    */
+  --text-section: 1.375rem;  /* 22px — Section Title */
+  --text-card:    1rem;      /* 16px — Card Title    */
+  --text-nav:     0.875rem;  /* 14px — Navigation    */
+  --text-body:    0.875rem;  /* 14px — Body Text     */
+  --text-caption: 0.75rem;   /* 12px — Caption       */
+  --text-small:   0.6875rem; /* 11px — Small Text    */
+
+  --line-height-base: 1.5;
+
+  /* ── Color System — Light Mode ──────────────────────────────────────── */
+  --bg-primary: #F5F7FB;
+  --bg-surface: #FFFFFF;
+  --bg-sidebar: #FFFFFF;
+  --bg-header:  #FFFFFF;
+  --bg-card:    #FFFFFF;
+
+  --color-primary:       #0E2A6D;
+  --color-primary-hover: #153B8A;
+  --color-royal:         #1E4DB7;
+  --color-accent:        #D9A441;
+  --color-accent-hover:  #C4902E;
+
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger:  #EF4444;
+
+  --color-border:  #E2E8F0;
+  --color-heading: #1F2937;
+  --color-body:    #475569;
+  --color-muted:   #64748B;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — DARK MODE
+   ══════════════════════════════════════════════════════════════════════════ */
+:root.dark {
+  color-scheme: dark;
+
+  --bg-primary: #0F172A;
+  --bg-surface: #111827;
+  --bg-sidebar: #111827;
+  --bg-header:  #111827;
+  --bg-card:    #1E293B;
+
+  --color-primary:       #3B82F6;
+  --color-primary-hover: #2563EB;
+  --color-royal:         #60A5FA;
+  --color-accent:        #D9A441;
+  --color-accent-hover:  #FBBF24;
+
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger:  #EF4444;
+
+  --color-border:  #334155;
+  --color-heading: #F8FAFC;
+  --color-body:    #CBD5E1;
+  --color-muted:   #94A3B8;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   GLOBAL BASE RESETS
+   ══════════════════════════════════════════════════════════════════════════ */
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: var(--line-height-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--color-body);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--line-height-base);
+  overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+button, input, textarea, select {
+  font-family: var(--font-body);
+  font-size: inherit;
+  line-height: var(--line-height-base);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   TYPOGRAPHY CLASSES (ENTERPRISE STANDARD)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Hero Title — League Spartan 700 · 42px */
+.ty-hero {
+  font-family: var(--font-heading);
+  font-size: var(--text-hero);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--color-heading);
+}
+
+/* Page Title — League Spartan 700 · 30px */
+.ty-h1 {
+  font-family: var(--font-heading);
+  font-size: var(--text-page);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--color-heading);
+}
+
+/* Section Title — League Spartan 700 · 22px */
+.ty-h2 {
+  font-family: var(--font-heading);
+  font-size: var(--text-section);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-heading);
+}
+
+/* Card Title — League Spartan 700 · 16px */
+.ty-h3 {
+  font-family: var(--font-heading);
+  font-size: var(--text-card);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--color-heading);
+}
+
+/* Navigation — Inter 600 · 14px */
+.ty-nav {
+  font-family: var(--font-body);
+  font-size: var(--text-nav);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Logo — League Spartan 700 · 18px */
+.ty-logo {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* Body Text — Inter 500 · 14px */
+.ty-body {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--color-body);
+}
+
+/* Caption — Inter 400 · 12px */
+.ty-caption {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-muted);
+}
+
+/* Small Text — Inter 400 · 11px */
+.ty-small {
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-muted);
+}
+
+/* Primary Button — Height 42px, Radius 12px, Text 14px 600 */
+.btn-primary {
+  height: 42px;
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+}
+
+/* Secondary Button — Height 40px, Radius 12px, Text 14px 600 */
+.btn-secondary {
+  height: 40px;
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-heading);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-secondary:hover {
+  background-color: rgba(148, 163, 184, 0.08);
+}
+
+/* Icon Button — 40x40, Radius 12px */
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-body);
+  transition: all 0.18s ease;
+}
+.btn-icon:hover {
+  background-color: rgba(148, 163, 184, 0.12);
+  color: var(--color-heading);
+}
+
+/* Input Standard — Height 48px, Radius 12px, Text 14px */
+.input-standard {
+  height: 48px;
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0 16px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-heading);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.input-standard:focus {
+  outline: none;
+  border-color: var(--color-royal);
+  box-shadow: 0 0 0 3px rgba(30, 77, 183, 0.15);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.25); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.45); }
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar,
+.custom-scrollbar.hide::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar,
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom styled scrollbar */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.2); border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.4); }
+
+/* ── Page scroll helper ─── */
+/* Any student page root that needs its own scroll inside AppLayout */
+.page-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── Focus ring utility ─── */
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(30, 77, 183, 0.35);
+}
+
+/* ── Dark mode input fix ─── */
+.dark .input-standard {
+  background-color: #1E293B;
+  border-color: #334155;
+  color: #F8FAFC;
+}
+.dark .input-standard:focus {
+  border-color: #60A5FA;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+}
+
+/* ── Select dark fix ─── */
+.dark select {
+  background-color: #1E293B;
+  color: #F8FAFC;
+  border-color: #334155;
+}
+
+/* ── Truncate text ─── */
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Animation utilities ─── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.2s ease forwards;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.15) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ── Mobile touch scroll fix ─── */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Prevent body scroll bleed when modal is open ─── */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* ── Print helpers ─── */
+@media print {
+  .no-print { display: none !important; }
+  .print-full { width: 100% !important; }
+}

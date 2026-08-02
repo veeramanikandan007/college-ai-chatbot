@@ -1,0 +1,9 @@
+MOUNT ZION COLLEGE OF ENGINEERING AND TECHNOLOGY - TRANSPORTATION & BUS ROUTES
+1. Fleet Overview: The institution operates a fleet of 35 deluxe buses connecting Pudukkottai, Trichy, Tanjore, Aranthangi, Karaikudi, and surrounding rural areas.
+2. Bus Passes: Transport passes are issued at the beginning of each academic year and must be displayed when boarding.
+3. Key Bus Routes:
+   - Route 1: Trichy Central Bus Stand -> Viralimalai -> College (Departs 7:00 AM)
+   - Route 2: Tanjore Old Bus Stand -> Gandarvakottai -> College (Departs 7:15 AM)
+   - Route 3: Karaikudi New Bus Stand -> Thirumayam -> College (Departs 7:10 AM)
+   - Route 4: Local Pudukkottai Town Shuttle (Departs 8:00 AM every 15 minutes)
+4. Safety Standards: All buses are equipped with GPS tracking, speed governors, first aid kits, and emergency exit doors.
