@@ -22,7 +22,7 @@ def register_user(db: Session, user_in: UserCreate):
     db.commit()
     db.refresh(db_user)
     
-    access_token = create_access_token(subject=db_user.id, role=db_user.role)
+    access_token = create_access_token(subject=db_user.id, role=db_user.role, email=db_user.email)
     return {"access_token": access_token, "token_type": "bearer"}
 
 def authenticate_user(db: Session, email: str, password: str):
@@ -34,7 +34,7 @@ def authenticate_user(db: Session, email: str, password: str):
     if not user.is_active:
         raise HTTPException(status_code=401, detail="Inactive user")
         
-    access_token = create_access_token(subject=user.id, role=user.role)
+    access_token = create_access_token(subject=user.id, role=user.role, email=user.email)
     return {"access_token": access_token, "token_type": "bearer"}
 
 def get_user_profile(db: Session, user_id: int):

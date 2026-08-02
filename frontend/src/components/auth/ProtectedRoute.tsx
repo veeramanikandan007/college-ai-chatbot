@@ -5,17 +5,18 @@ import { useAuth } from '../../hooks/useAuth';
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requiredRole?: string;
+  allowedRoles?: string[];
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole }) => {
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole, allowedRoles }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] dark:bg-[#0F172A]">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-full border-4 border-[#0A2A6A] border-t-transparent animate-spin"></div>
-          <p className="text-slate-500 text-sm font-medium">Loading CollegeMate AI…</p>
+          <p className="text-slate-500 text-sm font-medium">Validating security credentials...</p>
         </div>
       </div>
     );
@@ -26,7 +27,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requir
   }
 
   if (requiredRole && user.role !== requiredRole) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/access-denied" replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/access-denied" replace />;
   }
 
   return <>{children}</>;

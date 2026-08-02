@@ -23,18 +23,7 @@ class TimetableEntry(Base):
     faculty = Column(String)
     room = Column(String)
 
-class Assignment(Base):
-    __tablename__ = "assignments"
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    description = Column(Text)
-    subject = Column(String)
-    department = Column(String)
-    year = Column(Integer)
-    semester = Column(Integer)
-    due_date = Column(DateTime)
-    created_by = Column(Integer, ForeignKey("users.id"))
-    file_url = Column(String, nullable=True)
+from app.models.assignment import AssignmentModel as Assignment
 
 class Fee(Base):
     __tablename__ = "fees"

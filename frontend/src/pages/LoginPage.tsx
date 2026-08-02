@@ -5,6 +5,7 @@ import { fetchApi, ApiError } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { APP_NAME, COLLEGE_NAME } from '../lib/constants';
+import { getDefaultHomeForRole } from '../config/navigation';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -35,9 +36,10 @@ export default function LoginPage() {
         },
         body: formData.toString(),
       });
-      await login(data.access_token);
+      const userData = await login(data.access_token);
       showToast('Welcome back!', 'success');
-      navigate('/dashboard');
+      const roleHome = getDefaultHomeForRole(userData?.role);
+      navigate(roleHome, { replace: true });
     } catch (err) {
       const msg = err instanceof ApiError ? err.message : 'Login failed. Please try again.';
       showToast(msg, 'error');

@@ -19,12 +19,20 @@ def get_password_hash(password: str) -> str:
     salt = bcrypt.gensalt()
     return bcrypt.hashpw(pwd_bytes, salt).decode('utf-8')
 
-def create_access_token(subject: Union[str, Any], role: str, expires_delta: timedelta = None) -> str:
+def create_access_token(subject: Union[str, Any], role: str, email: str = None, expires_delta: timedelta = None) -> str:
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
         expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode = {"exp": expire, "sub": str(subject), "role": role}
+    
+    user_id_val = int(subject) if isinstance(subject, int) or (isinstance(subject, str) and subject.isdigit()) else subject
+    to_encode = {
+        "exp": expire,
+        "sub": str(subject),
+        "user_id": user_id_val,
+        "email": email or "",
+        "role": role,
+    }
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm="HS256")
     return encoded_jwt
 

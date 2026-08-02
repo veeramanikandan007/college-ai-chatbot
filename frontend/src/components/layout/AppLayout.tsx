@@ -179,7 +179,7 @@ export default function AppLayout() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="flex flex-1 overflow-hidden absolute inset-0"
+              className="absolute inset-0 flex flex-col overflow-hidden"
             >
               <Outlet />
             </motion.div>

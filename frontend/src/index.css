@@ -293,11 +293,93 @@ button, input, textarea, select {
 ::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.45); }
 
 /* Hide scrollbar utility */
-.no-scrollbar::-webkit-scrollbar {
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar,
+.custom-scrollbar.hide::-webkit-scrollbar {
   display: none;
 }
-.no-scrollbar {
+.no-scrollbar,
+.scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
+/* Custom styled scrollbar */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.2); border-radius: 9999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.4); }
+
+/* ── Page scroll helper ─── */
+/* Any student page root that needs its own scroll inside AppLayout */
+.page-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── Focus ring utility ─── */
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(30, 77, 183, 0.35);
+}
+
+/* ── Dark mode input fix ─── */
+.dark .input-standard {
+  background-color: #1E293B;
+  border-color: #334155;
+  color: #F8FAFC;
+}
+.dark .input-standard:focus {
+  border-color: #60A5FA;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+}
+
+/* ── Select dark fix ─── */
+.dark select {
+  background-color: #1E293B;
+  color: #F8FAFC;
+  border-color: #334155;
+}
+
+/* ── Truncate text ─── */
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Animation utilities ─── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.2s ease forwards;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.15) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ── Mobile touch scroll fix ─── */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Prevent body scroll bleed when modal is open ─── */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* ── Print helpers ─── */
+@media print {
+  .no-print { display: none !important; }
+  .print-full { width: 100% !important; }
+}

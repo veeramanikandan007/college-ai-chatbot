@@ -355,7 +355,7 @@ export default function PlacementHubPage() {
 
   if (loading || !stats) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] dark:bg-[#0B0F19]">
+      <div className="w-full h-full flex items-center justify-center bg-[#F8FAFC] dark:bg-[#0B0F19]">
         <div className="flex flex-col items-center gap-3">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#0E2A6D] border-t-transparent dark:border-[#D9A441]" />
           <p className="text-sm font-semibold text-[#64748B] dark:text-[#94A3B8]">

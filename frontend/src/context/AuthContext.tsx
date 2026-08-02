@@ -4,7 +4,7 @@ import { User, getMe } from '../lib/auth';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (token: string) => Promise<void>;
+  login: (token: string) => Promise<User | null>;
   logout: () => void;
   refreshUser: () => Promise<void>;
   updateUser: (fields: Partial<User>) => void;
@@ -13,7 +13,7 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  login: async () => {},
+  login: async () => null,
   logout: () => {},
   refreshUser: async () => {},
   updateUser: () => {},
@@ -51,10 +51,25 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     fetchUser();
   }, []);
 
-  const login = async (token: string) => {
+  const login = async (token: string): Promise<User | null> => {
     localStorage.setItem('token', token);
     setLoading(true);
-    await fetchUser();
+    try {
+      const userData = await getMe();
+      const storedAvatar = localStorage.getItem('user_avatar_url');
+      if (storedAvatar && !userData.avatar_url) {
+        userData.avatar_url = storedAvatar;
+      }
+      setUser(userData);
+      return userData;
+    } catch (error) {
+      console.error('Failed to authenticate:', error);
+      localStorage.removeItem('token');
+      setUser(null);
+      return null;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {

@@ -29,6 +29,12 @@ const DocumentHubPage = lazy(() => import('./pages/student/DocumentHubPage'));
 const AttendancePage = lazy(() => import('./pages/student/AttendancePage'));
 const TimetablePage = lazy(() => import('./pages/student/TimetablePage'));
 const AssignmentsPage = lazy(() => import('./pages/student/AssignmentsPage'));
+const QuestionPapersPage = lazy(() => import('./pages/student/QuestionPapersPage'));
+const StudyPlannerPage = lazy(() => import('./pages/student/StudyPlannerPage'));
+const MockInterviewsPage = lazy(() => import('./pages/student/MockInterviewsPage'));
+const StudentAnalyticsPage = lazy(() => import('./pages/student/StudentAnalyticsPage'));
+const FacultyPortalPage = lazy(() => import('./pages/faculty/FacultyPortalPage'));
+const AccessDeniedPage = lazy(() => import('./pages/AccessDeniedPage'));
 const NotesPage = lazy(() => import('./pages/student/NotesPage'));
 const NotificationsPage = lazy(() => import('./pages/student/NotificationsPage'));
 const EventsPage = lazy(() => import('./pages/student/EventsPage'));
@@ -51,31 +57,33 @@ function App() {
             <AuthProvider>
               <Suspense fallback={<PageLoader />}>
                 <Routes>
-                  {/* ── Public routes (no sidebar, no layout) ── */}
+                  {/* ── Public routes ── */}
                   <Route path="/" element={<HomePage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/access-denied" element={<AccessDeniedPage />} />
 
-                  {/* ── Protected routes — ALL share AppLayout (Sidebar mounted once) ── */}
+                  {/* ── Student Protected routes (AppLayout with Student Sidebar) ── */}
                   <Route
                     element={
-                      <ProtectedRoute>
+                      <ProtectedRoute allowedRoles={['student']}>
                         <AppLayout />
                       </ProtectedRoute>
                     }
                   >
-                    {/* Main chat */}
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/documents" element={<DocumentHubPage />} />
                     <Route path="/placement" element={<PlacementHubPage />} />
                     <Route path="/placement-hub" element={<PlacementHubPage />} />
                     <Route path="/quiz" element={<QuizGeneratorPage />} />
                     <Route path="/quiz-generator" element={<QuizGeneratorPage />} />
-
-                    {/* Student portal pages */}
                     <Route path="/attendance" element={<AttendancePage />} />
                     <Route path="/timetable" element={<TimetablePage />} />
                     <Route path="/assignments" element={<AssignmentsPage />} />
+                    <Route path="/question-papers" element={<QuestionPapersPage />} />
+                    <Route path="/study-planner" element={<StudyPlannerPage />} />
+                    <Route path="/mock-interviews" element={<MockInterviewsPage />} />
+                    <Route path="/analytics" element={<StudentAnalyticsPage />} />
                     <Route path="/notes" element={<NotesPage />} />
                     <Route path="/notifications" element={<NotificationsPage />} />
                     <Route path="/events" element={<EventsPage />} />
@@ -85,11 +93,23 @@ function App() {
                     <Route path="/profile" element={<ProfilePage />} />
                   </Route>
 
-                  {/* ── Admin-only (standalone, no student sidebar) ── */}
+                  {/* ── Faculty Protected routes (AppLayout with Faculty Sidebar) ── */}
+                  <Route
+                    element={
+                      <ProtectedRoute allowedRoles={['faculty', 'admin']}>
+                        <AppLayout />
+                      </ProtectedRoute>
+                    }
+                  >
+                    <Route path="/faculty" element={<FacultyPortalPage />} />
+                    <Route path="/faculty-portal" element={<FacultyPortalPage />} />
+                  </Route>
+
+                  {/* ── Admin-only route ── */}
                   <Route
                     path="/admin"
                     element={
-                      <ProtectedRoute requiredRole="admin">
+                      <ProtectedRoute allowedRoles={['admin']}>
                         <AdminDashboardPage />
                       </ProtectedRoute>
                     }

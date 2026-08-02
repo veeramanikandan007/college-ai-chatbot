@@ -1,313 +1,234 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import {
-  Users, FileText, BarChart3, Bell, RefreshCw, Trash2,
-  CheckCircle2, XCircle, Upload, ShieldAlert, AlertCircle,
-  Settings, GraduationCap, Sparkles, TrendingUp, MessageSquare,
-  LogOut
+  ShieldCheck,
+  Users,
+  GraduationCap,
+  Building2,
+  BookOpen,
+  ClipboardCheck,
+  FileText,
+  Upload,
+  Download,
+  Bell,
+  Settings2,
+  Database,
+  BarChart3,
+  Search,
+  Filter,
+  Briefcase,
+  Files,
+  Brain,
+  CalendarDays,
+  LogOut,
+  RefreshCw,
 } from 'lucide-react';
+import { adminDashboardApi, AdminMasterOverviewStats } from '../api/adminDashboard';
+import { AdminOverviewManager } from '../components/admin/AdminOverviewManager';
+import { AdminUserManagement } from '../components/admin/AdminUserManagement';
+import { AdminDepartmentManagement } from '../components/admin/AdminDepartmentManagement';
+import { AdminAcademicManager } from '../components/admin/AdminAcademicManager';
+import { AdminPlacementManager } from '../components/admin/AdminPlacementManager';
+import { AdminDocumentManager } from '../components/admin/AdminDocumentManager';
+import { AdminAnnouncementManager } from '../components/admin/AdminAnnouncementManager';
+import { AdminAnalyticsManager } from '../components/admin/AdminAnalyticsManager';
+import { AdminSettingsManager } from '../components/admin/AdminSettingsManager';
 import { useAuth } from '../hooks/useAuth';
 
-// ── Mock data ────────────────────────────────────────────────
-const mockStats = [
-  { label: 'Total Students', value: 128, icon: Users, color: 'from-[#0E2A6D] to-[#1E4DB7]', trend: '+12 this month' },
-  { label: 'Chat Sessions', value: 3_842, icon: MessageSquare, color: 'from-[#22C55E] to-emerald-600', trend: '+234 this week' },
-  { label: 'Documents Indexed', value: 47, icon: FileText, color: 'from-[#D9A441] to-amber-500', trend: '3 pending rebuild' },
-  { label: 'Broadcasts Sent', value: 19, icon: Bell, color: 'from-[#1E4DB7] to-indigo-600', trend: 'Last: 2 days ago' },
-];
-
-const mockStudents = [
-  { id: 1, name: 'Rahul Verma', email: 'rahul@college.edu', dept: 'CSE', active: true },
-  { id: 2, name: 'Priya Sharma', email: 'priya@college.edu', dept: 'ECE', active: true },
-  { id: 3, name: 'Ankit Patel', email: 'ankit@college.edu', dept: 'MECH', active: false },
-];
-
-const mockDocuments = [
-  { name: 'college_regulations_2024.pdf', size: '1.2 MB', indexed: true },
-  { name: 'library_handbook.pdf', size: '780 KB', indexed: true },
-  { name: 'exam_schedule_oct2026.pdf', size: '320 KB', indexed: false },
-];
-
-type AdminTab = 'overview' | 'students' | 'documents' | 'rag' | 'broadcast' | 'analytics';
-
 export default function AdminDashboardPage() {
-  const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState<AdminTab>('overview');
-  const [students, setStudents] = useState(mockStudents);
-  const [documents, setDocuments] = useState(mockDocuments);
-  const [isRebuilding, setIsRebuilding] = useState(false);
-  const [broadcastTitle, setBroadcastTitle] = useState('');
-  const [broadcastMessage, setBroadcastMessage] = useState('');
-  const [broadcastSent, setBroadcastSent] = useState(false);
+  const { logout } = useAuth();
+  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [overviewStats, setOverviewStats] = useState<AdminMasterOverviewStats | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const navItems: { id: AdminTab; label: string; icon: any }[] = [
+  // Global Filters & Search State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRole, setSelectedRole] = useState('All');
+  const [selectedDept, setSelectedDept] = useState('All');
+  const [selectedStatus, setSelectedStatus] = useState('All');
+
+  useEffect(() => {
+    fetchOverview();
+  }, []);
+
+  const fetchOverview = async () => {
+    try {
+      setLoading(true);
+      const stats = await adminDashboardApi.getOverviewStats();
+      setOverviewStats(stats);
+    } catch (err) {
+      console.error('Error fetching admin overview:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const tabs = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
-    { id: 'students', label: 'Students', icon: Users },
-    { id: 'documents', label: 'Documents', icon: FileText },
-    { id: 'rag', label: 'RAG Engine', icon: RefreshCw },
-    { id: 'broadcast', label: 'Broadcast', icon: Bell },
-    { id: 'analytics', label: 'Analytics', icon: TrendingUp },
+    { id: 'users', label: 'User Management', icon: Users },
+    { id: 'departments', label: 'Departments & Courses', icon: Building2 },
+    { id: 'academics', label: 'Academic Control', icon: BookOpen },
+    { id: 'placements', label: 'Placements', icon: Briefcase },
+    { id: 'documents', label: 'RAG Documents', icon: Database },
+    { id: 'announcements', label: 'Announcements', icon: Bell },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'settings', label: 'System Settings', icon: Settings2 },
   ];
 
-  const handleToggleActive = (id: number) => {
-    setStudents(prev => prev.map(s => s.id === id ? { ...s, active: !s.active } : s));
-  };
-
-  const handleDeleteStudent = (id: number) => {
-    setStudents(prev => prev.filter(s => s.id !== id));
-  };
-
-  const handleRebuild = () => {
-    setIsRebuilding(true);
-    setTimeout(() => setIsRebuilding(false), 3000);
-  };
-
-  const handleBroadcast = () => {
-    if (!broadcastTitle.trim() || !broadcastMessage.trim()) return;
-    setBroadcastSent(true);
-    setBroadcastTitle('');
-    setBroadcastMessage('');
-    setTimeout(() => setBroadcastSent(false), 4000);
+  const handleExportCSV = () => {
+    const csvContent = "Category,Metric,Value\nTotal Students,Count,320\nTotal Faculty,Count,24\nUptime,Percentage,99.8%\nStorage Used,GB,42.5 GB\n";
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Admin_Master_Report_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
   };
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] font-body">
-      {/* Admin Sidebar */}
-      <aside className="hidden md:flex w-64 shrink-0 flex-col bg-white dark:bg-[#111827] border-r border-[#E2E8F0] dark:border-[#334155] p-4 select-none">
-        {/* Brand */}
-        <div className="flex items-center gap-3 mb-8">
+      {/* ── Admin Master Sidebar ── */}
+      <aside className="hidden md:flex w-64 shrink-0 flex-col bg-white dark:bg-[#1E293B] border-r border-[#E2E8F0] dark:border-[#334155] p-4 select-none">
+        <div className="flex items-center gap-3 mb-6 px-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white shadow-xs border border-[#D9A441]/30">
-            <GraduationCap className="h-6 w-6" />
+            <ShieldCheck className="h-6 w-6" />
           </div>
           <div>
-            <h2 className="font-heading font-extrabold text-nav tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">CollegeMate AI</h2>
-            <div className="flex items-center gap-1 font-heading text-caption font-bold uppercase tracking-[0.02em] text-[#EF4444]">
-              <ShieldAlert className="h-3 w-3" />
-              <span>Admin Portal</span>
-            </div>
+            <h2 className="font-heading font-extrabold text-nav tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">
+              CollegeMate AI
+            </h2>
+            <p className="font-heading text-caption font-bold uppercase tracking-[0.05em] text-[#D9A441]">
+              Master Admin Cockpit
+            </p>
           </div>
         </div>
 
-        {/* Nav */}
-        <nav className="space-y-1 flex-1">
-          {navItems.map(item => {
-            const Icon = item.icon;
-            const active = activeTab === item.id;
+        {/* Sidebar Nav */}
+        <nav className="space-y-1 flex-1 overflow-y-auto pr-1 no-scrollbar">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const active = activeTab === tab.id;
             return (
               <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-heading text-nav font-bold tracking-[0.02em] transition-colors ${
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-heading text-nav font-bold tracking-[0.02em] transition-colors ${
                   active
                     ? 'bg-[#0E2A6D] text-white shadow-xs'
-                    : 'text-[#64748B] dark:text-[#94A3B8] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B]'
+                    : 'text-[#64748B] dark:text-[#94A3B8] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] hover:text-[#0E2A6D] dark:hover:text-[#F8FAFC]'
                 }`}
               >
-                <Icon className={`h-4 w-4 ${active ? 'text-[#D9A441]' : 'text-[#64748B]'}`} />
-                {item.label}
+                <Icon className="h-4 w-4 shrink-0" />
+                <span className="truncate">{tab.label}</span>
               </button>
             );
           })}
         </nav>
 
-        {/* Footer */}
-        <div className="border-t border-[#E2E8F0] dark:border-[#334155] pt-4 space-y-2">
-          <Link
-            to="/dashboard"
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-heading text-nav font-bold tracking-[0.02em] text-[#64748B] dark:text-[#94A3B8] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-colors"
-          >
-            <Sparkles className="h-4 w-4 text-[#D9A441]" />
-            Student View
-          </Link>
+        {/* Logout */}
+        <div className="pt-4 border-t border-[#E2E8F0] dark:border-[#334155]">
           <button
             onClick={logout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-heading text-nav font-bold tracking-[0.02em] text-[#EF4444] hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors"
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-heading text-nav font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
           >
-            <LogOut className="h-4 w-4" />
-            Logout
+            <LogOut className="h-4 w-4 shrink-0" />
+            <span>Sign Out</span>
           </button>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-6 lg:p-8">
-        {/* Overview */}
-        {activeTab === 'overview' && (
-          <div>
-            <div className="mb-8">
-              <h1 className="font-heading font-bold text-page tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">Admin Dashboard</h1>
-              <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-1">Welcome back, <span className="font-semibold text-[#0E2A6D] dark:text-[#D9A441]">{user?.name}</span>. Here's your Mount Zion campus overview.</p>
+      {/* ── Main Admin Content Body ── */}
+      <main className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Header Bar */}
+        <header className="h-16 shrink-0 bg-white dark:bg-[#1E293B] border-b border-[#E2E8F0] dark:border-[#334155] px-6 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <h1 className="font-heading font-bold text-xl text-[#0E2A6D] dark:text-white capitalize">
+              {tabs.find((t) => t.id === activeTab)?.label}
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleExportCSV}
+              className="h-9 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] hover:bg-[#0E2A6D] hover:text-white text-caption font-bold text-[#0E2A6D] dark:text-[#60A5FA] flex items-center gap-2 transition"
+            >
+              <Download size={15} /> Export Report
+            </button>
+          </div>
+        </header>
+
+        {/* Content Area with Global Filters */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
+          {/* Global Filter Bar */}
+          <div className="bg-white dark:bg-[#1E293B] p-4 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="relative flex-1">
+              <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#64748B]" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Global search across users, courses, departments, documents..."
+                className="w-full h-10 pl-10 pr-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+              />
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4 mb-10">
-              {mockStats.map(stat => {
-                const Icon = stat.icon;
-                return (
-                  <div key={stat.label} className={`rounded-xl bg-gradient-to-br ${stat.color} text-white p-6 shadow-xs relative overflow-hidden border border-[#D9A441]/30`}>
-                    <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
-                    <div className="flex items-start justify-between mb-4">
-                      <Icon className="h-7 w-7 opacity-90" />
-                    </div>
-                    <p className="font-heading text-caption font-bold uppercase tracking-[0.02em] opacity-80">{stat.label}</p>
-                    <p className="font-heading text-hero font-extrabold mt-1">{stat.value.toLocaleString()}</p>
-                    <p className="text-caption mt-2 opacity-90">{stat.trend}</p>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Quick overview panels */}
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="bg-white dark:bg-[#1E293B] rounded-xl p-6 shadow-xs border border-[#E2E8F0] dark:border-[#334155]">
-                <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] mb-4">System Health</h3>
-                <div className="space-y-3 font-body text-small">
-                  <div className="flex items-center justify-between p-3 bg-[#F5F7FB] dark:bg-[#0F172A] rounded-xl">
-                    <span className="font-semibold">RAG Vector Store</span>
-                    <span className="text-[#22C55E] font-bold flex items-center gap-1"><CheckCircle2 size={16} /> Operational</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-[#F5F7FB] dark:bg-[#0F172A] rounded-xl">
-                    <span className="font-semibold">Chat API Service</span>
-                    <span className="text-[#22C55E] font-bold flex items-center gap-1"><CheckCircle2 size={16} /> Operational</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-[#F5F7FB] dark:bg-[#0F172A] rounded-xl">
-                    <span className="font-semibold">TTS Voice Engine</span>
-                    <span className="text-[#22C55E] font-bold flex items-center gap-1"><CheckCircle2 size={16} /> Operational</span>
-                  </div>
-                </div>
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <div className="flex items-center gap-1.5">
+                <Filter size={15} className="text-[#64748B]" />
+                <select
+                  value={selectedRole}
+                  onChange={(e) => setSelectedRole(e.target.value)}
+                  className="h-10 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] px-3 text-caption font-bold text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                >
+                  <option value="All">All Roles</option>
+                  <option value="student">Student</option>
+                  <option value="faculty">Faculty</option>
+                  <option value="admin">Admin</option>
+                </select>
               </div>
 
-              <div className="bg-white dark:bg-[#1E293B] rounded-xl p-6 shadow-xs border border-[#E2E8F0] dark:border-[#334155]">
-                <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] mb-4">Recent Activity</h3>
-                <div className="space-y-3 font-body text-small">
-                  <div className="p-3 bg-[#F5F7FB] dark:bg-[#0F172A] rounded-xl">
-                    <p className="font-semibold text-[#1F2937] dark:text-[#F8FAFC]">Indexed 12 new handbook PDFs</p>
-                    <p className="text-caption text-[#64748B] dark:text-[#94A3B8]">2 hours ago</p>
-                  </div>
-                  <div className="p-3 bg-[#F5F7FB] dark:bg-[#0F172A] rounded-xl">
-                    <p className="font-semibold text-[#1F2937] dark:text-[#F8FAFC]">Sent broadcast notification: Exam Timetable</p>
-                    <p className="text-caption text-[#64748B] dark:text-[#94A3B8]">Yesterday</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+              <select
+                value={selectedDept}
+                onChange={(e) => setSelectedDept(e.target.value)}
+                className="h-10 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] px-3 text-caption font-bold text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+              >
+                <option value="All">All Departments</option>
+                <option value="Computer Science & Engineering">CS & Engineering</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="Electronics & Communication">Electronics & Comm</option>
+              </select>
 
-        {/* Students Tab */}
-        {activeTab === 'students' && (
-          <div>
-            <div className="mb-8">
-              <h1 className="font-heading font-bold text-page tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">Student Management</h1>
-              <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-1">Manage active student accounts across departments.</p>
-            </div>
-            <div className="bg-white dark:bg-[#1E293B] rounded-xl shadow-xs border border-[#E2E8F0] dark:border-[#334155] overflow-hidden">
-              <table className="w-full text-left text-body">
-                <thead className="text-caption font-heading font-bold uppercase bg-[#F5F7FB] dark:bg-[#111827] text-[#64748B] dark:text-[#94A3B8] border-b border-[#E2E8F0] dark:border-[#334155]">
-                  <tr>
-                    <th className="p-4">Name</th>
-                    <th className="p-4">Email</th>
-                    <th className="p-4">Department</th>
-                    <th className="p-4">Status</th>
-                    <th className="p-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#334155]">
-                  {students.map(s => (
-                    <tr key={s.id} className="hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A]">
-                      <td className="p-4 font-bold text-[#1F2937] dark:text-[#F8FAFC]">{s.name}</td>
-                      <td className="p-4 text-[#64748B] dark:text-[#94A3B8]">{s.email}</td>
-                      <td className="p-4 font-semibold">{s.dept}</td>
-                      <td className="p-4">
-                        <span className={`px-2.5 py-1 rounded-full text-caption font-bold ${s.active ? 'bg-[#22C55E]/10 text-[#22C55E]' : 'bg-[#EF4444]/10 text-[#EF4444]'}`}>
-                          {s.active ? 'Active' : 'Disabled'}
-                        </span>
-                      </td>
-                      <td className="p-4 text-right space-x-2">
-                        <button onClick={() => handleToggleActive(s.id)} className="px-3 py-1 bg-[#F5F7FB] dark:bg-[#0F172A] rounded-lg text-caption font-bold text-[#0E2A6D] dark:text-[#60A5FA]">
-                          {s.active ? 'Disable' : 'Enable'}
-                        </button>
-                        <button onClick={() => handleDeleteStudent(s.id)} className="p-1.5 text-[#EF4444] hover:bg-rose-50 rounded-lg">
-                          <Trash2 size={16} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="h-10 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] px-3 text-caption font-bold text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+              >
+                <option value="All">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Suspended">Suspended</option>
+              </select>
             </div>
           </div>
-        )}
 
-        {/* Documents Tab */}
-        {activeTab === 'documents' && (
-          <div>
-            <div className="mb-8">
-              <h1 className="font-heading font-bold text-page tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">Knowledge Base Documents</h1>
-              <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-1">Upload and manage RAG index files.</p>
-            </div>
-            <div className="bg-white dark:bg-[#1E293B] rounded-xl p-6 shadow-xs border border-[#E2E8F0] dark:border-[#334155] mb-6">
-              <div className="border-2 border-dashed border-[#E2E8F0] dark:border-[#334155] rounded-xl p-8 text-center cursor-pointer hover:border-[#1E4DB7]">
-                <Upload size={32} className="mx-auto text-[#0E2A6D] dark:text-[#60A5FA] mb-2" />
-                <p className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Click to upload campus PDF documents</p>
-                <p className="text-caption text-[#64748B] dark:text-[#94A3B8] mt-1">Syllabus, circulars, handbooks, timetables</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* RAG Engine Tab */}
-        {activeTab === 'rag' && (
-          <div>
-            <div className="mb-8">
-              <h1 className="font-heading font-bold text-page tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">RAG Vector Index</h1>
-              <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-1">Rebuild vector embeddings for Mount Zion database.</p>
-            </div>
-            <div className="bg-white dark:bg-[#1E293B] rounded-xl p-6 shadow-xs border border-[#E2E8F0] dark:border-[#334155]">
-              <button onClick={handleRebuild} disabled={isRebuilding} className="px-6 py-3 bg-[#0E2A6D] hover:bg-[#153B8A] text-white font-btn rounded-xl shadow-xs flex items-center gap-2">
-                <RefreshCw size={18} className={isRebuilding ? 'animate-spin' : ''} />
-                <span>{isRebuilding ? 'Rebuilding Index...' : 'Rebuild RAG Vector Store'}</span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Broadcast Tab */}
-        {activeTab === 'broadcast' && (
-          <div>
-            <div className="mb-8">
-              <h1 className="font-heading font-bold text-page tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">Campus Broadcast</h1>
-              <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-1">Send announcements to all registered students.</p>
-            </div>
-            <div className="bg-white dark:bg-[#1E293B] rounded-xl p-6 shadow-xs border border-[#E2E8F0] dark:border-[#334155] space-y-4 max-w-xl">
-              <div>
-                <label className="ty-label text-[#1F2937] dark:text-[#F8FAFC]">Title</label>
-                <input type="text" value={broadcastTitle} onChange={e => setBroadcastTitle(e.target.value)} placeholder="e.g. Exam Schedule Release" className="w-full h-11 px-3.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body mt-1" />
-              </div>
-              <div>
-                <label className="ty-label text-[#1F2937] dark:text-[#F8FAFC]">Message</label>
-                <textarea rows={4} value={broadcastMessage} onChange={e => setBroadcastMessage(e.target.value)} placeholder="Type announcement here..." className="w-full p-3.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body mt-1" />
-              </div>
-              <button onClick={handleBroadcast} className="px-6 py-3 bg-[#0E2A6D] hover:bg-[#153B8A] text-white font-btn rounded-xl shadow-xs">
-                Send Announcement
-              </button>
-              {broadcastSent && <p className="text-small text-[#22C55E] font-bold">Broadcast successfully sent to all students!</p>}
-            </div>
-          </div>
-        )}
-
-        {/* Analytics Tab */}
-        {activeTab === 'analytics' && (
-          <div>
-            <div className="mb-8">
-              <h1 className="font-heading font-bold text-page tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">Usage Analytics</h1>
-              <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-1">Platform query trends and engagement metrics.</p>
-            </div>
-            <div className="bg-white dark:bg-[#1E293B] rounded-xl p-6 shadow-xs border border-[#E2E8F0] dark:border-[#334155]">
-              <p className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Total Queries Handled Today: 482</p>
-              <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-2">Most frequent categories: Attendance, Exam Timetables, Fee Receipts.</p>
-            </div>
-          </div>
-        )}
+          {/* Active Tab View */}
+          {activeTab === 'overview' && (
+            <AdminOverviewManager stats={overviewStats} loading={loading} onNavigateTab={(t) => setActiveTab(t)} />
+          )}
+          {activeTab === 'users' && (
+            <AdminUserManagement
+              selectedRole={selectedRole}
+              selectedDept={selectedDept}
+              selectedStatus={selectedStatus}
+              searchQuery={searchQuery}
+            />
+          )}
+          {activeTab === 'departments' && <AdminDepartmentManagement />}
+          {activeTab === 'academics' && <AdminAcademicManager />}
+          {activeTab === 'placements' && <AdminPlacementManager />}
+          {activeTab === 'documents' && <AdminDocumentManager />}
+          {activeTab === 'announcements' && <AdminAnnouncementManager />}
+          {activeTab === 'analytics' && <AdminAnalyticsManager />}
+          {activeTab === 'settings' && <AdminSettingsManager />}
+        </div>
       </main>
     </div>
   );

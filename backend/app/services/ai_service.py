@@ -198,7 +198,7 @@ class AIService:
         if not message or not message.strip():
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Message is required')
 
-        if not self.llm and not self.ollama_llm:
+        if not self.llm and not self.ollama_llm and not self.gemini_llm:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail='AI LLM service is not configured'
@@ -222,6 +222,8 @@ class AIService:
             intent = self.query_router.route_query(normalized_message)
             logger.info('Intent detected: %s', intent)
             
+            valid_chunks: list = []
+
             if intent == "GREETING":
                 system_instruction = f"You are CampusMate AI, a helpful college assistant. Greet the student warmly. {language_instruction}"
                 return await self._get_llm_response(message, system_instruction)
@@ -256,6 +258,13 @@ class AIService:
             context_text = self._build_context(valid_chunks)
             prompt = self._build_prompt(message, context_text)
             answer = await self._get_llm_response(prompt, SYSTEM_RAG_PROMPT)
+
+            source_names = [str(c.get('filename') or c.get('source')) for c in valid_chunks if (c.get('filename') or c.get('source'))]
+            sources = sorted(list(set(source_names)))
+            if sources:
+                sources_str = "\n\n**Sources:**\n" + "\n".join(f"- {s}" for s in sources)
+                answer += sources_str
+
             return answer
 
         except HTTPException:
@@ -276,7 +285,7 @@ class AIService:
                 logger.info('Calling Google Gemini LLM (%s)', self.gemini_model_name)
                 res = await self.gemini_llm.ainvoke(messages)
                 if res and res.content:
-                    return res.content
+                    return str(res.content)
             except Exception as e:
                 logger.warning('Google Gemini LLM failed/unavailable, falling back to backup LLM: %s', e)
 
@@ -286,7 +295,7 @@ class AIService:
                 logger.info('Calling local Ollama Qwen2.5')
                 res = await self.ollama_llm.ainvoke(messages)
                 if res and res.content:
-                    return res.content
+                    return str(res.content)
             except Exception as e:
                 logger.warning('Ollama Qwen2.5 failed/unavailable, falling back to Groq: %s', e)
 
@@ -296,6 +305,7 @@ class AIService:
 
         retries = 3
         backoff = 1.0
+        response = None
 
         for attempt in range(retries):
             try:
@@ -307,7 +317,7 @@ class AIService:
                     await asyncio.sleep(backoff)
                     backoff *= 2.0
 
-        return response.content if response else RAG_FALLBACK_RESPONSE
+        return str(response.content) if response and response.content else RAG_FALLBACK_RESPONSE
 
     def _build_context(self, context_chunks: list) -> str:
         if not context_chunks:
@@ -430,7 +440,7 @@ class AIService:
                 
         except HTTPException as e:
             logger.error('HTTPException during stream: %s', e.detail)
-            yield _FRIENDLY_UNAVAILABLE
+            yield RAG_FALLBACK_RESPONSE
         except Exception as exc:
             logger.exception('Unexpected error during AI stream generation')
             yield RAG_FALLBACK_RESPONSE
@@ -446,7 +456,7 @@ class AIService:
                 logger.info('Streaming with Google Gemini LLM (%s)', self.gemini_model_name)
                 async for chunk in self.gemini_llm.astream(messages):
                     if chunk.content:
-                        yield chunk.content
+                        yield str(chunk.content)
                 return
             except Exception as e:
                 logger.warning('Google Gemini LLM stream failed/unavailable, falling back: %s', e)
@@ -455,7 +465,7 @@ class AIService:
             try:
                 async for chunk in self.ollama_llm.astream(messages):
                     if chunk.content:
-                        yield chunk.content
+                        yield str(chunk.content)
                 return
             except Exception as e:
                 logger.warning('Ollama stream failed, falling back to Groq: %s', e)
@@ -464,7 +474,7 @@ class AIService:
             try:
                 async for chunk in self.llm.astream(messages):
                     if chunk.content:
-                        yield chunk.content
+                        yield str(chunk.content)
                 return
             except Exception as exc:
                 logger.warning('Groq stream request failed: %s', exc)

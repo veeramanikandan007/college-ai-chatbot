@@ -1,7 +1,11 @@
+import sys
+import os
 import unittest
 import asyncio
 from unittest.mock import MagicMock, patch
 from fastapi import HTTPException
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.services.ai_service import AIService
 
@@ -21,6 +25,7 @@ class TestAIService(unittest.IsolatedAsyncioTestCase):
         self.MockConv.return_value = mock_conv
 
         self.service = AIService()
+        self.service.gemini_llm = None
         self.service.llm = MagicMock()
 
         async def dummy_ainvoke(*args, **kwargs):
@@ -42,9 +47,9 @@ class TestAIService(unittest.IsolatedAsyncioTestCase):
 
     async def test_get_chat_answer_knowledge(self):
         self.service.query_router.route_query = MagicMock(return_value="CAMPUS_QUERY")
-        self.service.rag_service.retrieve_context.return_value = [
+        self.service.rag_service.retrieve_context = MagicMock(return_value=[
             {"content": "Campus opens at 8am.", "distance": 0.5, "source": "handbook.pdf", "filename": "handbook.pdf"}
-        ]
+        ])
 
         response = await self.service.get_chat_answer("What time does campus open?")
         self.assertIn("Mocked AI Greeting!", response)
