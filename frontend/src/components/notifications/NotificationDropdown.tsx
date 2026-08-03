@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+﻿import { useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, Loader2 } from 'lucide-react';
 import { useNotifications } from '../../hooks/useNotifications';
@@ -47,7 +47,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
         {unreadCount > 0 && (
           <button 
             onClick={() => markAllAsRead()}
-            className="text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA] hover:underline flex items-center gap-1 cursor-pointer"
+            className="text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:underline flex items-center gap-1 cursor-pointer"
           >
             <Check size={14} />
             Mark all read
@@ -79,7 +79,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
       <div className="p-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-center">
         <button 
           onClick={() => { onClose(); navigate('/notifications'); }}
-          className="text-[13px] font-bold text-[#111827] dark:text-[#FAFAFA] hover:underline cursor-pointer"
+          className="text-[13px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:underline cursor-pointer"
         >
           View all notifications
         </button>

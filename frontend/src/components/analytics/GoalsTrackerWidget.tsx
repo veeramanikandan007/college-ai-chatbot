@@ -281,23 +281,23 @@ export const GoalsTrackerWidget: React.FC<Props> = ({ goals, loading, onRefresh 
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   return (
-    <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-4">
-      <div className="flex items-center justify-between pb-4 border-b border-[#F3F4F6] dark:border-[#2A2A2A]">
+    <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-5 select-none">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#D1D5DB] dark:border-[#3F3F46]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+          <div className="w-[40px] h-[40px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
             <Target size={20} />
           </div>
           <div>
-            <h2 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">Goals Tracker</h2>
-            <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
-              {goals.filter((g) => g.status === 'Completed').length} of {goals.length} goals completed
+            <h2 className="text-[20px] font-[700] text-[#111827] dark:text-[#FAFAFA]">Goals Tracker</h2>
+            <p className="text-[14px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">
+              {goals.filter((g) => g.status === 'Completed').length} of {goals.length} targets completed
             </p>
           </div>
         </div>
 
         <button
           onClick={() => setShowCreateModal(true)}
-          className="h-10 px-4 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+          className="h-[40px] px-4 rounded-[12px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] font-[700] text-[14px] transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-[0.98]"
         >
           <Plus size={16} />
           <span>New Goal</span>
@@ -307,10 +307,10 @@ export const GoalsTrackerWidget: React.FC<Props> = ({ goals, loading, onRefresh 
       {loading ? (
         <div className="py-12 flex flex-col items-center justify-center text-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#111827] dark:border-[#FAFAFA] border-t-transparent mb-3" />
-          <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Loading goals...</p>
+          <p className="text-[14px] font-[600] text-[#6B7280] dark:text-[#A1A1AA]">Loading goals...</p>
         </div>
       ) : goals.length === 0 ? (
-        <div className="py-12 text-center text-[#6B7280] dark:text-[#A3A3A3] text-[14px]">
+        <div className="py-12 text-center text-[#6B7280] dark:text-[#A1A1AA] text-[14px] font-[500]">
           No active goals found. Click "New Goal" to set a learning target.
         </div>
       ) : (
@@ -327,3 +327,4 @@ export const GoalsTrackerWidget: React.FC<Props> = ({ goals, loading, onRefresh 
     </div>
   );
 };
+

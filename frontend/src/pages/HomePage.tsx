@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -137,13 +137,13 @@ export default function HomePage() {
           <nav className="flex items-center gap-3">
             <Link
               to="/login"
-              className="h-[44px] px-4 inline-flex items-center justify-center text-[15px] font-semibold text-[#475569] dark:text-[#CBD5E1] hover:text-[#0E2A6D] dark:hover:text-white transition rounded-[14px] hover:bg-[#E2E8F0] dark:hover:bg-[#1E293B]"
+              className="h-[44px] px-4 inline-flex items-center justify-center text-[15px] font-normal text-[#475569] dark:text-[#CBD5E1] hover:text-[#0E2A6D] dark:hover:text-white transition rounded-[14px] hover:bg-[#E2E8F0] dark:hover:bg-[#1E293B]"
             >
               Sign in
             </Link>
             <Link
               to="/register"
-              className="h-[44px] px-5 inline-flex items-center justify-center text-[15px] font-semibold text-white bg-[#0E2A6D] hover:bg-[#153B8A] rounded-[14px] transition shadow-xs"
+              className="h-[44px] px-5 inline-flex items-center justify-center text-[15px] font-normal text-white bg-[#0E2A6D] hover:bg-[#153B8A] rounded-[14px] transition shadow-xs"
             >
               Get started
             </Link>

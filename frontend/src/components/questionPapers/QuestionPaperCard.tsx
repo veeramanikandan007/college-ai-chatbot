@@ -4,15 +4,12 @@ import {
   BookOpen,
   Download,
   Eye,
-  Bookmark,
-  Share2,
   Sparkles,
-  MessageSquare,
-  Trash2,
   Calendar,
   User
 } from 'lucide-react';
 import { QuestionPaper } from '../../api/questionPapers';
+import { PaperActionsDropdown } from './PaperActionsDropdown';
 
 interface QuestionPaperCardProps {
   paper: QuestionPaper;
@@ -33,124 +30,86 @@ export const QuestionPaperCard: React.FC<QuestionPaperCardProps> = ({
   onDelete,
   onShare,
 }) => {
-  const isBookmarked = paper.is_bookmarked;
-
   return (
-    <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col justify-between space-y-4">
+    <div className="w-full p-[20px] rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] shadow-xs hover:shadow-md transition-all duration-150 ease-in-out hover:-translate-y-[2px] flex flex-col justify-between select-none space-y-4">
+      {/* Header Info */}
       <div className="space-y-3">
-        {/* Header Metadata Pills */}
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center gap-1">
-              <BookOpen size={12} />
-              {paper.subject_code}
-            </span>
-
-            <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
-              {paper.regulation}
-            </span>
-
-            <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
-              {paper.exam_type}
-            </span>
+        {/* Top Header with 3-Dot Icon Menu at the Top Right */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-[48px] h-[48px] rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <FileText size={22} />
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5 min-w-0">
+              <span className="h-[24px] inline-flex items-center rounded-full border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#18181B] px-3 text-[12px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] shrink-0">
+                {paper.subject_code}
+              </span>
+              <span className="h-[24px] inline-flex items-center rounded-full border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#18181B] px-3 text-[12px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] shrink-0">
+                {paper.regulation}
+              </span>
+            </div>
           </div>
 
-          <button
-            onClick={() => onToggleBookmark(paper.id)}
-            title={isBookmarked ? 'Remove Bookmark' : 'Bookmark Paper'}
-            className="h-8 w-8 rounded-[6px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center transition cursor-pointer"
-          >
-            <Bookmark size={16} className={isBookmarked ? 'fill-current' : ''} />
-          </button>
+          {/* 3-Dot Icon Menu Pinned to Top-Right Header */}
+          <PaperActionsDropdown
+            paper={paper}
+            onAnalysis={onAnalysis}
+            onChat={onChat}
+            onToggleBookmark={onToggleBookmark}
+            onShare={onShare}
+            onDelete={onDelete}
+          />
         </div>
 
-        {/* Paper Title */}
-        <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] leading-snug">
-          {paper.title}
-        </h3>
+        <div>
+          <h3 className="text-[18px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-snug line-clamp-2">
+            {paper.title}
+          </h3>
 
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">
-          <span className="inline-flex items-center gap-1">
-            <Calendar size={14} />
-            Year: <strong className="text-[#111827] dark:text-[#FAFAFA]">{paper.academic_year}</strong> (Sem {paper.semester})
-          </span>
-
-          {paper.faculty_name && (
-            <span className="inline-flex items-center gap-1">
-              <User size={14} />
-              Faculty: <strong className="text-[#111827] dark:text-[#FAFAFA]">{paper.faculty_name}</strong>
-            </span>
-          )}
+          {/* 3 Rows Metadata */}
+          <div className="mt-3 space-y-1.5 text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA]">
+            <div className="flex items-center gap-2 truncate">
+              <Calendar size={16} className="shrink-0 text-[#6B7280] dark:text-[#A1A1AA]" />
+              <span className="truncate">AY {paper.academic_year} • Sem {paper.semester} ({paper.exam_type})</span>
+            </div>
+            <div className="flex items-center gap-2 truncate">
+              <User size={16} className="shrink-0 text-[#6B7280] dark:text-[#A1A1AA]" />
+              <span className="truncate">{paper.faculty_name || 'Department Faculty'}</span>
+            </div>
+            <div className="flex items-center gap-2 truncate">
+              <BookOpen size={16} className="shrink-0 text-[#6B7280] dark:text-[#A1A1AA]" />
+              <span className="truncate">{paper.department}</span>
+            </div>
+          </div>
         </div>
-
-        <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">
-          Department: <span className="text-[#111827] dark:text-[#FAFAFA] font-medium">{paper.department}</span>
-        </p>
       </div>
 
-      {/* Footer Metrics & Actions */}
-      <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex flex-wrap items-center justify-between gap-3">
-        {/* Metric Badges */}
-        <div className="flex items-center gap-3 text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
-          <span className="inline-flex items-center gap-1" title="Views">
-            <Eye size={14} />
-            {paper.view_count}
-          </span>
-          <span className="inline-flex items-center gap-1" title="Downloads">
-            <Download size={14} />
-            {paper.download_count}
-          </span>
-          <span className="inline-flex items-center gap-1" title="Pages">
-            <FileText size={14} />
-            {paper.page_count || 4} pgs
-          </span>
+      {/* Footer & Action Bar */}
+      <div className="pt-3 border-t border-[#D1D5DB] dark:border-[#3F3F46] space-y-3">
+        {/* Horizontal Statistics */}
+        <div className="flex items-center justify-between text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA]">
+          <span className="inline-flex items-center gap-1.5"><Eye size={15} /> {paper.view_count} views</span>
+          <span className="inline-flex items-center gap-1.5"><Download size={15} /> {paper.download_count} downloads</span>
+          <span className="inline-flex items-center gap-1.5"><FileText size={15} /> {paper.page_count || 4} pgs</span>
         </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-1.5">
+        {/* Action Bar: [ Preview ] [ AI Insights ] */}
+        <div className="flex items-center gap-[8px]">
           <button
             onClick={() => onPreview(paper)}
-            className="h-9 px-3.5 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+            className="flex-1 h-[40px] px-[18px] py-[10px] rounded-[12px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111827] text-[14px] font-[600] tracking-normal transition-all duration-150 ease-in-out hover:-translate-y-[1px] shadow-xs active:scale-[0.98] flex items-center justify-center gap-[8px] cursor-pointer"
           >
-            <Eye size={14} />
+            <Eye size={16} className="shrink-0" />
             <span>Preview</span>
           </button>
 
           <button
             onClick={() => onAnalysis(paper)}
-            className="h-9 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center gap-1 cursor-pointer"
-            title="AI Analysis & Pattern"
+            className="flex-1 h-[40px] px-[14px] py-[10px] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-[600] tracking-normal transition-all duration-150 ease-in-out hover:-translate-y-[1px] active:scale-[0.98] flex items-center justify-center gap-[8px] cursor-pointer whitespace-nowrap"
           >
-            <Sparkles size={14} />
-            <span>AI Insights</span>
+            <Sparkles size={16} className="shrink-0" />
+            <span className="truncate">AI Insights</span>
           </button>
-
-          <button
-            onClick={() => onChat(paper)}
-            className="h-9 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center gap-1 cursor-pointer"
-            title="Ask AI about this Paper"
-          >
-            <MessageSquare size={14} />
-            <span>Ask AI</span>
-          </button>
-
-          <button
-            onClick={() => onShare(paper)}
-            title="Share Paper"
-            className="h-9 w-9 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
-          >
-            <Share2 size={16} />
-          </button>
-
-          {onDelete && (
-            <button
-              onClick={() => onDelete(paper.id)}
-              title="Delete Paper"
-              className="h-9 w-9 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
-            >
-              <Trash2 size={16} />
-            </button>
-          )}
         </div>
       </div>
     </div>

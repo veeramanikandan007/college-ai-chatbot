@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, SendHorizontal, Square, Settings2, X, Check } from 'lucide-react';
 
@@ -201,7 +201,7 @@ export default function VoiceInputBar({
               </motion.div>
 
               <div className="min-w-0">
-                <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#111827] dark:text-[#FAFAFA] uppercase tracking-wider">
+                <div className="flex items-center gap-1.5 text-[11px] font-normal text-[#111827] dark:text-[#FAFAFA] uppercase tracking-wider">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#111827] dark:bg-[#FAFAFA] animate-pulse" />
                   <span>Listening</span>
                 </div>
@@ -223,7 +223,7 @@ export default function VoiceInputBar({
                   />
                 ))}
               </div>
-              <span className="font-mono text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA]
+              <span className="font-mono text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA]
                                bg-[#F8FAFC] dark:bg-[#111111]
                                border border-[#E5E7EB] dark:border-[#2A2A2A]
                                px-2.5 py-1 rounded-[6px]">
@@ -240,7 +240,7 @@ export default function VoiceInputBar({
                 className="flex h-8 items-center gap-1 rounded-[8px] px-2.5
                            border border-[#D1D5DB] dark:border-[#3F3F46]
                            bg-[#F8FAFC] dark:bg-[#111111]
-                           text-[12px] font-semibold text-[#6B7280] dark:text-[#A3A3A3]
+                           text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]
                            hover:bg-[#F9FAFB] dark:hover:bg-[#232323]
                            hover:text-[#111827] dark:hover:text-[#FAFAFA]
                            transition"
@@ -256,7 +256,7 @@ export default function VoiceInputBar({
                 className="flex h-8 items-center gap-1 rounded-[8px] px-2.5
                            border border-[#D1D5DB] dark:border-[#3F3F46]
                            bg-[#F8FAFC] dark:bg-[#111111]
-                           text-[12px] font-semibold text-[#111827] dark:text-[#FAFAFA]
+                           text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA]
                            hover:bg-[#F9FAFB] dark:hover:bg-[#232323]
                            transition"
               >
@@ -270,7 +270,7 @@ export default function VoiceInputBar({
                 type="button" onClick={handleConfirmRecording} title="Confirm speech"
                 className="flex h-8 items-center gap-1.5 rounded-[8px] px-3
                            bg-[#111827] dark:bg-[#FFFFFF]
-                           text-[12px] font-bold text-[#FFFFFF] dark:text-[#111111]
+                           text-[12px] font-medium text-[#FFFFFF] dark:text-[#111111]
                            hover:bg-[#1F2937] dark:hover:bg-[#F0F0F0]
                            transition shadow-sm"
               >

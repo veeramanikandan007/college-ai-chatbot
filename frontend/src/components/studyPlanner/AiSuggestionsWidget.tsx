@@ -1,14 +1,5 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  Sparkles,
-  BookOpen,
-  Brain,
-  FileText,
-  Clock3,
-  ArrowRight,
-  AlertCircle
-} from 'lucide-react';
+﻿import React, { useState } from 'react';
+import { ChevronDown, ChevronUp, Brain, ArrowRight } from 'lucide-react';
 import { AiSuggestion } from '../../api/studyPlanner';
 
 interface AiSuggestionsWidgetProps {
@@ -20,77 +11,84 @@ export const AiSuggestionsWidget: React.FC<AiSuggestionsWidgetProps> = ({
   suggestions,
   loading,
 }) => {
-  const navigate = useNavigate();
+  const [isExpanded, setIsExpanded] = useState<boolean>(true);
 
   if (loading) {
     return (
-      <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs animate-pulse space-y-3">
-        <div className="h-6 w-36 bg-[#F8FAFC] dark:bg-[#111111] rounded-[6px]" />
-        <div className="h-16 bg-[#F8FAFC] dark:bg-[#111111] rounded-[10px]" />
-        <div className="h-16 bg-[#F8FAFC] dark:bg-[#111111] rounded-[10px]" />
-      </div>
+      <div className="h-[80px] rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111] animate-pulse" />
     );
   }
 
-  if (!suggestions || suggestions.length === 0) return null;
+  if (suggestions.length === 0) return null;
 
   return (
-    <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-4">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
-          <Sparkles size={20} />
+    <div className="rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] shadow-xs overflow-hidden transition-all select-none">
+      {/* Header Bar */}
+      <div
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="p-4 sm:p-5 flex items-center justify-between cursor-pointer hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-[40px] h-[40px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+            <Brain size={20} />
+          </div>
+          <div>
+            <h3 className="text-[18px] font-[600] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+              AI Recommendations
+              <span className="h-[20px] inline-flex items-center rounded-full border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111] px-2.5 text-[12px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">
+                {suggestions.length} hints
+              </span>
+            </h3>
+            <p className="text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA]">
+              Adaptive recommendations calculated from exam dates & module progress
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
-            Smart AI Study Suggestions
-          </h3>
-          <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
-            Real-time recommendations based on your attendance, upcoming deadlines, and quiz performance
-          </p>
-        </div>
+
+        <button className="h-8 w-8 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0">
+          {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {suggestions.map((sug) => (
-          <div
-            key={sug.id}
-            className="flex flex-col justify-between p-5 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-all space-y-3"
-          >
-            <div className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <Brain size={16} />
-                  <span className="text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA]">
-                    {sug.title}
+      {/* Collapsible Content - Generous Padding & Distinct Background */}
+      {isExpanded && (
+        <div className="p-4 sm:p-5 border-t border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC]/50 dark:bg-[#111111]/50 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {suggestions.map((item, idx) => (
+              <div
+                key={idx}
+                className="p-4 sm:p-5 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] shadow-xs flex flex-col justify-between space-y-3 h-full transition-all duration-150 hover:-translate-y-[2px]"
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="h-[22px] inline-flex items-center rounded-full border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111] px-2.5 text-[11px] font-[600] text-[#111827] dark:text-[#FAFAFA] uppercase tracking-wider">
+                      {item.suggestion_type}
+                    </span>
+                    <span className="text-[12px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">
+                      {item.priority} Priority
+                    </span>
+                  </div>
+
+                  <h4 className="text-[18px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-snug">
+                    {item.title}
+                  </h4>
+                  <p className="text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+
+                {/* Bottom Bar with Spacing */}
+                <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-between text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA]">
+                  <span className="text-[#6B7280] dark:text-[#A1A1AA] font-[400]">{item.subject_name}</span>
+                  <span className="flex items-center gap-1 cursor-pointer hover:underline">
+                    {item.action_label || 'Apply Action'} <ArrowRight size={14} />
                   </span>
                 </div>
-                <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
-                  {sug.priority} Priority
-                </span>
               </div>
-              <p className="text-[14px] text-[#4B5563] dark:text-[#D4D4D4] leading-relaxed">
-                {sug.description}
-              </p>
-            </div>
-
-            <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-between text-[14px]">
-              <span className="text-[#6B7280] dark:text-[#A3A3A3]">
-                Subject: <strong className="text-[#111827] dark:text-[#FAFAFA]">{sug.subject_name}</strong>
-              </span>
-
-              {sug.module_link && (
-                <button
-                  onClick={() => navigate(sug.module_link!)}
-                  className="h-8 px-3 rounded-[6px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center gap-1 cursor-pointer"
-                >
-                  <span>{sug.action_label}</span>
-                  <ArrowRight size={13} />
-                </button>
-              )}
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -16,3 +16,5 @@ vector_db/
 **/*.db
 .venv/
 **/ttsService_backup2.ts
+backend/.env
+.env

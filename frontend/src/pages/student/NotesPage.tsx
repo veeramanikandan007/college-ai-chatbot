@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   Book,
   Plus,
@@ -146,111 +146,124 @@ export default function NotesPage() {
   };
 
   return (
-    <div className="w-full h-full overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 md:p-8 transition-colors">
-      <div className="w-full max-w-[1600px] mx-auto space-y-8">
+    <div className="w-full h-full overflow-x-hidden overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 md:p-8 transition-colors select-none">
+      {/* 1440px Centered Max Content Width Container */}
+      <div className="w-full max-w-[1440px] mx-auto space-y-6">
 
-        {/* ========================================================================= */}
-        {/* 1. PAGE HEADER CARD                                                       */}
-        {/* ========================================================================= */}
-        <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 md:p-8 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
-              <Book size={24} />
+        {/* Compact Hero Header (Matching AI Study Planner layout) */}
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-4 sm:p-5 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+            <div className="w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <Book size={22} />
             </div>
-            <div>
-              <h1 className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight flex items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-[20px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-[1.2] truncate">
                 Knowledge Base & Notes
-                <span className="text-[12px] font-medium px-2.5 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
-                  Academic Repository
-                </span>
               </h1>
-              <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-1">
-                Access, organize, and manage your personal class notes, study summaries, and course references.
+              <p className="text-[13px] sm:text-[14px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] mt-0.5 truncate">
+                Organize, synthesize, and manage personal course notes and AI study summaries.
               </p>
             </div>
           </div>
 
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition flex items-center gap-2 cursor-pointer shrink-0"
-          >
-            <Plus size={16} />
-            <span>Create New Note</span>
-          </button>
-        </div>
+          <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 shrink-0 w-full lg:w-auto pt-2 lg:pt-0 border-t lg:border-t-0 border-[#E5E7EB] dark:border-[#27272A]">
+            <div className="hidden xl:flex items-center gap-2">
+              <span className="h-[36px] inline-flex items-center gap-1.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111] px-3 text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA]">
+                <FileText size={15} />
+                Total Notes: {notes.length}
+              </span>
+              <span className="h-[36px] inline-flex items-center gap-1.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111] px-3 text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA]">
+                <Bookmark size={15} />
+                Pinned: {pinnedNotes.length}
+              </span>
+            </div>
 
-        {/* ========================================================================= */}
-        {/* 2. OVERVIEW METRIC CARDS                                                  */}
-        {/* ========================================================================= */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Total Notes</p>
-              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{notes.length}</p>
-            </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
-              <FileText size={20} />
-            </div>
-          </div>
-
-          <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Subjects</p>
-              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{subjectsList.length - 1}</p>
-            </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
-              <BookOpen size={20} />
-            </div>
-          </div>
-
-          <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Pinned Notes</p>
-              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{notes.filter(n => n.isPinned).length}</p>
-            </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
-              <Bookmark size={20} />
-            </div>
-          </div>
-
-          <div className="p-6 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] border border-[#111827] dark:border-[#FAFAFA] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium opacity-80">AI Synthesis</p>
-              <p className="text-[32px] font-bold mt-1">Active</p>
-            </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#FFFFFF] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
-              <Sparkles size={20} />
-            </div>
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="h-[38px] sm:h-[40px] px-[16px] sm:px-[18px] rounded-[12px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-[500] transition flex items-center justify-center gap-2 cursor-pointer shrink-0 active:scale-[0.98] w-full sm:w-auto"
+            >
+              <Plus size={16} />
+              <span>Create New Note</span>
+            </button>
           </div>
         </div>
 
-        {/* ========================================================================= */}
-        {/* 3. SEARCH & SUBJECT FILTER TOOLBAR                                        */}
-        {/* ========================================================================= */}
-        <div className="space-y-4">
-          {/* Full Width Search Input */}
-          <div className="relative w-full">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A3A3A3]" size={18} />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search notes by title, topic, content, or subject..."
-              className="w-full h-11 pl-10 pr-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none placeholder-[#9CA3AF] dark:placeholder-[#6B7280] shadow-xs"
-            />
+        {/* Overview Metric Cards (Exact Study Analytics Banner System) */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 select-none">
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Total Notes</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">{notes.length}</p>
+              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Academic repository</p>
+            </div>
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
+              <FileText size={18} />
+            </div>
           </div>
 
-          {/* Subject Pills Row */}
-          <div className="bg-[#FFFFFF] dark:bg-[#181818] p-2 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs overflow-x-auto no-scrollbar">
-            <div className="flex items-center gap-1.5 min-w-max">
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Course Subjects</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">{subjectsList.length - 1}</p>
+              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Active modules</p>
+            </div>
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
+              <BookOpen size={18} />
+            </div>
+          </div>
+
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Pinned Notes</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">{pinnedNotes.length}</p>
+              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Quick access</p>
+            </div>
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
+              <Bookmark size={18} />
+            </div>
+          </div>
+
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">AI Synthesis</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">Active</p>
+              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Auto-summaries</p>
+            </div>
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
+              <Sparkles size={18} />
+            </div>
+          </div>
+        </div>
+
+        {/* Content Section Container (Matching Study Tasks List rhythm) */}
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-4 sm:p-6 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-5 select-none">
+          
+          {/* Section Header */}
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 pb-4 border-b border-[#D1D5DB] dark:border-[#3F3F46]">
+            <div className="flex items-center gap-3">
+              <div className="w-[36px] h-[36px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+                <BookOpen size={20} />
+              </div>
+              <div>
+                <h3 className="text-[16px] sm:text-[17px] font-[600] text-[#111827] dark:text-[#FAFAFA]">
+                  Academic Notes & Study Summaries
+                </h3>
+                <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA]">
+                  Manage notes, filter by course modules, and pin key exam preparation references
+                </p>
+              </div>
+            </div>
+
+            {/* Subject Pills Segmented Control */}
+            <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] min-h-[44px] max-w-full overflow-x-auto no-scrollbar">
               {subjectsList.map((subj) => (
                 <button
                   key={subj}
                   onClick={() => setSelectedSubject(subj)}
-                  className={`h-9 px-4 text-[13px] font-medium rounded-[8px] transition-all cursor-pointer whitespace-nowrap ${
+                  className={`h-[36px] px-3.5 sm:px-4 rounded-[8px] text-[14px] font-[500] transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                     selectedSubject === subj
                       ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                      : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F8FAFC] dark:hover:bg-[#232323]'
+                      : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
                   }`}
                 >
                   {subj}
@@ -258,185 +271,197 @@ export default function NotesPage() {
               ))}
             </div>
           </div>
-        </div>
 
-        {/* ========================================================================= */}
-        {/* 4. PINNED NOTES SECTION                                                   */}
-        {/* ========================================================================= */}
-        {pinnedNotes.length > 0 && (
-          <div className="space-y-4">
-            <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
-              <Bookmark size={18} />
-              Pinned Notes
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pinnedNotes.map((note) => (
-                <div
-                  key={note.id}
-                  className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col justify-between space-y-4"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]">
-                        {note.subject}
-                      </span>
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => handleTogglePin(note.id)}
-                          title="Unpin Note"
-                          className="h-8 w-8 rounded-[6px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
-                        >
-                          <Bookmark size={15} className="fill-current" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteNote(note.id)}
-                          title="Delete Note"
-                          className="h-8 w-8 rounded-[6px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    </div>
-
-                    <h4 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] leading-snug">
-                      {note.title}
-                    </h4>
-
-                    <p className="text-[14px] text-[#4B5563] dark:text-[#D4D4D4] leading-relaxed line-clamp-3">
-                      {note.snippet}
-                    </p>
-
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {note.tags.map((t, idx) => (
-                        <span key={idx} className="px-2 py-0.5 rounded-[4px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#6B7280] dark:text-[#A3A3A3] text-[12px]">
-                          #{t}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-between text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
-                    <span className="flex items-center gap-1 font-medium">
-                      <Clock size={13} />
-                      {note.date}
-                    </span>
-                    <span className="font-bold text-[#111827] dark:text-[#FAFAFA]">Pinned</span>
-                  </div>
-                </div>
-              ))}
+          {/* Search Input Bar */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A1A1AA]" size={18} />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search notes by title, topic, content..."
+                className="w-full h-[40px] pl-10 pr-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] font-[600] text-[#111827] dark:text-[#FAFAFA] outline-none"
+              />
             </div>
           </div>
-        )}
 
-        {/* ========================================================================= */}
-        {/* 5. ALL / OTHER NOTES GRID                                                 */}
-        {/* ========================================================================= */}
-        <div className="space-y-4">
-          <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
-            <FileText size={18} />
-            {pinnedNotes.length > 0 ? 'All Notes' : 'Notes Collection'}
-          </h3>
+          {/* Pinned Notes Grid */}
+          {pinnedNotes.length > 0 && (
+            <div className="space-y-3 pt-2">
+              <h4 className="text-[16px] font-[700] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+                <Bookmark size={16} />
+                <span>Pinned Notes ({pinnedNotes.length})</span>
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {pinnedNotes.map((note) => (
+                  <div
+                    key={note.id}
+                    className="p-[18px] sm:p-5 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs hover:shadow-md transition-all duration-150 ease-in-out hover:-translate-y-[2px] flex flex-col justify-between space-y-4 h-full"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="h-[24px] inline-flex items-center rounded-full border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#111827] dark:bg-[#FAFAFA] px-3 text-[12px] font-[400] text-[#FFFFFF] dark:text-[#111111]">
+                          {note.subject}
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => handleTogglePin(note.id)}
+                            title="Unpin Note"
+                            className="h-[34px] w-[34px] rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center justify-center cursor-pointer shrink-0 active:scale-[0.98]"
+                          >
+                            <Bookmark size={15} className="fill-current" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteNote(note.id)}
+                            title="Delete Note"
+                            className="h-[34px] w-[34px] rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center justify-center cursor-pointer shrink-0 active:scale-[0.98]"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      </div>
 
-          {filteredNotes.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {otherNotes.map((note) => (
-                <div
-                  key={note.id}
-                  className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col justify-between space-y-4"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
-                        {note.subject}
-                      </span>
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => handleTogglePin(note.id)}
-                          title="Pin Note"
-                          className="h-8 w-8 rounded-[6px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
-                        >
-                          <Bookmark size={15} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteNote(note.id)}
-                          title="Delete Note"
-                          className="h-8 w-8 rounded-[6px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
-                        >
-                          <Trash2 size={15} />
-                        </button>
+                      <h4 className="text-[18px] font-[700] text-[#111827] dark:text-[#FAFAFA] leading-snug">
+                        {note.title}
+                      </h4>
+
+                      <p className="text-[14px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] line-clamp-3 leading-relaxed">
+                        {note.snippet}
+                      </p>
+
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {note.tags.map((t, idx) => (
+                          <span key={idx} className="h-[22px] inline-flex items-center rounded-full border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111] px-2.5 text-[11px] font-[600] text-[#6B7280] dark:text-[#A1A1AA]">
+                            #{t}
+                          </span>
+                        ))}
                       </div>
                     </div>
 
-                    <h4 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] leading-snug">
-                      {note.title}
-                    </h4>
-
-                    <p className="text-[14px] text-[#4B5563] dark:text-[#D4D4D4] leading-relaxed line-clamp-3">
-                      {note.snippet}
-                    </p>
-
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {note.tags.map((t, idx) => (
-                        <span key={idx} className="px-2 py-0.5 rounded-[4px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#6B7280] dark:text-[#A3A3A3] text-[12px]">
-                          #{t}
-                        </span>
-                      ))}
+                    <div className="pt-3 border-t border-[#D1D5DB] dark:border-[#3F3F46] flex items-center justify-between text-[14px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">
+                      <span className="flex items-center gap-1.5">
+                        <Clock size={14} className="text-[#111827] dark:text-[#FAFAFA]" />
+                        {note.date}
+                      </span>
+                      <span className="text-[#111827] dark:text-[#FAFAFA]">Pinned</span>
                     </div>
                   </div>
-
-                  <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-between text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
-                    <span className="flex items-center gap-1 font-medium">
-                      <Clock size={13} />
-                      {note.date}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="py-20 text-center bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] p-8 shadow-xs space-y-3">
-              <Book className="mx-auto text-[#6B7280] dark:text-[#A3A3A3] opacity-40" size={48} />
-              <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
-                No Notes Found
-              </h3>
-              <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] max-w-sm mx-auto">
-                Try a different search query, switch subject filters, or create a new note.
-              </p>
-              <button
-                onClick={() => setIsCreateModalOpen(true)}
-                className="mt-2 h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs cursor-pointer inline-flex items-center gap-2"
-              >
-                <Plus size={16} />
-                <span>Create New Note</span>
-              </button>
+                ))}
+              </div>
             </div>
           )}
+
+          {/* All / Other Notes Grid */}
+          <div className="space-y-3 pt-2">
+            <h4 className="text-[16px] font-[700] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+              <FileText size={16} />
+              <span>{pinnedNotes.length > 0 ? 'Other Notes' : 'All Notes'} ({otherNotes.length})</span>
+            </h4>
+
+            {filteredNotes.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {otherNotes.map((note) => (
+                  <div
+                    key={note.id}
+                    className="p-[18px] sm:p-5 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs hover:shadow-md transition-all duration-150 ease-in-out hover:-translate-y-[2px] flex flex-col justify-between space-y-4 h-full"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="h-[24px] inline-flex items-center rounded-full border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111] px-3 text-[12px] font-[600] text-[#6B7280] dark:text-[#A1A1AA]">
+                          {note.subject}
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => handleTogglePin(note.id)}
+                            title="Pin Note"
+                            className="h-[34px] w-[34px] rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center justify-center cursor-pointer shrink-0 active:scale-[0.98]"
+                          >
+                            <Bookmark size={15} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteNote(note.id)}
+                            title="Delete Note"
+                            className="h-[34px] w-[34px] rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center justify-center cursor-pointer shrink-0 active:scale-[0.98]"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      </div>
+
+                      <h4 className="text-[18px] font-[700] text-[#111827] dark:text-[#FAFAFA] leading-snug">
+                        {note.title}
+                      </h4>
+
+                      <p className="text-[14px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] line-clamp-3 leading-relaxed">
+                        {note.snippet}
+                      </p>
+
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {note.tags.map((t, idx) => (
+                          <span key={idx} className="h-[22px] inline-flex items-center rounded-full border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111] px-2.5 text-[11px] font-[600] text-[#6B7280] dark:text-[#A1A1AA]">
+                            #{t}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-[#D1D5DB] dark:border-[#3F3F46] flex items-center justify-between text-[14px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">
+                      <span className="flex items-center gap-1.5">
+                        <Clock size={14} className="text-[#111827] dark:text-[#FAFAFA]" />
+                        {note.date}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="py-12 text-center bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] p-8 shadow-xs space-y-4 my-auto">
+                <div className="w-[80px] h-[80px] rounded-[16px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] flex items-center justify-center mx-auto text-[#111827] dark:text-[#FAFAFA]">
+                  <Book size={36} />
+                </div>
+                <div>
+                  <h3 className="text-[20px] font-[700] text-[#111827] dark:text-[#FAFAFA]">
+                    No Notes Found
+                  </h3>
+                  <p className="text-[14px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] max-w-sm mx-auto mt-1">
+                    Try a different search query or create a new note.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="h-[40px] px-5 rounded-[12px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-[500] transition flex items-center justify-center gap-2 cursor-pointer mx-auto active:scale-[0.98]"
+                >
+                  <Plus size={16} />
+                  <span>Create New Note</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* ========================================================================= */}
-        {/* 6. CREATE NOTE MODAL                                                      */}
-        {/* ========================================================================= */}
+        {/* Create Note Modal */}
         {isCreateModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-            <div className="relative w-full max-w-xl bg-[#FFFFFF] dark:bg-[#181818] rounded-[16px] shadow-lg border border-[#D1D5DB] dark:border-[#3F3F46] my-8 overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
+            <div className="relative w-full max-w-xl bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] shadow-lg border border-[#D1D5DB] dark:border-[#3F3F46] my-8 overflow-hidden">
+              <div className="flex items-center justify-between p-5 border-b border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111]">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+                  <div className="w-[40px] h-[40px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
                     <Book size={20} />
                   </div>
-                  <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">Create New Note</h3>
+                  <h3 className="text-[18px] font-[700] text-[#111827] dark:text-[#FAFAFA]">Create New Note</h3>
                 </div>
                 <button
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="p-1 rounded text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA] cursor-pointer"
+                  className="h-8 w-8 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 cursor-pointer"
                 >
-                  <X size={20} />
+                  <X size={18} />
                 </button>
               </div>
 
               <form onSubmit={handleCreateNote} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
                 <div>
-                  <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
+                  <label className="block text-[12px] font-[400] uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA] mb-1">
                     Note Title *
                   </label>
                   <input
@@ -445,18 +470,18 @@ export default function NotesPage() {
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
                     placeholder="e.g. Memory Management & Paging Algorithms"
-                    className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-[600] outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
+                  <label className="block text-[12px] font-[400] uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA] mb-1">
                     Subject / Course *
                   </label>
                   <select
                     value={newSubject}
                     onChange={(e) => setNewSubject(e.target.value)}
-                    className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none cursor-pointer"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-[600] outline-none cursor-pointer"
                   >
                     {subjectsList.filter((s) => s !== 'All').map((s) => (
                       <option key={s} value={s}>
@@ -467,7 +492,7 @@ export default function NotesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
+                  <label className="block text-[12px] font-[400] uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA] mb-1">
                     Note Content / Summary *
                   </label>
                   <textarea
@@ -476,12 +501,12 @@ export default function NotesPage() {
                     value={newSnippet}
                     onChange={(e) => setNewSnippet(e.target.value)}
                     placeholder="Write your study notes, formulas, or key concepts here..."
-                    className="w-full p-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none leading-relaxed"
+                    className="w-full p-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-[500] outline-none leading-relaxed"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
+                  <label className="block text-[12px] font-[400] uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA] mb-1">
                     Tags (Comma Separated)
                   </label>
                   <input
@@ -489,21 +514,21 @@ export default function NotesPage() {
                     value={newTags}
                     onChange={(e) => setNewTags(e.target.value)}
                     placeholder="e.g. Memory, Virtual Memory, Paging"
-                    className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-[600] outline-none"
                   />
                 </div>
 
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E5E7EB] dark:border-[#2A2A2A]">
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#D1D5DB] dark:border-[#3F3F46]">
                   <button
                     type="button"
                     onClick={() => setIsCreateModalOpen(false)}
-                    className="h-10 px-5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium cursor-pointer"
+                    className="h-[40px] px-5 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-[500] cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="h-10 px-6 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs cursor-pointer inline-flex items-center gap-2"
+                    className="h-[40px] px-6 rounded-[12px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] font-[700] text-[14px] shadow-xs cursor-pointer inline-flex items-center gap-2 active:scale-[0.98]"
                   >
                     <CheckCircle2 size={16} />
                     <span>Save Note</span>
@@ -517,3 +542,4 @@ export default function NotesPage() {
     </div>
   );
 }
+

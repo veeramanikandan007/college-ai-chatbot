@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   CalendarDays,
@@ -172,8 +172,9 @@ export default function TimetablePage() {
   const nextClass: TimetableItem | null = todayData.next_class;
 
   return (
-    <div className="w-full h-full overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 md:p-8 transition-colors">
-      <div className="w-full max-w-[1600px] mx-auto space-y-8">
+    <div className="w-full h-full overflow-x-hidden overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 md:p-8 transition-colors select-none font-sans">
+      {/* 1440px Centered Max Content Width Container */}
+      <div className="w-full max-w-[1440px] mx-auto space-y-6">
 
         {/* Reminder Notification Banner */}
         <AnimatePresence>
@@ -182,7 +183,7 @@ export default function TimetablePage() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="p-4 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs flex items-center justify-between"
+              className="p-4 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-[500] shadow-xs flex items-center justify-between"
             >
               <div className="flex items-center gap-2">
                 <Bell size={18} />
@@ -195,22 +196,22 @@ export default function TimetablePage() {
           )}
         </AnimatePresence>
 
-        {/* ========================================================================= */}
-        {/* 1. PAGE HEADER CARD                                                       */}
-        {/* ========================================================================= */}
-        <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 md:p-8 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
-              <CalendarDays size={24} />
+        {/* Compact Hero Header (Matching AI Study Planner layout) */}
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-4 sm:p-5 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
+            <div className="w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <CalendarDays size={22} />
             </div>
-            <div>
-              <h1 className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight flex items-center gap-3">
-                Smart Timetable
-                <span className="text-[12px] font-medium px-2.5 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-[20px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-[1.2]">
+                  Smart Timetable
+                </h1>
+                <span className="text-[11px] sm:text-[14px] font-[500] px-2 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] shrink-0">
                   CSE • Sem 6 • Sec A
                 </span>
-              </h1>
-              <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-1 flex items-center gap-2">
+              </div>
+              <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] mt-0.5 sm:truncate flex items-center gap-2">
                 <span>{todayData.current_date}</span>
                 <span>•</span>
                 <span>{todayData.current_day} ({todayData.current_time})</span>
@@ -218,8 +219,8 @@ export default function TimetablePage() {
             </div>
           </div>
 
-          {/* View Selector Tabs */}
-          <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] shrink-0 overflow-x-auto">
+          {/* Single-Row Segmented Tab Control Bar */}
+          <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] min-h-[44px] shrink-0 overflow-x-auto no-scrollbar w-full lg:w-auto">
             {[
               { id: 'today', label: "Today's Schedule", icon: Clock3 },
               { id: 'week', label: 'Weekly Matrix', icon: Layers },
@@ -232,13 +233,13 @@ export default function TimetablePage() {
                 <button
                   key={tab.id}
                   onClick={() => setViewMode(tab.id as any)}
-                  className={`h-10 px-4 text-[14px] font-medium rounded-[8px] transition-all duration-150 whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+                  className={`h-[36px] flex-1 lg:flex-none px-3.5 sm:px-4 rounded-[8px] text-[14px] font-[500] transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 active:scale-[0.98] ${
                     isActive
-                      ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                      : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                      ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                      : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
                   }`}
                 >
-                  <Icon size={16} />
+                  <Icon size={15} />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -246,29 +247,86 @@ export default function TimetablePage() {
           </div>
         </div>
 
+        {/* Overview Cards Banner (88px Height matching Study Analytics Banner) */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 select-none">
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Ongoing Status</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">
+                {ongoingClass ? ongoingClass.subject_name : 'No Class Now'}
+              </p>
+              <p className="text-[12px] sm:text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">
+                {ongoingClass ? `${ongoingClass.classroom} • ${ongoingClass.end_time}` : 'Free Period'}
+              </p>
+            </div>
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2">
+              <Timer size={18} />
+            </div>
+          </div>
+
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Up Next</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">
+                {nextClass ? nextClass.subject_name : 'Day Completed'}
+              </p>
+              <p className="text-[12px] sm:text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">
+                {nextClass ? `${nextClass.start_time} @ ${nextClass.classroom}` : 'All done today'}
+              </p>
+            </div>
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2">
+              <Clock3 size={18} />
+            </div>
+          </div>
+
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Today's Lectures</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">
+                {todayData.today_entries?.length || 0} Periods
+              </p>
+              <p className="text-[12px] sm:text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Scheduled classes</p>
+            </div>
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2">
+              <NotebookTabs size={18} />
+            </div>
+          </div>
+
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Overall Attendance</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">88.5%</p>
+              <p className="text-[12px] sm:text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Above minimum cutoff</p>
+            </div>
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2">
+              <CircleCheck size={18} />
+            </div>
+          </div>
+        </div>
+
         {/* Ongoing & Next Class Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 select-none">
           {/* Ongoing Class */}
           {ongoingClass && (
-            <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border-2 border-[#111827] dark:border-[#FAFAFA] flex items-center justify-between shadow-xs">
-              <div className="space-y-1">
-                <span className="text-[12px] font-semibold uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1.5">
-                  <CircleAlert size={14} /> Ongoing Class Right Now
+            <div className="p-4 sm:p-5 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border-2 border-[#111827] dark:border-[#FAFAFA] flex items-center justify-between gap-3 shadow-xs">
+              <div className="space-y-1 min-w-0 flex-1">
+                <span className="text-[11px] font-[600] uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1.5">
+                  <CircleAlert size={14} className="shrink-0" /> Ongoing Class Right Now
                 </span>
-                <h3 className="font-bold text-[18px] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
-                  <BookOpen size={18} /> {ongoingClass.subject_name}
+                <h3 className="font-[700] text-[16px] sm:text-[20px] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2 truncate">
+                  <BookOpen size={16} className="shrink-0" /> <span className="truncate">{ongoingClass.subject_name}</span>
                 </h3>
-                <div className="flex items-center gap-3 text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">
-                  <span>{ongoingClass.faculty_name}</span>
+                <div className="flex items-center gap-2 text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">
+                  <span className="truncate">{ongoingClass.faculty_name}</span>
                   <span>•</span>
-                  <span>{ongoingClass.classroom}</span>
+                  <span className="shrink-0">{ongoingClass.classroom}</span>
                 </div>
               </div>
               <div className="text-right shrink-0">
-                <span className="text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA] block">
+                <span className="text-[13px] sm:text-[15px] font-[400] text-[#111827] dark:text-[#FAFAFA] block">
                   {ongoingClass.start_time} - {ongoingClass.end_time}
                 </span>
-                <span className="text-[12px] px-2.5 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] font-medium inline-block mt-1">
+                <span className="text-[11px] font-[600] px-2.5 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] inline-block mt-1">
                   {ongoingClass.subject_type}
                 </span>
               </div>
@@ -277,27 +335,27 @@ export default function TimetablePage() {
 
           {/* Next Class */}
           {nextClass && (
-            <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] flex items-center justify-between shadow-xs">
-              <div className="space-y-1">
-                <span className="text-[12px] font-semibold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1">
-                  <Timer size={14} /> Next Up
+            <div className="p-4 sm:p-5 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] flex items-center justify-between gap-3 shadow-xs">
+              <div className="space-y-1 min-w-0 flex-1">
+                <span className="text-[11px] font-[400] uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA] flex items-center gap-1">
+                  <Timer size={14} className="shrink-0" /> Next Up
                 </span>
-                <h3 className="font-bold text-[18px] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
-                  <BookOpen size={18} /> {nextClass.subject_name}
+                <h3 className="font-[700] text-[16px] sm:text-[18px] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2 truncate">
+                  <BookOpen size={16} className="shrink-0" /> <span className="truncate">{nextClass.subject_name}</span>
                 </h3>
-                <div className="flex items-center gap-3 text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">
-                  <span>{nextClass.faculty_name}</span>
+                <div className="flex items-center gap-2 text-[12px] sm:text-[13px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] truncate">
+                  <span className="truncate">{nextClass.faculty_name}</span>
                   <span>•</span>
-                  <span>{nextClass.classroom}</span>
+                  <span className="shrink-0">{nextClass.classroom}</span>
                 </div>
               </div>
               <div className="text-right shrink-0">
-                <span className="text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA] block">
+                <span className="text-[13px] sm:text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] block">
                   Starts at {nextClass.start_time}
                 </span>
                 <button
                   onClick={() => handleSetReminder(nextClass)}
-                  className="mt-1 h-8 px-3 rounded-[6px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center gap-1 justify-end cursor-pointer"
+                  className="mt-1 h-[32px] px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-[400] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center gap-1 justify-end cursor-pointer active:scale-[0.98]"
                 >
                   <Bell size={12} /> Set Reminder
                 </button>
@@ -311,61 +369,17 @@ export default function TimetablePage() {
         {/* ========================================================================= */}
         {viewMode === 'today' && (
           <div className="space-y-6">
-            {/* Statistics Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-              <div className="bg-[#FFFFFF] dark:bg-[#181818] p-5 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-1">
-                <span className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] font-medium uppercase flex items-center gap-1">
-                  <BookOpen size={14} /> Total Classes
-                </span>
-                <div className="text-[28px] font-bold text-[#111827] dark:text-[#FAFAFA]">
-                  {todayData.stats.total_classes}
-                </div>
-              </div>
-              <div className="bg-[#FFFFFF] dark:bg-[#181818] p-5 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-1">
-                <span className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] font-medium uppercase flex items-center gap-1">
-                  <NotebookTabs size={14} /> Theory
-                </span>
-                <div className="text-[28px] font-bold text-[#111827] dark:text-[#FAFAFA]">
-                  {todayData.stats.theory_count}
-                </div>
-              </div>
-              <div className="bg-[#FFFFFF] dark:bg-[#181818] p-5 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-1">
-                <span className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] font-medium uppercase flex items-center gap-1">
-                  <Building2 size={14} /> Labs
-                </span>
-                <div className="text-[28px] font-bold text-[#111827] dark:text-[#FAFAFA]">
-                  {todayData.stats.lab_count}
-                </div>
-              </div>
-              <div className="bg-[#FFFFFF] dark:bg-[#181818] p-5 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-1">
-                <span className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] font-medium uppercase flex items-center gap-1">
-                  <Clock3 size={14} /> Total Hours
-                </span>
-                <div className="text-[28px] font-bold text-[#111827] dark:text-[#FAFAFA]">
-                  {todayData.stats.total_hours} hrs
-                </div>
-              </div>
-              <div className="bg-[#FFFFFF] dark:bg-[#181818] p-5 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-1">
-                <span className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] font-medium uppercase flex items-center gap-1">
-                  <Timer size={14} /> Free Periods
-                </span>
-                <div className="text-[28px] font-bold text-[#111827] dark:text-[#FAFAFA]">
-                  {todayData.stats.free_periods}
-                </div>
-              </div>
-            </div>
-
             {/* Filter Bar */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#181818] p-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs">
-              <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#FFFFFF] dark:bg-[#18181B] p-3.5 sm:p-4 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs select-none">
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar w-full sm:w-auto pb-1 sm:pb-0">
                 {(['All', 'Theory', 'Lab', 'Upcoming', 'Completed'] as const).map((filter) => (
                   <button
                     key={filter}
                     onClick={() => setActiveFilter(filter)}
-                    className={`h-9 px-4 rounded-[8px] text-[14px] font-medium transition cursor-pointer whitespace-nowrap ${
+                    className={`h-[36px] px-3.5 rounded-[8px] text-[14px] font-[500] transition cursor-pointer whitespace-nowrap shrink-0 active:scale-[0.98] ${
                       activeFilter === filter
-                        ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                        : 'bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                        ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                        : 'bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323]'
                     }`}
                   >
                     {filter}
@@ -374,29 +388,29 @@ export default function TimetablePage() {
               </div>
 
               <div className="relative w-full sm:w-64">
-                <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A3A3A3]" />
+                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A1A1AA]" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search subject, faculty, room..."
-                  className="w-full h-10 pl-10 pr-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
+                  className="w-full h-[38px] sm:h-[40px] pl-10 pr-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[13px] sm:text-[14px] font-sans text-[#111827] dark:text-[#FAFAFA] outline-none"
                 />
               </div>
             </div>
 
             {/* Vertical Timeline View */}
-            <div className="space-y-4 relative before:absolute before:left-4 before:top-3 before:bottom-3 before:w-0.5 before:bg-[#D1D5DB] dark:before:bg-[#3F3F46]">
+            <div className="space-y-3 relative before:absolute before:left-3.5 sm:before:left-4 before:top-3 before:bottom-3 before:w-0.5 before:bg-[#D1D5DB] dark:before:bg-[#3F3F46]">
               {filteredTodayEntries.map((item, idx) => (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.05 }}
-                  className="relative pl-10"
+                  className="relative pl-8 sm:pl-10"
                 >
                   <div
-                    className={`absolute left-2.5 top-5 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-white dark:border-[#181818] shadow-xs z-10 ${
+                    className={`absolute left-2 sm:left-2.5 top-5 -translate-x-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-white dark:border-[#18181B] shadow-xs z-10 ${
                       item.status === 'Ongoing'
                         ? 'bg-[#111827] dark:bg-[#FAFAFA]'
                         : item.status === 'Completed'
@@ -406,24 +420,24 @@ export default function TimetablePage() {
                   />
 
                   <div
-                    className={`p-6 rounded-[12px] border transition-all duration-150 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                    className={`p-4 sm:p-5 rounded-[16px] border transition-all duration-150 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                       item.status === 'Ongoing'
-                        ? 'bg-[#FFFFFF] dark:bg-[#181818] border-2 border-[#111827] dark:border-[#FAFAFA]'
-                        : 'bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46]'
+                        ? 'bg-[#FFFFFF] dark:bg-[#18181B] border-2 border-[#111827] dark:border-[#FAFAFA]'
+                        : 'bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46]'
                     }`}
                   >
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-[18px] text-[#111827] dark:text-[#FAFAFA]">
+                    <div className="space-y-1.5 min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-[700] text-[16px] sm:text-[18px] text-[#111827] dark:text-[#FAFAFA] leading-tight">
                           {item.subject_name}
                         </span>
-                        <span className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">({item.subject_code})</span>
-                        <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
+                        <span className="text-[12px] sm:text-[13px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">({item.subject_code})</span>
+                        <span className="px-2.5 py-0.5 rounded-[6px] text-[11px] sm:text-[12px] font-[400] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA]">
                           {item.subject_type}
                         </span>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-4 text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[12px] sm:text-[13px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">
                         <span>Faculty: {item.faculty_name}</span>
                         <span>•</span>
                         <span>Room: {item.classroom}</span>
@@ -432,11 +446,11 @@ export default function TimetablePage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#D1D5DB] dark:border-[#3F3F46]">
                       {item.status === 'Upcoming' && (
                         <button
                           onClick={() => handleSetReminder(item)}
-                          className="h-9 px-3.5 rounded-[8px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center gap-1.5 cursor-pointer"
+                          className="h-[36px] px-3.5 rounded-[10px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] text-[12px] sm:text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center gap-1.5 cursor-pointer active:scale-[0.98] w-full sm:w-auto justify-center"
                         >
                           <Bell size={14} /> Set Reminder
                         </button>

@@ -1,14 +1,6 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Download,
-  X,
-  FileText,
-  FileCode,
-  Database,
-  Printer,
-  ArrowRight,
-} from 'lucide-react';
-import { ChatMessageData } from './ChatMessage';
+﻿import { motion, AnimatePresence } from "framer-motion";
+import { Download, X, FileText, FileCode, Database, Printer, ArrowRight } from "lucide-react";
+import { ChatMessageData } from "./ChatMessage";
 
 interface ExportModalProps {
   isOpen: boolean;
@@ -17,33 +9,28 @@ interface ExportModalProps {
   messages: ChatMessageData[];
 }
 
-export default function ExportModal({
-  isOpen,
-  onClose,
-  chatTitle,
-  messages,
-}: ExportModalProps) {
+const formats = [
+  { id: "txt",  label: "Plain Text",      ext: ".txt",  icon: FileText },
+  { id: "md",   label: "Markdown",        ext: ".md",   icon: FileCode },
+  { id: "json", label: "JSON Export",     ext: ".json", icon: Database },
+  { id: "pdf",  label: "Print / Save as PDF", ext: "",  icon: Printer  },
+] as const;
+
+export default function ExportModal({ isOpen, onClose, chatTitle, messages }: ExportModalProps) {
   if (!isOpen) return null;
 
-  const downloadText = (format: 'txt' | 'md' | 'json') => {
-    let content = '';
-    let filename = `${chatTitle.replace(/\s+/g, '_').toLowerCase()}.${format}`;
-
-    if (format === 'json') {
+  const downloadText = (format: "txt" | "md" | "json") => {
+    let content = "";
+    const filename = `${chatTitle.replace(/\s+/g, "_").toLowerCase()}.${format}`;
+    if (format === "json") {
       content = JSON.stringify({ title: chatTitle, messages }, null, 2);
     } else {
       content = `# ${chatTitle}\n\n` +
-        messages
-          .map(
-            (m) =>
-              `[${m.timestamp}] ${m.role === 'user' ? 'You' : 'CollegeMate AI'}:\n${m.text}\n`
-          )
-          .join('\n---\n\n');
+        messages.map((m) => `[${m.timestamp}] ${m.role === "user" ? "You" : "CollegeMate AI"}:\n${m.text}\n`).join("\n---\n\n");
     }
-
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     link.download = filename;
     link.click();
@@ -51,90 +38,103 @@ export default function ExportModal({
     onClose();
   };
 
-  const handlePrintPDF = () => {
-    window.print();
-    onClose();
+  const handleAction = (id: string) => {
+    if (id === "pdf") { window.print(); onClose(); }
+    else downloadText(id as "txt" | "md" | "json");
   };
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 font-body">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
           onClick={onClose}
-          className="absolute inset-0 bg-[#0E2A6D]/40 backdrop-blur-xs"
+          className="absolute inset-0 bg-black/50 backdrop-blur-[3px]"
         />
 
-        {/* Export Dialog — Border Radius 18px */}
+        {/* Dialog */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          className="relative w-full max-w-sm rounded-[18px] border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] p-6 shadow-2xl overflow-hidden select-none text-[#1F2937] dark:text-[#F8FAFC]"
+          initial={{ opacity: 0, scale: 0.93, y: 16, filter: "blur(4px)" }}
+          animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
+          exit={{ opacity: 0, scale: 0.95, y: 8 }}
+          transition={{ type: "spring", stiffness: 420, damping: 30 }}
+          className="relative w-full max-w-[360px] rounded-[20px]
+                     bg-[#FFFFFF] dark:bg-[#111111]
+                     border border-[#E5E7EB] dark:border-[#2A2A2A]
+                     shadow-[0_24px_64px_-8px_rgba(0,0,0,0.18)] dark:shadow-[0_24px_64px_-8px_rgba(0,0,0,0.6)]
+                     p-5 select-none overflow-hidden"
         >
-          <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#334155] pb-3 mb-4">
-            <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0E2A6D] text-white shadow-xs border border-[#D9A441]/30">
-                <Download size={18} strokeWidth={1.75} />
+          {/* Header */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-white dark:text-[#111111]">
+                <Download size={17} strokeWidth={1.75} />
               </div>
-              <h3 className="font-heading font-bold text-[18px] text-[#0E2A6D] dark:text-[#F8FAFC]">Export Conversation</h3>
+              <div>
+                <h3 className="text-[14px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight">Export Conversation</h3>
+                <p className="text-[11px] text-[#9CA3AF] dark:text-[#737373] leading-tight mt-0.5 truncate max-w-[200px]">"{chatTitle}"</p>
+              </div>
             </div>
-            <button onClick={onClose} className="rounded-xl p-1.5 text-[#64748B] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] transition">
-              <X size={18} strokeWidth={1.75} />
-            </button>
+            <motion.button
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={onClose}
+              className="w-8 h-8 flex items-center justify-center rounded-[8px] text-[#9CA3AF] dark:text-[#737373] hover:bg-[#F3F4F6] dark:hover:bg-[#1A1A1A] transition-colors"
+            >
+              <X size={16} strokeWidth={1.75} />
+            </motion.button>
           </div>
 
-          <p className="text-small text-[#64748B] dark:text-[#94A3B8] mb-4">
-            Select format to export <span className="font-semibold text-[#1F2937] dark:text-[#F8FAFC]">"{chatTitle}"</span>:
+          <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] mb-3">
+            Choose a format to download:
           </p>
 
+          {/* Format buttons — staggered */}
           <div className="space-y-2">
-            <button
-              onClick={() => downloadText('txt')}
-              className="flex h-[44px] w-full items-center justify-between rounded-[14px] border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] px-3.5 text-small font-semibold text-[#0E2A6D] dark:text-[#60A5FA] hover:bg-[#E2E8F0] dark:hover:bg-[#1E293B] transition"
-            >
-              <div className="flex items-center gap-2.5">
-                <FileText size={18} strokeWidth={1.75} className="text-[#0E2A6D] dark:text-[#60A5FA]" />
-                <span>Plain Text (.txt)</span>
-              </div>
-              <ArrowRight size={16} strokeWidth={1.75} />
-            </button>
-
-            <button
-              onClick={() => downloadText('md')}
-              className="flex h-[44px] w-full items-center justify-between rounded-[14px] border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] px-3.5 text-small font-semibold text-[#0E2A6D] dark:text-[#60A5FA] hover:bg-[#E2E8F0] dark:hover:bg-[#1E293B] transition"
-            >
-              <div className="flex items-center gap-2.5">
-                <FileCode size={18} strokeWidth={1.75} className="text-[#1E4DB7] dark:text-[#60A5FA]" />
-                <span>Markdown (.md)</span>
-              </div>
-              <ArrowRight size={16} strokeWidth={1.75} />
-            </button>
-
-            <button
-              onClick={() => downloadText('json')}
-              className="flex h-[44px] w-full items-center justify-between rounded-[14px] border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] px-3.5 text-small font-semibold text-[#0E2A6D] dark:text-[#60A5FA] hover:bg-[#E2E8F0] dark:hover:bg-[#1E293B] transition"
-            >
-              <div className="flex items-center gap-2.5">
-                <Database size={18} strokeWidth={1.75} className="text-[#D9A441]" />
-                <span>JSON Export (.json)</span>
-              </div>
-              <ArrowRight size={16} strokeWidth={1.75} />
-            </button>
-
-            <button
-              onClick={handlePrintPDF}
-              className="flex h-[44px] w-full items-center justify-between rounded-[14px] border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] px-3.5 text-small font-semibold text-[#0E2A6D] dark:text-[#60A5FA] hover:bg-[#E2E8F0] dark:hover:bg-[#1E293B] transition"
-            >
-              <div className="flex items-center gap-2.5">
-                <Printer size={18} strokeWidth={1.75} className="text-[#22C55E]" />
-                <span>Print / Save as PDF</span>
-              </div>
-              <ArrowRight size={16} strokeWidth={1.75} />
-            </button>
+            {formats.map((fmt, i) => {
+              const Icon = fmt.icon;
+              return (
+                <motion.button
+                  key={fmt.id}
+                  onClick={() => handleAction(fmt.id)}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.16, delay: i * 0.05, ease: "easeOut" }}
+                  whileHover={{ x: 3 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="group flex h-[44px] w-full items-center justify-between
+                             rounded-[12px] px-3.5
+                             border border-[#E5E7EB] dark:border-[#2A2A2A]
+                             bg-[#F9FAFB] dark:bg-[#1A1A1A]
+                             hover:bg-[#F3F4F6] dark:hover:bg-[#252525]
+                             hover:border-[#D1D5DB] dark:hover:border-[#3F3F46]
+                             transition-colors duration-150"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Icon
+                      size={16}
+                      strokeWidth={1.75}
+                      className="text-[#6B7280] dark:text-[#A3A3A3] group-hover:text-[#111827] dark:group-hover:text-[#FAFAFA] transition-colors duration-150 shrink-0"
+                    />
+                    <span className="text-[13px] font-medium text-[#374151] dark:text-[#D4D4D4] group-hover:text-[#111827] dark:group-hover:text-[#FAFAFA] transition-colors duration-150">
+                      {fmt.label}
+                      {fmt.ext && <span className="ml-1 text-[11px] text-[#9CA3AF] dark:text-[#737373]">{fmt.ext}</span>}
+                    </span>
+                  </div>
+                  <motion.div
+                    initial={{ opacity: 0, x: -4 }}
+                    whileHover={{ opacity: 1, x: 0 }}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                  >
+                    <ArrowRight size={14} strokeWidth={1.75} className="text-[#9CA3AF] dark:text-[#737373]" />
+                  </motion.div>
+                </motion.button>
+              );
+            })}
           </div>
         </motion.div>
       </div>

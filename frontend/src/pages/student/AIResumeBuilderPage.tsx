@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FileText,
@@ -213,8 +213,8 @@ export default function AIResumeBuilderPage() {
   ];
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] font-sans transition-colors duration-300 space-y-6">
-      {/* ── Print-only CSS style override ── */}
+    <div className="w-full h-full overflow-x-hidden overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 md:p-8 transition-colors select-none">
+      {/* Print-only CSS style override */}
       <style>{`
         @media print {
           body * {
@@ -240,40 +240,39 @@ export default function AIResumeBuilderPage() {
         }
       `}</style>
 
-      <div className="mx-auto max-w-6xl space-y-6">
+      {/* 1440px Centered Max Content Width Container */}
+      <div className="w-full max-w-[1440px] mx-auto space-y-6">
         
-        {/* ==================================================
-            PAGE HEADER (Monochrome Header Card)
-            ================================================== */}
-        <div className="no-print bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-150">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0 shadow-xs">
-              <FileText size={24} className="stroke-[2.2]" />
+        {/* Compact Hero Header (Matching AI Study Planner layout) */}
+        <div className="no-print bg-[#FFFFFF] dark:bg-[#18181B] p-4 sm:p-5 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+            <div className="w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <FileText size={22} />
             </div>
-            <div>
-              <h1 className="text-[32px] font-bold tracking-tight text-[#111827] dark:text-[#FAFAFA] leading-tight">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-[20px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-[1.2] truncate">
                 AI Resume Builder
               </h1>
-              <p className="text-[14px] text-[#4B5563] dark:text-[#A3A3A3] mt-1">
+              <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] mt-0.5 truncate">
                 Create ATS-optimized, high-impact technical resumes with 1-click AI enhancements.
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2 sm:gap-3 shrink-0 w-full lg:w-auto pt-2 lg:pt-0 border-t lg:border-t-0 border-[#E5E7EB] dark:border-[#27272A]">
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="h-10 px-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-all duration-150 text-[14px] font-medium flex items-center space-x-2 cursor-pointer"
+              className="h-[38px] sm:h-[40px] px-3.5 sm:px-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[13px] sm:text-[14px] font-[500] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0 active:scale-[0.98]"
             >
-              {isSaving ? <RefreshCw size={16} className="animate-spin" /> : <Check size={16} className="text-[#111827] dark:text-[#FAFAFA]" />}
+              {isSaving ? <RefreshCw size={16} className="animate-spin" /> : <Check size={16} />}
               <span>Save Draft</span>
             </button>
 
             <button
               onClick={handleRunATS}
               disabled={evaluatingATS}
-              className="h-10 px-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-all duration-150 text-[14px] font-medium flex items-center space-x-2 cursor-pointer"
+              className="h-[38px] sm:h-[40px] px-3.5 sm:px-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[13px] sm:text-[14px] font-[500] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0 active:scale-[0.98]"
             >
               {evaluatingATS ? <RefreshCw size={16} className="animate-spin" /> : <BarChart3 size={16} />}
               <span>Check ATS Score</span>
@@ -281,7 +280,7 @@ export default function AIResumeBuilderPage() {
 
             <button
               onClick={handlePrintPDF}
-              className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition-all duration-150 flex items-center space-x-2 cursor-pointer"
+              className="h-[38px] sm:h-[40px] px-[16px] sm:px-[18px] rounded-[12px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-[500] transition flex items-center justify-center gap-2 cursor-pointer shrink-0 active:scale-[0.98]"
             >
               <Printer size={16} />
               <span>Download PDF</span>
@@ -289,92 +288,92 @@ export default function AIResumeBuilderPage() {
           </div>
         </div>
 
-        {/* ==================================================
-            DASHBOARD OVERVIEW CARDS
-            ================================================== */}
-        <div className="no-print grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-[#FFFFFF] dark:bg-[#181818] p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Total Resumes</p>
-              <h3 className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">1</h3>
+        {/* Dashboard Overview Cards Banner (88px Height matching Study Analytics Banner) */}
+        <div className="no-print grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 select-none">
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Total Resumes</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">1 Draft</p>
+              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Active profile</p>
             </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center">
-              <FileText size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
+              <FileText size={18} />
             </div>
           </div>
 
-          <div className="bg-[#FFFFFF] dark:bg-[#181818] p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">ATS Compatibility</p>
-              <h3 className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">ATS Compatibility</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">
                 {atsResult ? `${atsResult.overall_score}%` : '88%'}
-              </h3>
+              </p>
+              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Industry parser rating</p>
             </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center">
-              <BarChart3 size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
+              <BarChart3 size={18} />
             </div>
           </div>
 
-          <div className="bg-[#FFFFFF] dark:bg-[#181818] p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Active Template</p>
-              <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-2 capitalize">
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Active Template</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate capitalize">
                 {resumeData.template}
-              </h3>
+              </p>
+              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Modern tech layout</p>
             </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center">
-              <Layers size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
+              <Layers size={18} />
             </div>
           </div>
 
-          <div className="bg-[#FFFFFF] dark:bg-[#181818] p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Downloads</p>
-              <h3 className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">12</h3>
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Exports & Downloads</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">12 PDF Downloads</p>
+              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Campus placement</p>
             </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center">
-              <Download size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
+              <Download size={18} />
             </div>
           </div>
         </div>
 
-        {/* ==================================================
-            MAIN NAVIGATION TABS BAR
-            ================================================== */}
-        <div className="no-print bg-[#FFFFFF] dark:bg-[#181818] p-2 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-wrap gap-2">
-          {[
-            { id: 'editor', label: '1. Resume Editor', icon: User },
-            { id: 'preview', label: '2. Live Preview', icon: Eye },
-            { id: 'templates', label: '3. Templates', icon: Layout },
-            { id: 'ats', label: '4. ATS Strength Report', icon: FileCheck },
-          ].map((tb) => {
-            const Icon = tb.icon;
-            const isActive = activeTab === tb.id;
-            return (
-              <button
-                key={tb.id}
-                onClick={() => setActiveTab(tb.id as any)}
-                className={`h-10 px-4 rounded-[10px] text-[14px] font-medium transition-all duration-150 flex items-center space-x-2 cursor-pointer ${
-                  isActive
-                    ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                    : 'bg-[#FFFFFF] dark:bg-[#181818] text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
-                }`}
-              >
-                <Icon size={16} className={isActive ? 'text-[#FFFFFF] dark:text-[#111111]' : 'text-[#111827] dark:text-[#FAFAFA]'} />
-                <span>{tb.label}</span>
-              </button>
-            );
-          })}
+        {/* Main Navigation Tabs Bar (Matching AI Study Planner view switcher) */}
+        <div className="no-print bg-[#FFFFFF] dark:bg-[#18181B] p-3 sm:p-4 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] flex items-center select-none">
+          <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] min-h-[44px] max-w-full overflow-x-auto no-scrollbar w-full">
+            {[
+              { id: 'editor', label: '1. Resume Editor', icon: User },
+              { id: 'preview', label: '2. Live Preview', icon: Eye },
+              { id: 'templates', label: '3. Templates', icon: Layout },
+              { id: 'ats', label: '4. ATS Strength Report', icon: FileCheck },
+            ].map((tb) => {
+              const Icon = tb.icon;
+              const isActive = activeTab === tb.id;
+              return (
+                <button
+                  key={tb.id}
+                  onClick={() => setActiveTab(tb.id as any)}
+                  className={`h-[36px] px-3.5 sm:px-4 rounded-[8px] text-[14px] font-[500] transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 active:scale-[0.98] ${
+                    isActive
+                      ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                      : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
+                  }`}
+                >
+                  <Icon size={15} />
+                  <span>{tb.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* ==================================================
-            TAB 1: RESUME FORM EDITOR
-            ================================================== */}
+        {/* TAB 1: RESUME FORM EDITOR */}
         {activeTab === 'editor' && (
-          <div className="no-print grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="no-print grid grid-cols-1 lg:grid-cols-12 gap-6 select-none">
             {/* Step Navigation Sidebar (4 cols) */}
-            <div className="lg:col-span-4 bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] p-4 space-y-2 h-fit shadow-xs">
-              <div className="text-[14px] font-semibold text-[#111827] dark:text-[#FAFAFA] px-3 py-2 border-b border-[#F3F4F6] dark:border-[#2A2A2A] mb-2">
+            <div className="lg:col-span-4 bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] p-4 space-y-2 h-fit shadow-xs">
+              <div className="text-[12px] font-[400] uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA] px-2 py-1 mb-1">
                 Resume Sections
               </div>
               {steps.map((st, idx) => {
@@ -384,96 +383,96 @@ export default function AIResumeBuilderPage() {
                   <button
                     key={st.label}
                     onClick={() => setEditorStep(idx)}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-[10px] text-[14px] font-medium transition-all duration-150 cursor-pointer ${
+                    className={`w-full flex items-center justify-between px-3.5 py-3 rounded-[12px] text-[13px] sm:text-[14px] font-[500] transition cursor-pointer active:scale-[0.98] ${
                       isActive
-                        ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                        : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                        ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                        : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323]'
                     }`}
                   >
-                    <div className="flex items-center space-x-3">
-                      <Icon size={18} className={isActive ? 'text-[#FFFFFF] dark:text-[#111111]' : 'text-[#111827] dark:text-[#FAFAFA]'} />
+                    <div className="flex items-center gap-3">
+                      <Icon size={18} />
                       <span>{st.label}</span>
                     </div>
-                    <ChevronRight size={16} className={isActive ? 'text-[#FFFFFF] dark:text-[#111111]' : 'text-[#6B7280]'} />
+                    <ChevronRight size={16} className={isActive ? 'opacity-100' : 'opacity-40'} />
                   </button>
                 );
               })}
             </div>
 
             {/* Form Fields Area (8 cols) */}
-            <div className="lg:col-span-8 bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] p-6 space-y-6 shadow-xs">
+            <div className="lg:col-span-8 bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] p-6 space-y-6 shadow-xs">
               {/* Step 0: Personal Info */}
               {editorStep === 0 && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between border-b border-[#F3F4F6] dark:border-[#2A2A2A] pb-3">
-                    <h2 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA]">Personal Information</h2>
-                    <span className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">Step 1 of 6</span>
+                  <div className="flex items-center justify-between border-b border-[#D1D5DB] dark:border-[#3F3F46] pb-3">
+                    <h2 className="text-[20px] font-[700] text-[#111827] dark:text-[#FAFAFA]">Personal Information</h2>
+                    <span className="text-[14px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">Step 1 of 6</span>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                     <div>
-                      <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Full Name</label>
+                      <label className="text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] block mb-1">Full Name</label>
                       <input
                         type="text"
                         value={resumeData.personalInfo.fullName}
                         onChange={(e) => updatePersonalInfo('fullName', e.target.value)}
-                        className="w-full px-4 py-2 bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] rounded-[10px] text-[14px] text-[#111827] dark:text-[#FAFAFA] focus:outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA]"
+                        className="w-full h-[40px] px-3.5 bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] rounded-[10px] text-[14px] font-[600] text-[#111827] dark:text-[#FAFAFA] outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Email Address</label>
+                      <label className="text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] block mb-1">Email Address</label>
                       <input
                         type="email"
                         value={resumeData.personalInfo.email}
                         onChange={(e) => updatePersonalInfo('email', e.target.value)}
-                        className="w-full px-4 py-2 bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] rounded-[10px] text-[14px] text-[#111827] dark:text-[#FAFAFA] focus:outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA]"
+                        className="w-full h-[40px] px-3.5 bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] rounded-[10px] text-[14px] font-[600] text-[#111827] dark:text-[#FAFAFA] outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Phone Number</label>
+                      <label className="text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] block mb-1">Phone Number</label>
                       <input
                         type="text"
                         value={resumeData.personalInfo.phone}
                         onChange={(e) => updatePersonalInfo('phone', e.target.value)}
-                        className="w-full px-4 py-2 bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] rounded-[10px] text-[14px] text-[#111827] dark:text-[#FAFAFA] focus:outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA]"
+                        className="w-full h-[40px] px-3.5 bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] rounded-[10px] text-[14px] font-[600] text-[#111827] dark:text-[#FAFAFA] outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Location</label>
+                      <label className="text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] block mb-1">Location</label>
                       <input
                         type="text"
                         value={resumeData.personalInfo.location || ''}
                         onChange={(e) => updatePersonalInfo('location', e.target.value)}
-                        className="w-full px-4 py-2 bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] rounded-[10px] text-[14px] text-[#111827] dark:text-[#FAFAFA] focus:outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA]"
+                        className="w-full h-[40px] px-3.5 bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] rounded-[10px] text-[14px] font-[600] text-[#111827] dark:text-[#FAFAFA] outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">LinkedIn Profile</label>
+                      <label className="text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] block mb-1">LinkedIn Profile</label>
                       <input
                         type="url"
                         value={resumeData.personalInfo.linkedin || ''}
                         onChange={(e) => updatePersonalInfo('linkedin', e.target.value)}
-                        className="w-full px-4 py-2 bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] rounded-[10px] text-[14px] text-[#111827] dark:text-[#FAFAFA] focus:outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA]"
+                        className="w-full h-[40px] px-3.5 bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] rounded-[10px] text-[14px] font-[600] text-[#111827] dark:text-[#FAFAFA] outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">GitHub Profile</label>
+                      <label className="text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] block mb-1">GitHub Profile</label>
                       <input
                         type="url"
                         value={resumeData.personalInfo.github || ''}
                         onChange={(e) => updatePersonalInfo('github', e.target.value)}
-                        className="w-full px-4 py-2 bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] rounded-[10px] text-[14px] text-[#111827] dark:text-[#FAFAFA] focus:outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA]"
+                        className="w-full h-[40px] px-3.5 bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] rounded-[10px] text-[14px] font-[600] text-[#111827] dark:text-[#FAFAFA] outline-none"
                       />
                     </div>
                   </div>
 
                   <div className="pt-2">
                     <div className="flex items-center justify-between mb-1.5">
-                      <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">Career Objective</label>
+                      <label className="text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA]">Career Objective</label>
                       <button
                         onClick={handleAIEnhanceObj}
                         disabled={enhancingField === 'objective'}
-                        className="h-8 px-3 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[12px] flex items-center space-x-1.5 transition-all duration-150 cursor-pointer"
+                        className="h-[34px] px-3 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] font-[700] text-[12px] flex items-center gap-1.5 transition cursor-pointer active:scale-[0.98]"
                       >
                         <Sparkles size={14} />
                         <span>{enhancingField === 'objective' ? 'Polishing...' : 'AI Rewrite'}</span>
@@ -483,7 +482,7 @@ export default function AIResumeBuilderPage() {
                       rows={3}
                       value={resumeData.personalInfo.careerObjective || ''}
                       onChange={(e) => updatePersonalInfo('careerObjective', e.target.value)}
-                      className="w-full p-3 bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] rounded-[10px] text-[14px] text-[#111827] dark:text-[#FAFAFA] focus:outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA]"
+                      className="w-full p-3.5 bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] rounded-[10px] text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] outline-none"
                     />
                   </div>
                 </div>
@@ -731,20 +730,18 @@ export default function AIResumeBuilderPage() {
           </div>
         )}
 
-        {/* ==================================================
-            TAB 2: LIVE RESUME PREVIEW
-            ================================================== */}
+        {/* TAB 2: LIVE RESUME PREVIEW */}
         {(activeTab === 'preview' || activeTab === 'editor') && (
-          <div className={`${activeTab === 'editor' ? 'no-print border-t pt-8 border-[#E5E7EB] dark:border-[#2A2A2A]' : ''} space-y-4`}>
+          <div className={`${activeTab === 'editor' ? 'no-print border-t pt-8 border-[#D1D5DB] dark:border-[#3F3F46]' : ''} space-y-4 select-none`}>
             {/* Action Bar for Preview */}
-            <div className="no-print bg-[#FFFFFF] dark:bg-[#181818] p-4 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-between shadow-xs">
-              <div>
-                <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">Resume Paper View</h3>
-                <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">High-resolution print & PDF preview</p>
+            <div className="no-print bg-[#FFFFFF] dark:bg-[#18181B] p-4 sm:p-5 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+              <div className="min-w-0 flex-1">
+                <h3 className="text-[18px] font-[700] text-[#111827] dark:text-[#FAFAFA]">Resume Paper View</h3>
+                <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">High-resolution print & PDF preview</p>
               </div>
               <button
                 onClick={handlePrintPDF}
-                className="h-9 px-4 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium flex items-center space-x-2 cursor-pointer"
+                className="h-[38px] sm:h-[40px] px-4 rounded-[12px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] text-[13px] sm:text-[14px] font-[500] transition flex items-center justify-center gap-2 cursor-pointer shrink-0 active:scale-[0.98] w-full sm:w-auto"
               >
                 <Printer size={16} />
                 <span>Export PDF</span>
@@ -962,19 +959,19 @@ export default function AIResumeBuilderPage() {
                     <div className="text-[32px] font-extrabold text-[#111827] dark:text-[#FAFAFA]">
                       {atsResult ? atsResult.overall_score : 88}%
                     </div>
-                    <div className="text-[12px] font-semibold text-[#6B7280] dark:text-[#A3A3A3]">Overall Score</div>
+                    <div className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Overall Score</div>
                   </div>
                   <div className="text-center border-l pl-6 border-[#E5E7EB] dark:border-[#2A2A2A]">
                     <div className="text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA]">
                       {atsResult ? atsResult.grammar_score : 90}%
                     </div>
-                    <div className="text-[12px] font-semibold text-[#6B7280] dark:text-[#A3A3A3]">Grammar</div>
+                    <div className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Grammar</div>
                   </div>
                   <div className="text-center border-l pl-6 border-[#E5E7EB] dark:border-[#2A2A2A]">
                     <div className="text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA]">
                       {atsResult ? atsResult.formatting_score : 92}%
                     </div>
-                    <div className="text-[12px] font-semibold text-[#6B7280] dark:text-[#A3A3A3]">Formatting</div>
+                    <div className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Formatting</div>
                   </div>
                 </div>
               </div>

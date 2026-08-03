@@ -140,21 +140,21 @@ const ChartPanel: React.FC<{ title: string; icon: React.ReactNode; children: Rea
   icon,
   children,
 }) => (
-  <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-4">
+  <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-4 select-none">
     <div className="flex items-center gap-3">
-      <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+      <div className="w-[40px] h-[40px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
         {icon}
       </div>
-      <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">{title}</h3>
+      <h3 className="text-[18px] font-[700] text-[#111827] dark:text-[#FAFAFA]">{title}</h3>
     </div>
     {children}
   </div>
 );
 
 const ChartSkeleton: React.FC = () => (
-  <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs animate-pulse space-y-4">
+  <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs animate-pulse space-y-4">
     <div className="flex items-center gap-3">
-      <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111]" />
+      <div className="w-[40px] h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111]" />
       <div className="h-5 w-32 bg-[#F8FAFC] dark:bg-[#111111] rounded-[6px]" />
     </div>
     <div className="h-32 w-full bg-[#F8FAFC] dark:bg-[#111111] rounded-[10px]" />
@@ -164,7 +164,7 @@ const ChartSkeleton: React.FC = () => (
 export const AnalyticsChartsGrid: React.FC<Props> = ({ charts, loading }) => {
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.from({ length: 6 }).map((_, i) => <ChartSkeleton key={i} />)}
       </div>
     );
@@ -172,7 +172,7 @@ export const AnalyticsChartsGrid: React.FC<Props> = ({ charts, loading }) => {
   if (!charts) return null;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <ChartPanel title="Weekly Study Hours" icon={<TrendingUp size={20} />}>
         <BarChart data={charts.weekly_study_hours || []} />
       </ChartPanel>
@@ -199,3 +199,4 @@ export const AnalyticsChartsGrid: React.FC<Props> = ({ charts, loading }) => {
     </div>
   );
 };
+

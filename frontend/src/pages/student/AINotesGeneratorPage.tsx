@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import {
   Book,
   Upload,
@@ -191,40 +191,39 @@ export default function AINotesGeneratorPage() {
   });
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] font-sans transition-colors duration-300 space-y-6">
-      <div className="mx-auto max-w-6xl space-y-6">
-        
-        {/* ==================================================
-            PAGE HEADER (Monochrome Header Card)
-            ================================================== */}
-        <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-150">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0 shadow-xs">
-              <Book size={24} className="stroke-[2.2]" />
+    <div className="w-full h-full overflow-x-hidden overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 md:p-8 transition-colors select-none">
+      {/* 1440px Centered Max Content Width Container */}
+      <div className="w-full max-w-[1440px] mx-auto space-y-6">
+
+        {/* Compact Hero Header (Matching AI Study Planner layout) */}
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-4 sm:p-5 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+            <div className="w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <Book size={22} />
             </div>
-            <div>
-              <h1 className="text-[32px] font-bold tracking-tight text-[#111827] dark:text-[#FAFAFA] leading-tight">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-[20px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-[1.2] truncate">
                 AI Notes Generator
               </h1>
-              <p className="text-[14px] text-[#4B5563] dark:text-[#A3A3A3] mt-1">
+              <p className="text-[13px] sm:text-[14px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] mt-0.5 truncate">
                 Transform textbooks, PDFs, and slides into structured study notes, flashcards & MCQs.
               </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 shrink-0 w-full lg:w-auto pt-2 lg:pt-0 border-t lg:border-t-0 border-[#E5E7EB] dark:border-[#27272A]">
             <button
               onClick={() => setHistoryOpen(!historyOpen)}
-              className="h-10 px-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-all duration-150 text-[14px] font-medium flex items-center space-x-2 cursor-pointer"
+              className="h-[38px] sm:h-[40px] px-3.5 sm:px-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[13px] sm:text-[14px] font-[500] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0 active:scale-[0.98]"
             >
-              <History size={16} className="text-[#111827] dark:text-[#FAFAFA]" />
-              <span>Notes History</span>
+              <History size={16} />
+              <span>History ({historyList.length})</span>
             </button>
 
             <button
               onClick={handleGenerate}
               disabled={isGenerating || !selectedFile}
-              className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition-all duration-150 disabled:opacity-40 flex items-center space-x-2 cursor-pointer"
+              className="h-[38px] sm:h-[40px] px-[16px] sm:px-[18px] rounded-[12px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-[500] transition flex items-center justify-center gap-2 cursor-pointer shrink-0 active:scale-[0.98] disabled:opacity-40"
             >
               {isGenerating ? (
                 <>
@@ -241,16 +240,65 @@ export default function AINotesGeneratorPage() {
           </div>
         </div>
 
-        {/* ==================================================
-            UPLOAD SECTION & DOCUMENT PREVIEW
-            ================================================== */}
-        <div className="grid grid-cols-1 gap-6">
+        {/* Overview Cards Banner (88px Height matching Study Analytics Banner) */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 select-none">
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Saved Notes</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">{historyList.length}</p>
+              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Study repository</p>
+            </div>
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
+              <Book size={18} />
+            </div>
+          </div>
+
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Flashcard Decks</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">
+                {content?.flashcards ? content.flashcards.length : 0} Cards
+              </p>
+              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Interactive revision</p>
+            </div>
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
+              <RotateCcw size={18} />
+            </div>
+          </div>
+
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">MCQ Practice</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">
+                {content?.mcqs ? content.mcqs.length : 0} Questions
+              </p>
+              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Auto-graded quiz</p>
+            </div>
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
+              <CheckSquare size={18} />
+            </div>
+          </div>
+
+          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Synthesis Mode</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">GPT-4o Vision</p>
+              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Deep comprehension</p>
+            </div>
+            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
+              <Sparkles size={18} />
+            </div>
+          </div>
+        </div>
+
+        {/* Upload & Document Preview Card */}
+        <div className="grid grid-cols-1 gap-6 select-none">
           {!selectedFile ? (
-            /* Upload Section */
+            /* Upload Section Dropzone */
             <div
               onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
-              className="bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border-2 border-dashed border-[#E5E7EB] dark:border-[#2A2A2A] p-8 text-center transition-all duration-150 hover:border-[#111827] dark:hover:border-[#A3A3A3] flex flex-col items-center justify-center space-y-4 shadow-xs"
+              className="bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] border-2 border-dashed border-[#D1D5DB] dark:border-[#3F3F46] p-6 sm:p-8 text-center transition-all hover:border-[#111827] dark:hover:border-[#FAFAFA] flex flex-col items-center justify-center min-h-[260px] shadow-xs space-y-4"
             >
               <input
                 type="file"
@@ -260,46 +308,46 @@ export default function AINotesGeneratorPage() {
                 className="hidden"
               />
 
-              <div className="w-12 h-12 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center border border-[#E5E7EB] dark:border-[#2A2A2A]">
-                <Upload size={22} className="text-[#111827] dark:text-[#FAFAFA]" />
+              <div className="w-[52px] h-[52px] rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center mx-auto">
+                <Upload size={24} />
               </div>
 
               <div className="max-w-md space-y-1">
-                <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">
+                <h3 className="text-[18px] font-[700] text-[#111827] dark:text-[#FAFAFA]">
                   Upload Study Document
                 </h3>
-                <p className="text-[14px] text-[#4B5563] dark:text-[#A3A3A3]">
+                <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">
                   Drag & drop your file here or click to select from computer
                 </p>
               </div>
 
-              <div className="flex items-center space-x-2 pt-1 text-[14px] text-[#6B7280]">
-                <span className="font-medium text-[#4B5563] dark:text-[#A3A3A3]">Supported Files:</span>
-                <span className="px-2 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[12px] font-semibold text-[#111827] dark:text-[#FAFAFA]">PDF</span>
-                <span className="px-2 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[12px] font-semibold text-[#111827] dark:text-[#FAFAFA]">DOCX</span>
-                <span className="px-2 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[12px] font-semibold text-[#111827] dark:text-[#FAFAFA]">PPTX</span>
-                <span className="px-2 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[12px] font-semibold text-[#111827] dark:text-[#FAFAFA]">TXT</span>
+              <div className="flex flex-wrap items-center justify-center gap-2 text-[13px] text-[#6B7280] dark:text-[#A1A1AA]">
+                <span className="font-[600]">Supported Files:</span>
+                <span className="px-2.5 py-1 rounded-[8px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[12px] font-[400] text-[#111827] dark:text-[#FAFAFA]">PDF</span>
+                <span className="px-2.5 py-1 rounded-[8px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[12px] font-[400] text-[#111827] dark:text-[#FAFAFA]">DOCX</span>
+                <span className="px-2.5 py-1 rounded-[8px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[12px] font-[400] text-[#111827] dark:text-[#FAFAFA]">PPTX</span>
+                <span className="px-2.5 py-1 rounded-[8px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[12px] font-[400] text-[#111827] dark:text-[#FAFAFA]">TXT</span>
               </div>
 
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="mt-2 px-5 py-2.5 rounded-[10px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] font-medium text-[14px] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-all duration-150 cursor-pointer"
+                className="h-[40px] px-5 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] font-[700] text-[14px] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition cursor-pointer active:scale-[0.98]"
               >
                 Browse Files
               </button>
             </div>
           ) : (
-            /* Document Preview Card */
-            <div className="bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center shrink-0">
-                  <FileText size={24} className="text-[#111827] dark:text-[#FAFAFA]" />
+            /* Selected Document Preview Card */
+            <div className="bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] p-5 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-[44px] h-[44px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+                  <FileText size={22} />
                 </div>
                 <div>
-                  <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">
+                  <h3 className="text-[18px] font-[700] text-[#111827] dark:text-[#FAFAFA]">
                     {selectedFile.name}
                   </h3>
-                  <div className="flex flex-wrap items-center gap-3 text-[14px] text-[#4B5563] dark:text-[#A3A3A3] mt-1">
+                  <div className="flex flex-wrap items-center gap-3 text-[13px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] mt-1">
                     <span>Size: {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB</span>
                     <span>•</span>
                     <span>Type: {selectedFile.name.split('.').pop()?.toUpperCase()}</span>
@@ -309,16 +357,16 @@ export default function AINotesGeneratorPage() {
                 </div>
               </div>
 
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center gap-3">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="px-4 py-2 rounded-[10px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] font-medium text-[14px] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-all duration-150 cursor-pointer"
+                  className="h-[38px] px-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-[500] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition cursor-pointer active:scale-[0.98]"
                 >
                   Replace Document
                 </button>
                 <button
                   onClick={() => setSelectedFile(null)}
-                  className="px-4 py-2 rounded-[10px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-all duration-150 text-[14px] font-medium cursor-pointer"
+                  className="h-[38px] px-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#DC2626] transition text-[14px] font-[500] cursor-pointer active:scale-[0.98]"
                 >
                   Remove
                 </button>
@@ -334,31 +382,28 @@ export default function AINotesGeneratorPage() {
           )}
         </div>
 
-        {/* ==================================================
-            LOADING SKELETON LOADER
-            ================================================== */}
+        {/* Loading Skeleton Loader */}
         {isGenerating && (
-          <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs space-y-6 animate-pulse">
+          <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-6 animate-pulse select-none">
             <div className="flex items-center justify-between">
-              <div className="h-6 bg-[#E5E7EB] dark:bg-[#2A2A2A] rounded w-1/3"></div>
-              <div className="h-6 bg-[#E5E7EB] dark:bg-[#2A2A2A] rounded w-1/6"></div>
+              <div className="h-6 bg-[#E5E7EB] dark:bg-[#27272A] rounded w-1/3"></div>
+              <div className="h-6 bg-[#E5E7EB] dark:bg-[#27272A] rounded w-1/6"></div>
             </div>
-            <div className="h-2.5 bg-[#E5E7EB] dark:bg-[#2A2A2A] rounded-full w-full overflow-hidden relative">
+            <div className="h-2.5 bg-[#E5E7EB] dark:bg-[#27272A] rounded-full w-full overflow-hidden relative">
               <div className="bg-[#111827] dark:bg-[#FAFAFA] h-full w-1/2 animate-pulse"></div>
             </div>
             <div className="space-y-3 pt-2">
-              <div className="h-4 bg-[#E5E7EB] dark:bg-[#2A2A2A] rounded w-full"></div>
-              <div className="h-4 bg-[#E5E7EB] dark:bg-[#2A2A2A] rounded w-5/6"></div>
-              <div className="h-4 bg-[#E5E7EB] dark:bg-[#2A2A2A] rounded w-4/6"></div>
+              <div className="h-4 bg-[#E5E7EB] dark:bg-[#27272A] rounded w-full"></div>
+              <div className="h-4 bg-[#E5E7EB] dark:bg-[#27272A] rounded w-5/6"></div>
+              <div className="h-4 bg-[#E5E7EB] dark:bg-[#27272A] rounded w-4/6"></div>
             </div>
           </div>
         )}
 
-        {/* ==================================================
-            SEARCH & FILTER CHIPS BAR
-            ================================================== */}
-        <div className="bg-[#FFFFFF] dark:bg-[#181818] p-4 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-2">
+        {/* Search & Filter Toolbar */}
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-3 sm:p-4 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 select-none">
+          {/* Segmented Filter Pills Toolbar */}
+          <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] min-h-[44px] max-w-full overflow-x-auto no-scrollbar">
             {[
               { id: 'all', label: 'All' },
               { id: 'recent', label: 'Recent' },
@@ -371,10 +416,10 @@ export default function AINotesGeneratorPage() {
                 <button
                   key={chip.id}
                   onClick={() => setFilterCategory(chip.id as any)}
-                  className={`px-4 py-1.5 rounded-[20px] text-[14px] font-medium transition-all duration-150 cursor-pointer ${
+                  className={`h-[36px] px-3.5 sm:px-4 rounded-[8px] text-[14px] font-[500] transition cursor-pointer whitespace-nowrap shrink-0 ${
                     isActive
-                      ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                      : 'bg-[#F8FAFC] dark:bg-[#111111] text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#E5E7EB] dark:hover:bg-[#232323]'
+                      ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                      : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
                   }`}
                 >
                   {chip.label}
@@ -383,36 +428,34 @@ export default function AINotesGeneratorPage() {
             })}
           </div>
 
-          <div className="relative w-full md:w-72">
-            <Search size={16} className="absolute left-3.5 top-3 text-[#111827] dark:text-[#FAFAFA]" />
+          <div className="relative flex-1 lg:w-64">
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A1A1AA]" />
             <input
               type="text"
               placeholder="Search notes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] rounded-[10px] text-[14px] text-[#111827] dark:text-[#FAFAFA] placeholder-[#6B7280] dark:placeholder-[#A3A3A3] focus:outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition-colors"
+              className="w-full h-[38px] sm:h-[40px] pl-9 pr-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[13px] sm:text-[14px] font-[600] text-[#111827] dark:text-[#FAFAFA] outline-none"
             />
           </div>
         </div>
 
-        {/* ==================================================
-            GENERATED NOTES (Monochrome Reading Layout)
-            ================================================== */}
+        {/* GENERATED NOTES DISPLAY */}
         {content ? (
-          <div className="space-y-6">
-            {/* AI ACTIONS BUTTONS BAR */}
-            <div className="bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] p-4 shadow-xs">
-              <div className="text-[14px] font-semibold text-[#111827] dark:text-[#FAFAFA] mb-3">
-                AI Actions
+          <div className="space-y-6 select-none">
+            {/* Sub-Tabs AI Actions Toolbar */}
+            <div className="bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] p-3 sm:p-4 shadow-xs space-y-3">
+              <div className="text-[12px] font-[400] uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA]">
+                AI Notes Toolkit & Actions
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex items-center gap-2 bg-[#F8FAFC] dark:bg-[#111111] p-1 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] min-h-[44px] max-w-full overflow-x-auto no-scrollbar">
                 {[
-                  { id: 'summary', label: 'Generate Summary', icon: FileText },
+                  { id: 'summary', label: 'Summary', icon: FileText },
                   { id: 'concepts', label: 'Key Points', icon: Layers },
                   { id: 'formulae', label: 'Definitions', icon: BookOpen },
-                  { id: 'questions', label: 'Generate Questions', icon: QuestionIcon },
-                  { id: 'flashcards', label: 'Generate Flashcards', icon: RotateCcw },
-                  { id: 'mcqs', label: 'Generate MCQs', icon: CheckSquare },
+                  { id: 'questions', label: 'Questions', icon: QuestionIcon },
+                  { id: 'flashcards', label: 'Flashcards', icon: RotateCcw },
+                  { id: 'mcqs', label: 'MCQs', icon: CheckSquare },
                   { id: 'checklist', label: 'Revision Notes', icon: CheckCircle2 },
                 ].map((act) => {
                   const IconComp = act.icon;
@@ -421,74 +464,72 @@ export default function AINotesGeneratorPage() {
                     <button
                       key={act.id}
                       onClick={() => setActiveTab(act.id as any)}
-                      className={`h-9 px-3.5 rounded-[10px] text-[14px] font-medium border transition-all duration-150 flex items-center space-x-2 cursor-pointer ${
+                      className={`h-[36px] px-3.5 sm:px-4 rounded-[8px] text-[14px] font-[500] transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 active:scale-[0.98] ${
                         isActive
-                          ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] border-[#111827] dark:border-[#FAFAFA]'
-                          : 'bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] border-[#D1D5DB] dark:border-[#2A2A2A] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                          ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                          : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
                       }`}
                     >
-                      <IconComp size={16} className={isActive ? 'text-[#FFFFFF] dark:text-[#111111]' : 'text-[#111827] dark:text-[#FAFAFA]'} />
+                      <IconComp size={15} />
                       <span>{act.label}</span>
                     </button>
                   );
                 })}
 
+                <div className="h-5 w-[1px] bg-[#D1D5DB] dark:bg-[#3F3F46] mx-1 shrink-0" />
+
                 <button
                   onClick={exportAsMarkdown}
-                  className="h-9 px-3.5 rounded-[10px] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] border border-[#D1D5DB] dark:border-[#2A2A2A] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-all duration-150 text-[14px] font-medium flex items-center space-x-2 cursor-pointer"
+                  className="h-[36px] px-3.5 rounded-[8px] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] border border-[#D1D5DB] dark:border-[#3F3F46] text-[14px] font-[500] hover:bg-[#F8FAFC] transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0 active:scale-[0.98]"
                 >
-                  <FileCode size={16} className="text-[#111827] dark:text-[#FAFAFA]" />
+                  <FileCode size={15} />
                   <span>Markdown</span>
                 </button>
 
                 <button
                   onClick={exportAsTextDoc}
-                  className="h-9 px-3.5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition-all duration-150 flex items-center space-x-2 cursor-pointer"
+                  className="h-[36px] px-4 rounded-[8px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] font-[700] text-[13px] transition flex items-center justify-center gap-2 cursor-pointer shrink-0 active:scale-[0.98]"
                 >
-                  <Download size={16} />
+                  <Download size={15} />
                   <span>Download Notes</span>
                 </button>
               </div>
             </div>
 
-            {/* Note Reading Layout Container */}
-            <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 lg:p-8 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs min-h-[400px]">
-              {/* Header Title inside Reading Document */}
-              <div className="border-b border-[#F3F4F6] dark:border-[#2A2A2A] pb-4 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-2">
+            {/* Main Reading Document Container */}
+            <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 lg:p-8 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs min-h-[400px]">
+              <div className="border-b border-[#D1D5DB] dark:border-[#3F3F46] pb-4 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-2">
                 <div>
-                  <h2 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+                  <h2 className="text-[24px] font-[700] text-[#111827] dark:text-[#FAFAFA]">
                     {content.title}
                   </h2>
-                  <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-0.5">
+                  <p className="text-[14px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] mt-0.5">
                     Generated Study Material
                   </p>
                 </div>
-                <div className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">
-                  Section: <span className="font-semibold text-[#111827] dark:text-[#FAFAFA] capitalize">{activeTab}</span>
+                <div className="text-[14px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">
+                  Active Section: <span className="font-[700] text-[#111827] dark:text-[#FAFAFA] capitalize">{activeTab}</span>
                 </div>
               </div>
 
-              {/* Section Content Views */}
               {activeTab === 'summary' && (
                 <div className="space-y-6 max-w-4xl">
-                  {/* Summary Section Card */}
-                  <div className="bg-[#F8FAFC] dark:bg-[#111111] p-6 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A]">
-                    <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA] mb-3 flex items-center space-x-2">
-                      <FileText size={18} className="text-[#111827] dark:text-[#FAFAFA]" />
+                  <div className="bg-[#F8FAFC] dark:bg-[#111111] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46]">
+                    <h3 className="text-[18px] font-[700] text-[#111827] dark:text-[#FAFAFA] mb-3 flex items-center gap-2">
+                      <FileText size={18} />
                       <span>Executive Summary</span>
                     </h3>
-                    <p className="text-[16px] text-[#4B5563] dark:text-[#D4D4D4] leading-relaxed">
+                    <p className="text-[15px] font-[500] text-[#111827] dark:text-[#FAFAFA] leading-relaxed">
                       {content.executive_summary}
                     </p>
                   </div>
 
-                  {/* Chapter Summary Section Card */}
-                  <div className="bg-[#F8FAFC] dark:bg-[#111111] p-6 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A]">
-                    <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA] mb-3 flex items-center space-x-2">
-                      <BookOpen size={18} className="text-[#111827] dark:text-[#FAFAFA]" />
+                  <div className="bg-[#F8FAFC] dark:bg-[#111111] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46]">
+                    <h3 className="text-[18px] font-[700] text-[#111827] dark:text-[#FAFAFA] mb-3 flex items-center gap-2">
+                      <BookOpen size={18} />
                       <span>Detailed Overview</span>
                     </h3>
-                    <p className="text-[16px] text-[#4B5563] dark:text-[#D4D4D4] leading-relaxed whitespace-pre-line">
+                    <p className="text-[15px] font-[500] text-[#111827] dark:text-[#FAFAFA] leading-relaxed whitespace-pre-line">
                       {content.chapter_summary}
                     </p>
                   </div>
@@ -497,16 +538,16 @@ export default function AINotesGeneratorPage() {
 
               {activeTab === 'concepts' && (
                 <div className="space-y-4 max-w-4xl">
-                  <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">
+                  <h3 className="text-[18px] font-[700] text-[#111827] dark:text-[#FAFAFA]">
                     Key Points & Concepts
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {content.key_concepts?.map((kc, idx) => (
-                      <div key={idx} className="bg-[#F8FAFC] dark:bg-[#111111] p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-start space-x-3">
-                        <span className="w-6 h-6 rounded-[6px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                      <div key={idx} className="bg-[#F8FAFC] dark:bg-[#111111] p-5 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] flex items-start gap-3">
+                        <span className="w-6 h-6 rounded-[6px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-[500] flex items-center justify-center shrink-0 mt-0.5">
                           {idx + 1}
                         </span>
-                        <p className="text-[16px] text-[#111827] dark:text-[#FAFAFA] leading-relaxed">{kc}</p>
+                        <p className="text-[14px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-relaxed">{kc}</p>
                       </div>
                     ))}
                   </div>
@@ -515,14 +556,14 @@ export default function AINotesGeneratorPage() {
 
               {activeTab === 'formulae' && (
                 <div className="space-y-4 max-w-4xl">
-                  <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">
+                  <h3 className="text-[18px] font-[700] text-[#111827] dark:text-[#FAFAFA]">
                     Definitions & Key Terms
                   </h3>
                   <div className="space-y-3">
                     {content.definitions?.map((df, idx) => (
-                      <div key={idx} className="bg-[#F8FAFC] dark:bg-[#111111] p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A]">
-                        <h4 className="text-[16px] font-bold text-[#111827] dark:text-[#FAFAFA] mb-1">{df.term}</h4>
-                        <p className="text-[16px] text-[#4B5563] dark:text-[#D4D4D4]">{df.definition}</p>
+                      <div key={idx} className="bg-[#F8FAFC] dark:bg-[#111111] p-5 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46]">
+                        <h4 className="text-[16px] font-[700] text-[#111827] dark:text-[#FAFAFA] mb-1">{df.term}</h4>
+                        <p className="text-[14px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">{df.definition}</p>
                       </div>
                     ))}
                   </div>
@@ -533,11 +574,11 @@ export default function AINotesGeneratorPage() {
                 <div className="space-y-6 max-w-4xl">
                   {content.questions?.two_marks && (
                     <div className="space-y-3">
-                      <h4 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Short Important Questions (2 Marks)</h4>
+                      <h4 className="text-[18px] font-[700] text-[#111827] dark:text-[#FAFAFA]">Short Important Questions (2 Marks)</h4>
                       <div className="space-y-2">
                         {content.questions.two_marks.map((q, i) => (
-                          <div key={i} className="bg-[#F8FAFC] dark:bg-[#111111] p-4 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[16px] text-[#111827] dark:text-[#FAFAFA]">
-                            <span className="font-bold mr-2">{i + 1}.</span>{q}
+                          <div key={i} className="bg-[#F8FAFC] dark:bg-[#111111] p-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] text-[14px] font-[600] text-[#111827] dark:text-[#FAFAFA]">
+                            <span className="font-[700] mr-2">{i + 1}.</span>{q}
                           </div>
                         ))}
                       </div>
@@ -546,11 +587,11 @@ export default function AINotesGeneratorPage() {
 
                   {content.questions?.five_marks && (
                     <div className="space-y-3 pt-2">
-                      <h4 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Long Important Questions (5 Marks)</h4>
+                      <h4 className="text-[18px] font-[700] text-[#111827] dark:text-[#FAFAFA]">Long Important Questions (5 Marks)</h4>
                       <div className="space-y-2">
                         {content.questions.five_marks.map((q, i) => (
-                          <div key={i} className="bg-[#F8FAFC] dark:bg-[#111111] p-4 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[16px] text-[#111827] dark:text-[#FAFAFA]">
-                            <span className="font-bold mr-2">{i + 1}.</span>{q}
+                          <div key={i} className="bg-[#F8FAFC] dark:bg-[#111111] p-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] text-[14px] font-[600] text-[#111827] dark:text-[#FAFAFA]">
+                            <span className="font-[700] mr-2">{i + 1}.</span>{q}
                           </div>
                         ))}
                       </div>
@@ -567,15 +608,15 @@ export default function AINotesGeneratorPage() {
                       <div
                         key={i}
                         onClick={() => setFlippedCards((prev) => ({ ...prev, [i]: !prev[i] }))}
-                        className="h-48 p-6 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] shadow-xs hover:border-[#111827] dark:hover:border-[#FAFAFA] transition-all duration-150 cursor-pointer flex flex-col justify-between text-center select-none"
+                        className="h-48 p-6 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] shadow-xs hover:shadow-md transition-all duration-150 ease-in-out hover:-translate-y-[2px] cursor-pointer flex flex-col justify-between text-center select-none"
                       >
-                        <span className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                        <span className="text-[11px] font-[400] uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA]">
                           {isFlipped ? 'Answer Side' : 'Question (Click to Flip)'}
                         </span>
-                        <p className="text-[16px] font-semibold text-[#111827] dark:text-[#FAFAFA] my-auto">
+                        <p className="text-[15px] font-[400] text-[#111827] dark:text-[#FAFAFA] my-auto">
                           {isFlipped ? fc.back : fc.front}
                         </p>
-                        <span className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">Flashcard #{i + 1}</span>
+                        <span className="text-[12px] font-[600] text-[#6B7280] dark:text-[#A1A1AA]">Flashcard #{i + 1}</span>
                       </div>
                     );
                   })}
@@ -585,8 +626,8 @@ export default function AINotesGeneratorPage() {
               {activeTab === 'mcqs' && (
                 <div className="space-y-6 max-w-4xl">
                   {content.mcqs?.map((m, i) => (
-                    <div key={i} className="bg-[#F8FAFC] dark:bg-[#111111] p-6 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-4">
-                      <h4 className="text-[16px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+                    <div key={i} className="bg-[#F8FAFC] dark:bg-[#111111] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] space-y-4">
+                      <h4 className="text-[16px] font-[700] text-[#111827] dark:text-[#FAFAFA]">
                         Q{i + 1}. {m.question}
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -594,12 +635,10 @@ export default function AINotesGeneratorPage() {
                           <button
                             key={oIdx}
                             onClick={() => setMcqAnswers((prev) => ({ ...prev, [i]: opt }))}
-                            className={`p-3 rounded-[10px] border text-[14px] text-left transition-all duration-150 cursor-pointer ${
+                            className={`p-3.5 rounded-[10px] border text-[14px] font-[500] text-left transition cursor-pointer active:scale-[0.98] ${
                               mcqAnswers[i] === opt
-                                ? opt === m.correct_answer
-                                  ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] border-[#111827] dark:border-[#FAFAFA] font-semibold'
-                                  : 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] border-[#111827] dark:border-[#FAFAFA] font-semibold'
-                                : 'bg-[#FFFFFF] dark:bg-[#181818] border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                                ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] border-[#111827]'
+                                : 'bg-[#FFFFFF] dark:bg-[#18181B] border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323]'
                             }`}
                           >
                             {opt}
@@ -617,12 +656,12 @@ export default function AINotesGeneratorPage() {
                     <div
                       key={i}
                       onClick={() => setChecklistState((prev) => ({ ...prev, [i]: !prev[i] }))}
-                      className="bg-[#F8FAFC] dark:bg-[#111111] p-4 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center space-x-3 cursor-pointer"
+                      className="bg-[#F8FAFC] dark:bg-[#111111] p-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] flex items-center gap-3 cursor-pointer"
                     >
                       <button className="text-[#111827] dark:text-[#FAFAFA]">
-                        {checklistState[i] ? <CheckSquare size={18} /> : <Square size={18} className="text-[#6B7280] dark:text-[#A3A3A3]" />}
+                        {checklistState[i] ? <CheckSquare size={18} /> : <Square size={18} className="text-[#6B7280] dark:text-[#A1A1AA]" />}
                       </button>
-                      <span className={`text-[16px] ${checklistState[i] ? 'line-through text-[#6B7280] dark:text-[#A3A3A3]' : 'text-[#111827] dark:text-[#FAFAFA]'}`}>
+                      <span className={`text-[14px] font-[600] ${checklistState[i] ? 'line-through text-[#6B7280] dark:text-[#A1A1AA]' : 'text-[#111827] dark:text-[#FAFAFA]'}`}>
                         {chk}
                       </span>
                     </div>
@@ -632,95 +671,94 @@ export default function AINotesGeneratorPage() {
             </div>
           </div>
         ) : (
-          /* EMPTY STATE */
+          /* EMPTY STATE CARD */
           !isGenerating && (
-            <div className="p-12 text-center bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col items-center justify-center space-y-4">
-              <div className="w-16 h-16 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center border border-[#E5E7EB] dark:border-[#2A2A2A]">
-                <Book size={32} className="text-[#111827] dark:text-[#FAFAFA]" />
+            <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-12 text-center rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-4 select-none">
+              <div className="w-[80px] h-[80px] rounded-[16px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] flex items-center justify-center mx-auto text-[#111827] dark:text-[#FAFAFA]">
+                <Book size={36} />
               </div>
-              <div className="max-w-md space-y-1">
-                <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
-                  No Notes Generated Yet
-                </h3>
-                <p className="text-[14px] text-[#4B5563] dark:text-[#A3A3A3]">
-                  Upload a document and let AI generate smart study notes.
+              <div>
+                <h3 className="text-[20px] font-[700] text-[#111827] dark:text-[#FAFAFA]">No Notes Generated Yet</h3>
+                <p className="text-[14px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] max-w-md mx-auto mt-1">
+                  Upload a document and let AI generate smart study notes, summaries, flashcards, and MCQs.
                 </p>
               </div>
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="mt-2 px-5 py-2.5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition-all duration-150 cursor-pointer"
+                className="h-[40px] px-5 rounded-[12px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] font-[700] text-[14px] transition flex items-center justify-center gap-2 cursor-pointer mx-auto active:scale-[0.98]"
               >
-                Upload Document
+                <Upload size={16} />
+                <span>Upload Document</span>
               </button>
             </div>
           )
         )}
 
-        {/* ==================================================
-            NOTES HISTORY TABLE
-            ================================================== */}
-        <div className="space-y-4">
+        {/* NOTES HISTORY TABLE SECTION */}
+        <div className="space-y-4 select-none">
           <div className="flex items-center justify-between">
-            <h2 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+            <h2 className="text-[22px] font-[700] text-[#111827] dark:text-[#FAFAFA]">
               Notes History
             </h2>
-            <span className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">
-              Total: {historyList.length}
+            <span className="text-[14px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">
+              Total Records: {historyList.length}
             </span>
           </div>
 
-          <div className="bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs overflow-hidden">
+          <div className="bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs overflow-hidden">
             {historyList.length === 0 ? (
-              <div className="p-8 text-center text-[#6B7280] dark:text-[#A3A3A3] text-[14px]">
+              <div className="p-8 text-center text-[#6B7280] dark:text-[#A1A1AA] text-[14px] font-[500]">
                 No generated notes in history.
               </div>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto no-scrollbar">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] font-semibold text-[#4B5563] dark:text-[#A3A3A3]">
-                      <th className="py-3.5 px-5">Document</th>
+                    <tr className="border-b border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111] text-[12px] font-[400] uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA]">
+                      <th className="py-3.5 px-5">Document & Title</th>
                       <th className="py-3.5 px-5">Created Date</th>
                       <th className="py-3.5 px-5">Status</th>
                       <th className="py-3.5 px-5 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#F3F4F6] dark:divide-[#2A2A2A] text-[14px] text-[#111827] dark:text-[#FAFAFA]">
+                  <tbody className="divide-y divide-[#D1D5DB] dark:divide-[#3F3F46] text-[14px] font-[600] text-[#111827] dark:text-[#FAFAFA]">
                     {filteredHistory.map((item) => (
                       <tr
                         key={item.id}
-                        className="hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-colors duration-150 cursor-pointer"
+                        className="hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition cursor-pointer"
                         onClick={() => handleSelectHistoryNote(item.id)}
                       >
-                        <td className="py-4 px-5 font-semibold">
-                          <div className="flex items-center space-x-3">
-                            <FileText size={18} className="text-[#111827] dark:text-[#FAFAFA] shrink-0" />
+                        <td className="py-4 px-5">
+                          <div className="flex items-center gap-3">
+                            <div className="w-[36px] h-[36px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+                              <FileText size={18} />
+                            </div>
                             <div>
-                              <div className="font-semibold text-[#111827] dark:text-[#FAFAFA]">{item.title}</div>
-                              <div className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">{item.document_name}</div>
+                              <div className="font-[700] text-[#111827] dark:text-[#FAFAFA]">{item.title}</div>
+                              <div className="text-[12px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">{item.document_name}</div>
                             </div>
                           </div>
                         </td>
-                        <td className="py-4 px-5 text-[#4B5563] dark:text-[#A3A3A3]">
+                        <td className="py-4 px-5 text-[#6B7280] dark:text-[#A1A1AA] font-[500]">
                           {item.created_at ? new Date(item.created_at).toLocaleDateString() : 'Recent'}
                         </td>
                         <td className="py-4 px-5">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[12px] font-medium bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[12px] font-[400] bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]">
                             Generated
                           </span>
                         </td>
                         <td className="py-4 px-5 text-right">
-                          <div className="flex items-center justify-end space-x-2" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
                             <button
                               onClick={() => handleSelectHistoryNote(item.id)}
-                              className="p-1.5 text-[#111827] hover:bg-[#F3F4F6] dark:text-[#FAFAFA] dark:hover:bg-[#232323] rounded-[6px] transition-colors"
+                              className="h-[34px] w-[34px] rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition cursor-pointer shrink-0 active:scale-[0.98]"
                               title="View Note"
                             >
                               <Eye size={16} />
                             </button>
                             <button
                               onClick={(e) => handleDeleteNote(item.id, e)}
-                              className="p-1.5 text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA] hover:bg-[#F3F4F6] dark:hover:bg-[#232323] rounded-[6px] transition-colors"
+                              className="h-[34px] w-[34px] rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#DC2626] flex items-center justify-center hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition cursor-pointer shrink-0 active:scale-[0.98]"
                               title="Delete Note"
                             >
                               <Trash2 size={16} />
@@ -740,5 +778,6 @@ export default function AINotesGeneratorPage() {
     </div>
   );
 }
+
 
 

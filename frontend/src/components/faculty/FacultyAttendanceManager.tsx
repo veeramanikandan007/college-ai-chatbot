@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { ClipboardCheck, Download, Check, X, Clock, AlertCircle, Save, Filter } from 'lucide-react';
 import { facultyApi, AttendanceRecord } from '../../api/faculty';
 import { useToast } from '../../context/ToastContext';
@@ -225,7 +225,7 @@ export const FacultyAttendanceManager: React.FC<Props> = ({ selectedSubject, sel
           <p className="font-heading font-bold text-xl text-amber-600 dark:text-amber-400">{lateCount}</p>
         </div>
         <div className="p-3 rounded-xl bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-center">
-          <p className="text-[11px] font-bold uppercase text-[#6B7280] dark:text-[#A3A3A3]">Percentage</p>
+          <p className="text-[11px] font-normal uppercase text-[#6B7280] dark:text-[#A3A3A3]">Percentage</p>
           <p className="font-bold text-xl text-[#111827] dark:text-[#FAFAFA]">{percentage}%</p>
         </div>
       </div>
