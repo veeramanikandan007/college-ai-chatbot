@@ -38,26 +38,26 @@ export const AssignmentAiModal: React.FC<AssignmentAiModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 my-8 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+      <div className="relative w-full max-w-2xl bg-[#FFFFFF] dark:bg-[#181818] rounded-[16px] shadow-lg border border-[#D1D5DB] dark:border-[#3F3F46] my-8 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-purple-50/50 dark:bg-purple-950/20">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
               <Sparkles size={20} />
             </div>
             <div>
-              <h2 className="text-lg font-bold font-heading text-slate-900 dark:text-white">
+              <h2 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
                 {aiData?.action ? actionTitles[aiData.action] || 'AI Assistant' : 'AI Assistant'}
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
                 {assignment.title} ({assignment.subject})
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1 rounded text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA] cursor-pointer"
           >
             <X size={20} />
           </button>
@@ -67,19 +67,19 @@ export const AssignmentAiModal: React.FC<AssignmentAiModalProps> = ({
         <div className="p-6 max-h-[75vh] overflow-y-auto">
           {loading ? (
             <div className="py-16 flex flex-col items-center justify-center text-center">
-              <div className="h-10 w-10 animate-spin rounded-full border-4 border-purple-600 border-t-transparent mb-4" />
-              <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#111827] dark:border-[#FAFAFA] border-t-transparent mb-4" />
+              <p className="text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA]">
                 Synthesizing AI Response...
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Analyzing assignment details with Gemini / Groq engine.
+              <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] mt-1">
+                Analyzing assignment details with Gemini engine.
               </p>
             </div>
           ) : aiData ? (
             <div className="space-y-4">
               {/* Main Result Text */}
               {aiData.result && (
-                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-sm text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-wrap font-sans">
+                <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[14px] text-[#4B5563] dark:text-[#D4D4D4] leading-relaxed whitespace-pre-wrap font-sans">
                   {aiData.result}
                 </div>
               )}
@@ -87,8 +87,8 @@ export const AssignmentAiModal: React.FC<AssignmentAiModalProps> = ({
               {/* Action: Checklist View */}
               {aiData.action === 'checklist' && aiData.checklist && (
                 <div className="space-y-2 pt-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                    <CheckSquare size={16} className="text-purple-500" />
+                  <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1.5">
+                    <CheckSquare size={16} />
                     Interactive Sub-task Checklist
                   </h4>
                   <div className="space-y-2">
@@ -98,19 +98,19 @@ export const AssignmentAiModal: React.FC<AssignmentAiModalProps> = ({
                         <div
                           key={idx}
                           onClick={() => handleChecklistToggle(idx)}
-                          className={`flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer ${
+                          className={`flex items-center gap-3 p-3 rounded-[10px] border transition-all cursor-pointer ${
                             isChecked
-                              ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800 text-slate-400 dark:text-slate-500 line-through'
-                              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 hover:border-purple-300 dark:hover:border-purple-800'
+                              ? 'bg-[#F8FAFC] dark:bg-[#111111] border-[#E5E7EB] dark:border-[#2A2A2A] text-[#6B7280] dark:text-[#A3A3A3] line-through'
+                              : 'bg-[#FFFFFF] dark:bg-[#181818] border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA]'
                           }`}
                         >
                           <input
                             type="checkbox"
                             checked={isChecked}
                             onChange={() => {}}
-                            className="h-4 w-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500"
+                            className="h-4 w-4 rounded border-[#D1D5DB]"
                           />
-                          <span className="text-xs sm:text-sm font-medium">{item}</span>
+                          <span className="text-[14px] font-medium">{item}</span>
                         </div>
                       );
                     })}
@@ -121,20 +121,20 @@ export const AssignmentAiModal: React.FC<AssignmentAiModalProps> = ({
               {/* Action: Study Plan View */}
               {aiData.action === 'study_plan' && aiData.study_plan && (
                 <div className="space-y-2 pt-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                    <CalendarDays size={16} className="text-purple-500" />
+                  <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1.5">
+                    <CalendarDays size={16} />
                     Day-by-Day Milestone Roadmap
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {aiData.study_plan.map((step, idx) => (
                       <div
                         key={idx}
-                        className="p-3.5 rounded-xl bg-purple-50/40 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-900/40"
+                        className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A]"
                       >
-                        <span className="text-xs font-bold text-purple-700 dark:text-purple-300 uppercase tracking-wider">
+                        <span className="text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA] uppercase tracking-wider">
                           {step.day}
                         </span>
-                        <p className="mt-1 text-xs text-slate-700 dark:text-slate-300 leading-normal">
+                        <p className="mt-1 text-[14px] text-[#4B5563] dark:text-[#D4D4D4] leading-normal">
                           {step.task}
                         </p>
                       </div>
@@ -144,17 +144,17 @@ export const AssignmentAiModal: React.FC<AssignmentAiModalProps> = ({
               )}
             </div>
           ) : (
-            <div className="py-12 text-center text-slate-500 dark:text-slate-400 text-sm">
+            <div className="py-12 text-center text-[#6B7280] dark:text-[#A3A3A3] text-[14px]">
               No AI results generated yet. Select an AI tool from the options.
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40">
+        <div className="flex items-center justify-end px-6 py-4 border-t border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
           <button
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#0E2A6D] text-white hover:bg-[#0E2A6D]/90 transition-colors shadow-xs"
+            className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs cursor-pointer"
           >
             Close AI Insights
           </button>

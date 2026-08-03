@@ -66,7 +66,7 @@ export const StudyCalendarView: React.FC<StudyCalendarViewProps> = ({
       cells.push(
         <div
           key={`empty-${i}`}
-          className="h-24 bg-slate-50/40 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800/60 p-1"
+          className="h-28 bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] p-2"
         />
       );
     }
@@ -86,47 +86,37 @@ export const StudyCalendarView: React.FC<StudyCalendarViewProps> = ({
       cells.push(
         <div
           key={d}
-          className={`h-24 border p-1.5 flex flex-col justify-between transition-colors overflow-hidden ${
+          className={`h-28 border p-2 flex flex-col justify-between transition-colors overflow-hidden ${
             isToday
-              ? 'bg-blue-50/50 dark:bg-blue-950/20 border-[#0E2A6D] dark:border-[#60A5FA]'
+              ? 'bg-[#FFFFFF] dark:bg-[#181818] border-[2px] border-[#111827] dark:border-[#FAFAFA]'
               : isExamDay
-              ? 'bg-rose-50/50 dark:bg-rose-950/20 border-rose-400 dark:border-rose-800'
-              : 'bg-white dark:bg-[#1E293B] border-slate-200 dark:border-slate-800 hover:border-slate-300'
+              ? 'bg-[#F8FAFC] dark:bg-[#111111] border border-[#111827] dark:border-[#FAFAFA]'
+              : 'bg-[#FFFFFF] dark:bg-[#181818] border-[#D1D5DB] dark:border-[#3F3F46]'
           }`}
         >
           <div className="flex items-center justify-between">
             <span
-              className={`text-xs font-bold ${
+              className={`text-[12px] font-bold ${
                 isToday
-                  ? 'h-5 w-5 rounded-full bg-[#0E2A6D] text-white flex items-center justify-center'
-                  : isExamDay
-                  ? 'text-rose-600 dark:text-rose-400 font-extrabold'
-                  : 'text-slate-700 dark:text-slate-300'
+                  ? 'h-6 w-6 rounded-full bg-[#111827] text-white dark:bg-[#FAFAFA] dark:text-[#111111] flex items-center justify-center'
+                  : 'text-[#111827] dark:text-[#FAFAFA]'
               }`}
             >
               {d}
             </span>
 
             {isExamDay && (
-              <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-md bg-rose-500 text-white">
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] bg-[#111827] text-white dark:bg-[#FAFAFA] dark:text-[#111111]">
                 EXAM
               </span>
             )}
           </div>
 
-          <div className="space-y-1 overflow-y-auto max-h-14 scrollbar-none">
+          <div className="space-y-1 overflow-y-auto max-h-16 scrollbar-none">
             {dayTasks.map((t) => (
               <div
                 key={t.id}
-                className={`px-1.5 py-0.5 rounded text-[10px] font-bold truncate ${
-                  t.status === 'Completed'
-                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 line-through'
-                    : t.task_type === 'Revision'
-                    ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                    : t.task_type === 'Assignment'
-                    ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
-                    : 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
-                }`}
+                className="px-2 py-1 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] truncate"
                 title={`${t.subject_code}: ${t.title}`}
               >
                 {t.title}
@@ -141,77 +131,61 @@ export const StudyCalendarView: React.FC<StudyCalendarViewProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+    <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-4">
       {/* Calendar Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-        <div className="flex items-center gap-2">
-          <div className="p-2 rounded-xl bg-[#0E2A6D]/10 text-[#0E2A6D] dark:bg-[#60A5FA]/10 dark:text-[#60A5FA]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#F3F4F6] dark:border-[#2A2A2A]">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
             <CalendarDays size={20} />
           </div>
           <div>
-            <h3 className="text-base font-bold font-heading text-slate-900 dark:text-white">
-              Interactive Study & Exam Calendar
+            <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+              {monthNames[month]} {year}
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Visualizing study days, revision sessions, assignment deadlines, and exam dates
+            <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
+              Monthly study schedule and exam milestone roadmap
             </p>
           </div>
         </div>
 
-        {/* Month Navigation */}
         <div className="flex items-center gap-2">
           <button
             onClick={handlePrevMonth}
-            className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200"
+            className="h-9 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center gap-1 text-[14px] font-medium cursor-pointer"
           >
             <ChevronLeft size={16} />
+            <span>Prev</span>
           </button>
-          <span className="text-xs font-bold text-slate-800 dark:text-slate-200 min-w-[120px] text-center">
-            {monthNames[month]} {year}
-          </span>
+          <button
+            onClick={() => setCurrentDate(new Date())}
+            className="h-9 px-4 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition text-[14px] font-medium cursor-pointer"
+          >
+            Today
+          </button>
           <button
             onClick={handleNextMonth}
-            className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200"
+            className="h-9 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center gap-1 text-[14px] font-medium cursor-pointer"
           >
+            <span>Next</span>
             <ChevronRight size={16} />
           </button>
         </div>
       </div>
 
-      {/* Days of Week Header */}
-      <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold text-slate-500 dark:text-slate-400 py-1 bg-slate-50 dark:bg-slate-900/60 rounded-xl">
-        <span>Sun</span>
-        <span>Mon</span>
-        <span>Tue</span>
-        <span>Wed</span>
-        <span>Thu</span>
-        <span>Fri</span>
-        <span>Sat</span>
+      {/* Days Grid Header */}
+      <div className="grid grid-cols-7 gap-1 text-center font-bold text-[12px] text-[#6B7280] dark:text-[#A3A3A3] py-2 border-b border-[#F3F4F6] dark:border-[#2A2A2A]">
+        <div>SUN</div>
+        <div>MON</div>
+        <div>TUE</div>
+        <div>WED</div>
+        <div>THU</div>
+        <div>FRI</div>
+        <div>SAT</div>
       </div>
 
       {/* Grid Cells */}
-      <div className="grid grid-cols-7 gap-1 rounded-xl overflow-hidden">
+      <div className="grid grid-cols-7 gap-1.5">
         {renderCalendarCells()}
-      </div>
-
-      {/* Legend Footer */}
-      <div className="pt-2 flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-slate-500">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-full bg-blue-500" />
-          Study Session
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-full bg-amber-500" />
-          Revision Day
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-full bg-rose-500" />
-          Exam / Deadline
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-full bg-emerald-500" />
-          Completed Task
-        </span>
       </div>
     </div>
   );

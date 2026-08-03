@@ -43,21 +43,6 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
   const isOverdue = assignment.status === 'Overdue';
   const isCompleted = assignment.status === 'Completed';
 
-  // Priority Styles
-  const priorityBadgeClass =
-    assignment.priority === 'High'
-      ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-900/50'
-      : assignment.priority === 'Medium'
-      ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-900/50'
-      : 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-900/50';
-
-  // Status Styles
-  const statusBadgeClass = isCompleted
-    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/50'
-    : isOverdue
-    ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-900/50'
-    : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-900/50';
-
   const aiOptions = [
     { label: 'Summarize Assignment', action: 'summarize' as const },
     { label: 'Explain Questions', action: 'explain' as const },
@@ -68,67 +53,62 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
   ];
 
   return (
-    <div className="group relative flex flex-col bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-xs hover:shadow-md hover:border-[#0E2A6D]/40 dark:hover:border-[#D9A441]/40 transition-all duration-200">
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+    <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col justify-between space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         {/* Title & Metadata */}
-        <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-2 mb-2">
+        <div className="flex-1 min-w-0 space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
             {/* Subject Pill */}
-            <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-md bg-[#0E2A6D]/10 text-[#0E2A6D] dark:bg-[#D9A441]/10 dark:text-[#D9A441]">
+            <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1">
               <BookOpen size={13} />
               {assignment.subject}
             </span>
 
             {/* Priority Pill */}
-            <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-md border ${priorityBadgeClass}`}>
+            <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1">
               <Tag size={12} />
               {assignment.priority} Priority
             </span>
 
             {/* Status Pill */}
-            <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-md border ${statusBadgeClass}`}>
+            <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1">
               {isCompleted ? <CircleCheck size={12} /> : <CircleAlert size={12} />}
               {assignment.status}
             </span>
 
             {assignment.assigned_class && (
-              <span className="text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+              <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#6B7280] dark:text-[#A3A3A3]">
                 {assignment.assigned_class}
               </span>
             )}
           </div>
 
-          <h3 className="text-lg font-bold font-heading text-slate-900 dark:text-white group-hover:text-[#0E2A6D] dark:group-hover:text-[#60A5FA] transition-colors leading-snug">
+          <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] leading-snug">
             {assignment.title}
           </h3>
 
-          <div className="flex items-center gap-2 mt-1.5 text-xs text-slate-600 dark:text-slate-400">
-            <span className="inline-flex items-center gap-1 font-medium">
-              <User size={13} className="text-slate-400" />
-              Faculty: <strong className="text-slate-700 dark:text-slate-300">{assignment.faculty}</strong>
+          <div className="flex items-center gap-2 text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">
+            <span className="inline-flex items-center gap-1">
+              <User size={14} />
+              Faculty: <strong className="text-[#111827] dark:text-[#FAFAFA]">{assignment.faculty}</strong>
             </span>
           </div>
 
           {assignment.description && (
-            <p className="mt-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+            <p className="text-[14px] text-[#4B5563] dark:text-[#D4D4D4] line-clamp-2 leading-relaxed">
               {assignment.description}
             </p>
           )}
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-1.5 shrink-0 self-start sm:self-auto">
+        <div className="flex items-center gap-2 shrink-0">
           {/* Status Toggle Button */}
           <button
             onClick={() => onToggleStatus(assignment.id, assignment.status)}
-            title={isCompleted ? 'Mark as Pending' : 'Mark as Completed'}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-180 ${
-              isCompleted
-                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20'
-                : 'bg-[#0E2A6D] text-white hover:bg-[#0E2A6D]/90 shadow-xs'
-            }`}
+            className="h-9 px-3.5 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium shadow-xs transition flex items-center gap-1.5 cursor-pointer"
           >
-            <CircleCheck size={15} />
+            <CircleCheck size={14} />
             <span>{isCompleted ? 'Completed' : 'Complete'}</span>
           </button>
 
@@ -136,7 +116,7 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
           <div className="relative">
             <button
               onClick={() => setShowAiMenu(!showAiMenu)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20 border border-purple-200 dark:border-purple-900/50 transition-all"
+              className="h-9 px-3.5 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center gap-1.5 cursor-pointer"
             >
               <Sparkles size={14} />
               <span>AI Tools</span>
@@ -145,19 +125,19 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
 
             {showAiMenu && (
               <div
-                className="absolute right-0 mt-2 w-56 bg-white dark:bg-[#1E293B] rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-1.5 z-30"
+                className="absolute right-0 mt-2 w-56 bg-[#FFFFFF] dark:bg-[#181818] rounded-[10px] shadow-lg border border-[#D1D5DB] dark:border-[#3F3F46] py-1 z-30"
                 onClick={() => setShowAiMenu(false)}
               >
-                <div className="px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400 border-b border-slate-100 dark:border-slate-800 mb-1">
+                <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] border-b border-[#E5E7EB] dark:border-[#2A2A2A] mb-1">
                   AI Capabilities
                 </div>
                 {aiOptions.map((opt) => (
                   <button
                     key={opt.action}
                     onClick={() => onAiAction(assignment, opt.action)}
-                    className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-purple-50 dark:hover:bg-purple-950/40 hover:text-purple-600 dark:hover:text-purple-300 transition-colors flex items-center gap-2"
+                    className="w-full text-left px-3 py-2 text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-colors flex items-center gap-2 cursor-pointer"
                   >
-                    <Sparkles size={13} className="text-purple-500" />
+                    <Sparkles size={13} />
                     {opt.label}
                   </button>
                 ))}
@@ -169,7 +149,7 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
           <button
             onClick={() => onEdit(assignment)}
             title="Edit Assignment"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="h-9 w-9 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
           >
             <SquarePen size={16} />
           </button>
@@ -178,7 +158,7 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
           <button
             onClick={() => onDelete(assignment.id)}
             title="Delete Assignment"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+            className="h-9 w-9 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
           >
             <Trash2 size={16} />
           </button>
@@ -186,11 +166,11 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
       </div>
 
       {/* Footer info: Due Date, Attachments, Remarks */}
-      <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2 font-semibold text-slate-500 dark:text-slate-400">
-          <Clock3 size={15} className={isOverdue ? 'text-rose-500' : 'text-slate-400'} />
+      <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex flex-wrap items-center justify-between gap-3 text-[14px]">
+        <div className="flex items-center gap-2 font-medium text-[#6B7280] dark:text-[#A3A3A3]">
+          <Clock3 size={15} />
           <span>Due:</span>
-          <span className={isOverdue ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-slate-800 dark:text-slate-200'}>
+          <span className="text-[#111827] dark:text-[#FAFAFA] font-bold">
             {formattedDueDate}
           </span>
         </div>
@@ -201,19 +181,19 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
             href={assignment.attachment_url || '#'}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium text-xs border border-slate-200 dark:border-slate-700"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-colors"
           >
             <Paperclip size={13} />
             <span className="truncate max-w-[160px]">{assignment.attachment_name}</span>
             {assignment.attachment_size && (
-              <span className="text-[10px] text-slate-400">({assignment.attachment_size})</span>
+              <span className="text-[10px] text-[#6B7280] dark:text-[#A3A3A3]">({assignment.attachment_size})</span>
             )}
             <Download size={13} className="ml-0.5" />
           </a>
         )}
 
         {assignment.remarks && (
-          <div className="w-full text-xs italic text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
+          <div className="w-full text-[12px] text-[#6B7280] dark:text-[#A3A3A3] bg-[#F8FAFC] dark:bg-[#111111] p-2.5 rounded-[6px] border border-[#E5E7EB] dark:border-[#2A2A2A]">
             <strong>Remarks:</strong> {assignment.remarks}
           </div>
         )}

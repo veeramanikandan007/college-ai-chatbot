@@ -72,29 +72,29 @@ export const DocumentViewerModal: React.FC<DocumentViewerModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
-          className="w-full max-w-5xl h-[88vh] overflow-hidden rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] shadow-2xl flex flex-col"
+          className="w-full max-w-5xl h-[88vh] overflow-hidden rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-lg flex flex-col"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2E8F0] dark:border-[#334155] bg-[#F8FAFC] dark:bg-[#0F172A]/50 shrink-0">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-[#F3F4F6] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] shrink-0">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="p-2.5 rounded-xl bg-[#0E2A6D] text-[#D9A441] shrink-0">
-                <FileText size={22} />
+              <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+                <FileText size={20} />
               </div>
               <div className="min-w-0">
-                <h2 className="font-heading text-base md:text-lg font-bold text-[#0E2A6D] dark:text-[#F8FAFC] truncate">
+                <h2 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] truncate">
                   {document.original_name}
                 </h2>
-                <div className="flex items-center gap-3 text-xs text-[#64748B] dark:text-[#94A3B8]">
+                <div className="flex items-center gap-3 text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
                   <span>{(document.file_size / (1024 * 1024)).toFixed(2)} MB</span>
                   <span>•</span>
                   <span>Folder: {document.folder_name || 'General'}</span>
                   <span>•</span>
-                  <span className="uppercase text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#1E4DB7]/10 text-[#1E4DB7] dark:text-[#60A5FA]">
+                  <span className="uppercase text-[10px] font-semibold px-2 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
                     {document.file_type}
                   </span>
                 </div>
@@ -105,21 +105,21 @@ export const DocumentViewerModal: React.FC<DocumentViewerModalProps> = ({
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => onOpenChat(document)}
-                className="px-3.5 py-2 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition"
+                className="h-9 px-4 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium flex items-center gap-1.5 shadow-xs transition cursor-pointer"
               >
                 <MessageSquare size={16} />
                 <span className="hidden sm:inline">Ask AI</span>
               </button>
               <button
                 onClick={() => onReadAloud(document.summary || document.extracted_text || document.original_name)}
-                className="p-2 rounded-xl text-[#0E2A6D] dark:text-[#60A5FA] bg-[#0E2A6D]/10 dark:bg-[#60A5FA]/10 hover:bg-[#0E2A6D]/20 transition"
+                className="p-2 rounded-[8px] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
                 title="Read Aloud"
               >
                 <Volume2 size={18} />
               </button>
               <button
                 onClick={onClose}
-                className="p-2 rounded-xl text-[#64748B] hover:text-[#1F2937] dark:hover:text-[#F8FAFC] hover:bg-[#F5F7FB] dark:hover:bg-[#334155] transition"
+                className="p-2 rounded-[8px] text-[#6B7280] hover:text-[#111827] dark:hover:text-[#FAFAFA] transition cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -127,33 +127,33 @@ export const DocumentViewerModal: React.FC<DocumentViewerModalProps> = ({
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex items-center gap-2 px-6 py-2 border-b border-[#E2E8F0] dark:border-[#334155] bg-[#F1F5F9]/50 dark:bg-[#0F172A]/30 shrink-0">
+          <div className="flex items-center gap-2 px-6 py-2 border-b border-[#F3F4F6] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] shrink-0">
             <button
               onClick={() => setActiveTab('view')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition ${
+              className={`h-9 px-4 rounded-[10px] text-[14px] font-medium flex items-center gap-2 transition-all duration-150 cursor-pointer ${
                 activeTab === 'view'
-                  ? 'bg-white dark:bg-[#1E293B] text-[#1E4DB7] dark:text-[#60A5FA] shadow-xs border border-[#E2E8F0] dark:border-[#334155]'
-                  : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#1F2937] dark:hover:text-[#F8FAFC]'
+                  ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                  : 'bg-[#FFFFFF] dark:bg-[#181818] text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
               }`}
             >
               <Eye size={15} /> Document Viewer
             </button>
             <button
               onClick={() => setActiveTab('summary')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition ${
+              className={`h-9 px-4 rounded-[10px] text-[14px] font-medium flex items-center gap-2 transition-all duration-150 cursor-pointer ${
                 activeTab === 'summary'
-                  ? 'bg-white dark:bg-[#1E293B] text-[#1E4DB7] dark:text-[#60A5FA] shadow-xs border border-[#E2E8F0] dark:border-[#334155]'
-                  : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#1F2937] dark:hover:text-[#F8FAFC]'
+                  ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                  : 'bg-[#FFFFFF] dark:bg-[#181818] text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
               }`}
             >
-              <Sparkles size={15} className="text-[#D9A441]" /> AI Summary & Insights
+              <Sparkles size={15} /> AI Summary & Insights
             </button>
             <button
               onClick={() => setActiveTab('extracted')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition ${
+              className={`h-9 px-4 rounded-[10px] text-[14px] font-medium flex items-center gap-2 transition-all duration-150 cursor-pointer ${
                 activeTab === 'extracted'
-                  ? 'bg-white dark:bg-[#1E293B] text-[#1E4DB7] dark:text-[#60A5FA] shadow-xs border border-[#E2E8F0] dark:border-[#334155]'
-                  : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#1F2937] dark:hover:text-[#F8FAFC]'
+                  ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                  : 'bg-[#FFFFFF] dark:bg-[#181818] text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
               }`}
             >
               <FileText size={15} /> Extracted Text
@@ -161,7 +161,7 @@ export const DocumentViewerModal: React.FC<DocumentViewerModalProps> = ({
           </div>
 
           {/* Main Body */}
-          <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-[#F8FAFC] dark:bg-[#0F172A]/40">
+          <div className="flex-1 overflow-y-auto p-6 bg-[#FFFFFF] dark:bg-[#181818]">
             {activeTab === 'view' && (
               <div className="h-full flex flex-col justify-center items-center">
                 {isImage ? (
@@ -169,15 +169,14 @@ export const DocumentViewerModal: React.FC<DocumentViewerModalProps> = ({
                     <img
                       src={`/uploads/${document.filename}`}
                       alt={document.original_name}
-                      className="max-h-[65vh] max-w-full rounded-xl shadow-lg border border-[#E2E8F0] dark:border-[#334155] object-contain"
+                      className="max-h-[65vh] max-w-full rounded-[12px] shadow-md border border-[#E5E7EB] dark:border-[#2A2A2A] object-contain"
                       onError={(e) => {
-                        // Fallback image display if mock
                         (e.target as HTMLElement).style.display = 'none';
                       }}
                     />
                   </div>
                 ) : isPdf ? (
-                  <div className="w-full h-full rounded-xl overflow-hidden border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B]">
+                  <div className="w-full h-full rounded-[12px] overflow-hidden border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818]">
                     <iframe
                       src={`/uploads/${document.filename}`}
                       title={document.original_name}
@@ -185,7 +184,7 @@ export const DocumentViewerModal: React.FC<DocumentViewerModalProps> = ({
                     />
                   </div>
                 ) : (
-                  <div className="w-full h-full p-6 bg-white dark:bg-[#1E293B] rounded-xl border border-[#E2E8F0] dark:border-[#334155] font-mono text-xs md:text-sm text-[#1F2937] dark:text-[#F8FAFC] whitespace-pre-wrap overflow-y-auto">
+                  <div className="w-full h-full p-6 bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[14px] text-[#111827] dark:text-[#FAFAFA] whitespace-pre-wrap overflow-y-auto">
                     {document.extracted_text ||
                       `Content of ${document.original_name}:\n\nUnit 1: Overview & Core Principles\nThis study guide contains foundational definitions, diagrams, solved examples, and practice questions for semester examination preparation.`}
                   </div>
@@ -197,67 +196,67 @@ export const DocumentViewerModal: React.FC<DocumentViewerModalProps> = ({
               <div className="space-y-6 max-w-3xl mx-auto">
                 {/* Meta Bar */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="p-4 rounded-xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] flex items-center gap-3">
-                    <Clock size={20} className="text-[#1E4DB7] dark:text-[#60A5FA]" />
+                  <div className="p-4 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center gap-3">
+                    <Clock size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
                     <div>
-                      <p className="text-[11px] font-semibold text-[#64748B] dark:text-[#94A3B8]">Est. Reading</p>
-                      <p className="text-sm font-bold text-[#1F2937] dark:text-[#F8FAFC]">
+                      <p className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Est. Reading</p>
+                      <p className="text-[16px] font-bold text-[#111827] dark:text-[#FAFAFA]">
                         {document.estimated_reading_time || 5} min
                       </p>
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] flex items-center gap-3">
-                    <Layers size={20} className="text-[#D9A441]" />
+                  <div className="p-4 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center gap-3">
+                    <Layers size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
                     <div>
-                      <p className="text-[11px] font-semibold text-[#64748B] dark:text-[#94A3B8]">Vector Chunks</p>
-                      <p className="text-sm font-bold text-[#1F2937] dark:text-[#F8FAFC]">
+                      <p className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Vector Chunks</p>
+                      <p className="text-[16px] font-bold text-[#111827] dark:text-[#FAFAFA]">
                         {document.chunk_count || 12} Chunks
                       </p>
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] flex items-center gap-3">
-                    <BookOpen size={20} className="text-emerald-500" />
+                  <div className="p-4 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center gap-3">
+                    <BookOpen size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
                     <div>
-                      <p className="text-[11px] font-semibold text-[#64748B] dark:text-[#94A3B8]">Difficulty</p>
-                      <p className="text-sm font-bold text-[#1F2937] dark:text-[#F8FAFC]">
+                      <p className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Difficulty</p>
+                      <p className="text-[16px] font-bold text-[#111827] dark:text-[#FAFAFA]">
                         {document.difficulty || 'Intermediate'}
                       </p>
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] flex items-center gap-3">
-                    <Sparkles size={20} className="text-purple-500" />
+                  <div className="p-4 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center gap-3">
+                    <Sparkles size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
                     <div>
-                      <p className="text-[11px] font-semibold text-[#64748B] dark:text-[#94A3B8]">RAG Status</p>
-                      <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">Indexed</p>
+                      <p className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">RAG Status</p>
+                      <p className="text-[16px] font-bold text-[#111827] dark:text-[#FAFAFA]">Indexed</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Summary Card */}
-                <div className="p-6 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] space-y-4 shadow-sm">
-                  <h3 className="font-heading text-lg font-bold text-[#0E2A6D] dark:text-[#F8FAFC] flex items-center gap-2">
-                    <Sparkles size={20} className="text-[#D9A441]" />
-                    AI Executive Overview
+                <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-4 shadow-xs">
+                  <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+                    <Sparkles size={20} />
+                    <span>AI Executive Overview</span>
                   </h3>
-                  <p className="text-sm leading-relaxed text-[#334155] dark:text-[#CBD5E1]">
+                  <p className="text-[14px] leading-relaxed text-[#4B5563] dark:text-[#D4D4D4]">
                     {document.summary ||
                       `Auto-generated overview for ${document.original_name}. Covers core theoretical frameworks, essential equations, real-world engineering trade-offs, and critical exam questions.`}
                   </p>
 
                   {/* Keywords */}
                   {document.keywords && document.keywords.length > 0 && (
-                    <div className="pt-4 border-t border-[#E2E8F0] dark:border-[#334155] space-y-2">
-                      <p className="text-xs font-semibold text-[#64748B] dark:text-[#94A3B8] flex items-center gap-1.5">
+                    <div className="pt-4 border-t border-[#F3F4F6] dark:border-[#2A2A2A] space-y-2">
+                      <p className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1.5">
                         <Tag size={14} /> Key Concepts & Tags
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {document.keywords.map((kw, i) => (
                           <span
                             key={i}
-                            className="text-xs font-medium px-3 py-1 rounded-full bg-[#1E4DB7]/10 text-[#1E4DB7] dark:text-[#60A5FA]"
+                            className="text-[12px] font-medium px-3 py-1 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]"
                           >
                             #{kw}
                           </span>
@@ -272,18 +271,18 @@ export const DocumentViewerModal: React.FC<DocumentViewerModalProps> = ({
             {activeTab === 'extracted' && (
               <div className="max-w-4xl mx-auto space-y-4">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold uppercase text-[#64748B] dark:text-[#94A3B8]">
+                  <p className="text-[12px] font-semibold uppercase text-[#6B7280] dark:text-[#A3A3A3]">
                     Raw Extracted Text Snippets
                   </p>
                   <button
                     onClick={handleCopyText}
-                    className="px-3 py-1.5 rounded-lg border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-xs font-bold text-[#0E2A6D] dark:text-[#60A5FA] flex items-center gap-1.5 shadow-xs transition"
+                    className="h-8 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1.5 transition cursor-pointer"
                   >
-                    {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                    {copied ? <Check size={14} /> : <Copy size={14} />}
                     {copied ? 'Copied!' : 'Copy Text'}
                   </button>
                 </div>
-                <div className="p-6 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] text-xs md:text-sm font-mono text-[#334155] dark:text-[#CBD5E1] leading-relaxed whitespace-pre-wrap">
+                <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[14px] text-[#4B5563] dark:text-[#D4D4D4] leading-relaxed whitespace-pre-wrap">
                   {document.extracted_text ||
                     `Sample Extracted Text from ${document.original_name}:\n\nSection 1.1 - Overview\nComputer science fundamentals dictate modular software design and state synchronization...\n\nSection 2.4 - Algorithm Breakdown\n1. Initialize semaphore s = 1\n2. Wait(s) locks resource\n3. Signal(s) releases critical region.`}
                 </div>
@@ -292,16 +291,16 @@ export const DocumentViewerModal: React.FC<DocumentViewerModalProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between px-6 py-4 border-t border-[#E2E8F0] dark:border-[#334155] bg-[#F8FAFC] dark:bg-[#0F172A]/50 shrink-0">
+          <div className="flex items-center justify-between px-6 py-4 border-t border-[#F3F4F6] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] shrink-0">
             <button
               onClick={() => onOpenChat(document)}
-              className="px-5 py-2.5 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white font-semibold text-sm flex items-center gap-2 shadow-md transition"
+              className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] flex items-center gap-2 shadow-xs transition cursor-pointer"
             >
               <MessageSquare size={18} /> Chat with this Document
             </button>
             <button
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-sm font-semibold text-[#475569] dark:text-[#CBD5E1] hover:bg-[#E2E8F0]/50 transition"
+              className="h-10 px-5 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
             >
               Close
             </button>

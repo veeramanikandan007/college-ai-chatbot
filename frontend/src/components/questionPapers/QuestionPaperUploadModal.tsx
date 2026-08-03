@@ -85,17 +85,17 @@ export const QuestionPaperUploadModal: React.FC<QuestionPaperUploadModalProps> =
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 my-8 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+      <div className="relative w-full max-w-2xl bg-[#FFFFFF] dark:bg-[#181818] rounded-[16px] shadow-lg border border-[#D1D5DB] dark:border-[#3F3F46] my-8 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40">
-          <h2 className="text-xl font-bold font-heading text-slate-900 dark:text-white flex items-center gap-2">
-            <Upload className="text-[#0E2A6D] dark:text-[#60A5FA]" size={22} />
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
+          <h2 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+            <Upload size={20} />
             <span>Upload Question Papers (Single/Bulk)</span>
           </h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1 rounded text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA] cursor-pointer"
           >
             <X size={20} />
           </button>
@@ -104,7 +104,7 @@ export const QuestionPaperUploadModal: React.FC<QuestionPaperUploadModalProps> =
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
           {errorMsg && (
-            <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-semibold flex items-center gap-2">
+            <div className="p-3 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium flex items-center gap-2">
               <CircleAlert size={16} />
               {errorMsg}
             </div>
@@ -113,13 +113,13 @@ export const QuestionPaperUploadModal: React.FC<QuestionPaperUploadModalProps> =
           {/* Department & Semester */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
                 Department *
               </label>
               <select
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none cursor-pointer"
               >
                 {(meta?.departments || [
                   'Computer Science & Engineering',
@@ -137,13 +137,13 @@ export const QuestionPaperUploadModal: React.FC<QuestionPaperUploadModalProps> =
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
                 Semester *
               </label>
               <select
                 value={semester}
                 onChange={(e) => setSemester(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none cursor-pointer"
               >
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                   <option key={s} value={s}>
@@ -157,7 +157,7 @@ export const QuestionPaperUploadModal: React.FC<QuestionPaperUploadModalProps> =
           {/* Subject Code & Subject Name */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
                 Subject Code *
               </label>
               <input
@@ -166,12 +166,12 @@ export const QuestionPaperUploadModal: React.FC<QuestionPaperUploadModalProps> =
                 value={subjectCode}
                 onChange={(e) => handleSubjectSelect(e.target.value)}
                 placeholder="e.g. CS8591"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
                 Subject Name *
               </label>
               <input
@@ -180,7 +180,7 @@ export const QuestionPaperUploadModal: React.FC<QuestionPaperUploadModalProps> =
                 value={subjectName}
                 onChange={(e) => setSubjectName(e.target.value)}
                 placeholder="e.g. Computer Networks"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
               />
             </div>
           </div>
@@ -188,13 +188,13 @@ export const QuestionPaperUploadModal: React.FC<QuestionPaperUploadModalProps> =
           {/* Year, Regulation, Exam Type */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
                 Academic Year *
               </label>
               <select
                 value={academicYear}
                 onChange={(e) => setAcademicYear(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none cursor-pointer"
               >
                 {[2024, 2023, 2022, 2021, 2020, 2019, 2018].map((y) => (
                   <option key={y} value={y}>
@@ -205,13 +205,13 @@ export const QuestionPaperUploadModal: React.FC<QuestionPaperUploadModalProps> =
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
                 Regulation *
               </label>
               <select
                 value={regulation}
                 onChange={(e) => setRegulation(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none cursor-pointer"
               >
                 {['R2021', 'R2017', 'R2023'].map((r) => (
                   <option key={r} value={r}>
@@ -222,13 +222,13 @@ export const QuestionPaperUploadModal: React.FC<QuestionPaperUploadModalProps> =
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
                 Exam Type *
               </label>
               <select
                 value={examType}
                 onChange={(e) => setExamType(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none cursor-pointer"
               >
                 <option value="University Exam">University Exam</option>
                 <option value="Model Exam">Model Exam</option>
@@ -239,7 +239,7 @@ export const QuestionPaperUploadModal: React.FC<QuestionPaperUploadModalProps> =
 
           {/* Faculty Name */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
+            <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
               Faculty / Instructor
             </label>
             <input
@@ -247,27 +247,27 @@ export const QuestionPaperUploadModal: React.FC<QuestionPaperUploadModalProps> =
               value={facultyName}
               onChange={(e) => setFacultyName(e.target.value)}
               placeholder="e.g. Dr. Aris Thorne"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+              className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
             />
           </div>
 
           {/* PDF Files Dropzone */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
+            <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
               Select PDF Files (Single or Bulk)
             </label>
-            <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-6 text-center hover:border-[#0E2A6D] dark:hover:border-[#60A5FA] transition-colors">
-              <Upload className="mx-auto text-slate-400 mb-2" size={32} />
-              <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
+            <div className="border border-dashed border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111] rounded-[12px] p-6 text-center">
+              <Upload className="mx-auto text-[#6B7280] dark:text-[#A3A3A3] mb-2" size={28} />
+              <p className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">
                 Click to browse or drag PDF question papers here
               </p>
-              <p className="text-[11px] text-slate-400 mt-1">PDF format only. Maximum 15MB per file.</p>
+              <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] mt-1">PDF format only. Maximum 15MB per file.</p>
               <input
                 type="file"
                 multiple
                 accept=".pdf"
                 onChange={handleFileChange}
-                className="mt-3 text-xs font-semibold text-slate-600 dark:text-slate-300 mx-auto"
+                className="mt-3 text-[12px] text-[#111827] dark:text-[#FAFAFA] mx-auto cursor-pointer"
               />
             </div>
 
@@ -276,13 +276,13 @@ export const QuestionPaperUploadModal: React.FC<QuestionPaperUploadModalProps> =
                 {files.map((f, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between p-2 rounded-xl bg-blue-50/50 dark:bg-blue-950/30 text-xs font-medium text-blue-900 dark:text-blue-200 border border-blue-200 dark:border-blue-900/50"
+                    className="flex items-center justify-between p-2.5 rounded-[6px] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] border border-[#D1D5DB] dark:border-[#3F3F46] text-[12px]"
                   >
                     <div className="flex items-center gap-2 truncate">
                       <FileText size={15} />
                       <span className="truncate">{f.name}</span>
                     </div>
-                    <span className="text-[10px] text-slate-400">({(f.size / 1048576).toFixed(1)} MB)</span>
+                    <span className="text-[10px] text-[#6B7280] dark:text-[#A3A3A3]">({(f.size / 1048576).toFixed(1)} MB)</span>
                   </div>
                 ))}
               </div>
@@ -290,18 +290,18 @@ export const QuestionPaperUploadModal: React.FC<QuestionPaperUploadModalProps> =
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E5E7EB] dark:border-[#2A2A2A]">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="h-10 px-5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={uploading || files.length === 0}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-[#0E2A6D] text-white hover:bg-[#0E2A6D]/90 disabled:opacity-50 transition-all shadow-xs"
+              className="h-10 px-6 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs cursor-pointer disabled:opacity-50 inline-flex items-center gap-2"
             >
               <CheckCircle2 size={16} />
               <span>{uploading ? 'Uploading & Indexing RAG...' : `Upload ${files.length} Paper(s)`}</span>

@@ -197,21 +197,22 @@ export default function AttendancePage() {
         {/* ========================================================================= */}
         {/* HEADER BAR                                                                 */}
         {/* ========================================================================= */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#111827] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs print:border-none print:shadow-none">
+        {/* HEADER BAR */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-zinc-900 p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-xs print:border-none print:shadow-none">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white flex items-center justify-center shadow-md border border-[#D9A441]/30 shrink-0">
-              <Award size={30} strokeWidth={1.75} />
+            <div className="w-12 h-12 rounded-[12px] bg-[#F3F4F6] text-[#111827] dark:bg-zinc-800 dark:text-zinc-100 flex items-center justify-center border border-[#E5E7EB] dark:border-zinc-700 shrink-0">
+              <Award size={22} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="font-heading font-extrabold text-2xl md:text-3xl text-[#0E2A6D] dark:text-white tracking-wide">
+                <h1 className="font-heading font-bold text-2xl md:text-3xl text-zinc-900 dark:text-zinc-100 tracking-tight">
                   Smart Attendance Dashboard
                 </h1>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#1E4DB7]/10 text-[#1E4DB7] dark:text-[#60A5FA] font-bold border border-[#1E4DB7]/20">
+                <span className="text-xs px-2.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-medium border border-zinc-200 dark:border-zinc-700">
                   AI Analytics
                 </span>
               </div>
-              <p className="text-xs md:text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5">
+              <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
                 {data.department} • Semester {data.semester} ({data.academic_year})
               </p>
             </div>
@@ -221,14 +222,14 @@ export default function AttendancePage() {
           <div className="flex items-center gap-3 shrink-0 print:hidden">
             <button
               onClick={fetchDashboardData}
-              className="p-2.5 rounded-xl bg-[#F1F5F9] dark:bg-[#1E293B] text-[#64748B] dark:text-[#94A3B8] hover:text-[#0E2A6D] dark:hover:text-white transition"
+              className="p-2.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition border border-zinc-200 dark:border-zinc-700"
               title="Refresh Analytics"
             >
               <RefreshCw size={18} />
             </button>
             <button
               onClick={handleExportPDF}
-              className="px-4 py-2.5 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white font-bold text-xs shadow-xs transition flex items-center gap-2 cursor-pointer"
+              className="px-4 py-2.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-medium text-xs shadow-xs transition flex items-center gap-2 cursor-pointer"
             >
               <Download size={16} />
               Export PDF Report
@@ -236,18 +237,16 @@ export default function AttendancePage() {
           </div>
         </div>
 
-        {/* ========================================================================= */}
-        {/* TOP METRICS & STATS CARDS GRID (6 Cards)                                  */}
-        {/* ========================================================================= */}
+        {/* TOP METRICS & STATS CARDS GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
           
-          {/* Card 1: Overall Percentage Radial Gauge (Span 2) */}
-          <div className="sm:col-span-2 bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white p-6 rounded-2xl shadow-md border border-[#D9A441]/30 flex items-center justify-between">
+          {/* Card 1: Overall Percentage Gauge */}
+          <div className="sm:col-span-2 bg-zinc-900 dark:bg-zinc-900 text-white p-6 rounded-xl shadow-xs border border-zinc-800 flex items-center justify-between">
             <div className="space-y-2">
-              <span className="text-xs uppercase tracking-wider font-bold text-slate-300">
+              <span className="text-xs uppercase tracking-wider font-medium text-zinc-400">
                 Overall Attendance
               </span>
-              <div className="text-4xl md:text-5xl font-extrabold font-heading text-white">
+              <div className="text-4xl md:text-5xl font-bold font-heading text-white">
                 {data.overall_percentage}%
               </div>
               <p className="text-xs text-slate-200">

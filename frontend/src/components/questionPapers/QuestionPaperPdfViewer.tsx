@@ -67,39 +67,39 @@ export const QuestionPaperPdfViewer: React.FC<QuestionPaperPdfViewerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-900/70 backdrop-blur-xs">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-xs">
       <div
         ref={containerRef}
-        className={`relative w-full max-w-5xl bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden ${
+        className={`relative w-full max-w-5xl bg-[#FFFFFF] dark:bg-[#181818] rounded-[16px] shadow-lg border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col overflow-hidden ${
           isFullscreen ? 'h-screen w-screen max-w-none rounded-none' : 'h-[90vh]'
         }`}
       >
         {/* Toolbar Header */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
           {/* Document Title */}
           <div className="flex items-center gap-2 min-w-0">
-            <FileText className="text-[#0E2A6D] dark:text-[#60A5FA] shrink-0" size={20} />
-            <h3 className="text-sm font-bold font-heading text-slate-900 dark:text-white truncate max-w-md">
+            <FileText className="shrink-0" size={20} />
+            <h3 className="text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA] truncate max-w-md">
               {title}
             </h3>
           </div>
 
           {/* Navigation Controls */}
-          <div className="flex items-center gap-2 bg-white dark:bg-slate-800 rounded-xl px-2 py-1 border border-slate-200 dark:border-slate-700">
+          <div className="flex items-center gap-2 bg-[#FFFFFF] dark:bg-[#181818] rounded-[8px] px-3 py-1 border border-[#D1D5DB] dark:border-[#3F3F46]">
             <button
               onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
               disabled={currentPage <= 1}
-              className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30 text-slate-700 dark:text-slate-200"
+              className="p-1 rounded hover:bg-[#F9FAFB] dark:hover:bg-[#232323] disabled:opacity-30 text-[#111827] dark:text-[#FAFAFA] cursor-pointer"
             >
               <ChevronLeft size={16} />
             </button>
-            <span className="text-xs font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">
+            <span className="text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] whitespace-nowrap">
               Page {currentPage} of {totalPages}
             </span>
             <button
               onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
               disabled={currentPage >= totalPages}
-              className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30 text-slate-700 dark:text-slate-200"
+              className="p-1 rounded hover:bg-[#F9FAFB] dark:hover:bg-[#232323] disabled:opacity-30 text-[#111827] dark:text-[#FAFAFA] cursor-pointer"
             >
               <ChevronRight size={16} />
             </button>
@@ -108,21 +108,21 @@ export const QuestionPaperPdfViewer: React.FC<QuestionPaperPdfViewerProps> = ({
           {/* Zoom, Rotate, Print, Fullscreen, Download, Close */}
           <div className="flex items-center gap-1.5 shrink-0">
             {/* Zoom Controls */}
-            <div className="flex items-center gap-1 bg-white dark:bg-slate-800 rounded-xl p-0.5 border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center gap-1 bg-[#FFFFFF] dark:bg-[#181818] rounded-[8px] p-1 border border-[#D1D5DB] dark:border-[#3F3F46]">
               <button
                 onClick={handleZoomOut}
                 title="Zoom Out"
-                className="p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                className="p-1 rounded text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] cursor-pointer"
               >
                 <ZoomOut size={15} />
               </button>
-              <span className="text-xs font-bold px-1 text-slate-700 dark:text-slate-200 min-w-[38px] text-center">
+              <span className="text-[12px] font-medium px-1 text-[#111827] dark:text-[#FAFAFA] min-w-[38px] text-center">
                 {zoomLevel}%
               </span>
               <button
                 onClick={handleZoomIn}
                 title="Zoom In"
-                className="p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                className="p-1 rounded text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] cursor-pointer"
               >
                 <ZoomIn size={15} />
               </button>
@@ -132,7 +132,7 @@ export const QuestionPaperPdfViewer: React.FC<QuestionPaperPdfViewerProps> = ({
             <button
               onClick={handleRotate}
               title="Rotate 90°"
-              className="p-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
+              className="h-9 w-9 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
             >
               <RotateCw size={15} />
             </button>
@@ -141,7 +141,7 @@ export const QuestionPaperPdfViewer: React.FC<QuestionPaperPdfViewerProps> = ({
             <button
               onClick={handlePrint}
               title="Print Question Paper"
-              className="p-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
+              className="h-9 w-9 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
             >
               <Printer size={15} />
             </button>
@@ -150,7 +150,7 @@ export const QuestionPaperPdfViewer: React.FC<QuestionPaperPdfViewerProps> = ({
             <button
               onClick={toggleFullscreen}
               title="Toggle Fullscreen"
-              className="p-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
+              className="h-9 w-9 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
             >
               <Expand size={15} />
             </button>
@@ -160,7 +160,7 @@ export const QuestionPaperPdfViewer: React.FC<QuestionPaperPdfViewerProps> = ({
               href={pdfUrl}
               download={fileName}
               title="Download PDF"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0E2A6D] text-white text-xs font-bold hover:bg-[#0E2A6D]/90 shadow-xs"
+              className="h-9 px-4 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium shadow-xs transition flex items-center gap-1.5 cursor-pointer"
             >
               <Download size={14} />
               <span>Download</span>
@@ -169,17 +169,17 @@ export const QuestionPaperPdfViewer: React.FC<QuestionPaperPdfViewerProps> = ({
             {/* Close */}
             <button
               onClick={onClose}
-              className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="p-1 rounded text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA] cursor-pointer"
             >
-              <X size={18} />
+              <X size={20} />
             </button>
           </div>
         </div>
 
         {/* PDF Frame Container */}
-        <div className="flex-1 bg-slate-100 dark:bg-slate-900 overflow-auto flex items-center justify-center p-4">
+        <div className="flex-1 bg-[#F8FAFC] dark:bg-[#111111] overflow-auto flex items-center justify-center p-4">
           <div
-            className="w-full h-full max-w-4xl bg-white dark:bg-[#1E293B] shadow-xl rounded-xl overflow-hidden transition-transform duration-200"
+            className="w-full h-full max-w-4xl bg-[#FFFFFF] dark:bg-[#181818] shadow-lg rounded-[12px] overflow-hidden transition-transform duration-200"
             style={{
               transform: `scale(${zoomLevel / 100}) rotate(${rotation}deg)`,
               transformOrigin: 'center center',

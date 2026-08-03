@@ -114,7 +114,7 @@ export const MockInterviewsPage: React.FC = () => {
   // If in active session mode, show full-screen interview cockpit
   if (activeSession) {
     return (
-      <div className="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-slate-950 p-4 sm:p-6 md:p-8">
+      <div className="w-full h-full overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] p-4 md:p-8">
         <MockInterviewSessionView
           session={activeSession}
           onSessionComplete={(evalRes) => {
@@ -132,156 +132,171 @@ export const MockInterviewsPage: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-slate-950 p-4 sm:p-6 md:p-8 space-y-6">
-      {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2.5 rounded-xl bg-[#0E2A6D] text-white dark:bg-[#60A5FA] dark:text-slate-950 shadow-xs">
-              <Brain size={22} />
+    <div className="w-full h-full overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 md:p-8 transition-colors">
+      <div className="w-full max-w-[1600px] mx-auto space-y-8">
+
+        {/* ========================================================================= */}
+        {/* 1. PAGE HEADER CARD                                                       */}
+        {/* ========================================================================= */}
+        <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 md:p-8 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <UserRound size={24} />
             </div>
-            <h1 className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
-              AI Mock Interviews
-            </h1>
+            <div>
+              <h1 className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight flex items-center gap-3">
+                AI Mock Interviews
+                <span className="text-[12px] font-medium px-2.5 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
+                  Placement Preparation
+                </span>
+              </h1>
+              <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-1">
+                Attend realistic AI HR, Technical, Coding, Aptitude & Group Discussion interviews with instant 7-metric evaluation and voice support.
+              </p>
+            </div>
           </div>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            Attend realistic AI HR, Technical, Coding, Aptitude & Group Discussion interviews with instant 7-metric evaluation and voice support.
-          </p>
+
+          <button
+            onClick={() => setIsSetupOpen(true)}
+            className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition flex items-center gap-2 cursor-pointer shrink-0"
+          >
+            <Sparkles size={16} />
+            <span>Start Mock Interview</span>
+          </button>
         </div>
 
-        {/* Start Interview Button */}
-        <button
-          onClick={() => setIsSetupOpen(true)}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0E2A6D] text-white text-xs font-bold hover:bg-[#0E2A6D]/90 transition-all shadow-xs"
-        >
-          <Sparkles size={16} />
-          <span>Start New Interview</span>
-        </button>
-      </div>
-
-      {/* Dashboard Stats Cards */}
-      {stats && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Total Interviews */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-xs space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Total Interviews</span>
-              <div className="p-2 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
-                <Brain size={18} />
+        {/* ========================================================================= */}
+        {/* 2. DASHBOARD OVERVIEW CARDS                                               */}
+        {/* ========================================================================= */}
+        {stats && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between">
+              <div>
+                <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Total Interviews</p>
+                <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{stats.total_interviews}</p>
+              </div>
+              <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
+                <Brain size={20} />
               </div>
             </div>
-            <p className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
-              {stats.total_interviews}
-            </p>
-          </div>
 
-          {/* Average Score */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-xs space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Average Score</span>
-              <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                <Award size={18} />
+            <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between">
+              <div>
+                <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Average Score</p>
+                <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{stats.average_score}%</p>
+              </div>
+              <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
+                <Award size={20} />
               </div>
             </div>
-            <p className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
-              {stats.average_score}%
-            </p>
-          </div>
 
-          {/* Best Score */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-xs space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Best Score</span>
-              <div className="p-2 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
-                <Sparkles size={18} />
+            <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between">
+              <div>
+                <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Best Score</p>
+                <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{stats.best_score}%</p>
+              </div>
+              <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
+                <Sparkles size={20} />
               </div>
             </div>
-            <p className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
-              {stats.best_score}%
-            </p>
-          </div>
 
-          {/* Completed Sessions */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-xs space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Completed Sessions</span>
-              <div className="p-2 rounded-xl bg-[#D9A441]/10 text-[#D9A441]">
-                <CheckCircle2 size={18} />
+            <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between">
+              <div>
+                <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Completed Sessions</p>
+                <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{stats.completed_count}</p>
+              </div>
+              <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
+                <CheckCircle2 size={20} />
               </div>
             </div>
-            <p className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
-              {stats.completed_count}
-            </p>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Search & Category Filter Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white dark:bg-[#1E293B] p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
-        {/* Search */}
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search interview title, role, topics..."
-            className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
-          />
-        </div>
-
-        {/* Category Pills */}
-        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl">
-          {['All', 'HR', 'Technical', 'Coding', 'Aptitude', 'Group Discussion'].map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setTypeFilter(cat)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                typeFilter === cat
-                  ? 'bg-white dark:bg-[#1E293B] text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Interview Cards Grid */}
-      {loading ? (
-        <div className="py-16 text-center text-slate-400 text-xs">
-          Loading interview history...
-        </div>
-      ) : interviews.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {interviews.map((item) => (
-            <MockInterviewCard
-              key={item.id}
-              interview={item}
-              onViewFeedback={handleViewFeedback}
-              onDelete={handleDeleteInterview}
+        {/* ========================================================================= */}
+        {/* 3. SEARCH & CATEGORY FILTER TOOLBAR                                       */}
+        {/* ========================================================================= */}
+        <div className="bg-[#FFFFFF] dark:bg-[#181818] p-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A3A3A3]" size={18} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search interview title, role, topics..."
+              className="w-full h-10 pl-10 pr-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
             />
-          ))}
-        </div>
-      ) : (
-        <div className="py-16 text-center text-slate-400 text-xs">
-          No mock interview sessions match the current search or category filter.
-        </div>
-      )}
+          </div>
 
-      {/* Modals */}
-      <MockInterviewSetupModal
-        isOpen={isSetupOpen}
-        onClose={() => setIsSetupOpen(false)}
-        onStartSession={handleStartSession}
-      />
+          <div className="flex flex-wrap items-center bg-[#F8FAFC] dark:bg-[#111111] p-1.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46]">
+            {['All', 'HR', 'Technical', 'Coding', 'Aptitude', 'Group Discussion'].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setTypeFilter(cat)}
+                className={`h-9 px-3.5 text-[14px] font-medium rounded-[8px] transition-all cursor-pointer ${
+                  typeFilter === cat
+                    ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                    : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      <MockInterviewFeedbackModal
-        isOpen={!!selectedEvaluation}
-        onClose={() => setSelectedEvaluation(null)}
-        evaluation={selectedEvaluation}
-      />
+        {/* ========================================================================= */}
+        {/* 4. INTERVIEW CARDS GRID                                                   */}
+        {/* ========================================================================= */}
+        {loading ? (
+          <div className="py-24 flex flex-col items-center justify-center text-center">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#111827] dark:border-[#FAFAFA] border-t-transparent mb-4" />
+            <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
+              Loading mock interview sessions...
+            </p>
+          </div>
+        ) : interviews.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {interviews.map((item) => (
+              <MockInterviewCard
+                key={item.id}
+                interview={item}
+                onViewFeedback={handleViewFeedback}
+                onDelete={handleDeleteInterview}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="py-20 text-center bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] p-8 shadow-xs space-y-3">
+            <UserRound className="mx-auto text-[#6B7280] dark:text-[#A3A3A3] opacity-40" size={48} />
+            <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+              No Interviews Yet
+            </h3>
+            <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] max-w-sm mx-auto">
+              Start your first AI Mock Interview and improve your placement skills.
+            </p>
+            <button
+              onClick={() => setIsSetupOpen(true)}
+              className="mt-2 h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs cursor-pointer inline-flex items-center gap-2"
+            >
+              <Sparkles size={16} />
+              <span>Start Mock Interview</span>
+            </button>
+          </div>
+        )}
+
+        {/* Modals */}
+        <MockInterviewSetupModal
+          isOpen={isSetupOpen}
+          onClose={() => setIsSetupOpen(false)}
+          onStartSession={handleStartSession}
+        />
+
+        <MockInterviewFeedbackModal
+          isOpen={!!selectedEvaluation}
+          onClose={() => setSelectedEvaluation(null)}
+          evaluation={selectedEvaluation}
+        />
+      </div>
     </div>
   );
 };

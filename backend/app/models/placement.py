@@ -67,7 +67,9 @@ class ResumeProfile(Base):
     formatting_score = Column(Integer, default=88)
     missing_skills = Column(String, nullable=True)
     suggestions = Column(Text, nullable=True)
+    template = Column(String, default="modern")
     resume_data = Column(Text, nullable=True) # JSON payload of resume fields
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
 class Certificate(Base):

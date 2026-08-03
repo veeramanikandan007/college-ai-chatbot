@@ -19,20 +19,6 @@ interface Props {
   onRefresh: () => void;
 }
 
-const CATEGORY_COLORS: Record<string, string> = {
-  Academic: 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30',
-  Attendance: 'text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-900/30',
-  Assignment: 'text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-900/30',
-  Interview: 'text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-900/30',
-  Placement: 'text-cyan-600 bg-cyan-50 dark:text-cyan-400 dark:bg-cyan-900/30',
-};
-
-const STATUS_BADGE: Record<string, string> = {
-  'In Progress': 'text-blue-700 bg-blue-100 dark:text-blue-300 dark:bg-blue-900/40',
-  'Completed': 'text-emerald-700 bg-emerald-100 dark:text-emerald-300 dark:bg-emerald-900/40',
-  'Overdue': 'text-red-700 bg-red-100 dark:text-red-300 dark:bg-red-900/40',
-};
-
 interface CreateModalProps {
   onClose: () => void;
   onCreated: () => void;
@@ -74,31 +60,41 @@ const CreateGoalModal: React.FC<CreateModalProps> = ({ onClose, onCreated }) => 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-[#0E2A6D] text-white"><Target size={16} /></div>
-            <h3 className="text-sm font-bold font-heading text-slate-900 dark:text-white">Create New Goal</h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+      <div className="relative w-full max-w-md bg-[#FFFFFF] dark:bg-[#181818] rounded-[16px] shadow-lg border border-[#D1D5DB] dark:border-[#3F3F46] overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <Target size={20} />
+            </div>
+            <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">Create New Goal</h3>
           </div>
-          <button onClick={onClose} className="btn-icon"><X size={18} /></button>
+          <button onClick={onClose} className="p-1 rounded text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA] cursor-pointer">
+            <X size={20} />
+          </button>
         </div>
-        <div className="px-6 py-5 space-y-4">
+
+        <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Goal Title *</label>
+            <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
+              Goal Title *
+            </label>
             <input
-              className="input-standard w-full"
-              placeholder="e.g., Achieve 90% attendance in Computer Networks"
+              type="text"
+              className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
+              placeholder="e.g. Achieve 90% attendance"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
             />
           </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Category</label>
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
+                Category
+              </label>
               <select
-                className="input-standard w-full"
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none cursor-pointer"
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
               >
@@ -107,10 +103,13 @@ const CreateGoalModal: React.FC<CreateModalProps> = ({ onClose, onCreated }) => 
                 ))}
               </select>
             </div>
+
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Unit</label>
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
+                Unit
+              </label>
               <select
-                className="input-standard w-full"
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none cursor-pointer"
                 value={form.unit}
                 onChange={(e) => setForm({ ...form, unit: e.target.value })}
               >
@@ -120,51 +119,67 @@ const CreateGoalModal: React.FC<CreateModalProps> = ({ onClose, onCreated }) => 
               </select>
             </div>
           </div>
+
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Target Metric *</label>
+            <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
+              Target Metric *
+            </label>
             <input
-              className="input-standard w-full"
-              placeholder="e.g., Attendance Rate"
+              type="text"
+              className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
+              placeholder="e.g. Attendance Rate"
               value={form.target_metric}
               onChange={(e) => setForm({ ...form, target_metric: e.target.value })}
             />
           </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Current Value</label>
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
+                Current Value
+              </label>
               <input
                 type="number"
-                className="input-standard w-full"
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
                 value={form.current_value}
                 onChange={(e) => setForm({ ...form, current_value: parseFloat(e.target.value) || 0 })}
               />
             </div>
+
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Target Value</label>
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
+                Target Value
+              </label>
               <input
                 type="number"
-                className="input-standard w-full"
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
                 value={form.target_value}
                 onChange={(e) => setForm({ ...form, target_value: parseFloat(e.target.value) || 100 })}
               />
             </div>
           </div>
+
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Deadline</label>
+            <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
+              Deadline
+            </label>
             <input
               type="date"
-              className="input-standard w-full"
+              className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none cursor-pointer"
               value={form.deadline}
               onChange={(e) => setForm({ ...form, deadline: e.target.value })}
             />
           </div>
         </div>
-        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100 dark:border-slate-800">
-          <button onClick={onClose} className="btn-secondary">Cancel</button>
+
+        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
+          <button onClick={onClose} className="h-10 px-5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium cursor-pointer">
+            Cancel
+          </button>
           <button
             onClick={handleSubmit}
             disabled={saving}
-            className="btn-primary disabled:opacity-60"
+            className="h-10 px-6 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs cursor-pointer disabled:opacity-50"
           >
             {saving ? 'Creating...' : 'Create Goal'}
           </button>
@@ -180,11 +195,6 @@ const GoalCard: React.FC<{
 }> = ({ goal, onUpdate }) => {
   const { showToast } = useToast();
   const [updatingProgress, setUpdatingProgress] = useState(false);
-  const [localValue, setLocalValue] = useState(goal.current_value);
-  const [editing, setEditing] = useState(false);
-
-  const catColor = CATEGORY_COLORS[goal.category] || CATEGORY_COLORS.Academic;
-  const statusBadge = STATUS_BADGE[goal.status] || STATUS_BADGE['In Progress'];
 
   const handleMarkComplete = async () => {
     setUpdatingProgress(true);
@@ -199,188 +209,120 @@ const GoalCard: React.FC<{
     }
   };
 
-  const handleProgressUpdate = async () => {
-    setUpdatingProgress(true);
-    try {
-      await updateGoal(goal.id, { current_value: localValue });
-      showToast('Goal progress updated.', 'success');
-      onUpdate();
-      setEditing(false);
-    } catch {
-      showToast('Failed to update progress.', 'error');
-    } finally {
-      setUpdatingProgress(false);
-    }
-  };
-
   const handleDelete = async () => {
-    if (!window.confirm('Delete this goal? This action cannot be undone.')) return;
+    if (!window.confirm('Delete this goal?')) return;
     try {
       await deleteGoal(goal.id);
-      showToast('Goal deleted.', 'success');
+      showToast('Goal deleted.', 'info');
       onUpdate();
     } catch {
       showToast('Failed to delete goal.', 'error');
     }
   };
 
-  const progressColor =
-    goal.progress_percentage >= 100
-      ? 'from-emerald-500 to-emerald-400'
-      : goal.progress_percentage >= 60
-      ? 'from-[#1E4DB7] to-[#60A5FA]'
-      : 'from-amber-500 to-amber-400';
-
-  const deadlineStr = goal.deadline
-    ? new Date(goal.deadline).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-    : null;
-
   return (
-    <div className="bg-white dark:bg-[#1E293B] rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm hover:shadow-md transition-all duration-200">
-      <div className="flex items-start justify-between gap-2 mb-3">
-        <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-2 mb-1">
-            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${catColor}`}>{goal.category}</span>
-            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${statusBadge}`}>{goal.status}</span>
-          </div>
-          <h4 className="text-sm font-bold text-slate-900 dark:text-white leading-snug">{goal.title}</h4>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{goal.target_metric}</p>
+    <div className="p-5 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col justify-between space-y-4">
+      <div className="space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]">
+            {goal.category}
+          </span>
+          <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
+            {goal.status}
+          </span>
         </div>
-        <div className="flex items-center gap-1 flex-shrink-0">
+
+        <h4 className="text-[16px] font-bold text-[#111827] dark:text-[#FAFAFA]">{goal.title}</h4>
+
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
+            <span>{goal.current_value} / {goal.target_value} {goal.unit}</span>
+            <span className="font-bold text-[#111827] dark:text-[#FAFAFA]">{goal.progress_percentage}%</span>
+          </div>
+          <div className="w-full h-2 bg-[#E5E7EB] dark:bg-[#2A2A2A] rounded-full overflow-hidden">
+            <div
+              className="h-full bg-[#111827] dark:bg-[#FAFAFA] rounded-full transition-all duration-300"
+              style={{ width: `${Math.min(goal.progress_percentage, 100)}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-between gap-3">
+        {goal.deadline ? (
+          <span className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">Due: {goal.deadline}</span>
+        ) : <span />}
+
+        <div className="flex items-center gap-1.5">
           {goal.status !== 'Completed' && (
             <button
               onClick={handleMarkComplete}
               disabled={updatingProgress}
-              className="btn-icon text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 disabled:opacity-50"
-              title="Mark as Completed"
+              className="h-8 px-3 rounded-[6px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium shadow-xs transition cursor-pointer"
             >
-              <CheckCircle2 size={16} />
+              Complete
             </button>
           )}
-          <button onClick={handleDelete} className="btn-icon text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" title="Delete Goal">
+
+          <button
+            onClick={handleDelete}
+            title="Delete Goal"
+            className="h-8 w-8 rounded-[6px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
+          >
             <Trash2 size={15} />
           </button>
         </div>
       </div>
-
-      {/* Progress bar */}
-      <div className="mb-3">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-            {goal.current_value} / {goal.target_value} {goal.unit}
-          </span>
-          <span className="text-xs font-bold text-slate-900 dark:text-white">{goal.progress_percentage}%</span>
-        </div>
-        <div className="h-2.5 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
-          <div
-            className={`h-full rounded-full bg-gradient-to-r ${progressColor} transition-all duration-700`}
-            style={{ width: `${goal.progress_percentage}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Progress update input */}
-      {editing ? (
-        <div className="flex items-center gap-2 mt-2">
-          <input
-            type="number"
-            className="input-standard flex-1 h-9 text-xs"
-            value={localValue}
-            min={0}
-            max={goal.target_value}
-            step={0.5}
-            onChange={(e) => setLocalValue(parseFloat(e.target.value) || 0)}
-          />
-          <button
-            onClick={handleProgressUpdate}
-            disabled={updatingProgress}
-            className="btn-primary h-9 text-xs px-3 disabled:opacity-60"
-          >
-            Save
-          </button>
-          <button onClick={() => setEditing(false)} className="btn-secondary h-9 text-xs px-3">
-            Cancel
-          </button>
-        </div>
-      ) : (
-        <div className="flex items-center justify-between mt-2">
-          {deadlineStr && (
-            <span className="inline-flex items-center gap-1 text-xs text-slate-400">
-              <CalendarDays size={11} />
-              Due {deadlineStr}
-            </span>
-          )}
-          {goal.status !== 'Completed' && (
-            <button
-              onClick={() => setEditing(true)}
-              className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-[#1E4DB7] dark:text-[#60A5FA] hover:underline"
-            >
-              <Edit2 size={11} />
-              Update Progress
-            </button>
-          )}
-        </div>
-      )}
     </div>
   );
 };
 
 export const GoalsTrackerWidget: React.FC<Props> = ({ goals, loading, onRefresh }) => {
-  const [showCreate, setShowCreate] = useState(false);
-
-  const inProgress = goals.filter((g) => g.status === 'In Progress');
-  const completed = goals.filter((g) => g.status === 'Completed');
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   return (
-    <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-[#0E2A6D] text-white">
-            <Target size={18} />
+    <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-4">
+      <div className="flex items-center justify-between pb-4 border-b border-[#F3F4F6] dark:border-[#2A2A2A]">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+            <Target size={20} />
           </div>
           <div>
-            <h2 className="text-sm font-bold font-heading text-slate-900 dark:text-white">Personal Goals</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              {inProgress.length} active, {completed.length} completed
+            <h2 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">Goals Tracker</h2>
+            <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
+              {goals.filter((g) => g.status === 'Completed').length} of {goals.length} goals completed
             </p>
           </div>
         </div>
+
         <button
-          onClick={() => setShowCreate(true)}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#0E2A6D] text-white text-xs font-bold hover:bg-[#153B8A] transition-all shadow-sm"
+          onClick={() => setShowCreateModal(true)}
+          className="h-10 px-4 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition flex items-center gap-1.5 cursor-pointer"
         >
-          <Plus size={14} />
-          New Goal
+          <Plus size={16} />
+          <span>New Goal</span>
         </button>
       </div>
 
-      <div className="p-5">
-        {loading ? (
-          <div className="space-y-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="animate-pulse h-28 rounded-xl bg-slate-100 dark:bg-slate-800" />
-            ))}
-          </div>
-        ) : goals.length === 0 ? (
-          <div className="text-center py-10 text-slate-400 dark:text-slate-500">
-            <Target size={32} className="mx-auto mb-2 opacity-40" />
-            <p className="text-sm font-medium">No goals yet.</p>
-            <p className="text-xs mt-1">Create your first learning goal to track progress.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {goals.map((goal) => (
-              <GoalCard key={goal.id} goal={goal} onUpdate={onRefresh} />
-            ))}
-          </div>
-        )}
-      </div>
+      {loading ? (
+        <div className="py-12 flex flex-col items-center justify-center text-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#111827] dark:border-[#FAFAFA] border-t-transparent mb-3" />
+          <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Loading goals...</p>
+        </div>
+      ) : goals.length === 0 ? (
+        <div className="py-12 text-center text-[#6B7280] dark:text-[#A3A3A3] text-[14px]">
+          No active goals found. Click "New Goal" to set a learning target.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {goals.map((g) => (
+            <GoalCard key={g.id} goal={g} onUpdate={onRefresh} />
+          ))}
+        </div>
+      )}
 
-      {showCreate && (
-        <CreateGoalModal
-          onClose={() => setShowCreate(false)}
-          onCreated={onRefresh}
-        />
+      {showCreateModal && (
+        <CreateGoalModal onClose={() => setShowCreateModal(false)} onCreated={onRefresh} />
       )}
     </div>
   );

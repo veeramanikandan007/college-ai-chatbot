@@ -16,7 +16,8 @@ import {
   Plus,
   Layers,
   CircleAlert,
-  CheckSquare
+  CheckSquare,
+  Award
 } from 'lucide-react';
 import {
   StudyPlan,
@@ -102,97 +103,102 @@ export const StudyPlannerPage: React.FC = () => {
   }, [fetchTasksList]);
 
   return (
-    <div className="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-slate-950 p-4 sm:p-6 md:p-8 space-y-6">
-      {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2.5 rounded-xl bg-purple-600 text-white shadow-xs">
-              <Brain size={22} />
-            </div>
-            <h1 className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
-              AI Study Planner
-            </h1>
-          </div>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            Automated study schedule synthesis, exam countdown, task roadmaps, and cross-module AI recommendations.
-          </p>
-        </div>
+    <div className="w-full h-full overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 md:p-8 transition-colors">
+      <div className="w-full max-w-[1600px] mx-auto space-y-8">
 
-        {/* Generator Button */}
-        <div className="flex items-center gap-3">
+        {/* ========================================================================= */}
+        {/* 1. PAGE HEADER CARD                                                       */}
+        {/* ========================================================================= */}
+        <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 md:p-8 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <Brain size={24} />
+            </div>
+            <div>
+              <h1 className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight flex items-center gap-3">
+                AI Study Planner
+                <span className="text-[12px] font-medium px-2.5 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
+                  Adaptive Roadmap
+                </span>
+              </h1>
+              <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-1">
+                Automated study schedule synthesis, exam countdown, task roadmaps, and cross-module AI recommendations.
+              </p>
+            </div>
+          </div>
+
           <button
             onClick={() => setIsGeneratorOpen(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-600 text-white text-xs font-bold hover:bg-purple-700 transition-all shadow-xs"
+            className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition flex items-center gap-2 cursor-pointer shrink-0"
           >
             <Sparkles size={16} />
             <span>Generate AI Study Plan</span>
           </button>
         </div>
-      </div>
 
-      {/* Analytics Banner Component */}
-      <StudyAnalyticsBanner analytics={analytics} loading={loadingAnalytics} />
+        {/* Analytics Banner Component */}
+        <StudyAnalyticsBanner analytics={analytics} loading={loadingAnalytics} />
 
-      {/* AI Cross-module Suggestions Widget */}
-      <AiSuggestionsWidget suggestions={suggestions} loading={loadingSuggestions} />
+        {/* AI Cross-module Suggestions Widget */}
+        <AiSuggestionsWidget suggestions={suggestions} loading={loadingSuggestions} />
 
-      {/* View Switcher Controls */}
-      <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setViewMode('tasks')}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              viewMode === 'tasks'
-                ? 'bg-[#0E2A6D] text-white dark:bg-[#60A5FA] dark:text-slate-950 shadow-xs'
-                : 'bg-white dark:bg-[#1E293B] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800'
-            }`}
-          >
-            <CheckSquare size={16} />
-            <span>Tasks Roadmap View</span>
-          </button>
+        {/* View Switcher Controls */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F3F4F6] dark:border-[#2A2A2A] pb-4">
+          <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46]">
+            <button
+              onClick={() => setViewMode('tasks')}
+              className={`h-9 px-4 text-[14px] font-medium rounded-[8px] transition-all cursor-pointer flex items-center gap-2 ${
+                viewMode === 'tasks'
+                  ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                  : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+              }`}
+            >
+              <CheckSquare size={16} />
+              <span>Tasks Roadmap View</span>
+            </button>
 
-          <button
-            onClick={() => setViewMode('calendar')}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              viewMode === 'calendar'
-                ? 'bg-[#0E2A6D] text-white dark:bg-[#60A5FA] dark:text-slate-950 shadow-xs'
-                : 'bg-white dark:bg-[#1E293B] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800'
-            }`}
-          >
-            <CalendarDays size={16} />
-            <span>Study Calendar View</span>
-          </button>
+            <button
+              onClick={() => setViewMode('calendar')}
+              className={`h-9 px-4 text-[14px] font-medium rounded-[8px] transition-all cursor-pointer flex items-center gap-2 ${
+                viewMode === 'calendar'
+                  ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                  : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+              }`}
+            >
+              <CalendarDays size={16} />
+              <span>Study Calendar View</span>
+            </button>
+          </div>
+
+          {activePlan && (
+            <span className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
+              Active Plan: <strong className="text-[#111827] dark:text-[#FAFAFA]">{activePlan.title}</strong>
+            </span>
+          )}
         </div>
 
-        {activePlan && (
-          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:inline">
-            Active Plan: <strong className="text-slate-800 dark:text-slate-200">{activePlan.title}</strong>
-          </span>
+        {/* Main View: Tasks List or Calendar */}
+        {viewMode === 'tasks' ? (
+          <StudyTasksList
+            tasks={tasks}
+            loading={loadingTasks}
+            onRefresh={fetchTasksList}
+            onFilterChange={(newFilters) => setFilters(newFilters)}
+          />
+        ) : (
+          <StudyCalendarView tasks={tasks} examDate={activePlan?.exam_date} />
         )}
-      </div>
 
-      {/* Main View: Tasks List or Calendar */}
-      {viewMode === 'tasks' ? (
-        <StudyTasksList
-          tasks={tasks}
-          loading={loadingTasks}
-          onRefresh={fetchTasksList}
-          onFilterChange={(newFilters) => setFilters(newFilters)}
+        {/* Generator Modal */}
+        <StudyPlanGeneratorModal
+          isOpen={isGeneratorOpen}
+          onClose={() => setIsGeneratorOpen(false)}
+          onSuccess={() => {
+            fetchDashboardData();
+            fetchTasksList();
+          }}
         />
-      ) : (
-        <StudyCalendarView tasks={tasks} examDate={activePlan?.exam_date} />
-      )}
-
-      {/* Generator Modal */}
-      <StudyPlanGeneratorModal
-        isOpen={isGeneratorOpen}
-        onClose={() => setIsGeneratorOpen(false)}
-        onSuccess={() => {
-          fetchDashboardData();
-          fetchTasksList();
-        }}
-      />
+      </div>
     </div>
   );
 };

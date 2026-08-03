@@ -236,30 +236,30 @@ export const MockInterviewSessionView: React.FC<MockInterviewSessionViewProps> =
 
   if (!currentQa) {
     return (
-      <div className="py-16 text-center text-slate-400 text-xs">
+      <div className="py-16 text-center text-[#6B7280] dark:text-[#A3A3A3] text-[14px]">
         Loading active question...
       </div>
     );
   }
 
   return (
-    <div className="bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-6">
+    <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 md:p-8 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-6">
       {/* Session Top Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#F3F4F6] dark:border-[#2A2A2A]">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#0E2A6D] text-white dark:bg-[#60A5FA] dark:text-slate-950">
-            <Brain size={22} />
+          <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+            <Brain size={20} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#0E2A6D] text-white dark:bg-[#D9A441] dark:text-slate-950">
+              <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]">
                 {session.interview_type}
               </span>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-600 dark:text-purple-400">
+              <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
                 {session.difficulty}
               </span>
             </div>
-            <h2 className="text-lg font-bold font-heading text-slate-900 dark:text-white mt-0.5">
+            <h2 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">
               {session.title}
             </h2>
           </div>
@@ -267,14 +267,14 @@ export const MockInterviewSessionView: React.FC<MockInterviewSessionViewProps> =
 
         {/* Live Timer & Exit */}
         <div className="flex items-center gap-3">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 font-extrabold text-sm border border-amber-200 dark:border-amber-900/50">
+          <div className="px-4 py-2 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] font-bold text-[14px] flex items-center gap-2">
             <Clock3 size={18} />
             <span>Time Left: {formatTimer(timeLeftSeconds)}</span>
           </div>
 
           <button
             onClick={onCancelSession}
-            className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="h-10 px-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium cursor-pointer"
           >
             End Early
           </button>
@@ -282,41 +282,37 @@ export const MockInterviewSessionView: React.FC<MockInterviewSessionViewProps> =
       </div>
 
       {/* Question Card Box */}
-      <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-3">
+      <div className="p-6 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-extrabold uppercase tracking-wider text-[#0E2A6D] dark:text-[#60A5FA]">
+          <span className="text-[12px] font-bold uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA]">
             Question #{currentQa.question_number}
           </span>
 
           {/* TTS Audio Controls */}
           <button
             onClick={() => (isSpeaking ? stopSpeaking() : speakText(currentQa.question_text))}
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-              isSpeaking
-                ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
-                : 'bg-[#0E2A6D]/10 text-[#0E2A6D] dark:bg-[#60A5FA]/10 dark:text-[#60A5FA]'
-            }`}
+            className="h-8 px-3 rounded-[6px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center gap-1.5 cursor-pointer"
           >
             {isSpeaking ? <VolumeX size={15} /> : <Volume2 size={15} />}
             <span>{isSpeaking ? 'Stop Speaking' : 'Replay Question'}</span>
           </button>
         </div>
 
-        <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-relaxed">
+        <p className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] leading-relaxed">
           {currentQa.question_text}
         </p>
       </div>
 
       {/* Voice Recorder & Audio Controls */}
-      <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 space-y-3">
+      <div className="p-5 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              Answer Mode: <strong className="text-purple-600 dark:text-purple-400">Voice or Keyboard</strong>
+            <span className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">
+              Answer Mode: <strong className="font-bold">Voice or Keyboard</strong>
             </span>
             {isRecording && (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-600 dark:text-rose-400 animate-pulse">
-                <span className="h-2 w-2 rounded-full bg-rose-500" />
+              <span className="inline-flex items-center gap-1.5 text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA] animate-pulse">
+                <span className="h-2 w-2 rounded-full bg-[#111827] dark:bg-[#FAFAFA]" />
                 Live Recording STT...
               </span>
             )}
@@ -327,7 +323,7 @@ export const MockInterviewSessionView: React.FC<MockInterviewSessionViewProps> =
             {!isRecording && !isPaused ? (
               <button
                 onClick={startRecording}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 transition-all shadow-xs"
+                className="h-9 px-3.5 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium transition flex items-center gap-1.5 cursor-pointer"
               >
                 <Mic size={15} />
                 <span>Start Recording</span>
@@ -335,7 +331,7 @@ export const MockInterviewSessionView: React.FC<MockInterviewSessionViewProps> =
             ) : isRecording ? (
               <button
                 onClick={pauseRecording}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 text-white text-xs font-bold hover:bg-amber-600 transition-all shadow-xs"
+                className="h-9 px-3.5 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium transition flex items-center gap-1.5 cursor-pointer"
               >
                 <Pause size={15} />
                 <span>Pause</span>
@@ -343,7 +339,7 @@ export const MockInterviewSessionView: React.FC<MockInterviewSessionViewProps> =
             ) : (
               <button
                 onClick={resumeRecording}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-all shadow-xs"
+                className="h-9 px-3.5 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium transition flex items-center gap-1.5 cursor-pointer"
               >
                 <Play size={15} />
                 <span>Resume</span>
@@ -353,7 +349,7 @@ export const MockInterviewSessionView: React.FC<MockInterviewSessionViewProps> =
             {(isRecording || isPaused) && (
               <button
                 onClick={stopRecording}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold hover:bg-slate-300 transition-all"
+                className="h-9 px-3.5 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center gap-1.5 cursor-pointer"
               >
                 <Square size={15} />
                 <span>Stop</span>
@@ -363,7 +359,7 @@ export const MockInterviewSessionView: React.FC<MockInterviewSessionViewProps> =
             <button
               onClick={clearAnswer}
               title="Clear Answer Text"
-              className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              className="h-9 w-9 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
             >
               <RefreshCw size={15} />
             </button>
@@ -376,7 +372,7 @@ export const MockInterviewSessionView: React.FC<MockInterviewSessionViewProps> =
           value={studentAnswer}
           onChange={(e) => setStudentAnswer(e.target.value)}
           placeholder="Speak using the microphone controls above or type your detailed response here..."
-          className="w-full p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA] leading-relaxed"
+          className="w-full p-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none leading-relaxed"
         />
       </div>
 
@@ -385,7 +381,7 @@ export const MockInterviewSessionView: React.FC<MockInterviewSessionViewProps> =
         <button
           onClick={handleFinalEvaluation}
           disabled={evaluating}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+          className="h-10 px-5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium cursor-pointer flex items-center gap-2"
         >
           <Award size={16} />
           <span>{evaluating ? 'Evaluating...' : 'Finish & View Evaluation'}</span>
@@ -394,7 +390,7 @@ export const MockInterviewSessionView: React.FC<MockInterviewSessionViewProps> =
         <button
           onClick={handleSubmitAnswer}
           disabled={submitting || !studentAnswer.trim()}
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0E2A6D] text-white text-xs font-bold hover:bg-[#0E2A6D]/90 disabled:opacity-50 transition-all shadow-xs"
+          className="h-10 px-6 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs cursor-pointer disabled:opacity-50 inline-flex items-center gap-2"
         >
           <Send size={16} />
           <span>{submitting ? 'Evaluating Answer...' : 'Submit Answer & Next'}</span>

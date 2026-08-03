@@ -29,27 +29,27 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
     return name.slice(0, 2).toUpperCase();
   };
 
-  // Dimension mapping
+  // Dimension mapping — Desktop header: 40px circle, Mobile header: 36px circle
   const sizeClasses: Record<string, { container: string; text: string; icon: number }> = {
-    xs:     { container: 'w-6 h-6 rounded-md', text: 'text-[10px]', icon: 14 },
-    sm:     { container: 'w-[34px] h-[34px] rounded-xl', text: 'text-[12px]', icon: 16 },
-    md:     { container: 'w-[34px] h-[34px] rounded-xl', text: 'text-[12px]', icon: 16 },
-    header: { container: 'w-10 h-10 rounded-[12px]', text: 'text-xs', icon: 16 },
-    lg:     { container: 'w-[56px] h-[56px] rounded-xl', text: 'text-base', icon: 20 },
-    xl:     { container: 'w-[72px] h-[72px] rounded-xl', text: 'text-xl', icon: 28 },
+    xs:     { container: 'w-6 h-6 rounded-full', text: 'text-[10px]', icon: 12 },
+    sm:     { container: 'w-8 h-8 rounded-full', text: 'text-[11px]', icon: 14 },
+    md:     { container: 'w-9 h-9 rounded-full', text: 'text-[12px]', icon: 16 },
+    header: { container: 'w-9 h-9 sm:w-10 sm:h-10 rounded-full', text: 'text-[12px]', icon: 16 },
+    lg:     { container: 'w-14 h-14 rounded-full', text: 'text-[16px]', icon: 20 },
+    xl:     { container: 'w-18 h-18 rounded-full', text: 'text-[20px]', icon: 28 },
   };
 
   const currentSize = typeof size === 'string' ? sizeClasses[size] || sizeClasses.md : null;
   const customStyle = typeof size === 'number' ? { width: `${size}px`, height: `${size}px` } : {};
 
   const initials = getInitials(user?.name);
-  const borderClass = showBorder ? 'border border-[#D9A441]/30' : '';
+  const borderClass = showBorder ? 'border border-[#D1D5DB] dark:border-[#3F3F46]' : '';
 
   return (
     <div
       onClick={onClick}
       style={customStyle}
-      className={`relative inline-flex items-center justify-center shrink-0 overflow-hidden select-none transition-all duration-200 ${
+      className={`relative inline-flex items-center justify-center shrink-0 overflow-hidden select-none transition-all duration-150 ${
         currentSize ? currentSize.container : ''
       } ${borderClass} ${onClick ? 'cursor-pointer hover:opacity-90' : ''} ${className}`}
     >
@@ -59,14 +59,14 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
           alt={user.name || 'User Avatar'}
           loading="lazy"
           onError={() => setImageError(true)}
-          className="h-full w-full object-cover rounded-inherit"
+          className="h-full w-full object-cover rounded-full"
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#0E2A6D] via-[#153B8A] to-[#1E4DB7] text-white font-heading font-bold shadow-xs">
+        <div className="flex h-full w-full items-center justify-center bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111] font-bold shadow-xs">
           {user?.name ? (
             <span className={currentSize?.text}>{initials}</span>
           ) : (
-            <UserRound size={currentSize?.icon || 18} strokeWidth={1.75} />
+            <UserRound size={currentSize?.icon || 16} />
           )}
         </div>
       )}

@@ -27,6 +27,11 @@ import {
   Target,
   FileCode,
   FileUp,
+  Search,
+  CheckCircle,
+  Share2,
+  Download,
+  Filter,
 } from 'lucide-react';
 
 interface DocumentItem {
@@ -102,6 +107,10 @@ export default function QuizGeneratorPage() {
   const [quizHistory, setQuizHistory] = useState<QuizAttempt[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<QuizAttempt | null>(null);
+
+  // History Filter & Search State
+  const [historySearchQuery, setHistorySearchQuery] = useState('');
+  const [historyFilter, setHistoryFilter] = useState<'All' | 'Completed' | 'Pending' | 'Draft' | 'Recent' | 'Favorites'>('All');
 
   // Document upload inline state
   const [uploading, setUploading] = useState(false);
@@ -335,66 +344,132 @@ export default function QuizGeneratorPage() {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
+  // Dashboard Overview Statistics Calculation
+  const totalQuizzesCount = quizHistory.length;
+  const completedCount = quizHistory.filter((q) => q.percentage >= 60).length;
+  const pendingCount = quizHistory.filter((q) => q.percentage < 60).length;
+  const averageScore = totalQuizzesCount > 0
+    ? Math.round(quizHistory.reduce((acc, curr) => acc + curr.percentage, 0) / totalQuizzesCount)
+    : 0;
+
+  // Filtered History List
+  const filteredHistory = quizHistory.filter((item) => {
+    const matchesSearch = item.title.toLowerCase().includes(historySearchQuery.toLowerCase()) ||
+      item.document_name.toLowerCase().includes(historySearchQuery.toLowerCase()) ||
+      item.subject.toLowerCase().includes(historySearchQuery.toLowerCase());
+    
+    if (!matchesSearch) return false;
+
+    if (historyFilter === 'Completed') return item.percentage >= 60;
+    if (historyFilter === 'Pending') return item.percentage < 60;
+    return true;
+  });
+
   return (
-    <div className="w-full h-full overflow-y-auto bg-[#F8FAFC] dark:bg-[#0B0F19] text-[#1E293B] dark:text-[#F8FAFC] p-4 md:p-8 font-body transition-colors">
-      <div className="max-w-6xl mx-auto space-y-6">
+    <div className="w-full h-full overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 md:p-8 transition-colors">
+      <div className="max-w-6xl mx-auto space-y-8">
         
         {/* ========================================================================= */}
-        {/* TOP HEADER & TABS BAR                                                      */}
+        {/* 1. PAGE HEADER CARD                                                       */}
         {/* ========================================================================= */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#111827] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white flex items-center justify-center shadow-md border border-[#D9A441]/30">
-              <Brain size={26} strokeWidth={1.75} />
+        <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 md:p-8 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <Brain size={24} />
             </div>
             <div>
-              <h1 className="font-heading font-bold text-2xl md:text-3xl text-[#0E2A6D] dark:text-white tracking-wide flex items-center gap-2">
+              <h1 className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight flex items-center gap-3">
                 AI Quiz Generator
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#D9A441]/20 text-[#0E2A6D] dark:text-[#D9A441] font-semibold border border-[#D9A441]/30">
-                  Grounded AI
+                <span className="text-[12px] font-medium px-2.5 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
+                  Grounded AI Engine
                 </span>
               </h1>
-              <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5">
+              <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-1">
                 Generate document-based quizzes, test your understanding, and view instant AI explanations.
               </p>
             </div>
           </div>
 
-          {/* Tab buttons */}
-          <div className="flex items-center bg-[#F1F5F9] dark:bg-[#1E293B] p-1 rounded-xl shrink-0">
+          {/* Tab Navigation Buttons */}
+          <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] shrink-0">
             <button
               onClick={() => {
                 setActiveTab('create');
                 setViewState('config');
               }}
-              className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 ${
+              className={`h-10 px-5 text-[14px] font-medium rounded-[8px] transition-all duration-150 flex items-center gap-2 cursor-pointer ${
                 activeTab === 'create'
-                  ? 'bg-[#0E2A6D] text-white shadow-xs'
-                  : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#0E2A6D] dark:hover:text-white'
+                  ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                  : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
               }`}
             >
               <Zap size={16} />
-              Quiz Generator
+              Quiz Studio
             </button>
             <button
               onClick={() => {
                 setActiveTab('history');
                 fetchHistory();
               }}
-              className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 ${
+              className={`h-10 px-5 text-[14px] font-medium rounded-[8px] transition-all duration-150 flex items-center gap-2 cursor-pointer ${
                 activeTab === 'history'
-                  ? 'bg-[#0E2A6D] text-white shadow-xs'
-                  : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#0E2A6D] dark:hover:text-white'
+                  ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                  : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
               }`}
             >
               <History size={16} />
               Quiz History
               {quizHistory.length > 0 && (
-                <span className="ml-1 px-1.5 py-0.2 bg-[#D9A441] text-[#0E2A6D] font-bold text-xs rounded-full">
+                <span className="ml-1 px-2 py-0.5 bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-bold rounded-[6px]">
                   {quizHistory.length}
                 </span>
               )}
             </button>
+          </div>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* 2. QUIZ DASHBOARD OVERVIEW CARDS                                           */}
+        {/* ========================================================================= */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
+            <div>
+              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Total Quizzes</p>
+              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{totalQuizzesCount}</p>
+            </div>
+            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
+              <BookOpen size={20} />
+            </div>
+          </div>
+
+          <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
+            <div>
+              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Passed Quizzes</p>
+              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{completedCount}</p>
+            </div>
+            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
+              <CheckCircle2 size={20} />
+            </div>
+          </div>
+
+          <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
+            <div>
+              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Needs Review</p>
+              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{pendingCount}</p>
+            </div>
+            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
+              <AlertTriangle size={20} />
+            </div>
+          </div>
+
+          <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
+            <div>
+              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Average Accuracy</p>
+              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{averageScore}%</p>
+            </div>
+            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
+              <Award size={20} />
+            </div>
           </div>
         </div>
 
@@ -416,19 +491,19 @@ export default function QuizGeneratorPage() {
                 className="grid grid-cols-1 lg:grid-cols-12 gap-6"
               >
                 {/* Left Side: Select Document & Upload (7 cols) */}
-                <div className="lg:col-span-7 bg-white dark:bg-[#111827] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs space-y-5">
+                <div className="lg:col-span-7 bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="font-heading font-bold text-lg text-[#0E2A6D] dark:text-white flex items-center gap-2">
-                        <FileText size={20} className="text-[#1E4DB7] dark:text-[#60A5FA]" />
-                        1. Select Source Document
+                      <h2 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+                        <FileText size={20} />
+                        <span>1. Select Source Document</span>
                       </h2>
-                      <p className="text-xs text-[#64748B] dark:text-[#94A3B8]">
-                        Questions will be generated ONLY from the content of the selected file.
+                      <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-0.5">
+                        Questions will be generated strictly from the content of the selected file.
                       </p>
                     </div>
 
-                    {/* Upload new doc inline */}
+                    {/* Upload file inline */}
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -439,23 +514,28 @@ export default function QuizGeneratorPage() {
                     <button
                       onClick={() => fileInputRef.current?.click()}
                       disabled={uploading}
-                      className="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-[#1E4DB7]/10 hover:bg-[#1E4DB7]/20 text-[#1E4DB7] dark:text-[#60A5FA] border border-[#1E4DB7]/20 transition flex items-center gap-1.5 cursor-pointer"
+                      className="h-9 px-4 text-[14px] font-medium rounded-[8px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center gap-2 cursor-pointer"
                     >
-                      <FileUp size={15} />
-                      {uploading ? 'Uploading...' : 'Upload File'}
+                      <FileUp size={16} />
+                      <span>{uploading ? 'Uploading...' : 'Upload File'}</span>
                     </button>
                   </div>
 
                   {/* Document Grid / List */}
                   {loadingDocs ? (
-                    <div className="py-12 text-center text-[#64748B]">Loading your documents...</div>
+                    <div className="py-12 text-center text-[#6B7280] dark:text-[#A3A3A3] text-[14px]">
+                      Loading your documents...
+                    </div>
                   ) : documents.length === 0 ? (
-                    <div className="p-8 border-2 border-dashed border-[#E2E8F0] dark:border-[#1E293B] rounded-xl text-center space-y-3">
-                      <UploadCloud size={36} className="mx-auto text-[#64748B]" />
-                      <p className="text-sm font-medium text-[#64748B]">No uploaded documents found.</p>
+                    <div className="p-8 border-2 border-dashed border-[#D1D5DB] dark:border-[#2A2A2A] rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] text-center space-y-3">
+                      <div className="w-12 h-12 mx-auto rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
+                        <UploadCloud size={24} />
+                      </div>
+                      <p className="text-[16px] font-bold text-[#111827] dark:text-[#FAFAFA]">No uploaded documents found.</p>
+                      <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">Upload a PDF, DOCX, or PPT file to generate your first AI quiz.</p>
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-4 py-2 bg-[#0E2A6D] text-white text-sm font-semibold rounded-xl"
+                        className="h-10 px-5 bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium rounded-[10px] shadow-xs cursor-pointer"
                       >
                         Upload Document Now
                       </button>
@@ -469,31 +549,28 @@ export default function QuizGeneratorPage() {
                             key={doc.id}
                             whileHover={{ scale: 1.01 }}
                             onClick={() => setSelectedDoc(doc)}
-                            className={`p-4 rounded-xl border cursor-pointer transition-all duration-200 flex flex-col justify-between ${
+                            className={`p-4 rounded-[12px] border cursor-pointer transition-all duration-150 flex flex-col justify-between ${
                               isSelected
-                                ? 'border-[#1E4DB7] bg-[#1E4DB7]/5 dark:bg-[#1E4DB7]/20 shadow-xs'
-                                : 'border-[#E2E8F0] dark:border-[#1E293B] bg-[#F8FAFC] dark:bg-[#1E293B]/40 hover:border-[#1E4DB7]/40'
+                                ? 'border-[#111827] dark:border-[#FAFAFA] bg-[#F9FAFB] dark:bg-[#232323]'
+                                : 'border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] hover:border-[#111827] dark:hover:border-[#FAFAFA]'
                             }`}
                           >
                             <div className="flex items-start justify-between gap-2 mb-2">
                               <div className="flex items-center gap-2 overflow-hidden">
-                                <FileText
-                                  size={18}
-                                  className={isSelected ? 'text-[#1E4DB7] dark:text-[#60A5FA]' : 'text-[#64748B]'}
-                                />
-                                <span className="font-semibold text-sm truncate text-[#1E293B] dark:text-white">
+                                <FileText size={18} className="text-[#111827] dark:text-[#FAFAFA]" />
+                                <span className="font-bold text-[14px] truncate text-[#111827] dark:text-[#FAFAFA]">
                                   {doc.original_name}
                                 </span>
                               </div>
                               {isSelected && (
-                                <div className="w-5 h-5 rounded-full bg-[#1E4DB7] text-white flex items-center justify-center shrink-0">
+                                <div className="w-5 h-5 rounded-full bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
                                   <Check size={12} strokeWidth={3} />
                                 </div>
                               )}
                             </div>
 
-                            <div className="flex items-center justify-between text-xs text-[#64748B] dark:text-[#94A3B8]">
-                              <span className="uppercase px-2 py-0.5 rounded bg-white dark:bg-[#111827] font-semibold border border-[#E2E8F0] dark:border-[#334155]">
+                            <div className="flex items-center justify-between text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
+                              <span className="uppercase px-2 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] font-medium">
                                 {doc.file_type}
                               </span>
                               <span>{doc.folder_name || doc.category || 'General'}</span>
@@ -505,23 +582,23 @@ export default function QuizGeneratorPage() {
                   )}
 
                   {/* Supported files pill banner */}
-                  <div className="p-3 bg-[#F1F5F9] dark:bg-[#1E293B]/60 rounded-xl text-xs text-[#64748B] dark:text-[#94A3B8] flex items-center gap-2">
-                    <span className="font-bold text-[#0E2A6D] dark:text-[#D9A441]">Supported Sources:</span>
+                  <div className="p-3 bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] rounded-[10px] text-[12px] text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-2">
+                    <span className="font-semibold text-[#111827] dark:text-[#FAFAFA]">Supported Formats:</span>
                     <span>PDF • DOCX • PPT • PPTX • TXT</span>
                   </div>
                 </div>
 
                 {/* Right Side: Quiz Settings Form (5 cols) */}
-                <div className="lg:col-span-5 bg-white dark:bg-[#111827] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs space-y-6 flex flex-col justify-between">
+                <div className="lg:col-span-5 bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs space-y-6 flex flex-col justify-between">
                   <div className="space-y-5">
-                    <h2 className="font-heading font-bold text-lg text-[#0E2A6D] dark:text-white flex items-center gap-2">
-                      <Sliders size={20} className="text-[#D9A441]" />
-                      2. Customize Settings
+                    <h2 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+                      <Sliders size={20} />
+                      <span>2. Quiz Settings</span>
                     </h2>
 
                     {/* Question Count */}
                     <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8]">
+                      <label className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                         Number of Questions
                       </label>
                       <div className="grid grid-cols-4 gap-2">
@@ -529,10 +606,10 @@ export default function QuizGeneratorPage() {
                           <button
                             key={count}
                             onClick={() => setNumQuestions(count)}
-                            className={`py-2 rounded-xl text-sm font-bold border transition ${
+                            className={`h-10 rounded-[8px] text-[14px] font-medium transition cursor-pointer ${
                               numQuestions === count
-                                ? 'bg-[#0E2A6D] text-white border-[#0E2A6D]'
-                                : 'bg-[#F8FAFC] dark:bg-[#1E293B] text-[#475569] dark:text-[#CBD5E1] border-[#E2E8F0] dark:border-[#334155]'
+                                ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                                : 'bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
                             }`}
                           >
                             {count}
@@ -543,7 +620,7 @@ export default function QuizGeneratorPage() {
 
                     {/* Difficulty */}
                     <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8]">
+                      <label className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                         Difficulty Level
                       </label>
                       <div className="grid grid-cols-3 gap-2">
@@ -551,14 +628,10 @@ export default function QuizGeneratorPage() {
                           <button
                             key={diff}
                             onClick={() => setDifficulty(diff)}
-                            className={`py-2 rounded-xl text-sm font-bold border transition ${
+                            className={`h-10 rounded-[8px] text-[14px] font-medium transition cursor-pointer ${
                               difficulty === diff
-                                ? diff === 'Easy'
-                                  ? 'bg-emerald-600 text-white border-emerald-600'
-                                  : diff === 'Medium'
-                                  ? 'bg-[#1E4DB7] text-white border-[#1E4DB7]'
-                                  : 'bg-purple-600 text-white border-purple-600'
-                                : 'bg-[#F8FAFC] dark:bg-[#1E293B] text-[#475569] dark:text-[#CBD5E1] border-[#E2E8F0] dark:border-[#334155]'
+                                ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                                : 'bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
                             }`}
                           >
                             {diff}
@@ -569,8 +642,8 @@ export default function QuizGeneratorPage() {
 
                     {/* Quiz Type */}
                     <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8]">
-                        Quiz Format / Question Type
+                      <label className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                        Question Type
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {[
@@ -583,10 +656,10 @@ export default function QuizGeneratorPage() {
                           <button
                             key={t.id}
                             onClick={() => setQuizType(t.id as any)}
-                            className={`py-2 px-3 rounded-xl text-xs font-bold border text-left transition ${
+                            className={`h-10 px-3 rounded-[8px] text-[12px] font-medium transition text-left cursor-pointer ${
                               quizType === t.id
-                                ? 'bg-[#0E2A6D] text-white border-[#0E2A6D]'
-                                : 'bg-[#F8FAFC] dark:bg-[#1E293B] text-[#475569] dark:text-[#CBD5E1] border-[#E2E8F0] dark:border-[#334155]'
+                                ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                                : 'bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
                             }`}
                           >
                             {t.label}
@@ -597,7 +670,7 @@ export default function QuizGeneratorPage() {
 
                     {/* Timer setting */}
                     <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8]">
+                      <label className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                         Timer Limit
                       </label>
                       <div className="grid grid-cols-4 gap-2">
@@ -610,10 +683,10 @@ export default function QuizGeneratorPage() {
                           <button
                             key={tm.secs}
                             onClick={() => setTimerOption(tm.secs)}
-                            className={`py-2 rounded-xl text-xs font-bold border transition ${
+                            className={`h-10 rounded-[8px] text-[12px] font-medium transition cursor-pointer ${
                               timerOption === tm.secs
-                                ? 'bg-[#D9A441] text-[#0E2A6D] border-[#D9A441]'
-                                : 'bg-[#F8FAFC] dark:bg-[#1E293B] text-[#475569] dark:text-[#CBD5E1] border-[#E2E8F0] dark:border-[#334155]'
+                                ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                                : 'bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
                             }`}
                           >
                             {tm.label}
@@ -624,25 +697,23 @@ export default function QuizGeneratorPage() {
                   </div>
 
                   {/* Generate Button */}
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                  <button
                     onClick={handleStartQuiz}
                     disabled={generating || !selectedDoc}
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-[#0E2A6D] to-[#1E4DB7] text-white font-heading font-bold text-base shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-4 border border-[#D9A441]/30"
+                    className="w-full h-12 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[16px] shadow-xs transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-40 mt-4"
                   >
                     {generating ? (
                       <>
-                        <div className="w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                        <div className="w-5 h-5 rounded-full border-2 border-white dark:border-black border-t-transparent animate-spin" />
                         Generating Grounded AI Quiz...
                       </>
                     ) : (
                       <>
-                        <Sparkles size={20} className="text-[#D9A441]" />
-                        Generate AI Quiz Now
+                        <Sparkles size={20} />
+                        <span>Generate Quiz Now</span>
                       </>
                     )}
-                  </motion.button>
+                  </button>
                 </div>
               </motion.div>
             )}
@@ -658,16 +729,16 @@ export default function QuizGeneratorPage() {
                 exit={{ opacity: 0, scale: 0.98 }}
                 className="max-w-4xl mx-auto space-y-6"
               >
-                {/* Top Status Card */}
-                <div className="bg-white dark:bg-[#111827] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+                {/* Top Status Bar */}
+                <div className="bg-[#FFFFFF] dark:bg-[#181818] p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="px-3 py-1 bg-[#0E2A6D]/10 text-[#0E2A6D] dark:text-[#60A5FA] font-bold text-xs rounded-lg">
+                    <div className="px-3 py-1 bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] font-medium text-[12px] rounded-[6px]">
                       Question {currentQuestionIndex + 1} of {currentQuestions.length}
                     </div>
-                    <span className="text-xs font-semibold px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg">
+                    <span className="text-[12px] font-medium px-2.5 py-1 bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] rounded-[6px]">
                       {difficulty}
                     </span>
-                    <span className="text-xs font-semibold px-2.5 py-1 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-lg">
+                    <span className="text-[12px] font-medium px-2.5 py-1 bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] rounded-[6px]">
                       {currentQuestions[currentQuestionIndex]?.type}
                     </span>
                   </div>
@@ -675,13 +746,7 @@ export default function QuizGeneratorPage() {
                   {/* Progress & Timer */}
                   <div className="flex items-center gap-4 w-full sm:w-auto">
                     {timerOption > 0 && (
-                      <div
-                        className={`flex items-center gap-1.5 text-sm font-mono font-bold px-3 py-1.5 rounded-xl border ${
-                          secondsRemaining < 60
-                            ? 'bg-red-500/10 text-red-600 border-red-500/30 animate-pulse'
-                            : 'bg-slate-100 dark:bg-slate-800 text-[#0E2A6D] dark:text-[#D9A441] border-slate-200 dark:border-slate-700'
-                        }`}
-                      >
+                      <div className="flex items-center gap-1.5 text-[14px] font-mono font-medium px-3.5 py-1.5 rounded-[8px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
                         <Clock size={16} />
                         {formatTime(secondsRemaining)}
                       </div>
@@ -689,7 +754,7 @@ export default function QuizGeneratorPage() {
                     
                     <button
                       onClick={() => setIsSubmitConfirmOpen(true)}
-                      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition"
+                      className="h-10 px-5 bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] rounded-[8px] shadow-xs transition cursor-pointer"
                     >
                       Submit Quiz
                     </button>
@@ -697,9 +762,9 @@ export default function QuizGeneratorPage() {
                 </div>
 
                 {/* Progress Bar */}
-                <div className="w-full bg-[#E2E8F0] dark:bg-[#1E293B] h-2.5 rounded-full overflow-hidden">
+                <div className="w-full bg-[#E5E7EB] dark:bg-[#2A2A2A] h-2 rounded-full overflow-hidden">
                   <div
-                    className="bg-gradient-to-r from-[#0E2A6D] to-[#1E4DB7] h-full transition-all duration-300"
+                    className="bg-[#111827] dark:bg-[#FAFAFA] h-full transition-all duration-300"
                     style={{
                       width: `${((currentQuestionIndex + 1) / currentQuestions.length) * 100}%`,
                     }}
@@ -707,8 +772,8 @@ export default function QuizGeneratorPage() {
                 </div>
 
                 {/* Question Box */}
-                <div className="bg-white dark:bg-[#111827] p-8 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-md space-y-6">
-                  <h3 className="font-heading font-bold text-xl md:text-2xl text-[#0E2A6D] dark:text-white leading-relaxed">
+                <div className="bg-[#FFFFFF] dark:bg-[#181818] p-8 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs space-y-6">
+                  <h3 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] leading-relaxed">
                     {currentQuestions[currentQuestionIndex]?.question}
                   </h3>
 
@@ -722,42 +787,40 @@ export default function QuizGeneratorPage() {
                         const optionLabels = ['A', 'B', 'C', 'D', 'E'];
 
                         return (
-                          <motion.div
+                          <div
                             key={idx}
-                            whileHover={{ scale: 1.005 }}
-                            whileTap={{ scale: 0.995 }}
                             onClick={() => handleAnswerSelect(opt)}
-                            className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 flex items-center justify-between ${
+                            className={`p-4 rounded-[10px] border cursor-pointer transition-all duration-150 flex items-center justify-between ${
                               isSelected
-                                ? 'border-[#1E4DB7] bg-[#1E4DB7]/10 dark:bg-[#1E4DB7]/25 text-[#0E2A6D] dark:text-white font-semibold'
-                                : 'border-[#E2E8F0] dark:border-[#1E293B] bg-[#F8FAFC] dark:bg-[#1E293B]/40 hover:border-[#1E4DB7]/40 text-[#334155] dark:text-[#CBD5E1]'
+                                ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] border-[#111827] dark:border-[#FAFAFA]'
+                                : 'bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
                             }`}
                           >
                             <div className="flex items-center gap-3">
                               <div
-                                className={`w-8 h-8 rounded-lg font-bold text-xs flex items-center justify-center ${
+                                className={`w-8 h-8 rounded-[6px] font-medium text-[12px] flex items-center justify-center ${
                                   isSelected
-                                    ? 'bg-[#1E4DB7] text-white'
-                                    : 'bg-white dark:bg-[#111827] border border-[#CBD5E1] dark:border-[#475569] text-[#64748B]'
+                                    ? 'bg-[#FFFFFF] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA]'
+                                    : 'bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]'
                                 }`}
                               >
                                 {optionLabels[idx] || idx + 1}
                               </div>
-                              <span className="text-base">{opt}</span>
+                              <span className="text-[16px]">{opt}</span>
                             </div>
                             {isSelected && (
-                              <div className="w-6 h-6 rounded-full bg-[#1E4DB7] text-white flex items-center justify-center">
-                                <Check size={14} strokeWidth={3} />
+                              <div className="w-5 h-5 rounded-full bg-[#FFFFFF] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
+                                <Check size={12} strokeWidth={3} />
                               </div>
                             )}
-                          </motion.div>
+                          </div>
                         );
                       })}
                     </div>
                   ) : (
                     /* Short Answer Input Area */
                     <div className="space-y-3">
-                      <label className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
+                      <label className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                         Your Answer
                       </label>
                       <textarea
@@ -765,17 +828,17 @@ export default function QuizGeneratorPage() {
                         value={userAnswers[currentQuestions[currentQuestionIndex].id] || ''}
                         onChange={(e) => handleAnswerSelect(e.target.value)}
                         placeholder="Type your brief answer here derived from the document content..."
-                        className="w-full p-4 rounded-xl bg-[#F8FAFC] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] text-sm text-[#1E293B] dark:text-white outline-none focus:border-[#1E4DB7]"
+                        className="w-full p-4 rounded-[10px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                       />
                     </div>
                   )}
 
                   {/* Navigation controls */}
-                  <div className="flex items-center justify-between pt-4 border-t border-[#E2E8F0] dark:border-[#1E293B]">
+                  <div className="flex items-center justify-between pt-4 border-t border-[#F3F4F6] dark:border-[#2A2A2A]">
                     <button
                       onClick={() => setCurrentQuestionIndex((prev) => Math.max(0, prev - 1))}
                       disabled={currentQuestionIndex === 0}
-                      className="px-4 py-2 rounded-xl text-sm font-semibold text-[#64748B] hover:text-[#0E2A6D] dark:hover:text-white disabled:opacity-40 flex items-center gap-1 cursor-pointer"
+                      className="h-10 px-4 rounded-[8px] text-[14px] font-medium border border-[#D1D5DB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition disabled:opacity-40 flex items-center gap-1 cursor-pointer"
                     >
                       <ChevronLeft size={18} />
                       Previous
@@ -788,7 +851,7 @@ export default function QuizGeneratorPage() {
                             Math.min(currentQuestions.length - 1, prev + 1)
                           )
                         }
-                        className="px-5 py-2.5 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white font-semibold text-sm shadow-xs flex items-center gap-1.5 cursor-pointer"
+                        className="h-10 px-5 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs flex items-center gap-1.5 cursor-pointer"
                       >
                         Next Question
                         <ChevronRight size={18} />
@@ -796,7 +859,7 @@ export default function QuizGeneratorPage() {
                     ) : (
                       <button
                         onClick={() => setIsSubmitConfirmOpen(true)}
-                        className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md flex items-center gap-1.5 cursor-pointer"
+                        className="h-10 px-6 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs flex items-center gap-1.5 cursor-pointer"
                       >
                         Submit Quiz
                         <CheckCircle2 size={18} />
@@ -819,29 +882,29 @@ export default function QuizGeneratorPage() {
                 className="max-w-4xl mx-auto space-y-6"
               >
                 {/* Hero Score Box */}
-                <div className="bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white p-8 rounded-3xl shadow-lg border border-[#D9A441]/30 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
-                  <div className="space-y-3 text-center md:text-left z-10">
-                    <span className="px-3 py-1 bg-[#D9A441] text-[#0E2A6D] font-bold text-xs rounded-full uppercase tracking-wider">
+                <div className="bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] p-8 rounded-[12px] shadow-xs flex flex-col md:flex-row items-center justify-between gap-6">
+                  <div className="space-y-3 text-center md:text-left">
+                    <span className="px-3 py-1 bg-[#FFFFFF] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] font-medium text-[12px] rounded-[6px] uppercase tracking-wider">
                       Quiz Complete
                     </span>
-                    <h2 className="font-heading font-extrabold text-3xl md:text-4xl">
+                    <h2 className="text-[32px] font-bold">
                       {completedResult.percentage >= 80
                         ? 'Outstanding Master!'
                         : completedResult.percentage >= 60
                         ? 'Good Performance!'
                         : 'Needs Review'}
                     </h2>
-                    <p className="text-sm text-slate-200 max-w-md">
+                    <p className="text-[14px] opacity-80 max-w-md">
                       Quiz generated from <strong>{completedResult.document_name}</strong> in {completedResult.subject}.
                     </p>
                   </div>
 
-                  {/* Circular Score Metric */}
-                  <div className="flex flex-col items-center justify-center bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 shrink-0 z-10">
-                    <div className="text-5xl font-extrabold text-[#D9A441] font-heading">
+                  {/* Score Metric */}
+                  <div className="flex flex-col items-center justify-center p-6 rounded-[10px] border border-white/20 dark:border-black/20 shrink-0">
+                    <div className="text-[48px] font-bold">
                       {completedResult.percentage}%
                     </div>
-                    <div className="text-xs text-slate-200 font-semibold mt-1">
+                    <div className="text-[12px] font-medium mt-1">
                       Score: {completedResult.score} / {completedResult.total_questions} Correct
                     </div>
                   </div>
@@ -849,31 +912,65 @@ export default function QuizGeneratorPage() {
 
                 {/* Metrics Breakdown Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-[#E2E8F0] dark:border-[#1E293B] text-center space-y-1">
-                    <div className="text-xs text-[#64748B] font-bold uppercase">Correct</div>
-                    <div className="text-2xl font-bold text-emerald-600 flex items-center justify-center gap-1">
+                  <div className="bg-[#FFFFFF] dark:bg-[#181818] p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] text-center space-y-1">
+                    <div className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] font-medium uppercase">Correct</div>
+                    <div className="text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center gap-1">
                       <CheckCircle2 size={20} />
                       {completedResult.correct_answers}
                     </div>
                   </div>
-                  <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-[#E2E8F0] dark:border-[#1E293B] text-center space-y-1">
-                    <div className="text-xs text-[#64748B] font-bold uppercase">Wrong</div>
-                    <div className="text-2xl font-bold text-rose-500 flex items-center justify-center gap-1">
+                  <div className="bg-[#FFFFFF] dark:bg-[#181818] p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] text-center space-y-1">
+                    <div className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] font-medium uppercase">Wrong</div>
+                    <div className="text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center gap-1">
                       <XCircle size={20} />
                       {completedResult.wrong_answers}
                     </div>
                   </div>
-                  <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-[#E2E8F0] dark:border-[#1E293B] text-center space-y-1">
-                    <div className="text-xs text-[#64748B] font-bold uppercase">Time Taken</div>
-                    <div className="text-2xl font-bold text-[#0E2A6D] dark:text-[#D9A441]">
+                  <div className="bg-[#FFFFFF] dark:bg-[#181818] p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] text-center space-y-1">
+                    <div className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] font-medium uppercase">Time Taken</div>
+                    <div className="text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA]">
                       {formatTime(completedResult.time_taken_seconds)}
                     </div>
                   </div>
-                  <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-[#E2E8F0] dark:border-[#1E293B] text-center space-y-1">
-                    <div className="text-xs text-[#64748B] font-bold uppercase">Difficulty</div>
-                    <div className="text-2xl font-bold text-[#1E4DB7] dark:text-[#60A5FA]">
+                  <div className="bg-[#FFFFFF] dark:bg-[#181818] p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] text-center space-y-1">
+                    <div className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] font-medium uppercase">Difficulty</div>
+                    <div className="text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA]">
                       {completedResult.difficulty}
                     </div>
+                  </div>
+                </div>
+
+                {/* AI Recommendations Section */}
+                <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-4">
+                  <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+                    <Sparkles size={20} />
+                    <span>AI Study Recommendations</span>
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button
+                      onClick={() => navigate('/notes')}
+                      className="p-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] text-left transition cursor-pointer space-y-1"
+                    >
+                      <BookOpen size={18} className="text-[#111827] dark:text-[#FAFAFA]" />
+                      <p className="font-bold text-[14px] text-[#111827] dark:text-[#FAFAFA]">Generate Notes</p>
+                      <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">Build structured revision notes from this document.</p>
+                    </button>
+                    <button
+                      onClick={() => navigate('/documents')}
+                      className="p-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] text-left transition cursor-pointer space-y-1"
+                    >
+                      <FileText size={18} className="text-[#111827] dark:text-[#FAFAFA]" />
+                      <p className="font-bold text-[14px] text-[#111827] dark:text-[#FAFAFA]">Review Document</p>
+                      <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">Re-read extracted sections and source materials.</p>
+                    </button>
+                    <button
+                      onClick={() => setViewState('config')}
+                      className="p-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] text-left transition cursor-pointer space-y-1"
+                    >
+                      <RotateCcw size={18} className="text-[#111827] dark:text-[#FAFAFA]" />
+                      <p className="font-bold text-[14px] text-[#111827] dark:text-[#FAFAFA]">Practice Weak Areas</p>
+                      <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">Generate a new targeted quiz with harder questions.</p>
+                    </button>
                   </div>
                 </div>
 
@@ -881,14 +978,14 @@ export default function QuizGeneratorPage() {
                 <div className="flex items-center justify-end gap-3">
                   <button
                     onClick={() => setViewState('config')}
-                    className="px-5 py-2.5 rounded-xl bg-white dark:bg-[#111827] border border-[#E2E8F0] dark:border-[#1E293B] text-sm font-bold text-[#0E2A6D] dark:text-white hover:bg-[#F1F5F9] transition flex items-center gap-2 cursor-pointer"
+                    className="h-10 px-5 rounded-[10px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center gap-2 cursor-pointer"
                   >
                     <RotateCcw size={16} />
                     New Quiz Setup
                   </button>
                   <button
                     onClick={handleStartQuiz}
-                    className="px-5 py-2.5 rounded-xl bg-[#0E2A6D] text-white text-sm font-bold shadow-md hover:bg-[#153B8A] transition flex items-center gap-2 cursor-pointer"
+                    className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium shadow-xs transition flex items-center gap-2 cursor-pointer"
                   >
                     <Zap size={16} />
                     Retake Same Quiz
@@ -897,58 +994,50 @@ export default function QuizGeneratorPage() {
 
                 {/* Detailed Questions & AI Grounded Explanations */}
                 <div className="space-y-4 pt-4">
-                  <h3 className="font-heading font-bold text-xl text-[#0E2A6D] dark:text-white flex items-center gap-2">
-                    <BarChart2 size={22} className="text-[#1E4DB7]" />
-                    Question Review & AI Explanations
+                  <h3 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+                    <BarChart2 size={22} />
+                    <span>Question Review & AI Explanations</span>
                   </h3>
 
                   {completedResult.questions_data?.map((q, idx) => (
                     <div
                       key={idx}
-                      className={`p-6 rounded-2xl border bg-white dark:bg-[#111827] shadow-xs space-y-3 ${
-                        q.is_correct
-                          ? 'border-emerald-500/30'
-                          : 'border-rose-500/30'
-                      }`}
+                      className="p-6 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] shadow-xs space-y-3"
                     >
                       <div className="flex items-start justify-between gap-3">
-                        <span className="font-heading font-bold text-base text-[#1E293B] dark:text-white">
+                        <span className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA]">
                           Q{idx + 1}. {q.question}
                         </span>
                         {q.is_correct ? (
-                          <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 font-bold text-xs rounded-lg flex items-center gap-1 shrink-0">
+                          <span className="px-3 py-1 bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] font-medium text-[12px] rounded-[6px] flex items-center gap-1 shrink-0">
                             <CheckCircle2 size={14} /> Correct
                           </span>
                         ) : (
-                          <span className="px-3 py-1 bg-rose-500/10 text-rose-600 font-bold text-xs rounded-lg flex items-center gap-1 shrink-0">
+                          <span className="px-3 py-1 bg-[#F8FAFC] dark:bg-[#111111] border border-[#DC2626] text-[#DC2626] font-medium text-[12px] rounded-[6px] flex items-center gap-1 shrink-0">
                             <XCircle size={14} /> Incorrect
                           </span>
                         )}
                       </div>
 
                       {/* Answers comparison */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
-                        <div className="p-3 rounded-xl bg-[#F8FAFC] dark:bg-[#1E293B]">
-                          <span className="text-[#64748B] block font-bold mb-1">Your Answer:</span>
-                          <span
-                            className={`font-semibold ${
-                              q.is_correct ? 'text-emerald-600' : 'text-rose-500'
-                            }`}
-                          >
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[14px] pt-1">
+                        <div className="p-3 rounded-[8px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A]">
+                          <span className="text-[#6B7280] dark:text-[#A3A3A3] block font-medium mb-1">Your Answer:</span>
+                          <span className="font-bold text-[#111827] dark:text-[#FAFAFA]">
                             {q.user_answer || '(No answer provided)'}
                           </span>
                         </div>
-                        <div className="p-3 rounded-xl bg-[#F8FAFC] dark:bg-[#1E293B]">
-                          <span className="text-[#64748B] block font-bold mb-1">Correct Answer:</span>
-                          <span className="font-semibold text-emerald-600">{q.correct_answer}</span>
+                        <div className="p-3 rounded-[8px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A]">
+                          <span className="text-[#6B7280] dark:text-[#A3A3A3] block font-medium mb-1">Correct Answer:</span>
+                          <span className="font-bold text-[#111827] dark:text-[#FAFAFA]">{q.correct_answer}</span>
                         </div>
                       </div>
 
                       {/* Grounded Explanation Box */}
-                      <div className="p-4 rounded-xl bg-[#1E4DB7]/5 dark:bg-[#1E4DB7]/15 border border-[#1E4DB7]/20 text-xs text-[#1E293B] dark:text-[#CBD5E1] space-y-1">
-                        <div className="font-bold text-[#1E4DB7] dark:text-[#60A5FA] flex items-center gap-1.5">
+                      <div className="p-4 rounded-[8px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[14px] text-[#4B5563] dark:text-[#D4D4D4] space-y-1">
+                        <div className="font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1.5">
                           <Brain size={14} />
-                          Document Grounded Explanation:
+                          <span>Document Grounded Explanation:</span>
                         </div>
                         <p className="leading-relaxed">{q.explanation}</p>
                       </div>
@@ -964,38 +1053,83 @@ export default function QuizGeneratorPage() {
         {/* TAB 2: QUIZ HISTORY VIEW                                                   */}
         {/* ========================================================================= */}
         {activeTab === 'history' && (
-          <div className="bg-white dark:bg-[#111827] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="font-heading font-bold text-xl text-[#0E2A6D] dark:text-white flex items-center gap-2">
-                <History size={22} className="text-[#D9A441]" />
-                Saved Quiz Attempts & Performance
-              </h2>
-              <span className="text-xs text-[#64748B]">Total: {quizHistory.length} Quizzes</span>
+          <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+                  <History size={22} />
+                  <span>Saved Quiz Attempts & History</span>
+                </h2>
+                <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">Track your test history, review scores, and delete past attempts</p>
+              </div>
+              <span className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Total: {quizHistory.length} Attempts</span>
+            </div>
+
+            {/* Search & Filters Toolbar */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-2">
+              {/* Search Bar */}
+              <div className="relative w-full md:w-80">
+                <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A3A3A3]" />
+                <input
+                  type="text"
+                  placeholder="Search quizzes by title or topic..."
+                  value={historySearchQuery}
+                  onChange={(e) => setHistorySearchQuery(e.target.value)}
+                  className="w-full h-10 pl-10 pr-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
+                />
+              </div>
+
+              {/* Filter Chips */}
+              <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
+                {(['All', 'Completed', 'Pending'] as const).map((flt) => (
+                  <button
+                    key={flt}
+                    onClick={() => setHistoryFilter(flt)}
+                    className={`h-9 px-4 rounded-[8px] text-[14px] font-medium transition cursor-pointer whitespace-nowrap ${
+                      historyFilter === flt
+                        ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                        : 'bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                    }`}
+                  >
+                    {flt}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {historyLoading ? (
-              <div className="py-12 text-center text-[#64748B]">Loading quiz history...</div>
-            ) : quizHistory.length === 0 ? (
-              <div className="py-12 text-center text-[#64748B] space-y-2">
-                <p>No past quizzes found. Generate your first quiz today!</p>
+              <div className="py-12 text-center text-[#6B7280] dark:text-[#A3A3A3] text-[14px]">Loading quiz history...</div>
+            ) : filteredHistory.length === 0 ? (
+              <div className="p-12 text-center border-2 border-dashed border-[#D1D5DB] dark:border-[#2A2A2A] rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] space-y-3">
+                <div className="w-12 h-12 mx-auto rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
+                  <History size={24} />
+                </div>
+                <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">No Quizzes Yet</h3>
+                <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">Generate your first AI quiz to see your performance history here.</p>
+                <button
+                  onClick={() => setActiveTab('create')}
+                  className="h-10 px-5 bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium rounded-[10px] shadow-xs cursor-pointer"
+                >
+                  Generate First Quiz
+                </button>
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-4">
-                {quizHistory.map((item) => (
+                {filteredHistory.map((item) => (
                   <div
                     key={item.id}
-                    className="p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] bg-[#F8FAFC] dark:bg-[#1E293B]/40 hover:border-[#1E4DB7]/40 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                    className="p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] hover:border-[#111827] dark:hover:border-[#FAFAFA] transition duration-150 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-heading font-bold text-base text-[#0E2A6D] dark:text-white">
+                        <span className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA]">
                           {item.title}
                         </span>
-                        <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#1E4DB7]/10 text-[#1E4DB7] dark:text-[#60A5FA]">
+                        <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
                           {item.difficulty}
                         </span>
                       </div>
-                      <div className="text-xs text-[#64748B] flex items-center gap-3">
+                      <div className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-3">
                         <span>Doc: {item.document_name}</span>
                         <span>•</span>
                         <span>Date: {new Date(item.created_at).toLocaleDateString()}</span>
@@ -1006,15 +1140,15 @@ export default function QuizGeneratorPage() {
 
                     <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
                       <div className="text-right">
-                        <div className="text-xl font-extrabold text-[#D9A441]">{item.percentage}%</div>
-                        <div className="text-xs text-[#64748B]">
+                        <div className="text-[20px] font-bold text-[#111827] dark:text-[#FAFAFA]">{item.percentage}%</div>
+                        <div className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
                           {item.score} / {item.total_questions} Correct
                         </div>
                       </div>
 
                       <button
                         onClick={() => handleDeleteHistory(item.id)}
-                        className="p-2 rounded-xl text-[#64748B] hover:text-rose-500 hover:bg-rose-500/10 transition"
+                        className="p-2 rounded-[8px] text-[#6B7280] hover:text-[#DC2626] transition cursor-pointer"
                         title="Delete History Entry"
                       >
                         <Trash2 size={18} />
@@ -1029,28 +1163,28 @@ export default function QuizGeneratorPage() {
 
         {/* Submit Confirmation Modal */}
         {isSubmitConfirmOpen && (
-          <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-[#111827] max-w-md w-full p-6 rounded-2xl shadow-xl space-y-4 border border-[#E2E8F0] dark:border-[#1E293B]">
-              <div className="flex items-center gap-3 text-amber-500">
-                <AlertTriangle size={28} />
-                <h3 className="font-heading font-bold text-lg text-[#1E293B] dark:text-white">
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+            <div className="bg-[#FFFFFF] dark:bg-[#181818] max-w-md w-full p-6 rounded-[12px] shadow-lg space-y-4 border border-[#E5E7EB] dark:border-[#2A2A2A]">
+              <div className="flex items-center gap-3 text-[#111827] dark:text-[#FAFAFA]">
+                <AlertTriangle size={24} />
+                <h3 className="font-bold text-[18px] text-[#111827] dark:text-[#FAFAFA]">
                   Confirm Quiz Submission
                 </h3>
               </div>
-              <p className="text-sm text-[#64748B] dark:text-[#94A3B8]">
-                You have answered {Object.keys(userAnswers).length} out of {currentQuestions.length} questions. Are you ready to finish and submit?
+              <p className="text-[14px] text-[#4B5563] dark:text-[#D4D4D4]">
+                You have answered {Object.keys(userAnswers).length} out of {currentQuestions.length} questions. Are you ready to submit your answers for AI scoring?
               </p>
               <div className="flex items-center justify-end gap-3 pt-2">
                 <button
                   onClick={() => setIsSubmitConfirmOpen(false)}
-                  className="px-4 py-2 rounded-xl text-sm font-semibold text-[#64748B] hover:bg-slate-100 dark:hover:bg-slate-800"
+                  className="h-10 px-4 rounded-[8px] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] cursor-pointer"
                 >
                   Continue Quiz
                 </button>
                 <button
                   onClick={handleFinalSubmit}
                   disabled={submitting}
-                  className="px-5 py-2 rounded-xl bg-emerald-600 text-white font-bold text-sm shadow-md"
+                  className="h-10 px-5 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs cursor-pointer disabled:opacity-40"
                 >
                   {submitting ? 'Submitting...' : 'Yes, Submit Now'}
                 </button>

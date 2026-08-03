@@ -88,39 +88,39 @@ export const QuestionPaperChatDrawer: React.FC<QuestionPaperChatDrawerProps> = (
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-slate-900/50 backdrop-blur-xs flex justify-end">
-      <div className="w-full max-w-lg bg-white dark:bg-[#1E293B] h-full shadow-2xl flex flex-col border-l border-slate-200 dark:border-slate-800 animate-slide-left">
+    <div className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-xs flex justify-end">
+      <div className="w-full max-w-lg bg-[#FFFFFF] dark:bg-[#181818] h-full shadow-lg flex flex-col border-l border-[#D1D5DB] dark:border-[#3F3F46]">
         {/* Drawer Header */}
-        <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-emerald-50/50 dark:bg-emerald-950/20 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+        <div className="p-4 border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
               <MessageSquare size={20} />
             </div>
             <div className="min-w-0">
-              <h3 className="text-sm font-bold font-heading text-slate-900 dark:text-white truncate">
+              <h3 className="text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA] truncate">
                 AI Question Paper Chat
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+              <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] truncate">
                 {paper.subject_code} - {paper.title}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1 rounded text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA] cursor-pointer"
           >
             <X size={20} />
           </button>
         </div>
 
         {/* Quick Prompts Bar */}
-        <div className="px-4 py-2 bg-slate-50 dark:bg-slate-900/60 border-b border-slate-100 dark:border-slate-800 overflow-x-auto scrollbar-none flex items-center gap-1.5">
+        <div className="px-4 py-2.5 bg-[#F8FAFC] dark:bg-[#111111] border-b border-[#E5E7EB] dark:border-[#2A2A2A] overflow-x-auto flex items-center gap-2">
           {quickPrompts.map((prompt, idx) => (
             <button
               key={idx}
               onClick={() => handleSend(prompt)}
               disabled={sending}
-              className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 whitespace-nowrap transition-colors"
+              className="h-8 px-3 rounded-[6px] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] border border-[#D1D5DB] dark:border-[#3F3F46] text-[12px] font-medium hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-colors whitespace-nowrap cursor-pointer"
             >
               {prompt}
             </button>
@@ -128,35 +128,35 @@ export const QuestionPaperChatDrawer: React.FC<QuestionPaperChatDrawerProps> = (
         </div>
 
         {/* Chat Messages */}
-        <div className="flex-1 p-4 overflow-y-auto space-y-3">
+        <div className="flex-1 p-4 overflow-y-auto space-y-4">
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className={`flex items-start gap-2.5 ${
+              className={`flex items-start gap-3 ${
                 msg.sender === 'user' ? 'flex-row-reverse' : ''
               }`}
             >
               <div
-                className={`p-2 rounded-xl text-xs shrink-0 ${
+                className={`w-8 h-8 rounded-[8px] flex items-center justify-center shrink-0 ${
                   msg.sender === 'user'
-                    ? 'bg-[#0E2A6D] text-white'
-                    : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                    ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                    : 'bg-[#F8FAFC] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] border border-[#D1D5DB] dark:border-[#3F3F46]'
                 }`}
               >
-                {msg.sender === 'user' ? <User size={15} /> : <Bot size={15} />}
+                {msg.sender === 'user' ? <User size={16} /> : <Bot size={16} />}
               </div>
 
               <div
-                className={`max-w-[80%] p-3.5 rounded-2xl text-xs leading-relaxed ${
+                className={`max-w-[80%] p-4 rounded-[12px] text-[14px] leading-relaxed ${
                   msg.sender === 'user'
-                    ? 'bg-[#0E2A6D] text-white rounded-tr-none'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-tl-none border border-slate-200 dark:border-slate-700 whitespace-pre-wrap'
+                    ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111] rounded-tr-none'
+                    : 'bg-[#F8FAFC] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] rounded-tl-none border border-[#E5E7EB] dark:border-[#2A2A2A] whitespace-pre-wrap'
                 }`}
               >
                 <p>{msg.text}</p>
                 <span
-                  className={`block text-[10px] mt-1 text-right ${
-                    msg.sender === 'user' ? 'text-blue-200' : 'text-slate-400'
+                  className={`block text-[10px] mt-1.5 text-right ${
+                    msg.sender === 'user' ? 'opacity-70' : 'text-[#6B7280] dark:text-[#A3A3A3]'
                   }`}
                 >
                   {msg.timestamp}
@@ -166,8 +166,8 @@ export const QuestionPaperChatDrawer: React.FC<QuestionPaperChatDrawerProps> = (
           ))}
 
           {sending && (
-            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 p-2">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent" />
+            <div className="flex items-center gap-2 text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3] p-2">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#111827] dark:border-[#FAFAFA] border-t-transparent" />
               <span>Analyzing paper & generating answer...</span>
             </div>
           )}
@@ -176,7 +176,7 @@ export const QuestionPaperChatDrawer: React.FC<QuestionPaperChatDrawerProps> = (
         </div>
 
         {/* Input Bar */}
-        <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#1E293B]">
+        <div className="p-4 border-t border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818]">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -189,12 +189,12 @@ export const QuestionPaperChatDrawer: React.FC<QuestionPaperChatDrawerProps> = (
               value={inputQuery}
               onChange={(e) => setInputQuery(e.target.value)}
               placeholder="Ask a question about this paper..."
-              className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="flex-1 h-10 px-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
             />
             <button
               type="submit"
               disabled={!inputQuery.trim() || sending}
-              className="p-2.5 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 transition-colors shadow-xs"
+              className="h-10 px-4 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs cursor-pointer disabled:opacity-50 flex items-center justify-center"
             >
               <Send size={16} />
             </button>

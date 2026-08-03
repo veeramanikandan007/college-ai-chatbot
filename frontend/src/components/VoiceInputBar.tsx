@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, MicOff, SendHorizontal, Square, Settings2, X, Check, Sparkles } from 'lucide-react';
+import { Mic, SendHorizontal, Square, Settings2, X, Check } from 'lucide-react';
 
 interface VoiceInputBarProps {
   promptInput: string;
@@ -34,18 +34,14 @@ export default function VoiceInputBar({
   const timerRef = useRef<number | null>(null);
   const isIntendedStopRef = useRef(false);
 
-  // Check browser support for SpeechRecognition
   useEffect(() => {
     const SpeechRecognitionClass =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     setIsSupported(!!SpeechRecognitionClass);
   }, []);
 
-  // Cleanup timer and recognition on unmount
   useEffect(() => {
-    return () => {
-      cleanupState();
-    };
+    return () => { cleanupState(); };
   }, []);
 
   const cleanupState = () => {
@@ -60,12 +56,9 @@ export default function VoiceInputBar({
         recognitionRef.current.onerror = null;
         recognitionRef.current.onend = null;
         recognitionRef.current.abort();
-      } catch (e) {
-        // ignore abort errors
-      }
+      } catch (e) {}
       recognitionRef.current = null;
     }
-    console.log("Microphone stopped");
     setIsRecording(false);
     setRecordingDuration(0);
     setInterimTranscript('');
@@ -91,11 +84,9 @@ export default function VoiceInputBar({
       rec.lang = language;
 
       rec.onstart = () => {
-        console.log("Microphone started");
         setIsRecording(true);
         setRecordingDuration(0);
         setInterimTranscript('');
-
         if (timerRef.current) clearInterval(timerRef.current);
         timerRef.current = window.setInterval(() => {
           setRecordingDuration((prev) => prev + 1);
@@ -107,10 +98,7 @@ export default function VoiceInputBar({
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           currentText += event.results[i][0].transcript;
         }
-        if (currentText) {
-          setInterimTranscript(currentText);
-          console.log(`Recognition result: ${currentText}`);
-        }
+        if (currentText) setInterimTranscript(currentText);
       };
 
       rec.onerror = (event: any) => {
@@ -118,7 +106,7 @@ export default function VoiceInputBar({
         if (err === 'not-allowed' || err === 'service-not-allowed') {
           onError('Microphone access denied. Please grant permission in browser settings.');
         } else if (err === 'no-speech') {
-          // Keep listening softly
+          // Keep listening
         } else if (err === 'network') {
           onError('Network error during speech recognition. Please check your connection.');
         } else if (err !== 'aborted') {
@@ -129,10 +117,7 @@ export default function VoiceInputBar({
 
       rec.onend = () => {
         if (!isIntendedStopRef.current && isRecording) {
-            console.log("Microphone stopped unexpectedly. Restarting...");
-            try { rec.start(); } catch (e) {}
-        } else {
-            console.log("Microphone stopped");
+          try { rec.start(); } catch (e) {}
         }
       };
 
@@ -144,13 +129,11 @@ export default function VoiceInputBar({
     }
   };
 
-  // Action 1: Cancel Recording (Clears everything, aborts mic, resets state)
   const handleCancelRecording = () => {
     isIntendedStopRef.current = true;
     cleanupState();
   };
 
-  // Action 2: Stop Recording (Stops mic, keeps current transcript in prompt)
   const handleStopRecording = () => {
     isIntendedStopRef.current = true;
     if (interimTranscript.trim()) {
@@ -159,7 +142,6 @@ export default function VoiceInputBar({
     cleanupState();
   };
 
-  // Action 3: Confirm Recording (Appends transcript, exits recording mode)
   const handleConfirmRecording = () => {
     isIntendedStopRef.current = true;
     if (interimTranscript.trim()) {
@@ -174,115 +156,133 @@ export default function VoiceInputBar({
     return `${m}:${s}`;
   };
 
+  /* ─── Monochrome waveform bars (static heights, animated) ─── */
   const waveHeights = [
-    [10, 26, 14, 30, 12],
-    [22, 12, 28, 16, 24],
-    [14, 30, 10, 22, 18],
-    [28, 16, 24, 12, 30],
-    [12, 24, 18, 28, 14],
-    [26, 14, 30, 16, 22],
+    [8, 20, 12, 24, 10],
+    [18, 10, 22, 14, 20],
+    [12, 24, 8, 18, 14],
+    [22, 14, 20, 10, 24],
+    [10, 20, 16, 22, 12],
+    [20, 12, 24, 14, 18],
   ];
 
   return (
     <div className="relative w-full select-none">
       <AnimatePresence mode="wait">
         {isRecording ? (
-          /* ==========================================
-             RECORDING STATE (ChatGPT-Quality Bar)
-             ========================================== */
+          /* ══════════════════════════════════════════════════════
+             RECORDING STATE — Monochrome Premium Bar
+          ══════════════════════════════════════════════════════ */
           <motion.div
             key="recording-bar"
             initial={{ opacity: 0, scale: 0.98, y: 6 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: -6 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="relative flex h-[56px] w-full items-center justify-between rounded-2xl border border-red-500/40 bg-slate-950/90 dark:bg-slate-900/95 px-4 shadow-[0_0_25px_rgba(239,68,68,0.25)] backdrop-blur-2xl text-white"
+            className="relative flex h-[56px] w-full items-center justify-between
+                       rounded-xl
+                       border border-[#D1D5DB] dark:border-[#3F3F46]
+                       bg-[#FFFFFF] dark:bg-[#181818]
+                       px-4 shadow-sm"
           >
-            {/* Left: Red Glowing Mic Badge & Listening Text */}
+            {/* Left: Mic badge + listening text */}
             <div className="flex items-center gap-3 overflow-hidden pr-2">
               <motion.div
-                animate={{ scale: [1, 1.15, 1] }}
-                transition={{ repeat: Infinity, duration: 1.2, ease: 'easeInOut' }}
-                className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-red-600 to-rose-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.6)]"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ repeat: Infinity, duration: 1.4, ease: 'easeInOut' }}
+                className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px]
+                           border border-[#D1D5DB] dark:border-[#3F3F46]
+                           bg-[#111827] dark:bg-[#FFFFFF]
+                           text-[#FFFFFF] dark:text-[#111111]"
               >
-                <Mic size={18} />
+                <Mic size={16} />
+                {/* Pulse ring */}
+                <span className="absolute inset-0 rounded-[8px] border-2 border-[#111827] dark:border-[#FFFFFF] animate-ping opacity-25" />
               </motion.div>
 
               <div className="min-w-0">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-red-400">
-                  <span className="h-2 w-2 rounded-full bg-red-500 animate-ping" />
-                  <span>Listening...</span>
+                <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#111827] dark:text-[#FAFAFA] uppercase tracking-wider">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#111827] dark:bg-[#FAFAFA] animate-pulse" />
+                  <span>Listening</span>
                 </div>
-                <p className="truncate text-[11px] text-slate-300">
-                  {interimTranscript || 'Speak into your microphone now...'}
+                <p className="truncate text-[12px] text-[#6B7280] dark:text-[#A3A3A3] mt-0.5">
+                  {interimTranscript || 'Speak into your microphone…'}
                 </p>
               </div>
             </div>
 
-            {/* Center: Dynamic Waveform & Timer */}
+            {/* Center: Waveform + Timer */}
             <div className="hidden sm:flex items-center gap-3 shrink-0">
-              <div className="flex items-center gap-1 h-6 px-2">
+              <div className="flex items-center gap-[3px] h-6">
                 {waveHeights.map((heights, idx) => (
                   <motion.div
                     key={idx}
                     animate={{ height: heights }}
-                    transition={{ repeat: Infinity, duration: 1.1, delay: idx * 0.08, ease: 'easeInOut' }}
-                    className="w-1 rounded-full bg-gradient-to-t from-red-500 via-amber-400 to-emerald-400"
+                    transition={{ repeat: Infinity, duration: 1.1, delay: idx * 0.09, ease: 'easeInOut' }}
+                    className="w-[3px] rounded-full bg-[#111827] dark:bg-[#FAFAFA] opacity-70"
                   />
                 ))}
               </div>
-
-              <span className="font-mono text-xs font-bold bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700 text-slate-200">
+              <span className="font-mono text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA]
+                               bg-[#F8FAFC] dark:bg-[#111111]
+                               border border-[#E5E7EB] dark:border-[#2A2A2A]
+                               px-2.5 py-1 rounded-[6px]">
                 {formatTime(recordingDuration)}
               </span>
             </div>
 
-            {/* Right: The 3 Action Buttons (Cancel, Stop, Confirm) */}
+            {/* Right: Cancel / Stop / Confirm */}
             <div className="flex items-center gap-1.5 shrink-0">
-              {/* Cancel Button */}
+              {/* Cancel */}
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                type="button"
-                onClick={handleCancelRecording}
-                title="Cancel recording (Esc)"
-                className="flex h-9 items-center gap-1 rounded-xl border border-slate-800 bg-slate-900/90 px-3 text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-white transition"
+                whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                type="button" onClick={handleCancelRecording} title="Cancel (Esc)"
+                className="flex h-8 items-center gap-1 rounded-[8px] px-2.5
+                           border border-[#D1D5DB] dark:border-[#3F3F46]
+                           bg-[#F8FAFC] dark:bg-[#111111]
+                           text-[12px] font-semibold text-[#6B7280] dark:text-[#A3A3A3]
+                           hover:bg-[#F9FAFB] dark:hover:bg-[#232323]
+                           hover:text-[#111827] dark:hover:text-[#FAFAFA]
+                           transition"
               >
-                <X size={14} />
+                <X size={13} />
                 <span className="hidden md:inline">Cancel</span>
               </motion.button>
 
-              {/* Stop Button */}
+              {/* Stop */}
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                type="button"
-                onClick={handleStopRecording}
-                title="Stop and keep transcript"
-                className="flex h-9 items-center gap-1 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 text-xs font-semibold text-amber-400 hover:bg-amber-500/20 transition"
+                whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                type="button" onClick={handleStopRecording} title="Stop and keep transcript"
+                className="flex h-8 items-center gap-1 rounded-[8px] px-2.5
+                           border border-[#D1D5DB] dark:border-[#3F3F46]
+                           bg-[#F8FAFC] dark:bg-[#111111]
+                           text-[12px] font-semibold text-[#111827] dark:text-[#FAFAFA]
+                           hover:bg-[#F9FAFB] dark:hover:bg-[#232323]
+                           transition"
               >
-                <Square size={14} className="fill-current" />
+                <Square size={13} className="fill-current" />
                 <span className="hidden md:inline">Stop</span>
               </motion.button>
 
-              {/* Confirm Button */}
+              {/* Confirm */}
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                type="button"
-                onClick={handleConfirmRecording}
-                title="Confirm and insert speech"
-                className="flex h-9 items-center gap-1 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 px-3.5 text-xs font-bold text-white shadow-md hover:brightness-110 transition"
+                whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                type="button" onClick={handleConfirmRecording} title="Confirm speech"
+                className="flex h-8 items-center gap-1.5 rounded-[8px] px-3
+                           bg-[#111827] dark:bg-[#FFFFFF]
+                           text-[12px] font-bold text-[#FFFFFF] dark:text-[#111111]
+                           hover:bg-[#1F2937] dark:hover:bg-[#F0F0F0]
+                           transition shadow-sm"
               >
-                <Check size={15} />
+                <Check size={13} />
                 <span>Confirm</span>
               </motion.button>
             </div>
           </motion.div>
         ) : (
-          /* ==========================================
-             IDLE STATE (48px Glassmorphic Input Bar)
-             ========================================== */
+          /* ══════════════════════════════════════════════════════
+             IDLE STATE — Modern ChatGPT-style 56px input bar
+          ══════════════════════════════════════════════════════ */
           <motion.form
             key="idle-bar"
             initial={{ opacity: 0, scale: 0.98, y: -6 }}
@@ -291,76 +291,93 @@ export default function VoiceInputBar({
             transition={{ duration: 0.18, ease: 'easeOut' }}
             onSubmit={(e) => {
               e.preventDefault();
-              if (promptInput.trim() && !isGenerating) {
-                onSendMessage();
-              }
+              if (promptInput.trim() && !isGenerating) onSendMessage();
             }}
-            className="relative flex h-[48px] w-full items-center rounded-[12px] border border-[#E2E8F0] dark:border-[#334155] bg-white/95 dark:bg-[#1E293B]/95 px-2 shadow-xs backdrop-blur-xl transition-all duration-180 focus-within:border-[#1E4DB7] dark:focus-within:border-[#D9A441] focus-within:ring-2 focus-within:ring-[#1E4DB7]/10"
+            className="relative flex h-[56px] w-full items-center
+                       rounded-xl
+                       border border-[#D1D5DB] dark:border-[#3F3F46]
+                       bg-[#FFFFFF] dark:bg-[#181818]
+                       px-3 shadow-sm
+                       transition-all duration-150
+                       focus-within:border-[#111827] dark:focus-within:border-[#FAFAFA]
+                       focus-within:shadow-[0_0_0_3px_rgba(17,24,39,0.06)] dark:focus-within:shadow-[0_0_0_3px_rgba(250,250,250,0.05)]"
           >
-            {/* Input Text Box — Inter 14px */}
+            {/* Input */}
             <input
               type="text"
               value={promptInput}
               onChange={(e) => setPromptInput(e.target.value)}
-              placeholder="Ask CollegeMate AI about rules, timetables, fees, library..."
-              className="flex-1 bg-transparent px-3 text-[14px] font-body text-[#1F2937] dark:text-[#F8FAFC] outline-none placeholder:text-[#64748B] dark:placeholder:text-[#94A3B8]"
+              placeholder="Ask CollegeMate AI about rules, timetables, fees, library…"
+              className="flex-1 bg-transparent px-3 text-[14px] text-[#111827] dark:text-[#FAFAFA]
+                         outline-none border-none focus:ring-0
+                         placeholder-[#9CA3AF] dark:placeholder-[#52525B]"
               disabled={isGenerating}
             />
 
-            {/* Action Icon Group — Buttons 40x40px, Icons 16px */}
+            {/* Actions */}
             <div className="flex items-center gap-1.5 shrink-0">
-              {/* Mic Recording Button (40x40px) */}
+              {/* Mic */}
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                type="button"
-                onClick={startRecording}
-                disabled={isGenerating}
+                whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                type="button" onClick={startRecording} disabled={isGenerating}
                 title="Start Voice Input"
-                className="flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-[#64748B] dark:text-[#94A3B8] hover:bg-[#E2E8F0] dark:hover:bg-[#334155] hover:text-[#0E2A6D] dark:hover:text-[#60A5FA] transition disabled:opacity-40 shrink-0"
+                className="flex h-9 w-9 items-center justify-center rounded-[8px]
+                           border border-[#D1D5DB] dark:border-[#3F3F46]
+                           bg-[#F8FAFC] dark:bg-[#111111]
+                           text-[#6B7280] dark:text-[#A3A3A3]
+                           hover:bg-[#F9FAFB] dark:hover:bg-[#232323]
+                           hover:text-[#111827] dark:hover:text-[#FAFAFA]
+                           transition disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
               >
-                <Mic size={16} strokeWidth={1.75} />
+                <Mic size={15} strokeWidth={1.75} />
               </motion.button>
 
-              {/* Stop Generation or Send Button (40px height) */}
+              {/* Stop / Send */}
               {isGenerating ? (
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  type="button"
-                  onClick={onStopGeneration}
-                  className="flex h-10 items-center gap-2 rounded-[12px] bg-[#EF4444] px-3.5 font-body text-[14px] font-semibold text-white shadow-xs hover:bg-rose-700 transition shrink-0"
+                  whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                  type="button" onClick={onStopGeneration}
+                  className="flex h-9 items-center gap-2 rounded-[8px]
+                             border border-[#D1D5DB] dark:border-[#3F3F46]
+                             bg-[#111827] dark:bg-[#FFFFFF]
+                             px-3.5 text-[13px] font-semibold
+                             text-[#FFFFFF] dark:text-[#111111]
+                             hover:bg-[#1F2937] dark:hover:bg-[#F0F0F0]
+                             transition shrink-0 shadow-sm"
                 >
-                  <Square size={16} strokeWidth={1.75} className="fill-current" />
+                  <Square size={13} strokeWidth={1.75} className="fill-current" />
                   <span className="hidden sm:inline">Stop</span>
                 </motion.button>
               ) : (
                 <motion.button
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.96 }}
-                  type="submit"
-                  disabled={!promptInput.trim()}
-                  className="flex h-10 items-center gap-2 rounded-[12px] bg-[#0E2A6D] hover:bg-[#153B8A] px-3.5 font-body text-[14px] font-semibold text-white shadow-xs transition disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 shrink-0"
+                  whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                  type="submit" disabled={!promptInput.trim()}
+                  className="flex h-9 items-center gap-2 rounded-[8px]
+                             bg-[#111827] dark:bg-[#FFFFFF]
+                             px-3.5 text-[13px] font-semibold
+                             text-[#FFFFFF] dark:text-[#111111]
+                             hover:bg-[#1F2937] dark:hover:bg-[#F0F0F0]
+                             transition disabled:opacity-30 disabled:cursor-not-allowed
+                             shrink-0 shadow-sm"
                 >
                   <span className="hidden sm:inline">Send</span>
-                  <SendHorizontal size={16} strokeWidth={1.75} />
+                  <SendHorizontal size={15} strokeWidth={1.75} />
                 </motion.button>
               )}
 
-              {/* Voice Settings Button (40x40px) */}
+              {/* Voice Settings */}
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                type="button"
-                onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                className={`flex h-10 w-10 items-center justify-center rounded-[12px] transition shrink-0 ${
-                  isSettingsOpen
-                    ? 'bg-[#F5F7FB] dark:bg-[#0F172A] text-[#0E2A6D] dark:text-[#60A5FA]'
-                    : 'text-[#64748B] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] hover:text-[#1F2937] dark:hover:text-[#F8FAFC]'
-                }`}
+                whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                type="button" onClick={() => setIsSettingsOpen(!isSettingsOpen)}
                 title="Voice Settings"
+                className={`flex h-9 w-9 items-center justify-center rounded-[8px] transition shrink-0
+                  border
+                  ${isSettingsOpen
+                    ? 'border-[#111827] dark:border-[#FAFAFA] bg-[#111827] dark:bg-[#FFFFFF] text-[#FFFFFF] dark:text-[#111111]'
+                    : 'border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111] text-[#6B7280] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] hover:text-[#111827] dark:hover:text-[#FAFAFA]'
+                  }`}
               >
-                <Settings2 size={16} strokeWidth={1.75} />
+                <Settings2 size={15} strokeWidth={1.75} />
               </motion.button>
             </div>
           </motion.form>
