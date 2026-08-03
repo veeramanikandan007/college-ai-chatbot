@@ -5,20 +5,18 @@ import {
   Mic,
   UploadCloud,
   Bot,
-  Sparkles,
   CheckCircle2,
   FileText,
   Calendar,
   BookOpen,
   BarChart3,
   Briefcase,
-  Bus,
-  Home,
   ArrowRight,
-  TrendingUp,
-  Clock,
-  Layers,
   Award,
+  Search,
+  UserCheck,
+  FilePlus,
+  Target,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { staggerContainer, staggerItem } from '../lib/animations';
@@ -36,8 +34,7 @@ export default function SuggestedQuestions({
   const navigate = useNavigate();
 
   // Dynamic Time Greeting
-  const [greeting, setGreeting] = useState('');
-  const [currentDateStr, setCurrentDateStr] = useState('');
+  const [greeting, setGreeting] = useState('Good Evening');
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -48,17 +45,9 @@ export default function SuggestedQuestions({
     } else {
       setGreeting('Good Evening');
     }
-
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    };
-    setCurrentDateStr(new Date().toLocaleDateString('en-US', options));
   }, []);
 
-  const studentName = user?.name || 'Student';
+  const studentName = user?.name || 'Pandiyarajan';
 
   // Statistics Data
   const statsItems = [
@@ -66,160 +55,130 @@ export default function SuggestedQuestions({
       id: 'attendance',
       label: 'Overall Attendance',
       value: '88.5%',
-      trend: 'Eligible for Exams',
       icon: CheckCircle2,
-      accent: 'text-[#111827] dark:text-[#FAFAFA]',
-      bg: 'bg-[#F8FAFC] dark:bg-[#111111] border-[#D1D5DB] dark:border-[#3F3F46]',
-      progress: 88.5,
     },
     {
       id: 'cgpa',
       label: 'Academic Performance',
       value: '8.75 CGPA',
-      trend: 'Top 5% of Batch',
       icon: Award,
-      accent: 'text-[#111827] dark:text-[#FAFAFA]',
-      bg: 'bg-[#F8FAFC] dark:bg-[#111111] border-[#D1D5DB] dark:border-[#3F3F46]',
-      progress: 87.5,
     },
     {
       id: 'exams',
       label: 'Next Exam',
       value: '12 Days',
-      trend: 'CIA Test II • Oct 24',
       icon: Calendar,
-      accent: 'text-[#111827] dark:text-[#FAFAFA]',
-      bg: 'bg-[#F8FAFC] dark:bg-[#111111] border-[#D1D5DB] dark:border-[#3F3F46]',
-      progress: 40,
     },
     {
       id: 'documents',
       label: 'Uploaded Documents',
       value: '24 Files',
-      trend: 'Indexed in Vector DB',
       icon: BookOpen,
-      accent: 'text-[#111827] dark:text-[#FAFAFA]',
-      bg: 'bg-[#F8FAFC] dark:bg-[#111111] border-[#D1D5DB] dark:border-[#3F3F46]',
-      progress: 100,
     },
   ];
 
-  // Bento Grid Feature Cards Data
-  const bentoFeatures = [
+  // Feature Section Cards Data
+  const featureServices = [
     {
       id: 'library',
       title: 'AI Library & Study Notes',
       description: 'Access verified course syllabus, lecture summaries, and vector-indexed study materials.',
       icon: BookOpen,
-      span: 'md:col-span-2',
-      gradient: 'from-[#111827] to-[#111827]',
-      badge: 'Verified Notes',
       action: () => navigate('/notes'),
-      prompt: 'Show my course syllabus and study material for this semester',
     },
     {
       id: 'attendance',
       title: 'Attendance Tracker',
       description: 'Track subject-wise attendance, condonation limits, and leave eligibility.',
       icon: BarChart3,
-      span: 'md:col-span-1',
-      gradient: 'from-[#111827] to-[#111827]',
-      badge: '88.5% Present',
       action: () => navigate('/attendance'),
-      prompt: 'What is my current attendance percentage and condonation rule?',
     },
     {
-      id: 'timetable',
-      title: 'Timetable & Exam Schedule',
-      description: 'View daily class hours, CIA exam dates, and lab schedules.',
-      icon: Calendar,
-      span: 'md:col-span-1',
-      gradient: 'from-[#111827] to-[#111827]',
-      badge: 'Today: 4 Classes',
-      action: () => navigate('/timetable'),
-      prompt: 'Show my timetable and upcoming exam schedule',
+      id: 'resume',
+      title: 'Resume Builder',
+      description: 'Generate ATS-optimized resumes with AI tailored for campus placements.',
+      icon: FilePlus,
+      action: () => navigate('/resume-builder'),
     },
     {
-      id: 'placements',
-      title: 'Placement & Careers',
+      id: 'placement',
+      title: 'Placement Preparation',
       description: 'Explore active campus recruitment drives, company CTC packages, and interview tips.',
       icon: Briefcase,
-      span: 'md:col-span-2',
-      gradient: 'from-[#111827] to-[#111827]',
-      badge: '18 Active Drives',
       action: () => navigate('/placement-hub'),
-      prompt: 'Show recent campus placement drives and company salary packages',
     },
     {
-      id: 'transport',
-      title: 'Campus Transport',
-      description: 'Bus route numbers, pickup timings, and emergency driver contact info.',
-      icon: Bus,
-      span: 'md:col-span-1',
-      gradient: 'from-[#111827] to-[#111827]',
-      badge: '14 Routes',
-      action: () => onSelectQuestion('What are the college bus routes and timing schedules?'),
-      prompt: 'What are the college bus routes and timing schedules?',
+      id: 'mock-interviews',
+      title: 'AI Interview Practice',
+      description: 'Practice mock technical and HR interviews with real-time AI feedback.',
+      icon: UserCheck,
+      action: () => navigate('/mock-interviews'),
     },
     {
-      id: 'hostel',
-      title: 'Hostel & Campus Amenities',
-      description: 'Hostel room guidelines, daily mess menu timing, warden contacts, and digital library hours.',
-      icon: Home,
-      span: 'md:col-span-2',
-      gradient: 'from-[#111827] to-[#111827]',
-      badge: 'Hostel & Library',
-      action: () => onSelectQuestion('What are the hostel room rules and mess timings?'),
-      prompt: 'What are the hostel room rules and mess timings?',
+      id: 'document-search',
+      title: 'Document Search',
+      description: 'Search across uploaded PDFs, lecture slides, and college regulations instantly.',
+      icon: Search,
+      action: () => navigate('/documents'),
     },
   ];
 
   return (
-    <div className="mx-auto my-auto max-w-6xl px-4 py-6 select-none flex flex-col justify-center font-body space-y-6">
+    <div className="w-full max-w-6xl mx-auto px-4 py-6 select-none font-body space-y-8">
 
-      {/* SECTION 1: STUDENT WELCOME CARD */}
+      {/* ========================================================================= */}
+      {/* 1. HERO SECTION (LARGE WELCOME CARD)                                      */}
+      {/* ========================================================================= */}
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 p-6"
+        transition={{ duration: 0.35, ease: 'easeOut' }}
+        className="relative overflow-hidden rounded-[20px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#111111] p-8 shadow-xs"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="font-heading text-[12px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center relative z-10">
+          
+          {/* Left Text Column */}
+          <div className="md:col-span-7 space-y-4">
+            <div className="space-y-1">
+              <span className="text-[13px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
                 {greeting}
               </span>
-              <span className="text-zinc-400 dark:text-zinc-600">•</span>
-              <span className="font-body text-[12px] font-medium text-zinc-500 dark:text-zinc-400">
-                {currentDateStr}
+              <h1 className="text-[24px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight">
+                Welcome back, {studentName} 👋
+              </h1>
+              <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A3A3A3]">
+                Mount Zion College of Engineering and Technology
+              </p>
+            </div>
+
+            {/* AI Online Status Pill */}
+            <div className="inline-flex items-center gap-2 rounded-full bg-[#F8FAFC] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] px-3.5 py-1.5 shadow-xs">
+              <span className="relative flex h-2.5 w-2.5 items-center justify-center">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#22C55E] opacity-75" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#22C55E]" />
+              </span>
+              <span className="text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA]">
+                AI Online & Ready
               </span>
             </div>
-
-            <h1 className="font-heading font-bold text-[26px] leading-tight text-zinc-900 dark:text-zinc-100">
-              Welcome back, <span className="text-zinc-900 dark:text-zinc-100">{studentName}</span>
-            </h1>
-
-            <p className="font-body text-[13.5px] text-zinc-500 dark:text-zinc-400">
-              Mount Zion College of Engineering and Technology • Smart AI Student Portal
-            </p>
           </div>
 
-          {/* AI Status Indicator Pill */}
-          <div className="flex items-center gap-2 self-start sm:self-auto rounded-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-3.5 py-1.5 shadow-xs">
-            <div className="relative flex h-2 w-2 items-center justify-center">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#111827] dark:bg-[#FAFAFA] opacity-20" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#111827] dark:bg-[#FAFAFA]" />
+          {/* Right Vector Illustration Column */}
+          <div className="md:col-span-5 flex justify-center md:justify-end">
+            <div className="relative w-full max-w-[280px] sm:max-w-[320px] aspect-[4/3] rounded-[16px] overflow-hidden border border-[#E5E7EB]/60 dark:border-[#2A2A2A]/60 bg-[#F8FAFC] dark:bg-[#181818]">
+              <img
+                src="/hero_illustration.png"
+                alt="CollegeMate AI SaaS Illustration"
+                className="w-full h-full object-cover"
+              />
             </div>
-            <span className="font-body text-[12px] font-medium text-zinc-700 dark:text-zinc-300">
-              AI Online & Ready
-            </span>
           </div>
+
         </div>
       </motion.div>
 
       {/* ========================================================================= */}
-      {/* SECTION 2: QUICK STATISTICS CARDS                                       */}
+      {/* 2. STATISTICS CARDS (4 CARDS)                                             */}
       {/* ========================================================================= */}
       <motion.div
         variants={staggerContainer}
@@ -233,28 +192,21 @@ export default function SuggestedQuestions({
             <motion.div
               key={st.id}
               variants={staggerItem}
-              whileHover={{ y: -1 }}
-              className="p-[18px] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs transition-all flex flex-col justify-between"
+              whileHover={{ y: -2 }}
+              className="p-5 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#111111] shadow-xs transition-all flex flex-col justify-between"
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="font-body text-[12px] font-medium text-zinc-500 dark:text-zinc-400">
+                  <p className="text-[13px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
                     {st.label}
                   </p>
-                  <h3 className="font-heading font-bold text-[20px] text-zinc-900 dark:text-zinc-100 mt-0.5">
+                  <h3 className="text-[24px] font-semibold text-[#111827] dark:text-[#FAFAFA] mt-1">
                     {st.value}
                   </h3>
                 </div>
-                <div className={`p-2.5 rounded-xl border ${st.bg} ${st.accent}`}>
-                  <Icon size={16} strokeWidth={1.75} />
+                <div className="p-2.5 rounded-[12px] bg-[#F8FAFC] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
+                  <Icon size={18} strokeWidth={1.75} />
                 </div>
-              </div>
-
-              <div className="mt-3 flex items-center justify-between pt-2 border-t border-[#E2E8F0]/60 dark:border-[#334155]/60">
-                <span className="font-body text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8] truncate">
-                  {st.trend}
-                </span>
-                <TrendingUp size={12} strokeWidth={1.75} className={st.accent} />
               </div>
             </motion.div>
           );
@@ -262,32 +214,29 @@ export default function SuggestedQuestions({
       </motion.div>
 
       {/* ========================================================================= */}
-      {/* SECTION 3: QUICK ACTIONS BAR (3 PRIMARY BUTTONS)                         */}
+      {/* 3. QUICK ACTION BUTTONS (MODERN OUTLINED BUTTONS)                         */}
       {/* ========================================================================= */}
-      <div className="flex flex-col sm:flex-row items-center gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Action 1: Start Voice Chat */}
         <motion.button
-          whileHover={{ scale: 1.02 }}
+          whileHover={{ y: -1 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => {
-            if (onStartVoice) {
-              onStartVoice();
-            } else {
-              onSelectQuestion('Start voice interaction');
-            }
+            if (onStartVoice) onStartVoice();
+            else onSelectQuestion('Start voice interaction');
           }}
-          className="w-full sm:flex-1 h-[42px] rounded-[12px] bg-[#111827] dark:bg-[#FFFFFF] hover:bg-[#1F2937] dark:hover:bg-[#F0F0F0] text-[#FFFFFF] dark:text-[#111111] font-body text-[14px] font-normal flex items-center justify-center gap-2 shadow-sm border border-[#111827] dark:border-[#FFFFFF] transition"
+          className="h-[44px] rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#181818] text-[14px] font-medium flex items-center justify-center gap-2 shadow-xs transition cursor-pointer"
         >
-          <Mic size={16} strokeWidth={1.75} />
+          <Mic size={16} strokeWidth={1.75} className="text-[#111827] dark:text-[#FAFAFA]" />
           <span>Start Voice Chat</span>
         </motion.button>
 
         {/* Action 2: Upload Notes */}
         <motion.button
-          whileHover={{ scale: 1.02 }}
+          whileHover={{ y: -1 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => navigate('/documents')}
-          className="w-full sm:flex-1 h-[40px] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] font-body text-[14px] font-normal flex items-center justify-center gap-2 transition"
+          className="h-[44px] rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#181818] text-[14px] font-medium flex items-center justify-center gap-2 shadow-xs transition cursor-pointer"
         >
           <UploadCloud size={16} strokeWidth={1.75} className="text-[#6B7280] dark:text-[#A3A3A3]" />
           <span>Upload Notes</span>
@@ -295,10 +244,10 @@ export default function SuggestedQuestions({
 
         {/* Action 3: Ask CollegeMate AI */}
         <motion.button
-          whileHover={{ scale: 1.02 }}
+          whileHover={{ y: -1 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => onSelectQuestion('Help me with my studies and exams')}
-          className="w-full sm:flex-1 h-[40px] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] font-body text-[14px] font-normal flex items-center justify-center gap-2 transition"
+          className="h-[44px] rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#181818] text-[14px] font-medium flex items-center justify-center gap-2 shadow-xs transition cursor-pointer"
         >
           <Bot size={16} strokeWidth={1.75} className="text-[#6B7280] dark:text-[#A3A3A3]" />
           <span>Ask CollegeMate AI</span>
@@ -306,15 +255,15 @@ export default function SuggestedQuestions({
       </div>
 
       {/* ========================================================================= */}
-      {/* SECTION 4: FEATURE GRID (BENTO STYLE LAYOUT)                             */}
+      {/* 4. FEATURE SECTION ("EXPLORE CAMPUS AI SERVICES")                         */}
       {/* ========================================================================= */}
-      <div className="space-y-3">
+      <div className="space-y-4 pt-2">
         <div className="flex items-center justify-between">
-          <h2 className="font-heading font-bold text-[22px] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
-            <span>Explore Campus AI Services</span>
+          <h2 className="text-[20px] font-semibold text-[#111827] dark:text-[#FAFAFA]">
+            Explore Campus AI Services
           </h2>
-          <span className="font-body text-[12px] font-medium text-[#64748B] dark:text-[#94A3B8]">
-            Interactive Student Modules
+          <span className="text-[13px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
+            Essential Student Modules
           </span>
         </div>
 
@@ -322,40 +271,33 @@ export default function SuggestedQuestions({
           variants={staggerContainer}
           initial="initial"
           animate="animate"
-          className="grid grid-cols-1 md:grid-cols-3 gap-4"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
         >
-          {bentoFeatures.map((feat) => {
+          {featureServices.map((feat) => {
             const Icon = feat.icon;
             return (
               <motion.div
                 key={feat.id}
                 variants={staggerItem}
-                whileHover={{ y: -3, scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ y: -2 }}
                 onClick={feat.action}
-                className={`group cursor-pointer rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] p-[20px] shadow-xs hover:shadow-md hover:border-[#111827] dark:hover:border-[#FAFAFA] transition-all flex flex-col justify-between ${feat.span}`}
+                className="group cursor-pointer rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#111111] p-6 shadow-xs hover:shadow-md hover:border-[#111827] dark:hover:border-[#FAFAFA] transition-all flex flex-col justify-between"
               >
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="p-3 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] shadow-xs">
-                      <Icon size={16} strokeWidth={1.75} />
-                    </div>
-
-                    <span className="rounded-full bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] px-3 py-1 font-body text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA]">
-                      {feat.badge}
-                    </span>
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-[12px] bg-[#F8FAFC] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center text-[#111827] dark:text-[#FAFAFA]">
+                    <Icon size={18} strokeWidth={1.75} />
                   </div>
 
-                  <h3 className="font-heading font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA] mb-1 group-hover:text-[#111827] dark:group-hover:text-[#FAFAFA] transition-colors">
+                  <h3 className="text-[16px] font-semibold text-[#111827] dark:text-[#FAFAFA] transition-colors">
                     {feat.title}
                   </h3>
 
-                  <p className="font-body text-[14px] text-[#6B7280] dark:text-[#A3A3A3] leading-relaxed line-clamp-2">
+                  <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A3A3A3] leading-relaxed line-clamp-2">
                     {feat.description}
                   </p>
                 </div>
 
-                <div className="mt-4 flex items-center gap-1.5 font-body text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3] group-hover:text-[#111827] dark:group-hover:text-[#FAFAFA] group-hover:translate-x-1 transition-all">
+                <div className="mt-5 flex items-center gap-1.5 text-[13px] font-medium text-[#111827] dark:text-[#FAFAFA] group-hover:translate-x-1 transition-all">
                   <span>Open Module</span>
                   <ArrowRight size={14} strokeWidth={1.75} />
                 </div>
