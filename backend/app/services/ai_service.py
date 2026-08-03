@@ -35,9 +35,39 @@ SYSTEM_RAG_PROMPT = (
     "Do not expose internal RAG implementation.\n\n"
     "Generate a professional, human-like answer.\n\n"
     "If the answer cannot be found in the retrieved context, simply reply:\n"
-    "'I couldn't find that information in the college knowledge base.'\n\n"
+    "'I couldn't find that information in the campus knowledge base.'\n\n"
     "Never hallucinate."
 )
+
+UNIVERSAL_CAPABILITIES = (
+    "You are a Universal AI Assistant and Campus Assistant. "
+    "You excel at General conversation, Coding (Python, React, Java, C++, etc.), System Design, Web Development, "
+    "Mathematics, Science, History, Career Guidance, Resume improvement, Email writing, Story writing, "
+    "and Translation (English to Tamil, etc.). Provide rich, well-formatted answers.\n\n"
+    "SMART DEFAULTS & INTELLIGENT UNDERSTANDING:\n"
+    "- If the user provides a very short phrase (e.g., 'python game', 'sudoku', 'react login', 'movie', 'resume', 'email'), DO NOT ask for clarification. Infer the best intent and fulfill it immediately. Provide a beginner-friendly code example, recommend a list of movies, or generate a professional template directly.\n"
+    "- PROGRAMMING MODE: If the question mentions Python, Java, C++, React, FastAPI, JavaScript, SQL, HTML, Flutter, Node.js, Game, Algorithm, API, or Database, automatically provide complete, error-free code with explanations and best practices. Never ask for unnecessary clarification."
+)
+
+SYSTEM_PROMPT_NO_RAG = (
+    f"{UNIVERSAL_CAPABILITIES}\n\n"
+    "Answer the user's question directly using your general intelligence. "
+    "Do not mention the campus database unless specifically asked."
+)
+
+SYSTEM_PROMPT_HIGH_CONFIDENCE = (
+    f"{UNIVERSAL_CAPABILITIES}\n\n"
+    "Use the provided Campus Knowledge Base to answer the question confidently. "
+    "Do not mention documents, sources, or expose internal RAG details."
+)
+
+SYSTEM_PROMPT_MEDIUM_CONFIDENCE = (
+    f"{UNIVERSAL_CAPABILITIES}\n\n"
+    "Use the provided Campus Knowledge Base. If the specific details aren't present, "
+    "state: 'I couldn't find reliable information in the campus knowledge base.', but still offer any general helpful advice you can."
+)
+
+SYSTEM_PROMPT_LOW_CONFIDENCE = SYSTEM_PROMPT_NO_RAG
 
 
 class AIService:
@@ -254,8 +284,11 @@ class AIService:
 
             # 1. PLANNER (Phase 1)
             plan = self.query_router.generate_plan(normalized_message)
-            logger.info("AI Plan: Intent=%s RAG=%s Memory=%s Tools=%s",
-                        plan.intent, plan.requires_rag, plan.requires_memory, plan.tools_required)
+            logger.info("AI Plan: Intent=%s RAG=%s Memory=%s Tools=%s Conf=%s",
+                        plan.intent, plan.requires_rag, plan.requires_memory, plan.tools_required, plan.confidence)
+
+            if plan.confidence == "LOW":
+                return "I'm not completely sure I understood that. Could you clarify what you mean or provide more details?"
 
             # 2. MEMORY (Phase 5)
             history_messages = []
@@ -284,10 +317,14 @@ class AIService:
             weather_info = ""
             if plan.intent == "WEATHER" or "weather" in plan.tools_required:
                 weather_info = await self.weather_service.get_weather()
+                if not weather_info:
+                    weather_info = "I don't have live access to current information at the moment. If web search is enabled by the administrator, I can provide the latest updates."
 
             web_search_info = ""
-            if plan.intent == "WEB_SEARCH" or "search" in plan.tools_required:
+            if plan.intent in ["NEWS", "SPORTS", "WEATHER", "WEB_SEARCH"] or "search" in plan.tools_required:
                 web_search_info = self.web_search_service.search(message)
+                if not web_search_info:
+                    web_search_info = "I don't have live access to current information at the moment. If web search is enabled by the administrator, I can provide the latest updates."
 
             # 6. SMART FALLBACK SYSTEM PROMPT SELECTION (Phase 4)
             needs_rag = plan.requires_rag or plan.intent in ["CAMPUS", "HYBRID"]
@@ -485,8 +522,12 @@ class AIService:
 
             # 1. PLANNER (Phase 1)
             plan = self.query_router.generate_plan(normalized_message)
-            logger.info("AI Plan: Intent=%s RAG=%s Memory=%s Tools=%s",
-                        plan.intent, plan.requires_rag, plan.requires_memory, plan.tools_required)
+            logger.info("AI Plan: Intent=%s RAG=%s Memory=%s Tools=%s Conf=%s",
+                        plan.intent, plan.requires_rag, plan.requires_memory, plan.tools_required, plan.confidence)
+
+            if plan.confidence == "LOW":
+                yield "I'm not completely sure I understood that. Could you clarify what you mean or provide more details?"
+                return
 
             # 2. MEMORY (Phase 5)
             history_messages = []
@@ -514,10 +555,14 @@ class AIService:
             weather_info = ""
             if plan.intent == "WEATHER" or "weather" in plan.tools_required:
                 weather_info = await self.weather_service.get_weather()
+                if not weather_info:
+                    weather_info = "I don't have live access to current information at the moment. If web search is enabled by the administrator, I can provide the latest updates."
 
             web_search_info = ""
-            if plan.intent == "WEB_SEARCH" or "search" in plan.tools_required:
+            if plan.intent in ["NEWS", "SPORTS", "WEATHER", "WEB_SEARCH"] or "search" in plan.tools_required:
                 web_search_info = self.web_search_service.search(message)
+                if not web_search_info:
+                    web_search_info = "I don't have live access to current information at the moment. If web search is enabled by the administrator, I can provide the latest updates."
 
             # 6. SMART FALLBACK PROMPT SELECTION (Phase 4)
             needs_rag = plan.requires_rag or plan.intent in ["CAMPUS", "HYBRID"]

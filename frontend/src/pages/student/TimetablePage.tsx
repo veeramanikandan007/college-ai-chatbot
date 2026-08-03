@@ -227,10 +227,10 @@ export default function TimetablePage() {
         {/* ========================================================================= */}
         {viewMode === 'today' && (
           todayData.today_entries?.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-12 text-center bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] rounded-[16px] shadow-sm mt-4 min-h-[400px]">
-              <CalendarRange className="text-[#9CA3AF] dark:text-[#52525B] mb-4" size={48} />
+            <div className="flex flex-col items-center justify-center p-12 text-center bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] rounded-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] mt-4 min-h-[400px]">
+              <CalendarRange className="text-[#111827] dark:text-[#FAFAFA] mb-4" size={48} />
               <h2 className="text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA] mb-2">
-                📅 No classes scheduled today.
+                No classes scheduled today.
               </h2>
               <p className="text-[16px] text-[#6B7280] dark:text-[#A3A3A3]">
                 Enjoy your weekend!
@@ -244,8 +244,8 @@ export default function TimetablePage() {
               {ongoingClass ? (
                 <CurrentClassCard item={ongoingClass} />
               ) : (
-                <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] flex flex-col justify-center items-center text-center gap-2 h-full min-h-[160px] shadow-sm">
-                  <Sparkles className="text-[#6B7280] dark:text-[#A3A3A3]" size={24} />
+                <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] flex flex-col justify-center items-center text-center gap-2 h-full min-h-[160px] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+                  <Sparkles className="text-[#111827] dark:text-[#FAFAFA]" size={24} />
                   <p className="text-[#111827] dark:text-[#FAFAFA] font-bold text-[18px]">No ongoing classes</p>
                   <p className="text-[#6B7280] dark:text-[#A3A3A3] text-[14px]">Enjoy your free time!</p>
                 </div>
@@ -257,9 +257,9 @@ export default function TimetablePage() {
               {nextClass ? (
                 <NextClassCard item={nextClass} />
               ) : (
-                <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] flex flex-col justify-center items-center text-center gap-2 h-full min-h-[160px] shadow-sm">
-                  <CheckCircle2 className="text-[#16A34A]" size={24} />
-                  <p className="text-[#111827] dark:text-[#FAFAFA] font-bold text-[18px]">✅ Classes completed for today.</p>
+                <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] flex flex-col justify-center items-center text-center gap-2 h-full min-h-[160px] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+                  <CheckCircle2 className="text-[#111827] dark:text-[#FAFAFA]" size={24} />
+                  <p className="text-[#111827] dark:text-[#FAFAFA] font-bold text-[18px]">Classes completed for today.</p>
                   <p className="text-[#6B7280] dark:text-[#A3A3A3] text-[14px]">See you tomorrow!</p>
                 </div>
               )}

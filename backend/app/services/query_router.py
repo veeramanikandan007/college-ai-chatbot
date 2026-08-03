@@ -13,13 +13,12 @@ logger = get_logger(__name__)
 # AI Planner Models
 # ─────────────────────────────────────────────────────────────────────────────
 class AIPlan(BaseModel):
-    intent: str = Field(description="The primary intent: CAMPUS, PROGRAMMING, GENERAL, MATH, TRANSLATION, FILE_QA, WEATHER, GREETING, PERSONAL")
-    requires_memory: bool = Field(description="Does this query require context from previous conversation turns?")
-    requires_rag: bool = Field(description="Does this require querying the campus knowledge base?")
-    tools_required: list[str] = Field(description="List of tools needed, e.g., ['weather', 'attendance']")
-    relevant_files: bool = Field(default=False, description="Are uploaded files relevant to this query?")
-    confidence: str = Field(description="HIGH, MEDIUM, or LOW confidence in understanding the query")
-    reasoning: str = Field(description="Hidden internal reasoning for why this plan was chosen")
+    intent: str
+    requires_memory: bool
+    requires_rag: bool
+    tools_required: str
+    confidence: str
+    reasoning: str
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Action-intent regex table for Copilot fast-path routing
@@ -126,31 +125,62 @@ class QueryRouter:
                 intent="CAMPUS",
                 requires_memory=False,
                 requires_rag=True,
-                tools_required=[],
+                tools_required="",
                 confidence="MEDIUM",
                 reasoning="Fallback planner used due to LLM unavailability."
             )
             
         prompt = ChatPromptTemplate.from_messages([
             ("system", 
-             "You are the CampusMate AI Planner. Analyze the user query and generate a structured execution plan. "
-             "Determine the intent (CAMPUS, PROGRAMMING, GENERAL, MATH, TRANSLATION, FILE_QA, WEATHER, GREETING, PERSONAL). "
-             "Decide if conversation memory, RAG, or tools are required. "
-             "Tools available: weather, calculator, search, attendance, timetable, notification, student_profile. "
-             "Never expose your internal reasoning to the user."),
+             "You are the CampusMate AI Planner. Analyze the user query and generate a structured JSON execution plan.\n"
+             "Determine the intent (CAMPUS, PROGRAMMING, GENERAL, MATH, TRANSLATION, FILE_QA, WEATHER, GREETING, PERSONAL, CAREER_GUIDANCE, EXAM_PREP, ASSIGNMENT_HELP, ENTERTAINMENT, MOVIES, SPORTS, NEWS, TECHNOLOGY, SCIENCE, JOKES, CREATIVE_WRITING, SUMMARIZATION).\n"
+             "Decide if conversation memory, RAG, or tools are required.\n"
+             "If the intent is entirely GENERAL (like Programming, Movies, Science, Translation, General Knowledge, Jokes), set requires_rag to False.\n"
+             "If the query involves College details (Timetable, Staff, Exams, Rules), set requires_rag to True.\n"
+             "IMPORTANT CONFIDENCE RULES:\n"
+             "- Assign HIGH confidence even for very short, vague phrases (e.g., 'python game', 'sudoku', 'movie', 'resume'). Assume standard user intent.\n"
+             "- Only assign LOW confidence if the text is pure gibberish (e.g., 'asdfghjkl') with literally no meaningful interpretation.\n"
+             "Tools available: weather, calculator, search, attendance, timetable, notification, student_profile.\n"
+             "Never expose your internal reasoning to the user.\n\n"
+             "You MUST respond with a raw JSON object exactly matching this format:\n"
+             "{{\n"
+             '  "intent": "string",\n'
+             '  "requires_memory": boolean,\n'
+             '  "requires_rag": boolean,\n'
+             '  "tools_required": "string (comma separated list or none)",\n'
+             '  "confidence": "string (HIGH, MEDIUM, LOW)",\n'
+             '  "reasoning": "string"\n'
+             "}}"
+             ),
             ("human", "{query}")
         ])
-        chain = prompt | self.planner_llm
+        
         try:
-            plan = chain.invoke({"query": message})
-            return plan
+            response = self.llm.invoke(prompt.format_messages(query=message))
+            import json
+            # Strip markdown code blocks if present
+            content = response.content.strip()
+            if content.startswith("```json"):
+                content = content.split("```json")[1].split("```")[0].strip()
+            elif content.startswith("```"):
+                content = content.split("```")[1].split("```")[0].strip()
+                
+            data = json.loads(content)
+            return AIPlan(
+                intent=data.get("intent", "CAMPUS"),
+                requires_memory=bool(data.get("requires_memory", False)),
+                requires_rag=bool(data.get("requires_rag", True)),
+                tools_required=str(data.get("tools_required", "none")),
+                confidence=str(data.get("confidence", "HIGH")),
+                reasoning=str(data.get("reasoning", "Parsed JSON"))
+            )
         except Exception as e:
             logger.warning("AI Planner failed: %s. Using fallback plan.", e)
             return AIPlan(
                 intent="CAMPUS",
                 requires_memory=False,
                 requires_rag=True,
-                tools_required=[],
+                tools_required="",
                 confidence="LOW",
                 reasoning=f"Error generating plan: {e}"
             )

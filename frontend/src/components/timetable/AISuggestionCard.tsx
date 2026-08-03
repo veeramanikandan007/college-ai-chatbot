@@ -53,24 +53,24 @@ export default function AISuggestionCard({ ongoingClass, nextClass }: Props) {
   const { insight, suggestions } = generateInsight();
 
   return (
-    <div className="p-6 rounded-[16px] bg-gradient-to-br from-[#111827] to-[#1F2937] dark:from-[#181818] dark:to-[#222222] border border-[#374151] dark:border-[#333333] text-white shadow-sm hover:-translate-y-[2px] transition-transform duration-200">
+    <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-[0_2px_8px_rgba(0,0,0,0.05)] hover:-translate-y-[2px] transition-transform duration-200">
       <div className="flex items-center gap-2 mb-4">
-        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-          <Lightbulb size={16} className="text-[#FBBF24]" />
+        <div className="w-8 h-8 rounded-full bg-[#F3F4F6] dark:bg-[#2A2A2A] flex items-center justify-center">
+          <Lightbulb size={16} className="text-[#111827] dark:text-[#FAFAFA]" />
         </div>
-        <h3 className="font-bold text-[16px] flex items-center gap-1.5">
-          AI Insight <Sparkles size={14} className="text-[#60A5FA]" />
+        <h3 className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1.5">
+          AI Insight <Sparkles size={14} className="text-[#6B7280]" />
         </h3>
       </div>
 
-      <p className="text-[14px] font-medium leading-relaxed mb-4 text-[#F3F4F6]">
+      <p className="text-[14px] font-medium leading-relaxed mb-4 text-[#111827] dark:text-[#FAFAFA]">
         "{insight}"
       </p>
 
       <ul className="space-y-2">
         {suggestions.map((s, i) => (
-          <li key={i} className="flex items-start gap-2 text-[13px] text-[#D1D5DB]">
-            <span className="text-[#60A5FA] mt-0.5">•</span>
+          <li key={i} className="flex items-start gap-2 text-[13px] text-[#6B7280] dark:text-[#A3A3A3]">
+            <span className="text-[#111827] dark:text-[#FAFAFA] mt-0.5">•</span>
             <span>{s}</span>
           </li>
         ))}

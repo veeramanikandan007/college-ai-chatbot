@@ -50,10 +50,10 @@ export default function NextClassCard({ item }: Props) {
   };
 
   return (
-    <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col justify-between gap-4 shadow-sm hover:-translate-y-[2px] transition-transform duration-200">
+    <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] flex flex-col justify-between gap-4 shadow-[0_2px_8px_rgba(0,0,0,0.05)] hover:-translate-y-[2px] transition-transform duration-200">
       <div className="space-y-3">
-        <span className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1">
-          <Timer size={14} /> NEXT CLASS
+        <span className="px-2.5 py-1 rounded-[6px] text-[10px] font-bold uppercase tracking-wider bg-[#F3F4F6] dark:bg-[#2D2D2D] text-[#111111] dark:text-[#FAFAFA] flex items-center gap-1.5 w-fit">
+          <Timer size={12} /> UPCOMING
         </span>
         <h3 className="font-bold text-[20px] text-[#111827] dark:text-[#FAFAFA] leading-tight">
           {item.subject_name}

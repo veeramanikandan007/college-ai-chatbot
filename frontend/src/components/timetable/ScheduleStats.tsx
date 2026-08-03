@@ -14,7 +14,7 @@ interface StatsProps {
 export default function ScheduleStats({ stats }: StatsProps) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-      <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-sm flex flex-col gap-2 hover:-translate-y-[2px] transition-transform duration-200">
+      <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-[0_2px_8px_rgba(0,0,0,0.05)] flex flex-col gap-2 hover:-translate-y-[2px] transition-transform duration-200">
         <div className="flex items-center gap-2 text-[#6B7280] dark:text-[#A3A3A3]">
           <BookOpen size={16} />
           <span className="text-[12px] font-bold uppercase tracking-wider">Today's Classes</span>
@@ -23,13 +23,13 @@ export default function ScheduleStats({ stats }: StatsProps) {
           <span className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] leading-none">
             {stats.total_classes}
           </span>
-          <span className="text-[12px] font-medium text-[#16A34A] flex items-center gap-0.5 pb-1">
+          <span className="text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] flex items-center gap-0.5 pb-1">
             <TrendingUp size={12} /> +1 vs yesterday
           </span>
         </div>
       </div>
 
-      <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-sm flex flex-col gap-2 hover:-translate-y-[2px] transition-transform duration-200">
+      <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-[0_2px_8px_rgba(0,0,0,0.05)] flex flex-col gap-2 hover:-translate-y-[2px] transition-transform duration-200">
         <div className="flex items-center gap-2 text-[#6B7280] dark:text-[#A3A3A3]">
           <Clock3 size={16} />
           <span className="text-[12px] font-bold uppercase tracking-wider">Learning Time</span>
@@ -44,7 +44,7 @@ export default function ScheduleStats({ stats }: StatsProps) {
         </div>
       </div>
 
-      <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-sm flex flex-col gap-2 hover:-translate-y-[2px] transition-transform duration-200">
+      <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-[0_2px_8px_rgba(0,0,0,0.05)] flex flex-col gap-2 hover:-translate-y-[2px] transition-transform duration-200">
         <div className="flex items-center gap-2 text-[#6B7280] dark:text-[#A3A3A3]">
           <UserCheck size={16} />
           <span className="text-[12px] font-bold uppercase tracking-wider">Attendance Today</span>
@@ -53,13 +53,13 @@ export default function ScheduleStats({ stats }: StatsProps) {
           <span className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] leading-none">
             75%
           </span>
-          <span className="text-[12px] font-medium text-[#16A34A] pb-1">
+          <span className="text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] pb-1">
             Looking good
           </span>
         </div>
       </div>
 
-      <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-sm flex flex-col gap-2 hover:-translate-y-[2px] transition-transform duration-200">
+      <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-[0_2px_8px_rgba(0,0,0,0.05)] flex flex-col gap-2 hover:-translate-y-[2px] transition-transform duration-200">
         <div className="flex items-center gap-2 text-[#6B7280] dark:text-[#A3A3A3]">
           <BookOpen size={16} />
           <span className="text-[12px] font-bold uppercase tracking-wider">Session Types</span>

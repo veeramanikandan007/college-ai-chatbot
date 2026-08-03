@@ -53,35 +53,35 @@ export default function CurrentClassCard({ item }: Props) {
   };
 
   return (
-    <div className="p-6 rounded-[16px] bg-[#16A34A]/10 border-2 border-[#16A34A] flex flex-col gap-4 shadow-sm hover:-translate-y-[2px] transition-transform duration-200">
+    <div className="p-6 rounded-[16px] bg-[#111111] border border-[#2D2D2D] flex flex-col gap-4 shadow-[0_2px_8px_rgba(0,0,0,0.05)] hover:-translate-y-[2px] transition-transform duration-200">
       <div className="flex items-center justify-between">
-        <span className="text-[12px] font-bold uppercase tracking-wider text-[#16A34A] flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
-          CURRENT CLASS
+        <span className="px-2.5 py-1 rounded-[6px] text-[10px] font-bold uppercase tracking-wider bg-[#2D2D2D] text-[#FFFFFF] flex items-center gap-1.5 w-fit">
+          <div className="w-1.5 h-1.5 rounded-full bg-[#FFFFFF] animate-pulse" />
+          LIVE
         </span>
-        <span className="text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+        <span className="text-[14px] font-bold text-[#FFFFFF]">
           {item.start_time} - {item.end_time}
         </span>
       </div>
 
       <div className="space-y-1">
-        <h3 className="font-bold text-[24px] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
-          <BookOpen size={24} className="text-[#16A34A]" /> {item.subject_name}
+        <h3 className="font-bold text-[24px] text-[#FFFFFF] flex items-center gap-2">
+          <BookOpen size={24} className="text-[#FFFFFF]" /> {item.subject_name}
         </h3>
-        <div className="flex items-center gap-4 text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
-          <span>Room: <strong className="text-[#111827] dark:text-[#FAFAFA]">{item.classroom}</strong></span>
-          <span>Faculty: <strong className="text-[#111827] dark:text-[#FAFAFA]">{item.faculty_name}</strong></span>
+        <div className="flex items-center gap-4 text-[14px] font-medium text-[#A3A3A3]">
+          <span>Room: <strong className="text-[#FFFFFF]">{item.classroom}</strong></span>
+          <span>Faculty: <strong className="text-[#FFFFFF]">{item.faculty_name}</strong></span>
         </div>
       </div>
 
       <div className="pt-2 space-y-2">
-        <div className="flex justify-between items-end text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+        <div className="flex justify-between items-end text-[14px] font-bold text-[#FFFFFF]">
           <span>Remaining Time:</span>
           <span>{remainingTimeText}</span>
         </div>
-        <div className="w-full h-2 rounded-full bg-[#16A34A]/20 overflow-hidden">
+        <div className="w-full h-2 rounded-full bg-[#2D2D2D] overflow-hidden">
           <div 
-            className="h-full bg-[#16A34A] rounded-full transition-all duration-1000 ease-in-out" 
+            className="h-full bg-[#FFFFFF] rounded-full transition-all duration-1000 ease-in-out" 
             style={{ width: `${progress}%` }} 
           />
         </div>

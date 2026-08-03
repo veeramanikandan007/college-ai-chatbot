@@ -36,8 +36,8 @@ export default function TimetableTimeline({ entries }: TimelineProps) {
             >
               <div className="absolute -left-6 top-5 flex items-center justify-center">
                 {isOngoing ? (
-                  <div className="w-5 h-5 rounded-full bg-[#16A34A] text-white flex items-center justify-center z-10 shadow-[0_0_0_4px_#FFFFFF] dark:shadow-[0_0_0_4px_#0A0A0A]">
-                    <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                  <div className="w-5 h-5 rounded-full bg-[#111111] dark:bg-[#FAFAFA] text-white dark:text-black flex items-center justify-center z-10 shadow-[0_0_0_4px_#FFFFFF] dark:shadow-[0_0_0_4px_#0A0A0A]">
+                    <div className="w-2 h-2 rounded-full bg-white dark:bg-black animate-pulse" />
                   </div>
                 ) : isCompleted ? (
                   <div className="w-5 h-5 rounded-full bg-[#9CA3AF] dark:bg-[#4B5563] text-white flex items-center justify-center z-10 shadow-[0_0_0_4px_#FFFFFF] dark:shadow-[0_0_0_4px_#0A0A0A]">
@@ -50,8 +50,8 @@ export default function TimetableTimeline({ entries }: TimelineProps) {
 
               <div className={`ml-8 flex flex-col md:flex-row gap-6 p-5 rounded-[16px] transition-all duration-200 border ${
                 isOngoing
-                  ? 'bg-[#16A34A]/5 border-[#16A34A]/20 shadow-sm'
-                  : 'bg-[#FFFFFF] dark:bg-[#181818] border-transparent group-hover:border-[#E5E7EB] dark:group-hover:border-[#2A2A2A] hover:shadow-xs'
+                  ? 'bg-[#F8F9FA] dark:bg-[#111111] border-[#E5E7EB] dark:border-[#2A2A2A] shadow-sm'
+                  : 'bg-[#FFFFFF] dark:bg-[#181818] border-transparent group-hover:border-[#E5E7EB] dark:group-hover:border-[#2A2A2A] hover:shadow-[0_2px_8px_rgba(0,0,0,0.05)]'
               }`}>
                 
                 {/* Time Anchor */}
@@ -69,14 +69,14 @@ export default function TimetableTimeline({ entries }: TimelineProps) {
                 {/* Content */}
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-3">
-                    <span className={`px-2 py-0.5 rounded-[6px] text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 ${
-                      isOngoing ? 'bg-[#16A34A] text-white' :
-                      isCompleted ? 'bg-[#F3F4F6] dark:bg-[#2A2A2A] text-[#9CA3AF]' :
-                      'bg-[#111827] dark:bg-[#FAFAFA] text-white dark:text-black'
+                    <span className={`px-2.5 py-1 rounded-[6px] text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${
+                      isOngoing ? 'bg-[#2D2D2D] text-white' :
+                      isCompleted ? 'bg-[#F3F4F6] dark:bg-[#2A2A2A] text-[#6B7280]' :
+                      'bg-[#F3F4F6] dark:bg-[#2D2D2D] text-[#111111] dark:text-[#FAFAFA]'
                     }`}>
-                      {isOngoing && '🟢 Ongoing'}
-                      {isCompleted && '✓ Completed'}
-                      {isUpcoming && '○ Upcoming'}
+                      {isOngoing && <><div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> LIVE</>}
+                      {isCompleted && 'COMPLETED'}
+                      {isUpcoming && 'UPCOMING'}
                     </span>
                     <span className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3] bg-[#F9FAFB] dark:bg-[#111111] px-2 py-0.5 rounded-[6px]">
                       {item.subject_type}
