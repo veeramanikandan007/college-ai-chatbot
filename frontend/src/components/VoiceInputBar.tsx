@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, SendHorizontal, Square, Settings2, X, Check } from 'lucide-react';
 
@@ -307,7 +307,7 @@ export default function VoiceInputBar({
               type="text"
               value={promptInput}
               onChange={(e) => setPromptInput(e.target.value)}
-              placeholder="Ask CollegeMate AI about rules, timetables, fees, library…"
+              placeholder="Ask CollegeMate AI about rules, timetables, exams, placements..."
               className="flex-1 bg-transparent px-3 text-[14px] text-[#111827] dark:text-[#FAFAFA]
                          outline-none border-none focus:ring-0
                          placeholder-[#9CA3AF] dark:placeholder-[#52525B]"
