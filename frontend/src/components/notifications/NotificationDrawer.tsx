@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -118,7 +118,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ isOpen, 
                 Notifications
               </h3>
               {unreadCount > 0 && (
-                <span className="px-2 py-0.5 rounded-[6px] text-[12px] font-bold bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]">
+                <span className="px-2 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
@@ -235,7 +235,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ isOpen, 
                       </p>
 
                       {notif.action_url && (
-                        <span className="inline-flex items-center gap-1 text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA] hover:underline mt-2">
+                        <span className="inline-flex items-center gap-1 text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:underline mt-2">
                           View details <ExternalLink size={12} />
                         </span>
                       )}

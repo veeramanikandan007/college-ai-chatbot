@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import {
   BarChart3,
   Search,
@@ -219,88 +219,74 @@ export const StudentAnalyticsPage: React.FC = () => {
     : goals;
 
   return (
-    <div className="w-full h-full overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 md:p-8 transition-colors">
-      <div className="w-full max-w-[1600px] mx-auto space-y-8">
+    <div className="w-full h-full overflow-x-hidden overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 md:p-8 transition-colors select-none">
+      {/* 1440px Centered Max Content Width Container */}
+      <div className="w-full max-w-[1440px] mx-auto space-y-6">
 
-        {/* ========================================================================= */}
-        {/* 1. PAGE HEADER CARD                                                       */}
-        {/* ========================================================================= */}
-        <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 md:p-8 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
-              <BarChart3 size={24} />
+        {/* Compact Hero Header (Matching AI Study Planner layout) */}
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-4 sm:p-5 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+            <div className="w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <BarChart3 size={22} />
             </div>
-            <div>
-              <h1 className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight flex items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-[20px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-[1.2] truncate">
                 AI Analytics Dashboard
-                <span className="text-[12px] font-medium px-2.5 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
-                  Live Telemetry
-                </span>
               </h1>
-              <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-1">
-                Personal performance analytics across all modules. Real-time cross-module data.
+              <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] mt-0.5 truncate">
+                Cross-module performance telemetry, placement readiness & AI risk predictions.
               </p>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            {/* Search */}
-            <div className="relative flex-1 sm:w-64">
-              <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A3A3A3]" />
-              <input
-                type="text"
-                placeholder="Search insights, goals, subjects..."
-                className="w-full h-10 pl-10 pr-8 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA] cursor-pointer"
-                >
-                  <X size={14} />
-                </button>
-              )}
-            </div>
+          <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 shrink-0 w-full lg:w-auto pt-2 lg:pt-0 border-t lg:border-t-0 border-[#E5E7EB] dark:border-[#27272A]">
+            {overview && (
+              <div className="hidden xl:flex items-center gap-2">
+                <span className="h-[36px] inline-flex items-center gap-1.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111] px-3 text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA]">
+                  <TrendingUp size={15} />
+                  Attendance: {overview.attendance_percentage}%
+                </span>
+                <span className="h-[36px] inline-flex items-center gap-1.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111] px-3 text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA]">
+                  <Brain size={15} />
+                  Quiz Avg: {overview.quiz_average}%
+                </span>
+              </div>
+            )}
 
-            {/* Export buttons */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
               <button
                 onClick={handleExportCSV}
                 disabled={exporting}
-                className="h-10 px-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="h-[38px] sm:h-[40px] px-3.5 sm:px-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[13px] sm:text-[14px] font-[500] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 active:scale-[0.98] flex-1 sm:flex-initial"
                 title="Export as CSV"
               >
-                <Download size={14} />
+                <Download size={15} />
                 <span>CSV</span>
               </button>
               <button
                 onClick={handleExportJSON}
                 disabled={exporting}
-                className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                className="h-[38px] sm:h-[40px] px-[16px] sm:px-[18px] rounded-[12px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] font-[600] text-[13px] sm:text-[15px] transition flex items-center justify-center gap-2 cursor-pointer shrink-0 active:scale-[0.98] disabled:opacity-50 flex-1 sm:flex-initial"
                 title="Export as JSON"
               >
-                <Download size={14} />
-                <span>{exporting ? 'Exporting...' : 'Export'}</span>
+                <Download size={15} />
+                <span>{exporting ? 'Exporting...' : 'Export JSON'}</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* ========================================================================= */}
-        {/* 2. TAB NAVIGATION TOOLBAR                                                 */}
-        {/* ========================================================================= */}
-        <div className="bg-[#FFFFFF] dark:bg-[#181818] p-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between gap-4">
-          <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46]">
+        {/* View Switcher & Filters Toolbar (Matching StudyPlanner view switcher) */}
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-3 sm:p-4 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 select-none">
+          <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] min-h-[44px] max-w-full overflow-x-auto no-scrollbar snap-x">
             {TAB_ITEMS.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`h-9 px-4 text-[14px] font-medium rounded-[8px] transition-all cursor-pointer flex items-center gap-2 ${
+                className={`h-[36px] px-3.5 sm:px-4 rounded-[8px] text-[14px] font-[500] transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 snap-start ${
                   activeTab === tab.id
                     ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                    : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                    : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
                 }`}
               >
                 {tab.icon}
@@ -309,24 +295,44 @@ export const StudentAnalyticsPage: React.FC = () => {
             ))}
           </div>
 
-          <button
-            onClick={() => {
-              fetchOverview();
-              fetchCharts();
-              fetchStreaks();
-              fetchGoals();
-              fetchInsights(true);
-            }}
-            className="h-9 w-9 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
-            title="Refresh all data"
-          >
-            <RefreshCw size={16} className={loadingOverview ? 'animate-spin' : ''} />
-          </button>
+          <div className="flex items-center gap-2 sm:gap-3 w-full lg:w-auto">
+            {/* Search Input */}
+            <div className="relative flex-1 lg:w-64">
+              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A1A1AA]" />
+              <input
+                type="text"
+                placeholder="Search insights, goals..."
+                className="w-full h-[38px] sm:h-[40px] pl-9 pr-8 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[13px] sm:text-[14px] font-[600] text-[#111827] dark:text-[#FAFAFA] outline-none"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-[#FAFAFA] cursor-pointer"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            <button
+              onClick={() => {
+                fetchOverview();
+                fetchCharts();
+                fetchStreaks();
+                fetchGoals();
+                fetchInsights(true);
+              }}
+              className="h-[38px] sm:h-[40px] w-[38px] sm:w-[40px] rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center justify-center cursor-pointer shrink-0 active:scale-[0.98]"
+              title="Refresh all data"
+            >
+              <RefreshCw size={15} className={loadingOverview ? 'animate-spin' : ''} />
+            </button>
+          </div>
         </div>
 
-        {/* ========================================================================= */}
-        {/* 3. TAB PANELS                                                             */}
-        {/* ========================================================================= */}
+        {/* Tab Panels */}
         {activeTab === 'overview' && (
           <AnalyticsOverviewCards overview={overview} loading={loadingOverview} />
         )}
@@ -355,15 +361,96 @@ export const StudentAnalyticsPage: React.FC = () => {
           <StreaksTrackerWidget streaks={streaks} loading={loadingStreaks} />
         )}
 
+        {/* Telemetry Data Table Section (New Reusable Data Table) */}
+        {activeTab === 'overview' && !loadingOverview && overview && (
+          <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-4 sm:p-6 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-4 sm:space-y-5 select-none">
+            <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-[#D1D5DB] dark:border-[#3F3F46]">
+              <div className="flex items-center gap-3">
+                <div className="w-[36px] h-[36px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+                  <BarChart3 size={20} />
+                </div>
+                <div>
+                  <h3 className="text-[16px] sm:text-[17px] font-[600] text-[#111827] dark:text-[#FAFAFA]">
+                    Student Telemetry Data Table
+                  </h3>
+                  <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA]">
+                    Live academic performance telemetry & AI risk level classification
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto no-scrollbar rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] max-w-full">
+              <table className="w-full text-left text-[13px] sm:text-[14px]">
+                <thead className="bg-[#F8FAFC] dark:bg-[#111111] text-[12px] sm:text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] border-b border-[#D1D5DB] dark:border-[#3F3F46] sticky top-0 whitespace-nowrap">
+                  <tr>
+                    <th className="p-3 sm:p-3.5">Metric Module</th>
+                    <th className="p-3 sm:p-3.5">Current Value</th>
+                    <th className="p-3 sm:p-3.5">Target Benchmark</th>
+                    <th className="p-3 sm:p-3.5">Risk Level</th>
+                    <th className="p-3 sm:p-3.5">AI Recommendation</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#D1D5DB] dark:divide-[#3F3F46] font-[500]">
+                  <tr>
+                    <td className="p-3 sm:p-3.5 font-[700] text-[#111827] dark:text-[#FAFAFA] whitespace-nowrap">Attendance Rate</td>
+                    <td className="p-3 sm:p-3.5 whitespace-nowrap">{overview.attendance_percentage}%</td>
+                    <td className="p-3 sm:p-3.5 whitespace-nowrap">80.0%</td>
+                    <td className="p-3 sm:p-3.5 whitespace-nowrap">
+                      <span className={`px-2.5 py-0.5 rounded-full text-[11px] sm:text-[12px] font-[400] ${overview.attendance_percentage >= 80 ? 'bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA]' : 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'}`}>
+                        {overview.attendance_percentage >= 80 ? 'Low Risk' : 'High Risk'}
+                      </span>
+                    </td>
+                    <td className="p-3 sm:p-3.5 text-[#6B7280] dark:text-[#A1A1AA] min-w-[220px]">Maintain minimum 80% mandatory attendance</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 sm:p-3.5 font-[700] text-[#111827] dark:text-[#FAFAFA] whitespace-nowrap">Quiz Performance</td>
+                    <td className="p-3 sm:p-3.5 whitespace-nowrap">{overview.quiz_average}%</td>
+                    <td className="p-3 sm:p-3.5 whitespace-nowrap">75.0%</td>
+                    <td className="p-3 sm:p-3.5 whitespace-nowrap">
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] sm:text-[12px] font-[400] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA]">
+                        Low Risk
+                      </span>
+                    </td>
+                    <td className="p-3 sm:p-3.5 text-[#6B7280] dark:text-[#A1A1AA] min-w-[220px]">Continue daily adaptive quizzes in weak subjects</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 sm:p-3.5 font-[700] text-[#111827] dark:text-[#FAFAFA] whitespace-nowrap">Assignment Submissions</td>
+                    <td className="p-3 sm:p-3.5 whitespace-nowrap">{overview.assignments_completed}/{overview.assignments_total}</td>
+                    <td className="p-3 sm:p-3.5 whitespace-nowrap">100%</td>
+                    <td className="p-3 sm:p-3.5 whitespace-nowrap">
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] sm:text-[12px] font-[400] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA]">
+                        Low Risk
+                      </span>
+                    </td>
+                    <td className="p-3 sm:p-3.5 text-[#6B7280] dark:text-[#A1A1AA] min-w-[220px]">Submit pending lab assignments before deadline</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 sm:p-3.5 font-[700] text-[#111827] dark:text-[#FAFAFA] whitespace-nowrap">Placement Readiness</td>
+                    <td className="p-3 sm:p-3.5 whitespace-nowrap">{overview.placement_readiness}%</td>
+                    <td className="p-3 sm:p-3.5 whitespace-nowrap">70.0%</td>
+                    <td className="p-3 sm:p-3.5 whitespace-nowrap">
+                      <span className={`px-2.5 py-0.5 rounded-full text-[11px] sm:text-[12px] font-[400] ${overview.placement_readiness >= 70 ? 'bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA]' : 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'}`}>
+                        {overview.placement_readiness >= 70 ? 'Optimal' : 'Moderate'}
+                      </span>
+                    </td>
+                    <td className="p-3 sm:p-3.5 text-[#6B7280] dark:text-[#A1A1AA] min-w-[220px]">Attend mock AI HR & Technical interview sessions</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
         {/* Overview Tab Sub-Widgets */}
         {activeTab === 'overview' && !loadingOverview && overview && (
-          <div className="space-y-8">
+          <div className="space-y-6">
             <AiInsightsFeed
               insights={filteredInsights.slice(0, 4)}
               loading={loadingInsights}
               onRefresh={() => fetchInsights(true)}
             />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <StreaksTrackerWidget streaks={streaks} loading={loadingStreaks} />
               <GoalsTrackerWidget
                 goals={filteredGoals.slice(0, 4)}
@@ -379,3 +466,4 @@ export const StudentAnalyticsPage: React.FC = () => {
 };
 
 export default StudentAnalyticsPage;
+

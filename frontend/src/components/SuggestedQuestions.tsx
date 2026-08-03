@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -276,7 +276,7 @@ export default function SuggestedQuestions({
               onSelectQuestion('Start voice interaction');
             }
           }}
-          className="w-full sm:flex-1 h-[42px] rounded-[12px] bg-[#111827] dark:bg-[#FFFFFF] hover:bg-[#1F2937] dark:hover:bg-[#F0F0F0] text-[#FFFFFF] dark:text-[#111111] font-body text-[14px] font-semibold flex items-center justify-center gap-2 shadow-sm border border-[#111827] dark:border-[#FFFFFF] transition"
+          className="w-full sm:flex-1 h-[42px] rounded-[12px] bg-[#111827] dark:bg-[#FFFFFF] hover:bg-[#1F2937] dark:hover:bg-[#F0F0F0] text-[#FFFFFF] dark:text-[#111111] font-body text-[14px] font-normal flex items-center justify-center gap-2 shadow-sm border border-[#111827] dark:border-[#FFFFFF] transition"
         >
           <Mic size={16} strokeWidth={1.75} />
           <span>Start Voice Chat</span>
@@ -287,7 +287,7 @@ export default function SuggestedQuestions({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => navigate('/documents')}
-          className="w-full sm:flex-1 h-[40px] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] font-body text-[14px] font-semibold flex items-center justify-center gap-2 transition"
+          className="w-full sm:flex-1 h-[40px] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] font-body text-[14px] font-normal flex items-center justify-center gap-2 transition"
         >
           <UploadCloud size={16} strokeWidth={1.75} className="text-[#6B7280] dark:text-[#A3A3A3]" />
           <span>Upload Notes</span>
@@ -298,7 +298,7 @@ export default function SuggestedQuestions({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => onSelectQuestion('Help me with my studies and exams')}
-          className="w-full sm:flex-1 h-[40px] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] font-body text-[14px] font-semibold flex items-center justify-center gap-2 transition"
+          className="w-full sm:flex-1 h-[40px] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] font-body text-[14px] font-normal flex items-center justify-center gap-2 transition"
         >
           <Bot size={16} strokeWidth={1.75} className="text-[#6B7280] dark:text-[#A3A3A3]" />
           <span>Ask CollegeMate AI</span>
@@ -313,7 +313,7 @@ export default function SuggestedQuestions({
           <h2 className="font-heading font-bold text-[22px] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
             <span>Explore Campus AI Services</span>
           </h2>
-          <span className="font-body text-[12px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+          <span className="font-body text-[12px] font-medium text-[#64748B] dark:text-[#94A3B8]">
             Interactive Student Modules
           </span>
         </div>
@@ -341,7 +341,7 @@ export default function SuggestedQuestions({
                       <Icon size={16} strokeWidth={1.75} />
                     </div>
 
-                    <span className="rounded-full bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] px-3 py-1 font-body text-[12px] font-semibold text-[#111827] dark:text-[#FAFAFA]">
+                    <span className="rounded-full bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] px-3 py-1 font-body text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA]">
                       {feat.badge}
                     </span>
                   </div>
@@ -355,7 +355,7 @@ export default function SuggestedQuestions({
                   </p>
                 </div>
 
-                <div className="mt-4 flex items-center gap-1.5 font-body text-[12px] font-semibold text-[#6B7280] dark:text-[#A3A3A3] group-hover:text-[#111827] dark:group-hover:text-[#FAFAFA] group-hover:translate-x-1 transition-all">
+                <div className="mt-4 flex items-center gap-1.5 font-body text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3] group-hover:text-[#111827] dark:group-hover:text-[#FAFAFA] group-hover:translate-x-1 transition-all">
                   <span>Open Module</span>
                   <ArrowRight size={14} strokeWidth={1.75} />
                 </div>

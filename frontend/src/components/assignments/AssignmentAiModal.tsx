@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { X, Sparkles, CircleCheck, CheckSquare, Clock3, CalendarDays, BookOpen } from 'lucide-react';
 import { Assignment, AssignmentAiResponseData } from '../../api/assignments';
 
@@ -39,15 +39,14 @@ export const AssignmentAiModal: React.FC<AssignmentAiModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-[#FFFFFF] dark:bg-[#181818] rounded-[16px] shadow-lg border border-[#D1D5DB] dark:border-[#3F3F46] my-8 overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
+      <div className="relative w-full max-w-2xl bg-[#FFFFFF] dark:bg-[#181818] rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] my-8 overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
-              <Sparkles size={20} />
+            <div className="w-9 h-9 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <Sparkles size={18} />
             </div>
             <div>
-              <h2 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+              <h2 className="text-[18px] font-[600] text-[#111827] dark:text-[#FAFAFA]">
                 {aiData?.action ? actionTitles[aiData.action] || 'AI Assistant' : 'AI Assistant'}
               </h2>
               <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
@@ -63,8 +62,7 @@ export const AssignmentAiModal: React.FC<AssignmentAiModalProps> = ({
           </button>
         </div>
 
-        {/* Modal Body */}
-        <div className="p-6 max-h-[75vh] overflow-y-auto">
+        <div className="p-5 max-h-[75vh] overflow-y-auto">
           {loading ? (
             <div className="py-16 flex flex-col items-center justify-center text-center">
               <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#111827] dark:border-[#FAFAFA] border-t-transparent mb-4" />
@@ -87,7 +85,7 @@ export const AssignmentAiModal: React.FC<AssignmentAiModalProps> = ({
               {/* Action: Checklist View */}
               {aiData.action === 'checklist' && aiData.checklist && (
                 <div className="space-y-2 pt-2">
-                  <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1.5">
+                  <h4 className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1.5">
                     <CheckSquare size={16} />
                     Interactive Sub-task Checklist
                   </h4>
@@ -121,7 +119,7 @@ export const AssignmentAiModal: React.FC<AssignmentAiModalProps> = ({
               {/* Action: Study Plan View */}
               {aiData.action === 'study_plan' && aiData.study_plan && (
                 <div className="space-y-2 pt-2">
-                  <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1.5">
+                  <h4 className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1.5">
                     <CalendarDays size={16} />
                     Day-by-Day Milestone Roadmap
                   </h4>
@@ -131,7 +129,7 @@ export const AssignmentAiModal: React.FC<AssignmentAiModalProps> = ({
                         key={idx}
                         className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A]"
                       >
-                        <span className="text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA] uppercase tracking-wider">
+                        <span className="text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] uppercase tracking-wider">
                           {step.day}
                         </span>
                         <p className="mt-1 text-[14px] text-[#4B5563] dark:text-[#D4D4D4] leading-normal">

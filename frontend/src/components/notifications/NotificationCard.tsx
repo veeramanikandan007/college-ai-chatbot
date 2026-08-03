@@ -1,4 +1,4 @@
-import { Bell, CheckCircle2, AlertCircle, AlertTriangle, Info, Book, FileText, Calendar, DollarSign } from 'lucide-react';
+﻿import { Bell, CheckCircle2, AlertCircle, AlertTriangle, Info, Book, FileText, Calendar, DollarSign } from 'lucide-react';
 import { Notification } from '../../api/notifications';
 
 interface NotificationCardProps {
@@ -61,7 +61,7 @@ export function NotificationCard({ notification, onRead, onDelete }: Notificatio
         <p className="text-[13px] text-[#4B5563] dark:text-[#D4D4D4] line-clamp-2">{notification.message}</p>
         
         {notification.action_url && (
-          <a href={notification.action_url} className="text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-2 inline-block hover:underline" onClick={e => e.stopPropagation()}>
+          <a href={notification.action_url} className="text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] mt-2 inline-block hover:underline" onClick={e => e.stopPropagation()}>
             View Details
           </a>
         )}

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import {
   BarChart3,
   CheckCircle2,
@@ -25,7 +25,7 @@ export default function RightPanel({
       {/* Student Overview Widget */}
       <div className="rounded-2xl border border-[#E2E8F0] dark:border-slate-800 bg-gradient-to-b from-[#F8FAFC] to-white dark:from-slate-900 dark:to-slate-950 p-4 shadow-sm">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.24em] text-[#163D8C] dark:text-secondary">
+          <div className="flex items-center gap-1.5 text-[11px] font-normal uppercase tracking-[0.24em] text-[#163D8C] dark:text-secondary">
             <BarChart3 className="h-4 w-4" />
             <span>Student Stats</span>
           </div>
@@ -49,7 +49,7 @@ export default function RightPanel({
             <h4 className="text-sm font-bold text-[#0A2A6A] dark:text-slate-100">Attendance</h4>
             <p className="text-xs text-[#64748B] dark:text-slate-400">Semester 6 • CS Dept</p>
             <div 
-              className="mt-1 flex items-center gap-1 text-[11px] font-semibold transition-colors duration-500"
+              className="mt-1 flex items-center gap-1 text-[11px] font-normal transition-colors duration-500"
               style={{ color: attendancePercent >= 80 ? '#22C55E' : attendancePercent >= 75 ? '#EAB308' : '#EF4444' }}
             >
               <CheckCircle2 className="h-3.5 w-3.5" />

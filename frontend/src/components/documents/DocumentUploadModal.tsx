@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   UploadCloud,
@@ -262,7 +262,7 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
             {/* Upload Queue */}
             {items.length > 0 && (
               <div className="space-y-3">
-                <h4 className="text-[12px] font-semibold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                <h4 className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                   Uploading Files ({items.length})
                 </h4>
                 <div className="space-y-2 max-h-56 overflow-y-auto pr-1">

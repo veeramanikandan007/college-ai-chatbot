@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ═══════════════════════════════════════════════════════════════════════════
  *  CollegeMate AI — ChatGPT-Inspired Monochrome Design System
  * ═══════════════════════════════════════════════════════════════════════════
@@ -95,6 +95,18 @@ h1, h2, h3, h4, h5, h6,
   letter-spacing: -0.01em;
   color: var(--color-heading);
 }
+/* ── Global Typography Weight Hierarchy ───────────────────── */
+/* Only page titles (h1) and section headings (h2) are bold.  */
+/* Everything else uses medium or normal weight.               */
+h1 { font-weight: 600; }
+h2 { font-weight: 600; }
+h3 { font-weight: 500; }
+h4 { font-weight: 500; }
+h5, h6 { font-weight: 400; }
+p, li, caption { font-weight: 400; }
+label { font-weight: 500; }
+td { font-weight: 400; }
+th { font-weight: 600; }
 
 button, input, select, textarea, table, p, span, div, a, label, nav, sidebar,
 .font-body {
@@ -155,21 +167,22 @@ button, input, select, textarea, table, p, span, div, a, label, nav, sidebar,
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   MAIN CONTENT TYPOGRAPHY SCALE & SAAS LAYOUT UTILITIES
-   Sidebar: 13px | Navigation: 14px | Buttons: 14px | Forms: 15px
-   Tables: 15px | Body: 16px | Chat: 16px | Card Title: 18px
-   Section Title: 22px | Dashboard Title: 26px | Page Title: 32px
+   MASTER APPLICATION TYPOGRAPHY SCALE & SAAS UTILITIES
+   Page Title: 36px (700, leading 1.2) | Section Title: 26px (700)
+   Card Title: 22px (700) | Statistics Number: 34px (700)
+   Card Subtitle: 15px (500, Gray) | Body Text: 16px (400)
+   Button Text: 15px (600) | Sidebar: 15px (500)
    ══════════════════════════════════════════════════════════════════════════ */
 .text-page-title {
   font-family: var(--font-stack);
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.02em;
   color: var(--color-heading);
 }
 
-.text-dashboard-title {
+.text-section-title {
   font-family: var(--font-stack);
   font-size: 26px;
   font-weight: 700;
@@ -178,21 +191,27 @@ button, input, select, textarea, table, p, span, div, a, label, nav, sidebar,
   color: var(--color-heading);
 }
 
-.text-section-heading {
+.text-card-title {
   font-family: var(--font-stack);
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.2;
-  letter-spacing: -0.01em;
   color: var(--color-heading);
 }
 
-.text-card-title {
+.text-stat-number {
   font-family: var(--font-stack);
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.2;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.1;
   color: var(--color-heading);
+}
+
+.text-card-subtitle {
+  font-family: var(--font-stack);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-muted);
 }
 
 .text-body-main, .text-chat-message {
@@ -203,23 +222,79 @@ button, input, select, textarea, table, p, span, div, a, label, nav, sidebar,
   color: var(--color-body);
 }
 
-.text-table-content, .text-form-input {
+.text-btn-ui {
   font-family: var(--font-stack);
   font-size: 15px;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-.text-btn-ui, .text-nav-item {
-  font-family: var(--font-stack);
-  font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.25;
 }
 
 .text-sidebar-item {
   font-family: var(--font-stack);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   line-height: 1.25;
+}
+
+/* Hide scrollbar for Chrome, Safari, Opera, Edge, Firefox */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
+}
+
+
+/* ── Monochrome Range Slider Styles ─────────────────────────── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 9999px;
+  background: #E5E7EB;
+  outline: none;
+  cursor: pointer;
+}
+:root.dark input[type="range"] {
+  background: #2A2A2A;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: #111827;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 0 0 1px #D1D5DB;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 1px #9CA3AF;
+}
+:root.dark input[type="range"]::-webkit-slider-thumb {
+  background: #FAFAFA;
+  border: 2px solid #111111;
+  box-shadow: 0 0 0 1px #3F3F46;
+}
+:root.dark input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 1px #737373;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: #111827;
+  border: 2px solid #FFFFFF;
+  cursor: pointer;
+}
+:root.dark input[type="range"]::-moz-range-thumb {
+  background: #FAFAFA;
+  border: 2px solid #111111;
 }

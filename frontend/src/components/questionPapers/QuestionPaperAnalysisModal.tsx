@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   X,
   Sparkles,
@@ -135,7 +135,7 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
                 <div className="space-y-4">
                   {/* Pattern Box */}
                   <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A]">
-                    <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA] mb-1 flex items-center gap-1.5">
+                    <h4 className="text-[12px] font-medium uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA] mb-1 flex items-center gap-1.5">
                       <ListFilter size={15} />
                       Question Paper Pattern
                     </h4>
@@ -146,7 +146,7 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
 
                   {/* Weightage Analysis */}
                   <div className="space-y-2">
-                    <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                    <h4 className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                       Topic Weightage Breakdown
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -172,7 +172,7 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
               {activeTab === 'repeated' && (
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-2">
+                    <h4 className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-2">
                       Repeated Questions Across Years
                     </h4>
                     <div className="space-y-2">
@@ -197,7 +197,7 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
                   </div>
 
                   <div>
-                    <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-2">
+                    <h4 className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-2">
                       Frequently Asked Topics
                     </h4>
                     <div className="flex flex-wrap gap-2">
@@ -219,24 +219,24 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
                 <div className="space-y-4">
                   {/* Difficulty Cards */}
                   <div>
-                    <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-2">
+                    <h4 className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-2">
                       Difficulty Level Breakdown
                     </h4>
                     <div className="grid grid-cols-3 gap-3">
                       <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-center">
-                        <span className="text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA]">Easy</span>
+                        <span className="text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA]">Easy</span>
                         <p className="text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">
                           {analysis.difficulty_analysis.easy_percentage}%
                         </p>
                       </div>
                       <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-center">
-                        <span className="text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA]">Medium</span>
+                        <span className="text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA]">Medium</span>
                         <p className="text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">
                           {analysis.difficulty_analysis.medium_percentage}%
                         </p>
                       </div>
                       <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-center">
-                        <span className="text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA]">Hard</span>
+                        <span className="text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA]">Hard</span>
                         <p className="text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">
                           {analysis.difficulty_analysis.hard_percentage}%
                         </p>
@@ -246,7 +246,7 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
 
                   {/* Unit-wise Distribution */}
                   <div>
-                    <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-2">
+                    <h4 className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-2">
                       Unit-wise Marks Distribution
                     </h4>
                     <div className="space-y-2">
