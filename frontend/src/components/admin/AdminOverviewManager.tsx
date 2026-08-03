@@ -37,7 +37,7 @@ export const AdminOverviewManager: React.FC<Props> = ({ stats, loading, onNaviga
   const kpiCards = [
     { title: 'Total Students', value: stats.total_students, icon: Users, color: 'text-[#0E2A6D] dark:text-[#60A5FA]', bg: 'bg-[#0E2A6D]/10 dark:bg-[#0E2A6D]/30', tab: 'users' },
     { title: 'Total Faculty', value: stats.total_faculty, icon: GraduationCap, color: 'text-[#D9A441]', bg: 'bg-[#D9A441]/10', tab: 'users' },
-    { title: 'Departments', value: stats.total_departments, icon: Building2, color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-500/10', tab: 'departments' },
+    { title: 'Departments', value: stats.total_departments, icon: Building2, color: 'text-[#111827] dark:text-[#FAFAFA]', bg: 'bg-[#F8FAFC] dark:bg-[#111111]', tab: 'departments' },
     { title: 'Active Courses', value: stats.total_courses, icon: BookOpen, color: 'text-[#1E4DB7] dark:text-[#60A5FA]', bg: 'bg-[#1E4DB7]/10', tab: 'departments' },
     { title: 'Attendance Rate', value: `${stats.overall_attendance_rate}%`, icon: ClipboardCheck, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10', tab: 'academics' },
     { title: 'Assignments Created', value: stats.total_assignments, icon: FileText, color: 'text-[#0E2A6D] dark:text-[#60A5FA]', bg: 'bg-[#0E2A6D]/10', tab: 'academics' },

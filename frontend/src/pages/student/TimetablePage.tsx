@@ -8,57 +8,45 @@ import {
   School,
   Building2,
   GraduationCap,
-  MapPinned,
   Timer,
   CircleCheck,
   CircleAlert,
   CircleX,
-  CalendarRange,
   NotebookTabs,
-  History,
-  RefreshCw,
-  Download,
-  Upload,
-  Settings2,
-  Search,
-  Filter,
   Bell,
   Brain,
-  ChevronLeft,
-  ChevronRight,
   Layers,
   Sparkles,
+  Search,
+  Filter,
+  Plus,
+  CalendarRange,
+  RotateCcw,
+  CheckCircle2,
+  XCircle,
+  FileText,
+  Clock,
 } from 'lucide-react';
 
-interface TimetableItem {
-  id: number;
-  day_of_week: string;
-  period_number: number;
-  start_time: string;
-  end_time: string;
-  subject_name: string;
-  subject_code: string;
-  subject_type: 'Theory' | 'Lab' | 'Seminar';
-  faculty_name: string;
-  classroom: string;
-  color_code: string;
-  status?: 'Ongoing' | 'Upcoming' | 'Completed';
-}
-
-interface AcademicEvent {
-  date: string;
-  title: string;
-  type: 'Class Day' | 'Exam Day' | 'Holiday' | 'Event';
-}
+import CurrentClassCard from '../../components/timetable/CurrentClassCard';
+import NextClassCard from '../../components/timetable/NextClassCard';
+import ScheduleStats from '../../components/timetable/ScheduleStats';
+import ScheduleFilters from '../../components/timetable/ScheduleFilters';
+import TimetableTimeline from '../../components/timetable/TimetableTimeline';
+import AISuggestionCard from '../../components/timetable/AISuggestionCard';
+import { TimetableItem, AcademicEvent } from '../../components/timetable/types';
+import { useCurrentTimetable } from '../../hooks/useCurrentTimetable';
 
 export default function TimetablePage() {
   const [viewMode, setViewMode] = useState<'today' | 'week' | 'calendar' | 'ai'>('today');
-  const [selectedDay, setSelectedDay] = useState<string>('Monday');
+  const [selectedDay, setSelectedDay] = useState<string>(
+    new Date().toLocaleDateString('en-US', { weekday: 'long' })
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'All' | 'Theory' | 'Lab' | 'Upcoming' | 'Completed'>('All');
 
   // Timetable Backend State
-  const [todayData, setTodayData] = useState<any>(null);
+  const { todayData, loading: todayLoading } = useCurrentTimetable();
   const [weeklyData, setWeeklyData] = useState<Record<string, TimetableItem[]>>({});
   const [calendarEvents, setCalendarEvents] = useState<AcademicEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -71,17 +59,14 @@ export default function TimetablePage() {
   // Reminder Toast State
   const [reminderToast, setReminderToast] = useState<string | null>(null);
 
-  // Fetch Timetable Backend Data
+  // Fetch Timetable Backend Data (Weekly and Calendar)
   const fetchTimetable = async () => {
-    setLoading(true);
     try {
-      const [todayRes, weeklyRes, calRes] = await Promise.all([
-        fetch('/api/v1/timetable/today'),
+      const [weeklyRes, calRes] = await Promise.all([
         fetch('/api/v1/timetable/weekly'),
         fetch('/api/v1/timetable/calendar'),
       ]);
 
-      if (todayRes.ok) setTodayData(await todayRes.json());
       if (weeklyRes.ok) setWeeklyData(await weeklyRes.json());
       if (calRes.ok) setCalendarEvents(await calRes.json());
     } catch (err) {
@@ -157,12 +142,12 @@ export default function TimetablePage() {
     return list;
   }, [todayData, activeFilter, searchQuery]);
 
-  if (loading || !todayData) {
+  if (loading || todayLoading || !todayData) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-[#F8FAFC] dark:bg-[#0B0F19]">
+      <div className="w-full h-full flex items-center justify-center bg-[#FFFFFF] dark:bg-[#0A0A0A]">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#0E2A6D] border-t-transparent dark:border-[#D9A441]" />
-          <p className="text-sm font-semibold text-[#64748B] dark:text-[#94A3B8]">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#111827] dark:border-[#FAFAFA] border-t-transparent" />
+          <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
             Loading Smart Timetable...
           </p>
         </div>
@@ -174,8 +159,8 @@ export default function TimetablePage() {
   const nextClass: TimetableItem | null = todayData.next_class;
 
   return (
-    <div className="w-full h-full overflow-y-auto bg-[#F8FAFC] dark:bg-[#0B0F19] text-[#1E293B] dark:text-[#F8FAFC] p-3 sm:p-6 md:p-8 font-body transition-colors duration-300">
-      <div className="w-full max-w-[1600px] mx-auto space-y-6">
+    <div className="w-full h-full overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 md:p-8 transition-colors">
+      <div className="w-full max-w-[1600px] mx-auto space-y-8">
 
         {/* Reminder Notification Banner */}
         <AnimatePresence>
@@ -184,13 +169,13 @@ export default function TimetablePage() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="p-4 rounded-2xl bg-emerald-600 text-white font-bold text-xs shadow-lg flex items-center justify-between"
+              className="p-4 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs flex items-center justify-between"
             >
               <div className="flex items-center gap-2">
                 <Bell size={18} />
                 <span>{reminderToast}</span>
               </div>
-              <button onClick={() => setReminderToast(null)}>
+              <button onClick={() => setReminderToast(null)} className="cursor-pointer">
                 <CircleX size={18} />
               </button>
             </motion.div>
@@ -198,306 +183,132 @@ export default function TimetablePage() {
         </AnimatePresence>
 
         {/* ========================================================================= */}
-        {/* HEADER BAR & STATUS OVERVIEW (LUCIDE ICONS ONLY, NO EMOJIS)               */}
+        {/* 1. SMART TIMETABLE HEADER                                                 */}
         {/* ========================================================================= */}
-        <div className="bg-white dark:bg-[#111827] p-5 sm:p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white flex items-center justify-center shadow-md border border-[#D9A441]/30 shrink-0">
-                <CalendarDays size={30} strokeWidth={1.75} />
-              </div>
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="font-heading font-extrabold text-2xl md:text-3xl text-[#0E2A6D] dark:text-white tracking-wide">
-                    Smart Timetable
-                  </h1>
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#D9A441]/20 text-[#0E2A6D] dark:text-[#D9A441] font-bold border border-[#D9A441]/30 flex items-center gap-1">
-                    <School size={13} /> CSE • <GraduationCap size={13} /> Sem 6 • Sec A
-                  </span>
-                </div>
-                <p className="text-xs sm:text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 flex items-center gap-2">
-                  <span className="flex items-center gap-1"><CalendarDays size={14} /> {todayData.current_date}</span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1"><Clock3 size={14} /> {todayData.current_day} ({todayData.current_time})</span>
-                </p>
-              </div>
-            </div>
-
-            {/* View Selector Tabs */}
-            <div className="flex items-center bg-[#F1F5F9] dark:bg-[#1E293B] p-1 rounded-xl shrink-0 overflow-x-auto">
-              {[
-                { id: 'today', label: "Today's Schedule", icon: Clock3 },
-                { id: 'week', label: 'Weekly Matrix', icon: Layers },
-                { id: 'calendar', label: 'Academic Calendar', icon: CalendarDays },
-                { id: 'ai', label: 'AI Schedule Assistant', icon: Brain },
-              ].map((tab) => {
-                const Icon = tab.icon;
-                const isActive = viewMode === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setViewMode(tab.id as any)}
-                    className={`px-3.5 py-2 text-xs font-bold rounded-lg transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
-                      isActive
-                        ? 'bg-[#0E2A6D] text-white shadow-xs'
-                        : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#0E2A6D] dark:hover:text-white'
-                    }`}
-                  >
-                    <Icon size={15} />
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-[#E5E7EB] dark:border-[#2A2A2A] mb-8">
+          <div className="space-y-1">
+            <h1 className="text-[28px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight">
+              Smart Timetable
+            </h1>
+            <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] font-medium flex items-center gap-2">
+              <span>{todayData.current_date}</span>
+              <span>•</span>
+              <span>{todayData.current_day}</span>
+              <span>•</span>
+              <span>Semester 6</span>
+              <span>•</span>
+              <span>CSE</span>
+            </p>
           </div>
 
-          {/* Ongoing & Next Class Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-            {/* Ongoing Class */}
-            {ongoingClass && (
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-[#1E4DB7]/10 to-[#0E2A6D]/10 border-2 border-[#1E4DB7] dark:border-[#60A5FA] flex items-center justify-between shadow-xs">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="relative flex h-2.5 w-2.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600"></span>
-                    </span>
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#1E4DB7] dark:text-[#60A5FA] flex items-center gap-1">
-                      <CircleAlert size={14} /> Ongoing Class Right Now
-                    </span>
-                  </div>
-                  <h3 className="font-heading font-bold text-base text-[#0E2A6D] dark:text-white flex items-center gap-1.5">
-                    <BookOpen size={16} className="text-[#1E4DB7]" /> {ongoingClass.subject_name}
-                  </h3>
-                  <div className="flex items-center gap-3 text-xs text-[#64748B] font-semibold">
-                    <span className="flex items-center gap-1"><UserRound size={14} /> {ongoingClass.faculty_name}</span>
-                    <span className="flex items-center gap-1"><Building2 size={14} /> {ongoingClass.classroom}</span>
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <span className="text-xs font-bold text-[#1E4DB7] dark:text-[#60A5FA] flex items-center gap-1 justify-end">
-                    <Clock3 size={14} /> {ongoingClass.start_time} - {ongoingClass.end_time}
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#1E4DB7] text-white font-bold inline-block mt-1">
-                    {ongoingClass.subject_type}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Next Class */}
-            {nextClass && (
-              <div className="p-4 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] flex items-center justify-between shadow-xs">
-                <div className="space-y-1">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] flex items-center gap-1">
-                    <Timer size={14} className="text-[#D9A441]" /> Next Up
-                  </span>
-                  <h3 className="font-heading font-bold text-base text-[#0E2A6D] dark:text-white flex items-center gap-1.5">
-                    <BookOpen size={16} className="text-[#D9A441]" /> {nextClass.subject_name}
-                  </h3>
-                  <div className="flex items-center gap-3 text-xs text-[#64748B] font-semibold">
-                    <span className="flex items-center gap-1"><UserRound size={14} /> {nextClass.faculty_name}</span>
-                    <span className="flex items-center gap-1"><Building2 size={14} /> {nextClass.classroom}</span>
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <span className="text-xs font-bold text-[#0E2A6D] dark:text-white block">
-                    Starts at {nextClass.start_time}
-                  </span>
-                  <button
-                    onClick={() => handleSetReminder(nextClass)}
-                    className="mt-1 px-2.5 py-1 rounded-lg bg-[#D9A441]/20 text-[#0E2A6D] dark:text-[#D9A441] text-[10px] font-bold border border-[#D9A441]/30 hover:bg-[#D9A441]/30 transition flex items-center gap-1 justify-end cursor-pointer"
-                  >
-                    <Bell size={12} /> Set Reminder
-                  </button>
-                </div>
-              </div>
-            )}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
+            {[
+              { id: 'today', label: "Today's Schedule" },
+              { id: 'week', label: 'Weekly View' },
+              { id: 'calendar', label: 'Calendar' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setViewMode(tab.id as any)}
+                className={`h-9 px-4 rounded-[8px] text-[13px] font-medium transition cursor-pointer whitespace-nowrap ${
+                  viewMode === tab.id
+                    ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] shadow-sm'
+                    : 'bg-transparent text-[#6B7280] dark:text-[#A3A3A3] hover:bg-[#F3F4F6] dark:hover:bg-[#2A2A2A] hover:text-[#111827] dark:hover:text-[#FAFAFA]'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* ========================================================================= */}
-        {/* MODE 1: TODAY'S SCHEDULE & VERTICAL TIMELINE                              */}
+        {/* MODE 1: TODAY'S SMART DASHBOARD                                           */}
         {/* ========================================================================= */}
         {viewMode === 'today' && (
-          <div className="space-y-6">
-            {/* Statistics Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-              <div className="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs space-y-1">
-                <span className="text-[11px] text-[#64748B] font-bold uppercase flex items-center gap-1">
-                  <BookOpen size={13} /> Total Classes
-                </span>
-                <div className="text-2xl font-extrabold font-heading text-[#0E2A6D] dark:text-white">
-                  {todayData.stats.total_classes}
+          todayData.today_entries?.length === 0 ? (
+            <div className="flex flex-col items-center justify-center p-12 text-center bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] rounded-[16px] shadow-sm mt-4 min-h-[400px]">
+              <CalendarRange className="text-[#9CA3AF] dark:text-[#52525B] mb-4" size={48} />
+              <h2 className="text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA] mb-2">
+                📅 No classes scheduled today.
+              </h2>
+              <p className="text-[16px] text-[#6B7280] dark:text-[#A3A3A3]">
+                Enjoy your weekend!
+              </p>
+            </div>
+          ) : (
+          <div className="flex flex-col gap-8 md:grid md:grid-cols-2 md:grid-flow-row-dense">
+            
+            {/* Current Class */}
+            <div className="col-span-1 order-1 md:order-none">
+              {ongoingClass ? (
+                <CurrentClassCard item={ongoingClass} />
+              ) : (
+                <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] flex flex-col justify-center items-center text-center gap-2 h-full min-h-[160px] shadow-sm">
+                  <Sparkles className="text-[#6B7280] dark:text-[#A3A3A3]" size={24} />
+                  <p className="text-[#111827] dark:text-[#FAFAFA] font-bold text-[18px]">No ongoing classes</p>
+                  <p className="text-[#6B7280] dark:text-[#A3A3A3] text-[14px]">Enjoy your free time!</p>
                 </div>
-              </div>
-              <div className="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs space-y-1">
-                <span className="text-[11px] text-[#64748B] font-bold uppercase flex items-center gap-1">
-                  <NotebookTabs size={13} /> Theory
-                </span>
-                <div className="text-2xl font-extrabold font-heading text-[#1E4DB7]">
-                  {todayData.stats.theory_count}
-                </div>
-              </div>
-              <div className="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs space-y-1">
-                <span className="text-[11px] text-[#64748B] font-bold uppercase flex items-center gap-1">
-                  <Building2 size={13} /> Labs
-                </span>
-                <div className="text-2xl font-extrabold font-heading text-purple-600">
-                  {todayData.stats.lab_count}
-                </div>
-              </div>
-              <div className="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs space-y-1">
-                <span className="text-[11px] text-[#64748B] font-bold uppercase flex items-center gap-1">
-                  <Clock3 size={13} /> Total Hours
-                </span>
-                <div className="text-2xl font-extrabold font-heading text-emerald-600">
-                  {todayData.stats.total_hours} hrs
-                </div>
-              </div>
-              <div className="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs space-y-1">
-                <span className="text-[11px] text-[#64748B] font-bold uppercase flex items-center gap-1">
-                  <Timer size={13} /> Free Periods
-                </span>
-                <div className="text-2xl font-extrabold font-heading text-[#D9A441]">
-                  {todayData.stats.free_periods}
-                </div>
-              </div>
+              )}
             </div>
 
-            {/* Filter Bar */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-[#111827] p-4 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs">
-              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                {(['All', 'Theory', 'Lab', 'Upcoming', 'Completed'] as const).map((filter) => (
-                  <button
-                    key={filter}
-                    onClick={() => setActiveFilter(filter)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
-                      activeFilter === filter
-                        ? 'bg-[#0E2A6D] text-white'
-                        : 'bg-[#F8FAFC] dark:bg-[#1E293B] text-[#64748B]'
-                    }`}
-                  >
-                    {filter}
-                  </button>
-                ))}
-              </div>
+            {/* Next Class */}
+            <div className="col-span-1 order-3 md:order-none">
+              {nextClass ? (
+                <NextClassCard item={nextClass} />
+              ) : (
+                <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] flex flex-col justify-center items-center text-center gap-2 h-full min-h-[160px] shadow-sm">
+                  <CheckCircle2 className="text-[#16A34A]" size={24} />
+                  <p className="text-[#111827] dark:text-[#FAFAFA] font-bold text-[18px]">✅ Classes completed for today.</p>
+                  <p className="text-[#6B7280] dark:text-[#A3A3A3] text-[14px]">See you tomorrow!</p>
+                </div>
+              )}
+            </div>
 
-              <div className="relative w-full sm:w-64">
-                <Search size={16} className="absolute left-3 top-2.5 text-[#64748B]" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search subject, faculty, room..."
-                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#F8FAFC] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] text-xs font-semibold outline-none focus:border-[#1E4DB7]"
+            {/* Statistics */}
+            <div className="col-span-1 md:col-span-2 order-4 md:order-none">
+              <ScheduleStats stats={todayData.stats} />
+            </div>
+
+            {/* Timeline */}
+            <div className="col-span-1 md:col-span-2 order-2 md:order-none bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] rounded-[16px] shadow-sm flex flex-col">
+              <div className="px-6 border-b border-[#E5E7EB] dark:border-[#2A2A2A]">
+                <ScheduleFilters 
+                  entries={todayData.today_entries || []} 
+                  activeFilter={activeFilter} 
+                  setActiveFilter={setActiveFilter} 
+                  searchQuery={searchQuery} 
+                  setSearchQuery={setSearchQuery} 
                 />
               </div>
+              <div className="p-6">
+                <TimetableTimeline entries={filteredTodayEntries} />
+              </div>
             </div>
 
-            {/* Vertical Timeline View */}
-            <div className="space-y-4 relative before:absolute before:left-4 before:top-3 before:bottom-3 before:w-0.5 before:bg-[#E2E8F0] dark:before:bg-[#334155]">
-              {filteredTodayEntries.map((item, idx) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.05 }}
-                  className="relative pl-10"
-                >
-                  <div
-                    className={`absolute left-2.5 top-5 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-white dark:border-[#111827] shadow-xs z-10 ${
-                      item.status === 'Ongoing'
-                        ? 'bg-blue-600 ring-4 ring-blue-500/20'
-                        : item.status === 'Completed'
-                        ? 'bg-slate-400'
-                        : 'bg-emerald-500'
-                    }`}
-                  />
-
-                  <div
-                    className={`p-5 rounded-2xl border transition shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
-                      item.status === 'Ongoing'
-                        ? 'bg-white dark:bg-[#111827] border-2 border-[#1E4DB7] dark:border-[#60A5FA] shadow-md'
-                        : item.status === 'Completed'
-                        ? 'bg-[#F8FAFC] dark:bg-[#111827]/40 border-[#E2E8F0] dark:border-[#1E293B] opacity-75'
-                        : 'bg-white dark:bg-[#111827] border-[#E2E8F0] dark:border-[#1E293B]'
-                    }`}
-                  >
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="w-3 h-3 rounded-full shrink-0"
-                          style={{ backgroundColor: item.color_code }}
-                        />
-                        <span className="font-heading font-extrabold text-lg text-[#0E2A6D] dark:text-white">
-                          {item.subject_name}
-                        </span>
-                        <span className="text-xs font-bold text-[#64748B]">({item.subject_code})</span>
-                        <span
-                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            item.subject_type === 'Lab'
-                              ? 'bg-purple-500/10 text-purple-600'
-                              : 'bg-blue-500/10 text-blue-600'
-                          }`}
-                        >
-                          {item.subject_type}
-                        </span>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-4 text-xs text-[#64748B] font-semibold">
-                        <span className="flex items-center gap-1"><UserRound size={14} /> {item.faculty_name}</span>
-                        <span className="flex items-center gap-1"><Building2 size={14} /> {item.classroom}</span>
-                        <span className="flex items-center gap-1"><Clock3 size={14} /> {item.start_time} - {item.end_time}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 shrink-0">
-                      {item.status === 'Upcoming' && (
-                        <button
-                          onClick={() => handleSetReminder(item)}
-                          className="px-3.5 py-2 rounded-xl bg-[#F8FAFC] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] text-xs font-bold text-[#0E2A6D] dark:text-[#D9A441] hover:border-[#D9A441] transition flex items-center gap-1.5 cursor-pointer"
-                        >
-                          <Bell size={14} /> Set Reminder
-                        </button>
-                      )}
-
-                      <span
-                        className={`px-3 py-1 rounded-xl text-xs font-bold flex items-center gap-1 ${
-                          item.status === 'Ongoing'
-                            ? 'bg-blue-600 text-white shadow-xs'
-                            : item.status === 'Completed'
-                            ? 'bg-slate-200 dark:bg-slate-800 text-[#64748B]'
-                            : 'bg-emerald-500/10 text-emerald-600'
-                        }`}
-                      >
-                        {item.status === 'Ongoing' && <CircleAlert size={13} />}
-                        {item.status === 'Completed' && <CircleCheck size={13} />}
-                        {item.status === 'Upcoming' && <Clock3 size={13} />}
-                        {item.status}
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+            {/* AI Insights */}
+            <div className="col-span-1 md:col-span-2 order-5 md:order-none">
+              <AISuggestionCard ongoingClass={ongoingClass} nextClass={nextClass} />
             </div>
+
           </div>
+          )
         )}
 
         {/* ========================================================================= */}
         {/* MODE 2: WEEKLY TIMETABLE MATRIX                                          */}
         {/* ========================================================================= */}
         {viewMode === 'week' && (
-          <div className="bg-white dark:bg-[#111827] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs space-y-6">
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-6">
+            <div className="flex items-center gap-2 overflow-x-auto">
               {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((d) => (
                 <button
                   key={d}
                   onClick={() => setSelectedDay(d)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
+                  className={`h-9 px-4 rounded-[8px] text-[14px] font-medium transition whitespace-nowrap cursor-pointer ${
                     selectedDay === d
-                      ? 'bg-[#0E2A6D] text-white shadow-xs'
-                      : 'bg-[#F8FAFC] dark:bg-[#1E293B] text-[#64748B]'
+                      ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                      : 'bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
                   }`}
                 >
                   {d}
@@ -505,32 +316,38 @@ export default function TimetablePage() {
               ))}
             </div>
 
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {(weeklyData[selectedDay] || []).map((item) => (
-                <div
-                  key={item.id}
-                  className="p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] bg-[#F8FAFC] dark:bg-[#1E293B]/40 space-y-3"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-[#1E4DB7] flex items-center gap-1">
-                      <Clock3 size={13} /> {item.start_time} - {item.end_time}
-                    </span>
-                    <span
-                      className="px-2 py-0.5 rounded text-[10px] font-bold text-white"
-                      style={{ backgroundColor: item.color_code }}
-                    >
-                      Period {item.period_number}
-                    </span>
-                  </div>
-                  <h4 className="font-heading font-bold text-base text-[#0E2A6D] dark:text-white flex items-center gap-1.5">
-                    <BookOpen size={16} style={{ color: item.color_code }} /> {item.subject_name}
-                  </h4>
-                  <div className="text-xs text-[#64748B] space-y-1">
-                    <p className="flex items-center gap-1"><UserRound size={13} /> {item.faculty_name}</p>
-                    <p className="flex items-center gap-1"><Building2 size={13} /> {item.classroom}</p>
-                  </div>
+              {(!weeklyData[selectedDay] || weeklyData[selectedDay].length === 0) ? (
+                <div className="col-span-full p-8 rounded-[12px] border border-dashed border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col items-center justify-center text-center gap-2">
+                  <BookOpen className="text-[#9CA3AF] dark:text-[#52525B]" size={32} />
+                  <p className="text-[16px] font-medium text-[#111827] dark:text-[#FAFAFA]">No classes scheduled today.</p>
+                  <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">Enjoy your free day!</p>
                 </div>
-              ))}
+              ) : (
+                weeklyData[selectedDay].map((item) => (
+                  <div
+                    key={item.id}
+                    className="p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] space-y-3"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1">
+                        <Clock3 size={14} /> {item.start_time} - {item.end_time}
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
+                        Period {item.period_number}
+                      </span>
+                    </div>
+                    <h4 className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+                      <BookOpen size={16} /> {item.subject_name}
+                    </h4>
+                    <div className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] space-y-1">
+                      <p>Faculty: {item.faculty_name}</p>
+                      <p>Room: {item.classroom}</p>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         )}
@@ -539,33 +356,23 @@ export default function TimetablePage() {
         {/* MODE 3: ACADEMIC CALENDAR                                                 */}
         {/* ========================================================================= */}
         {viewMode === 'calendar' && (
-          <div className="bg-white dark:bg-[#111827] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs space-y-6">
-            <h2 className="font-heading font-bold text-xl text-[#0E2A6D] dark:text-white flex items-center gap-2">
-              <CalendarDays size={22} className="text-[#D9A441]" />
-              Academic Calendar Highlights
+          <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-6">
+            <h2 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+              <CalendarDays size={22} />
+              <span>Academic Calendar Highlights</span>
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {calendarEvents.map((ev, idx) => (
                 <div
                   key={idx}
-                  className="p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] bg-[#F8FAFC] dark:bg-[#1E293B]/40 space-y-2"
+                  className="p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] space-y-2"
                 >
-                  <span
-                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                      ev.type === 'Class Day'
-                        ? 'bg-blue-500/10 text-blue-600'
-                        : ev.type === 'Exam Day'
-                        ? 'bg-rose-500/10 text-rose-600'
-                        : ev.type === 'Holiday'
-                        ? 'bg-amber-500/10 text-amber-600'
-                        : 'bg-purple-500/10 text-purple-600'
-                    }`}
-                  >
+                  <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
                     {ev.type}
                   </span>
-                  <h3 className="font-bold text-sm text-[#0E2A6D] dark:text-white">{ev.title}</h3>
-                  <p className="text-xs text-[#64748B] flex items-center gap-1"><CalendarDays size={13} /> {ev.date}</p>
+                  <h3 className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA]">{ev.title}</h3>
+                  <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1"><CalendarDays size={14} /> {ev.date}</p>
                 </div>
               ))}
             </div>
@@ -573,13 +380,13 @@ export default function TimetablePage() {
         )}
 
         {/* ========================================================================= */}
-        {/* MODE 4: AI TIMETABLE ASSISTANT                                            */}
+        {/* MODE 4: AI TIMETABLE ASSISTANT & SUGGESTIONS                              */}
         {/* ========================================================================= */}
         {viewMode === 'ai' && (
-          <div className="bg-white dark:bg-[#111827] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#1E293B] shadow-xs space-y-6">
-            <h2 className="font-heading font-bold text-xl text-[#0E2A6D] dark:text-white flex items-center gap-2">
-              <Brain size={22} className="text-[#1E4DB7]" />
-              AI Timetable Assistant
+          <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-6">
+            <h2 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+              <Brain size={22} />
+              <span>AI Timetable Assistant</span>
             </h2>
 
             <div className="flex flex-wrap gap-2">
@@ -595,7 +402,7 @@ export default function TimetablePage() {
                     setAiQuery(qp);
                     handleAskAi(qp);
                   }}
-                  className="px-3 py-1.5 rounded-xl bg-[#1E4DB7]/10 text-[#1E4DB7] dark:text-[#60A5FA] text-xs font-semibold hover:bg-[#1E4DB7]/20 transition cursor-pointer"
+                  className="h-8 px-3 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
                 >
                   {qp}
                 </button>
@@ -608,20 +415,19 @@ export default function TimetablePage() {
                 value={aiQuery}
                 onChange={(e) => setAiQuery(e.target.value)}
                 placeholder="Ask any timetable question..."
-                className="flex-1 p-3 rounded-xl bg-[#F8FAFC] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] text-xs outline-none focus:border-[#1E4DB7]"
+                className="flex-1 h-10 px-4 rounded-[10px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
               />
               <button
                 onClick={() => handleAskAi()}
                 disabled={askingAi}
-                className="px-6 py-3 rounded-xl bg-[#0E2A6D] text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer"
+                className="h-10 px-6 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] cursor-pointer"
               >
-                <Brain size={15} />
                 {askingAi ? 'Thinking...' : 'Ask AI'}
               </button>
             </div>
 
             {aiAnswer && (
-              <div className="p-6 rounded-2xl bg-[#F8FAFC] dark:bg-[#1E293B]/40 border border-[#E2E8F0] dark:border-[#334155] text-xs leading-relaxed space-y-2 whitespace-pre-wrap">
+              <div className="p-6 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[14px] leading-relaxed text-[#4B5563] dark:text-[#D4D4D4] space-y-2 whitespace-pre-wrap">
                 {aiAnswer}
               </div>
             )}

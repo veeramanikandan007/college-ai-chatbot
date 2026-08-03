@@ -8,35 +8,25 @@ interface NotificationCardProps {
 }
 
 export function NotificationCard({ notification, onRead, onDelete }: NotificationCardProps) {
-  const getIconAndColor = () => {
+  const getIcon = () => {
     let Icon = Info;
-    let color = 'text-blue-500 bg-blue-500/10';
+    if (notification.type.toLowerCase() === 'academic') Icon = Book;
+    if (notification.type.toLowerCase() === 'administrative') Icon = DollarSign;
+    if (notification.type.toLowerCase() === 'ai') Icon = CheckCircle2;
+    if (notification.type.toLowerCase() === 'alert') Icon = AlertTriangle;
+    if (notification.type.toLowerCase() === 'announcement') Icon = Calendar;
 
-    // Type specific icons/colors
-    if (notification.type.toLowerCase() === 'academic') { Icon = Book; color = 'text-[#163D8C] bg-[#163D8C]/10'; }
-    if (notification.type.toLowerCase() === 'administrative') { Icon = DollarSign; color = 'text-purple-500 bg-purple-500/10'; }
-    if (notification.type.toLowerCase() === 'ai') { Icon = CheckCircle2; color = 'text-emerald-500 bg-emerald-500/10'; }
-    if (notification.type.toLowerCase() === 'alert') { Icon = AlertTriangle; color = 'text-amber-500 bg-amber-500/10'; }
-    if (notification.type.toLowerCase() === 'announcement') { Icon = Calendar; color = 'text-indigo-500 bg-indigo-500/10'; }
-
-    // Override by priority if high
-    if (notification.priority === 'high') {
-      color = 'text-rose-500 bg-rose-500/10';
-    }
-
-    // Override by explicit icon if provided
     if (notification.icon === 'alert-triangle') Icon = AlertTriangle;
     if (notification.icon === 'book') Icon = Book;
     if (notification.icon === 'file-text') Icon = FileText;
     if (notification.icon === 'dollar-sign') Icon = DollarSign;
     if (notification.icon === 'check-circle') Icon = CheckCircle2;
 
-    return { Icon, color };
+    return Icon;
   };
 
-  const { Icon, color } = getIconAndColor();
+  const Icon = getIcon();
 
-  // Format date relative to now
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -52,24 +42,26 @@ export function NotificationCard({ notification, onRead, onDelete }: Notificatio
 
   return (
     <div 
-      className={`p-4 flex gap-4 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 group ${notification.is_read ? 'opacity-70' : 'bg-blue-50/30 dark:bg-slate-800/20'}`}
+      className={`p-4 flex gap-4 transition-colors hover:bg-[#F9FAFB] dark:hover:bg-[#232323] group cursor-pointer ${
+        notification.is_read ? 'opacity-70 bg-transparent' : 'bg-[#F8FAFC] dark:bg-[#111111]'
+      }`}
       onClick={() => !notification.is_read && onRead(notification.id)}
     >
-      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${color}`}>
-        <Icon size={18} />
+      <div className="w-9 h-9 rounded-[8px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0">
+        <Icon size={16} />
       </div>
       
-      <div className="flex-1 min-w-0 cursor-pointer">
+      <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between mb-1 gap-2">
-          <h3 className={`text-sm truncate ${notification.is_read ? 'font-medium text-slate-700 dark:text-slate-300' : 'font-bold text-slate-900 dark:text-white'}`}>
+          <h3 className={`text-[14px] truncate ${notification.is_read ? 'font-medium text-[#4B5563] dark:text-[#A3A3A3]' : 'font-bold text-[#111827] dark:text-[#FAFAFA]'}`}>
             {notification.title}
           </h3>
-          <span className="text-xs text-slate-400 whitespace-nowrap">{formatTime(notification.created_at)}</span>
+          <span className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] whitespace-nowrap">{formatTime(notification.created_at)}</span>
         </div>
-        <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">{notification.message}</p>
+        <p className="text-[13px] text-[#4B5563] dark:text-[#D4D4D4] line-clamp-2">{notification.message}</p>
         
         {notification.action_url && (
-          <a href={notification.action_url} className="text-xs text-[#163D8C] dark:text-blue-400 mt-2 inline-block hover:underline" onClick={e => e.stopPropagation()}>
+          <a href={notification.action_url} className="text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-2 inline-block hover:underline" onClick={e => e.stopPropagation()}>
             View Details
           </a>
         )}
@@ -77,12 +69,12 @@ export function NotificationCard({ notification, onRead, onDelete }: Notificatio
 
       <div className="flex flex-col items-end justify-between shrink-0">
         {!notification.is_read ? (
-          <div className="w-2.5 h-2.5 rounded-full bg-[#E8B24D]" title="Unread"></div>
-        ) : <div className="w-2.5 h-2.5"></div>}
+          <div className="w-2 h-2 rounded-full bg-[#111827] dark:bg-[#FAFAFA]" title="Unread"></div>
+        ) : <div className="w-2 h-2"></div>}
         
         <button 
           onClick={(e) => { e.stopPropagation(); onDelete(notification.id); }}
-          className="text-xs text-slate-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA] opacity-0 group-hover:opacity-100 transition"
         >
           Delete
         </button>

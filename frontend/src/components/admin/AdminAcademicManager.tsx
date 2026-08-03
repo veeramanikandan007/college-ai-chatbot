@@ -10,7 +10,7 @@ export const AdminAcademicManager: React.FC = () => {
     { title: 'Attendance System', path: '/attendance', icon: ClipboardCheck, color: 'text-[#0E2A6D] dark:text-[#60A5FA]', desc: 'Inspect college-wide student attendance percentages and shortage reports.' },
     { title: 'Smart Assignments', path: '/assignments', icon: FileText, color: 'text-[#1E4DB7] dark:text-[#60A5FA]', desc: 'Audit assignment submissions, deadlines, and faculty evaluation metrics.' },
     { title: 'Question Papers Vault', path: '/question-papers', icon: Files, color: 'text-[#D9A441]', desc: 'Manage Previous Year question papers and Model examination archives.' },
-    { title: 'AI Quiz Generator', path: '/quiz', icon: Brain, color: 'text-purple-600 dark:text-purple-400', desc: 'Inspect AI generated quizzes, MCQ banks, and student score distributions.' },
+    { title: 'AI Quiz Generator', path: '/quiz', icon: Brain, color: 'text-[#111827] dark:text-[#FAFAFA]', desc: 'Inspect AI generated quizzes, MCQ banks, and student score distributions.' },
     { title: 'Knowledge Base Notes', path: '/notes', icon: BookOpen, color: 'text-[#0E2A6D] dark:text-[#60A5FA]', desc: 'Review syllabus notes, department study materials, and subject reference links.' },
   ];
 

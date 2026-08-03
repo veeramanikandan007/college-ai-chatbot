@@ -5,7 +5,7 @@ from typing import Optional, List, Dict, Any, AsyncGenerator
 
 from fastapi import HTTPException, status
 from langchain_groq import ChatGroq
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from sqlalchemy.orm import Session
 
 from app.rag.rag_service import RAGService
@@ -19,7 +19,8 @@ from app.services.groq_client import get_api_key, get_model_name, is_configured
 
 logger = get_logger(__name__)
 
-RAG_FALLBACK_RESPONSE = "I couldn't find this information in the college knowledge base."
+# Maximum previous turns to inject for context memory (Phase 5)
+MEMORY_WINDOW = 8
 
 
 SYSTEM_RAG_PROMPT = (
@@ -194,7 +195,42 @@ class AIService:
 
         return "\n\n".join(parts)
 
-    async def get_chat_answer(self, message: str, current_user: Optional[Any] = None, db: Optional[Session] = None) -> str:
+    def _get_conversation_history(self, session_id: Optional[int], db: Optional[Session]) -> List:
+        """
+        Phase 5: Short-term Conversation Memory.
+        Fetch the last MEMORY_WINDOW messages from the DB for the given session.
+        Returns a list of LangChain message objects (HumanMessage / AIMessage).
+        """
+        if not session_id or not db:
+            return []
+        try:
+            from app.models.chat import ChatMessage
+            rows = (
+                db.query(ChatMessage)
+                .filter(ChatMessage.session_id == session_id)
+                .order_by(ChatMessage.created_at.desc())
+                .limit(MEMORY_WINDOW)
+                .all()
+            )
+            # Reverse to chronological order
+            history = []
+            for row in reversed(rows):
+                if row.role == "user":
+                    history.append(HumanMessage(content=row.content))
+                else:
+                    history.append(AIMessage(content=row.content))
+            return history
+        except Exception as e:
+            logger.warning("Failed to retrieve conversation history: %s", e)
+            return []
+
+    async def get_chat_answer(
+        self,
+        message: str,
+        current_user: Optional[Any] = None,
+        db: Optional[Session] = None,
+        session_id: Optional[int] = None,
+    ) -> str:
         if not message or not message.strip():
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Message is required')
 
@@ -205,65 +241,97 @@ class AIService:
             )
 
         try:
-            logger.info('Processing chat request with AI engine')
-            
+            logger.info('Processing chat request (Phase 2-5 Hybrid Pipeline)')
+
             from app.services.language_service import LanguageService
-            
             detected_lang = LanguageService.detect_language(message)
             normalized_message = LanguageService.normalize_message(message)
-            logger.info('Language detected: %s. Normalized message: %s', detected_lang, normalized_message)
-            
+
             language_instruction = (
-                "You are CampusMate AI Assistant.\n"
                 f"Detected language: {detected_lang}.\n"
                 "Reply in natural, clear English or Tamil matching the user's language."
             )
 
-            intent = self.query_router.route_query(normalized_message)
-            logger.info('Intent detected: %s', intent)
-            
+            # 1. PLANNER (Phase 1)
+            plan = self.query_router.generate_plan(normalized_message)
+            logger.info("AI Plan: Intent=%s RAG=%s Memory=%s Tools=%s",
+                        plan.intent, plan.requires_rag, plan.requires_memory, plan.tools_required)
+
+            # 2. MEMORY (Phase 5)
+            history_messages = []
+            if plan.requires_memory:
+                history_messages = self._get_conversation_history(session_id, db)
+                logger.info("Injected %d memory messages.", len(history_messages))
+
+            # 3. SMART RAG + CONFIDENCE (Phase 3 & 4)
+            rag_context = ""
+            rag_confidence = "NONE"
             valid_chunks: list = []
-
-            if intent == "GREETING":
-                system_instruction = f"You are CampusMate AI, a helpful college assistant. Greet the student warmly. {language_instruction}"
-                return await self._get_llm_response(message, system_instruction)
-                
-            elif intent == "SMALL_TALK":
-                system_instruction = f"You are CampusMate AI. Respond naturally to the user's conversation. {language_instruction}"
-                return await self._get_llm_response(message, system_instruction)
-
-            elif intent == "WEATHER":
-                weather_info = await self.weather_service.get_weather()
-                system_instruction = f"You are CampusMate AI. Present weather info clearly. {language_instruction}"
-                prompt = f"User asked: {message}\n\nWeather Info:\n{weather_info}"
-                return await self._get_llm_response(prompt, system_instruction)
-                
-            elif intent == "WEB_SEARCH":
-                search_results = self.web_search_service.search(message)
-                system_instruction = f"You are CampusMate AI. Answer using search results. {language_instruction}"
-                prompt = f"User Question: {message}\n\nWeb Search Results:\n{search_results}"
-                return await self._get_llm_response(prompt, system_instruction)
-
-            elif intent in ["GENERAL", "CAMPUS_QUERY"]:
+            if plan.requires_rag or plan.intent in ["CAMPUS", "HYBRID", "PERSONAL"]:
                 self.rag_service.ensure_index_ready()
-                context_chunks = self.rag_service.retrieve_context(normalized_message, top_k=5)
-                # Filter chunks by relevance (distance < 1.2 in Cosine distance)
-                valid_chunks = [c for c in context_chunks if c.get('distance', 1.0) < 1.2 or c.get('score', 1.0) < 1.2]
+                valid_chunks, rag_confidence = self.rag_service.retrieve_context_with_confidence(
+                    normalized_message, top_k=5
+                )
+                rag_context = self._build_context(valid_chunks)
+                logger.info("RAG retrieved %d chunks with confidence=%s", len(valid_chunks), rag_confidence)
 
-                if not valid_chunks:
-                    logger.info('No relevant RAG context retrieved. Returning exact fallback.')
-                    return RAG_FALLBACK_RESPONSE
-            
-            logger.info('RAG context retrieved with %s chunks.', len(valid_chunks))
-            context_text = self._build_context(valid_chunks)
-            prompt = self._build_prompt(message, context_text)
-            answer = await self._get_llm_response(prompt, SYSTEM_RAG_PROMPT)
+            # 4. STUDENT CONTEXT
+            student_context = ""
+            if plan.intent in ["PERSONAL", "HYBRID"]:
+                student_context = self._get_student_context(current_user, db)
 
-            source_names = [str(c.get('filename') or c.get('source')) for c in valid_chunks if (c.get('filename') or c.get('source'))]
-            sources = sorted(list(set(source_names)))
-            if sources:
-                sources_str = "\n\n**Sources:**\n" + "\n".join(f"- {s}" for s in sources)
-                answer += sources_str
+            # 5. TOOLS (Phase 6 prep — fire tools identified by the planner)
+            weather_info = ""
+            if plan.intent == "WEATHER" or "weather" in plan.tools_required:
+                weather_info = await self.weather_service.get_weather()
+
+            web_search_info = ""
+            if plan.intent == "WEB_SEARCH" or "search" in plan.tools_required:
+                web_search_info = self.web_search_service.search(message)
+
+            # 6. SMART FALLBACK SYSTEM PROMPT SELECTION (Phase 4)
+            needs_rag = plan.requires_rag or plan.intent in ["CAMPUS", "HYBRID"]
+            if not needs_rag:
+                base_system = SYSTEM_PROMPT_NO_RAG
+            elif rag_confidence == "HIGH":
+                base_system = SYSTEM_PROMPT_HIGH_CONFIDENCE
+            elif rag_confidence == "MEDIUM":
+                base_system = SYSTEM_PROMPT_MEDIUM_CONFIDENCE
+            else:  # LOW or NONE
+                base_system = SYSTEM_PROMPT_LOW_CONFIDENCE
+
+            system_instruction = f"{base_system}\n\n{language_instruction}"
+
+            if plan.intent == "PROGRAMMING":
+                system_instruction += "\nProvide clean, well-commented code with explanations."
+
+            # 7. PROMPT ASSEMBLY
+            prompt_parts = []
+            if student_context:
+                prompt_parts.append(f"Student Record:\n{student_context}")
+            if weather_info:
+                prompt_parts.append(f"Weather Data:\n{weather_info}")
+            if web_search_info:
+                prompt_parts.append(f"Web Search Results:\n{web_search_info}")
+            if rag_context:
+                prompt_parts.append(f"Campus Knowledge Base (confidence={rag_confidence}):\n{rag_context}")
+            prompt_parts.append(f"User Question: {message}")
+            final_prompt = "\n\n".join(prompt_parts)
+
+            # 8. GENERATE
+            answer = await self._get_llm_response_with_history(
+                final_prompt, system_instruction, history_messages
+            )
+
+            # 9. APPEND CITATIONS
+            source_names = [
+                str(c.get('filename') or c.get('source'))
+                for c in valid_chunks
+                if c.get('filename') or c.get('source')
+            ]
+            sources = sorted(set(source_names))
+            if sources and rag_confidence in ["HIGH", "MEDIUM"]:
+                answer += "\n\n**Sources:** " + " | ".join(f"`{s}`" for s in sources)
 
             return answer
 
@@ -271,7 +339,7 @@ class AIService:
             raise
         except Exception as exc:
             logger.exception('Unexpected error during AI generation')
-            return RAG_FALLBACK_RESPONSE
+            return "I'm having trouble processing that right now. Please try again."
 
     async def _get_llm_response(self, user_prompt: str, system_prompt: str) -> str:
         messages = [
@@ -317,7 +385,56 @@ class AIService:
                     await asyncio.sleep(backoff)
                     backoff *= 2.0
 
-        return str(response.content) if response and response.content else RAG_FALLBACK_RESPONSE
+        return str(response.content) if response and response.content else "I'm having trouble processing that right now."
+
+    async def _get_llm_response_with_history(
+        self,
+        user_prompt: str,
+        system_prompt: str,
+        history: List,
+    ) -> str:
+        """
+        Phase 5: Invoke LLM with conversation history injected between system
+        and the current user message for multi-turn context awareness.
+        """
+        messages = [SystemMessage(content=system_prompt)]
+        # Inject previous turns (HumanMessage / AIMessage objects)
+        messages.extend(history)
+        messages.append(HumanMessage(content=user_prompt))
+
+        # Priority: Gemini → Ollama → Groq
+        if self.gemini_llm:
+            try:
+                logger.info("Calling Gemini LLM with %d history messages", len(history))
+                res = await self.gemini_llm.ainvoke(messages)
+                if res and res.content:
+                    return str(res.content)
+            except Exception as e:
+                logger.warning("Gemini failed in _get_llm_response_with_history: %s", e)
+
+        if self.ollama_llm:
+            try:
+                res = await self.ollama_llm.ainvoke(messages)
+                if res and res.content:
+                    return str(res.content)
+            except Exception as e:
+                logger.warning("Ollama failed in _get_llm_response_with_history: %s", e)
+
+        if not self.llm:
+            return "I'm having trouble processing that right now."
+
+        retries, backoff, response = 3, 1.0, None
+        for attempt in range(retries):
+            try:
+                response = await self.llm.ainvoke(messages)
+                break
+            except Exception as exc:
+                logger.warning("Groq attempt %d failed: %s", attempt + 1, exc)
+                if attempt < retries - 1:
+                    await asyncio.sleep(backoff)
+                    backoff *= 2.0
+
+        return str(response.content) if response and response.content else "I'm having trouble processing that right now."
 
     def _build_context(self, context_chunks: list) -> str:
         if not context_chunks:
@@ -339,111 +456,109 @@ class AIService:
             f'User Question: {message}'
         )
 
-    async def stream_chat_answer(self, message: str, current_user: Optional[Any] = None, db: Optional[Session] = None) -> AsyncGenerator[str, None]:
+    async def stream_chat_answer(
+        self,
+        message: str,
+        current_user: Optional[Any] = None,
+        db: Optional[Session] = None,
+        session_id: Optional[int] = None,
+    ) -> AsyncGenerator[str, None]:
         if not message or not message.strip():
             yield "Message is required."
             return
 
-        if not self.llm and not self.ollama_llm:
-            yield RAG_FALLBACK_RESPONSE
+        if not self.llm and not self.ollama_llm and not self.gemini_llm:
+            yield "AI service is not configured."
             return
 
         try:
+            logger.info('Processing streaming chat request (Phase 2-5 Hybrid Pipeline)')
             from app.services.language_service import LanguageService
-            
+
             detected_lang = LanguageService.detect_language(message)
             normalized_message = LanguageService.normalize_message(message)
-            
+
             language_instruction = (
-                "You are CampusMate AI Assistant.\n"
                 f"Detected language: {detected_lang}.\n"
                 "Reply in natural, clear English or Tamil matching the user's language."
             )
 
-            intent = self.query_router.route_query(normalized_message)
-            
-            if intent == "GREETING":
-                system_instruction = f"You are CampusMate AI, a helpful college assistant. Greet the user warmly. {language_instruction}"
-                async for chunk in self._stream_llm_response(message, system_instruction):
-                    yield chunk
-                return
-                
-            elif intent == "SMALL_TALK":
-                system_instruction = f"You are CampusMate AI. Respond naturally to small talk. {language_instruction}"
-                async for chunk in self._stream_llm_response(message, system_instruction):
-                    yield chunk
-                return
+            # 1. PLANNER (Phase 1)
+            plan = self.query_router.generate_plan(normalized_message)
+            logger.info("AI Plan: Intent=%s RAG=%s Memory=%s Tools=%s",
+                        plan.intent, plan.requires_rag, plan.requires_memory, plan.tools_required)
 
-            elif intent == "WEATHER":
-                weather_info = await self.weather_service.get_weather()
-                system_instruction = f"You are CampusMate AI. Present weather information clearly. {language_instruction}"
-                prompt = f"User asked: {message}\n\nWeather Info:\n{weather_info}"
-                async for chunk in self._stream_llm_response(prompt, system_instruction):
-                    yield chunk
-                return
-                
-            elif intent == "WEB_SEARCH":
-                search_results = self.web_search_service.search(message)
-                system_instruction = f"You are CampusMate AI. Use search results to answer accurately. {language_instruction}"
-                prompt = f"User Question: {message}\n\nWeb Search Results:\n{search_results}"
-                async for chunk in self._stream_llm_response(prompt, system_instruction):
-                    yield chunk
-                return
+            # 2. MEMORY (Phase 5)
+            history_messages = []
+            if plan.requires_memory:
+                history_messages = self._get_conversation_history(session_id, db)
+                logger.info("Injected %d memory messages into stream.", len(history_messages))
 
-            elif intent == "GENERAL":
-                system_instruction = f"You are CampusMate AI. Answer general knowledge questions accurately. {language_instruction}"
-                async for chunk in self._stream_llm_response(normalized_message, system_instruction):
-                    yield chunk
-                return
-                
-            elif intent == "CALCULATOR":
-                system_instruction = f"You are a helpful AI assistant. Evaluate the following mathematical expression or calculation query accurately. Provide only the final answer or a brief explanation of the calculation. {language_instruction}"
-                async for chunk in self._stream_llm_response(message, system_instruction):
-                    yield chunk
-                return
-
-            elif intent == "PERSONAL":
-                student_context = self._get_student_context(current_user, db)
-                system_instruction = f"You are CampusMate AI. Answer using the student's official PostgreSQL database record context. {language_instruction}"
-                prompt = f"Student Personal Data Context:\n{student_context}\n\nStudent Question: {message}"
-                async for chunk in self._stream_llm_response(prompt, system_instruction):
-                    yield chunk
-                return
-
-            elif intent == "HYBRID":
-                student_context = self._get_student_context(current_user, db)
+            # 3. SMART RAG + CONFIDENCE (Phase 3 & 4)
+            rag_context = ""
+            rag_confidence = "NONE"
+            if plan.requires_rag or plan.intent in ["CAMPUS", "HYBRID", "PERSONAL"]:
                 self.rag_service.ensure_index_ready()
-                context_chunks = self.rag_service.retrieve_context(normalized_message, top_k=4)
-                valid_chunks = [c for c in context_chunks if c.get('distance', 0) < 1.5]
-                rag_context = self._build_context(valid_chunks) if valid_chunks else "No college knowledge document context found."
-                
-                system_instruction = f"You are CampusMate AI. Synthesize both the student's personal records and college policy guidelines into one response. {language_instruction}"
-                prompt = f"Student Personal Database Context:\n{student_context}\n\nCollege Knowledge Base RAG Context:\n{rag_context}\n\nStudent Question: {message}"
-                async for chunk in self._stream_llm_response(prompt, system_instruction):
-                    yield chunk
-                return
+                valid_chunks, rag_confidence = self.rag_service.retrieve_context_with_confidence(
+                    normalized_message, top_k=5
+                )
+                rag_context = self._build_context(valid_chunks)
+                logger.info("RAG retrieved %d chunks with confidence=%s", len(valid_chunks), rag_confidence)
 
-            self.rag_service.ensure_index_ready()
-            context_chunks = self.rag_service.retrieve_context(normalized_message, top_k=4)
-            valid_chunks = [c for c in context_chunks if c.get('distance', 0) < 1.5]
+            # 4. STUDENT CONTEXT
+            student_context = ""
+            if plan.intent in ["PERSONAL", "HYBRID"]:
+                student_context = self._get_student_context(current_user, db)
 
-            if not valid_chunks:
-                yield RAG_FALLBACK_RESPONSE
-                return
-            
-            context_text = self._build_context(valid_chunks)
-            prompt = self._build_prompt(message, context_text)
-            
-            async for chunk in self._stream_llm_response(prompt, SYSTEM_RAG_PROMPT):
+            # 5. TOOLS
+            weather_info = ""
+            if plan.intent == "WEATHER" or "weather" in plan.tools_required:
+                weather_info = await self.weather_service.get_weather()
+
+            web_search_info = ""
+            if plan.intent == "WEB_SEARCH" or "search" in plan.tools_required:
+                web_search_info = self.web_search_service.search(message)
+
+            # 6. SMART FALLBACK PROMPT SELECTION (Phase 4)
+            needs_rag = plan.requires_rag or plan.intent in ["CAMPUS", "HYBRID"]
+            if not needs_rag:
+                base_system = SYSTEM_PROMPT_NO_RAG
+            elif rag_confidence == "HIGH":
+                base_system = SYSTEM_PROMPT_HIGH_CONFIDENCE
+            elif rag_confidence == "MEDIUM":
+                base_system = SYSTEM_PROMPT_MEDIUM_CONFIDENCE
+            else:
+                base_system = SYSTEM_PROMPT_LOW_CONFIDENCE
+
+            system_instruction = f"{base_system}\n\n{language_instruction}"
+            if plan.intent == "PROGRAMMING":
+                system_instruction += "\nProvide clean, well-commented code with explanations."
+
+            # 7. PROMPT ASSEMBLY
+            prompt_parts = []
+            if student_context:
+                prompt_parts.append(f"Student Record:\n{student_context}")
+            if weather_info:
+                prompt_parts.append(f"Weather Data:\n{weather_info}")
+            if web_search_info:
+                prompt_parts.append(f"Web Search Results:\n{web_search_info}")
+            if rag_context:
+                prompt_parts.append(f"Campus Knowledge Base (confidence={rag_confidence}):\n{rag_context}")
+            prompt_parts.append(f"User Question: {message}")
+            final_prompt = "\n\n".join(prompt_parts)
+
+            # 8. GENERATE STREAM WITH MEMORY
+            async for chunk in self._stream_llm_response_with_history(
+                final_prompt, system_instruction, history_messages
+            ):
                 yield chunk
-            return
-                
+
         except HTTPException as e:
             logger.error('HTTPException during stream: %s', e.detail)
-            yield RAG_FALLBACK_RESPONSE
+            yield "An error occurred while processing your request."
         except Exception as exc:
             logger.exception('Unexpected error during AI stream generation')
-            yield RAG_FALLBACK_RESPONSE
+            yield "I'm having trouble processing that right now. Please try again."
 
     async def _stream_llm_response(self, user_prompt: str, system_prompt: str) -> AsyncGenerator[str, None]:
         messages = [
@@ -479,6 +594,50 @@ class AIService:
             except Exception as exc:
                 logger.warning('Groq stream request failed: %s', exc)
 
-        yield RAG_FALLBACK_RESPONSE
+        yield "I'm having trouble processing that right now."
+
+    async def _stream_llm_response_with_history(
+        self,
+        user_prompt: str,
+        system_prompt: str,
+        history: List,
+    ) -> AsyncGenerator[str, None]:
+        """
+        Phase 5: Stream LLM response with conversation history injected.
+        Priority: Gemini → Ollama → Groq.
+        """
+        messages = [SystemMessage(content=system_prompt)]
+        messages.extend(history)  # Inject previous turns
+        messages.append(HumanMessage(content=user_prompt))
+
+        if self.gemini_llm:
+            try:
+                logger.info("Streaming Gemini with %d history messages", len(history))
+                async for chunk in self.gemini_llm.astream(messages):
+                    if chunk.content:
+                        yield str(chunk.content)
+                return
+            except Exception as e:
+                logger.warning("Gemini stream failed, falling back: %s", e)
+
+        if self.ollama_llm:
+            try:
+                async for chunk in self.ollama_llm.astream(messages):
+                    if chunk.content:
+                        yield str(chunk.content)
+                return
+            except Exception as e:
+                logger.warning("Ollama stream failed, falling back to Groq: %s", e)
+
+        if self.llm:
+            try:
+                async for chunk in self.llm.astream(messages):
+                    if chunk.content:
+                        yield str(chunk.content)
+                return
+            except Exception as exc:
+                logger.warning("Groq stream failed: %s", exc)
+
+        yield "I'm having trouble processing that right now."
 
 

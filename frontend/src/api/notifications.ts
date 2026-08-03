@@ -9,6 +9,7 @@ export interface Notification {
   priority: string;
   icon: string | null;
   is_read: boolean;
+  is_pinned?: boolean;
   action_url: string | null;
   created_at: string;
   updated_at: string;
@@ -34,6 +35,14 @@ export const markAsRead = async (id: number): Promise<Notification> => {
 
 export const markAllAsRead = async (): Promise<{ success: boolean }> => {
   return await fetchApi('/notifications/read-all', { method: 'POST' });
+};
+
+export const togglePin = async (id: number): Promise<Notification> => {
+  return await fetchApi(`/notifications/${id}/pin`, { method: 'POST' });
+};
+
+export const clearAll = async (): Promise<{ success: boolean }> => {
+  return await fetchApi('/notifications/clear-all', { method: 'DELETE' });
 };
 
 export const deleteNotification = async (id: number): Promise<{ success: boolean }> => {

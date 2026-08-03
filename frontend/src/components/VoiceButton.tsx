@@ -154,7 +154,7 @@ const VoiceButton = forwardRef<VoiceButtonRef, VoiceButtonProps>(({
         type="button"
         disabled
         title="Speech recognition is not supported in this browser."
-        className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 text-slate-400 dark:text-slate-600 cursor-not-allowed transition"
+        className="p-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111] text-[#9CA3AF] dark:text-[#52525B] cursor-not-allowed transition"
       >
         <MicOff size={16} />
       </button>
@@ -167,10 +167,10 @@ const VoiceButton = forwardRef<VoiceButtonRef, VoiceButtonProps>(({
       onClick={toggleRecording}
       disabled={disabled}
       title={isRecording ? 'Stop recording (Esc)' : 'Speak message (Space)'}
-      className={`p-3.5 rounded-xl transition-all duration-200 active:scale-95 shrink-0 ${
+      className={`p-3.5 rounded-[10px] transition-all duration-200 active:scale-95 shrink-0 border ${
         isRecording
-          ? 'bg-red-500 text-white shadow-lg shadow-red-500/20 scale-[1.05]'
-          : 'border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-primary dark:hover:text-secondary shadow-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-white'
+          ? 'bg-[#111827] dark:bg-[#FFFFFF] border-[#111827] dark:border-[#FFFFFF] text-[#FFFFFF] dark:text-[#111111] scale-[1.05]'
+          : 'border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#6B7280] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] hover:text-[#111827] dark:hover:text-[#FAFAFA] shadow-sm disabled:opacity-40 disabled:cursor-not-allowed'
       }`}
     >
       <Mic size={16} className={isRecording ? 'animate-pulse' : ''} />

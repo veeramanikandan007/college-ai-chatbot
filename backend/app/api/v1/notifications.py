@@ -40,6 +40,20 @@ def mark_all_as_read(current_user: User = Depends(deps.get_current_user), db: Se
     notification_service.mark_all_as_read(db, current_user.id)
     return {"success": True}
 
+@router.post("/{notification_id}/pin", response_model=NotificationResponse)
+def toggle_pin(notification_id: int, current_user: User = Depends(deps.get_current_user), db: Session = Depends(deps.get_db)):
+    """Toggle pin status of a notification."""
+    notification = notification_service.toggle_pin(db, notification_id, current_user.id)
+    if not notification:
+        raise HTTPException(status_code=404, detail="Notification not found")
+    return notification
+
+@router.delete("/clear-all")
+def clear_all_notifications(current_user: User = Depends(deps.get_current_user), db: Session = Depends(deps.get_db)):
+    """Clear all notifications for user."""
+    notification_service.clear_all(db, current_user.id)
+    return {"success": True}
+
 @router.delete("/{notification_id}")
 def delete_notification(notification_id: int, current_user: User = Depends(deps.get_current_user), db: Session = Depends(deps.get_db)):
     """Delete a notification."""

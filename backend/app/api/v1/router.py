@@ -1,5 +1,30 @@
 from fastapi import APIRouter
-from app.api.v1 import auth, chat, chat_stream, students, admin, health, notifications, voice, rag_router, documents, quiz, attendance, placement, timetable, assignments, question_papers, study_planner, mock_interviews, student_analytics, faculty
+from app.api.v1 import (
+    auth,
+    chat,
+    chat_stream,
+    students,
+    admin,
+    health,
+    notifications,
+    voice,
+    rag_router,
+    documents,
+    quiz,
+    attendance,
+    placement,
+    timetable,
+    assignments,
+    question_papers,
+    study_planner,
+    mock_interviews,
+    student_analytics,
+    faculty,
+    notes,
+    ocr,
+    resume,
+    workspace
+)
 
 api_router = APIRouter()
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
@@ -21,6 +46,10 @@ api_router.include_router(study_planner.router, prefix="/study-planner", tags=["
 api_router.include_router(mock_interviews.router, prefix="/mock-interviews", tags=["mock-interviews"])
 api_router.include_router(student_analytics.router, prefix="/analytics", tags=["analytics"])
 api_router.include_router(faculty.router, prefix="/faculty", tags=["faculty"])
+api_router.include_router(notes.router, prefix="/notes", tags=["notes"])
+api_router.include_router(ocr.router, prefix="/ocr", tags=["ocr"])
+api_router.include_router(resume.router, prefix="/resume", tags=["resume"])
+api_router.include_router(workspace.router, prefix="/workspaces", tags=["workspaces"])
 api_router.include_router(rag_router.router, tags=["RAG"])
 
 

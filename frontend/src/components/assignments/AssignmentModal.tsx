@@ -127,16 +127,16 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 my-8 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+      <div className="relative w-full max-w-2xl bg-[#FFFFFF] dark:bg-[#181818] rounded-[16px] shadow-lg border border-[#D1D5DB] dark:border-[#3F3F46] my-8 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40">
-          <h2 className="text-xl font-bold font-heading text-slate-900 dark:text-white flex items-center gap-2">
-            <span>{initialData ? 'Edit Assignment' : 'Create New Assignment'}</span>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
+          <h2 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+            {initialData ? 'Edit Assignment' : 'Create New Assignment'}
           </h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1 rounded text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA] cursor-pointer"
           >
             <X size={20} />
           </button>
@@ -145,7 +145,7 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
           {formError && (
-            <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-semibold flex items-center gap-2">
+            <div className="p-3 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium flex items-center gap-2">
               <CircleAlert size={16} />
               {formError}
             </div>
@@ -153,7 +153,7 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({
 
           {/* Title */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
+            <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
               Assignment Title *
             </label>
             <input
@@ -162,14 +162,14 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="e.g. B-Tree & B+ Tree Implementation"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+              className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
             />
           </div>
 
           {/* Subject & Faculty Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
                 Subject *
               </label>
               <input
@@ -178,12 +178,12 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                 placeholder="e.g. Data Structures & Algorithms"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
                 Faculty / Instructor *
               </label>
               <input
@@ -192,7 +192,7 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({
                 value={formData.faculty}
                 onChange={(e) => setFormData({ ...formData, faculty: e.target.value })}
                 placeholder="e.g. Dr. Aris Thorne"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
               />
             </div>
           </div>
@@ -200,28 +200,28 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({
           {/* Priority, Status, Due Date */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
                 Priority
               </label>
               <select
                 value={formData.priority}
-                onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+                onChange={(e) => setFormData({ ...formData, priority: e.target.value as any })}
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none cursor-pointer"
               >
-                <option value="High">High Priority</option>
-                <option value="Medium">Medium Priority</option>
                 <option value="Low">Low Priority</option>
+                <option value="Medium">Medium Priority</option>
+                <option value="High">High Priority</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
                 Status
               </label>
               <select
                 value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+                onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none cursor-pointer"
               >
                 <option value="Pending">Pending</option>
                 <option value="Completed">Completed</option>
@@ -230,7 +230,7 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
+              <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
                 Due Date & Time *
               </label>
               <input
@@ -238,111 +238,76 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({
                 required
                 value={formData.due_date}
                 onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
-              />
-            </div>
-          </div>
-
-          {/* Class Assignment & Remarks */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
-                Assigned Class / Section
-              </label>
-              <input
-                type="text"
-                value={formData.assigned_class || ''}
-                onChange={(e) => setFormData({ ...formData, assigned_class: e.target.value })}
-                placeholder="e.g. CSE-3A or All Classes"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
-                Remarks / Notes
-              </label>
-              <input
-                type="text"
-                value={formData.remarks || ''}
-                onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
-                placeholder="e.g. Include benchmark comparison graphs"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+                className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
               />
             </div>
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
-              Description / Instructions
+            <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
+              Description & Requirements
             </label>
             <textarea
               rows={3}
-              value={formData.description || ''}
+              value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Enter comprehensive instructions for students..."
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+              placeholder="Describe assignment problem statement, submission guidelines..."
+              className="w-full p-3 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
             />
           </div>
 
-          {/* File Upload Section */}
+          {/* File Upload */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">
-              Attachment (PDF, DOCX, PPT, ZIP, Images - Max 10MB)
+            <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
+              Attachment (PDF / Doc / Image)
             </label>
-            
-            <div className="flex flex-col sm:flex-row items-center gap-3">
-              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold transition-all border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center gap-3">
+              <label className="h-10 px-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium hover:bg-[#F9FAFB] dark:hover:bg-[#232323] cursor-pointer flex items-center gap-2">
                 <Upload size={16} />
-                <span>{uploading ? 'Uploading File...' : 'Choose File'}</span>
-                <input
-                  type="file"
-                  onChange={handleFileUpload}
-                  disabled={uploading}
-                  accept=".pdf,.docx,.doc,.ppt,.pptx,.zip,.rar,.png,.jpg,.jpeg,.webp"
-                  className="hidden"
-                />
+                <span>{uploading ? 'Uploading...' : 'Choose File'}</span>
+                <input type="file" onChange={handleFileUpload} disabled={uploading} className="hidden" />
               </label>
 
               {formData.attachment_name && (
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 text-xs font-medium border border-blue-200 dark:border-blue-900/50">
-                  <Paperclip size={14} />
-                  <span className="truncate max-w-[200px]">{formData.attachment_name}</span>
-                  {formData.attachment_size && <span className="text-[10px]">({formData.attachment_size})</span>}
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, attachment_name: '', attachment_url: '', attachment_size: '' })}
-                    className="p-0.5 hover:text-rose-500"
-                  >
-                    <X size={14} />
-                  </button>
+                <div className="flex items-center gap-1.5 text-[12px] text-[#111827] dark:text-[#FAFAFA] bg-[#F8FAFC] dark:bg-[#111111] px-3 py-1.5 rounded-[6px] border border-[#E5E7EB] dark:border-[#2A2A2A]">
+                  <Paperclip size={13} />
+                  <span>{formData.attachment_name}</span>
                 </div>
               )}
             </div>
-
-            {uploadError && (
-              <p className="mt-1 text-xs text-rose-500 font-semibold">{uploadError}</p>
-            )}
+            {uploadError && <p className="text-[12px] text-rose-500 mt-1">{uploadError}</p>}
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+          {/* Remarks */}
+          <div>
+            <label className="block text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-1">
+              Additional Remarks
+            </label>
+            <input
+              type="text"
+              value={formData.remarks}
+              onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
+              placeholder="e.g. Needs physical submission at HOD office"
+              className="w-full h-10 px-3.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none"
+            />
+          </div>
+
+          {/* Buttons */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E5E7EB] dark:border-[#2A2A2A]">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="h-10 px-5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium cursor-pointer"
             >
               Cancel
             </button>
-
             <button
               type="submit"
-              disabled={submitting || uploading}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-[#0E2A6D] text-white hover:bg-[#0E2A6D]/90 disabled:opacity-50 transition-all shadow-xs"
+              disabled={submitting}
+              className="h-10 px-6 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium shadow-xs cursor-pointer disabled:opacity-50"
             >
-              <CheckCircle2 size={16} />
-              <span>{submitting ? 'Saving...' : initialData ? 'Update Assignment' : 'Create Assignment'}</span>
+              {submitting ? 'Saving...' : initialData ? 'Update Assignment' : 'Save Assignment'}
             </button>
           </div>
         </form>

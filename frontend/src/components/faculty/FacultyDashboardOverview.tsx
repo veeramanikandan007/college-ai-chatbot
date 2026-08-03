@@ -93,24 +93,24 @@ export const FacultyDashboardOverview: React.FC<Props> = ({
       title: 'Student Count',
       value: stats.total_assigned_students,
       icon: Users,
-      color: 'text-emerald-600 dark:text-emerald-400',
-      bg: 'bg-emerald-500/10',
+      color: 'text-[#111827] dark:text-[#FAFAFA]',
+      bg: 'bg-[#F8FAFC] dark:bg-[#111111]',
       action: () => onNavigateTab('students'),
     },
   ];
 
   const pendingTaskActions = [
-    { title: 'Mark Attendance', desc: 'Submit period attendance for today', icon: ClipboardCheck, color: 'text-emerald-600', tab: 'attendance' },
-    { title: 'Review Assignments', desc: 'Evaluate student submitted files', icon: FileText, color: 'text-[#1E4DB7]', tab: 'assignments' },
-    { title: 'Prepare Quiz', desc: 'Create AI or custom MCQ tests', icon: Brain, color: 'text-purple-600', tab: 'quizzes' },
-    { title: 'Upload Question Papers', desc: 'Add model exam question papers', icon: Files, color: 'text-[#D9A441]', tab: 'question-papers' },
-    { title: 'Student Requests', desc: 'View assigned student roster & grades', icon: Users, color: 'text-[#0E2A6D]', tab: 'students' },
+    { title: 'Mark Attendance', desc: 'Submit period attendance for today', icon: ClipboardCheck, color: 'text-[#111827] dark:text-[#FAFAFA]', tab: 'attendance' },
+    { title: 'Review Assignments', desc: 'Evaluate student submitted files', icon: FileText, color: 'text-[#111827] dark:text-[#FAFAFA]', tab: 'assignments' },
+    { title: 'Prepare Quiz', desc: 'Create AI or custom MCQ tests', icon: Brain, color: 'text-[#111827] dark:text-[#FAFAFA]', tab: 'quizzes' },
+    { title: 'Upload Question Papers', desc: 'Add model exam question papers', icon: Files, color: 'text-[#111827] dark:text-[#FAFAFA]', tab: 'question-papers' },
+    { title: 'Student Requests', desc: 'View assigned student roster & grades', icon: Users, color: 'text-[#111827] dark:text-[#FAFAFA]', tab: 'students' },
   ];
 
   return (
     <div className="space-y-6 font-body">
       {/* ── Welcome Hero Banner ── */}
-      <div className="bg-gradient-to-r from-[#0E2A6D] via-[#153B8A] to-[#1E4DB7] p-6 sm:p-8 rounded-2xl text-white shadow-md space-y-2 border border-[#D9A441]/20 relative overflow-hidden">
+      <div className="bg-[#111827] dark:bg-[#000000] p-6 sm:p-8 rounded-2xl text-white shadow-md space-y-2 border border-[#334155] relative overflow-hidden">
         <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
           <Sparkles size={180} />
         </div>

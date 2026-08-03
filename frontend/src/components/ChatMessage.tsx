@@ -17,7 +17,6 @@ import {
   RotateCcw,
   ThumbsUp,
   ThumbsDown,
-  Sparkles,
   Loader2,
   Pencil,
   Trash2,
@@ -132,24 +131,27 @@ export default function ChatMessage({
     >
       {/* Avatar for Assistant */}
       {!isUser && (
-        <div className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0E2A6D] to-[#1E4DB7] text-white font-bold shadow-xs border border-[#D9A441]/30">
-          <Bot size={16} strokeWidth={1.75} />
+        <div className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[12px]
+                        bg-[#111827] dark:bg-[#FFFFFF]
+                        text-[#FFFFFF] dark:text-[#111111]
+                        border border-[#111827] dark:border-[#FFFFFF]
+                        shadow-[0_1px_4px_rgba(0,0,0,0.08)]">
+          <Bot size={20} strokeWidth={1.75} />
         </div>
       )}
 
       <div
-        className={`group relative max-w-[92%] sm:max-w-[88%] md:max-w-[85%] lg:max-w-[82%] rounded-xl p-3.5 sm:p-4 shadow-xs transition-all duration-200 break-words font-body text-[14px] font-medium leading-[1.5] ${
+        className={`group relative max-w-[92%] sm:max-w-[88%] md:max-w-[85%] lg:max-w-[82%] rounded-xl p-3.5 sm:p-4 shadow-xs transition-all duration-200 break-words font-body text-[14px] font-normal leading-[1.6] ${
           isUser
-            ? 'bg-[#0E2A6D] dark:bg-[#1E293B] text-white rounded-tr-xs'
-            : 'bg-white dark:bg-[#1E293B] text-[#1F2937] dark:text-[#F8FAFC] border border-[#E2E8F0] dark:border-[#334155] rounded-tl-xs'
+            ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 rounded-tr-xs'
+            : 'bg-white dark:bg-zinc-900/90 text-zinc-900 dark:text-zinc-100 border border-zinc-200/80 dark:border-zinc-800 rounded-tl-xs'
         }`}
       >
         {/* Thinking Indicator */}
         {message.isThinking && (
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#1E3A8A] dark:text-[#60A5FA] py-1">
-            <Loader2 className="h-4 w-4 animate-spin text-[#F59E0B]" />
-            <Sparkles className="h-3.5 w-3.5 text-[#1E3A8A] dark:text-[#60A5FA] animate-pulse" />
-            <span>Analyzing college knowledge base...</span>
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#6B7280] dark:text-[#A3A3A3] py-1">
+            <Loader2 className="h-4 w-4 animate-spin text-[#111827] dark:text-[#FAFAFA]" />
+            <span>Analyzing college knowledge base…</span>
           </div>
         )}
 
@@ -159,20 +161,20 @@ export default function ChatMessage({
             <textarea
               value={editText}
               onChange={(e) => setEditText(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-950 p-2 text-sm text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-[#0A2A6A]"
+              className="w-full rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] p-2 text-sm text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] focus:ring-1 focus:ring-[#111827]/10 dark:focus:ring-[#FAFAFA]/10"
               rows={3}
             />
             <div className="flex items-center justify-end gap-2 text-xs">
               <button
                 onClick={() => setIsEditing(false)}
-                className="flex items-center gap-1 rounded-md px-2.5 py-1 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="flex items-center gap-1 rounded-[6px] px-2.5 py-1 text-[#6B7280] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition"
               >
                 <X className="h-3.5 w-3.5" />
                 Cancel
               </button>
               <button
                 onClick={handleSaveEdit}
-                className="flex items-center gap-1 rounded-md bg-[#0A2A6A] dark:bg-secondary px-3 py-1 text-white dark:text-slate-900 font-semibold shadow-xs"
+                className="flex items-center gap-1 rounded-[6px] bg-[#111827] dark:bg-[#FFFFFF] px-3 py-1 text-[#FFFFFF] dark:text-[#111111] font-semibold shadow-xs transition hover:bg-[#1F2937] dark:hover:bg-[#F0F0F0]"
               >
                 Save & Submit
               </button>
@@ -191,12 +193,12 @@ export default function ChatMessage({
                     const codeString = String(children).replace(/\n$/, '');
 
                     return !isInline ? (
-                      <div className="my-2 overflow-hidden rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-[#0A2A6A] text-slate-100 shadow-sm">
-                        <div className="flex items-center justify-between bg-[#163D8C] dark:bg-slate-800 px-3 py-1.5 text-[11px] font-mono text-slate-300">
+                      <div className="my-2 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-900 text-zinc-100 shadow-xs">
+                        <div className="flex items-center justify-between bg-zinc-800/80 px-3 py-1.5 text-[11px] font-mono text-zinc-400">
                           <span>{match ? match[1] : 'code'}</span>
                           <button
                             onClick={() => copyToClipboard(codeString, 1)}
-                            className="flex items-center gap-1 rounded px-2 py-0.5 text-[10px] font-sans hover:bg-white/20 transition active:scale-95 text-slate-200"
+                            className="flex items-center gap-1 rounded px-2 py-0.5 text-[10px] font-sans hover:bg-white/10 transition text-zinc-300"
                           >
                             {copiedCodeIndex === 1 ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
                             <span>{copiedCodeIndex === 1 ? 'Copied' : 'Copy Code'}</span>
@@ -208,7 +210,7 @@ export default function ChatMessage({
                       </div>
                     ) : (
                       <code
-                        className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 text-xs font-mono text-[#0A2A6A] dark:text-secondary"
+                        className="rounded bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 text-xs font-mono text-zinc-900 dark:text-zinc-100"
                         {...props}
                       >
                         {children}
@@ -222,7 +224,7 @@ export default function ChatMessage({
 
               {/* Streaming Pulse Cursor */}
               {message.isStreaming && (
-                <span className="inline-block h-4 w-1.5 ml-1 bg-[#E8B24D] animate-pulse" />
+                <span className="inline-block h-4 w-1.5 ml-1 bg-[#111827] dark:bg-[#FAFAFA] opacity-70 animate-pulse" />
               )}
 
 
@@ -237,15 +239,15 @@ export default function ChatMessage({
               {message.timestamp}
             </span>
             {isSpeakingThisMsg && (
-              <span className="text-primary dark:text-[#60A5FA] flex items-center gap-1 font-bold">
-                <span className="w-1 h-1 rounded-full bg-primary dark:bg-[#60A5FA] animate-ping" />
+              <span className="text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1 font-bold">
+                <span className="w-1 h-1 rounded-full bg-[#111827] dark:bg-[#FAFAFA] animate-ping" />
                 Speaking...
               </span>
             )}
             {!isSpeakingThisMsg && isFinishedThisMsg && (
-              <span className="text-[#22C55E] font-bold flex items-center gap-1">
+              <span className="text-[#6B7280] dark:text-[#A3A3A3] font-semibold flex items-center gap-1">
                 <Check size={14} strokeWidth={1.75} />
-                <span>Read Complete</span>
+                <span>Read</span>
               </span>
             )}
           </div>
@@ -258,10 +260,10 @@ export default function ChatMessage({
                 <button
                   onClick={() => (isSpeakingThisMsg && onStopSpeak ? onStopSpeak() : onSpeak(message.text))}
                   title={isSpeakingThisMsg ? 'Stop speaking' : 'Read response aloud'}
-                  className={`rounded p-1 transition ${
+                  className={`rounded-[6px] p-1 transition ${
                     isSpeakingThisMsg
-                      ? 'bg-primary/10 text-primary dark:text-[#60A5FA]'
-                      : 'hover:bg-[#F1F5F9] dark:hover:bg-slate-800 text-muted'
+                      ? 'bg-[#111827]/10 dark:bg-[#FAFAFA]/10 text-[#111827] dark:text-[#FAFAFA]'
+                      : 'hover:bg-[#F9FAFB] dark:hover:bg-[#232323] text-[#6B7280] dark:text-[#A3A3A3]'
                   }`}
                 >
                   {isSpeakingThisMsg ? (
@@ -271,7 +273,7 @@ export default function ChatMessage({
                           key={b}
                           animate={{ scaleY: [0.3, 1, 0.3] }}
                           transition={{ duration: 0.8, repeat: Infinity, delay: b * 0.15 }}
-                          className="w-[1.5px] h-full bg-primary dark:bg-[#60A5FA] rounded-full"
+                          className="w-[1.5px] h-full bg-[#111827] dark:bg-[#FAFAFA] rounded-full"
                         />
                       ))}
                     </div>
@@ -289,7 +291,7 @@ export default function ChatMessage({
                   isUser ? 'hover:bg-white/20 text-white' : 'hover:bg-[#F1F5F9] dark:hover:bg-slate-800 text-[#1F2937] dark:text-slate-300'
                 }`}
               >
-                {copied ? <Check size={16} strokeWidth={1.75} className="text-emerald-400" /> : <Copy size={16} strokeWidth={1.75} />}
+                {copied ? <Check size={16} strokeWidth={1.75} className="text-[#111827] dark:text-[#FAFAFA]" /> : <Copy size={16} strokeWidth={1.75} />}
               </button>
 
               {/* User Actions: Edit, Delete, Retry */}
@@ -340,7 +342,7 @@ export default function ChatMessage({
                     <button
                       onClick={onRegenerate}
                       title="Regenerate response"
-                      className="rounded p-1 hover:bg-[#F1F5F9] dark:hover:bg-slate-800 text-[#163D8C] dark:text-secondary transition"
+                      className="rounded-[6px] p-1 hover:bg-[#F9FAFB] dark:hover:bg-[#232323] text-[#6B7280] dark:text-[#A3A3A3] transition"
                     >
                       <RotateCcw size={16} strokeWidth={1.75} />
                     </button>
@@ -352,7 +354,7 @@ export default function ChatMessage({
                         onClick={() => onReact(message.id, 'like')}
                         title="Like response"
                         className={`rounded p-1 hover:bg-[#F1F5F9] dark:hover:bg-slate-800 transition ${
-                          message.reaction === 'like' ? 'text-emerald-600 font-bold' : 'text-[#64748B] dark:text-slate-400'
+                          message.reaction === 'like' ? 'text-[#111827] dark:text-[#FAFAFA] font-bold' : 'text-[#6B7280] dark:text-[#A3A3A3]'
                         }`}
                       >
                         <ThumbsUp size={16} strokeWidth={1.75} />
@@ -361,7 +363,7 @@ export default function ChatMessage({
                         onClick={() => onReact(message.id, 'dislike')}
                         title="Dislike response"
                         className={`rounded p-1 hover:bg-[#F1F5F9] dark:hover:bg-slate-800 transition ${
-                          message.reaction === 'dislike' ? 'text-rose-600 font-bold' : 'text-[#64748B] dark:text-slate-400'
+                          message.reaction === 'dislike' ? 'text-[#111827] dark:text-[#FAFAFA] font-bold' : 'text-[#6B7280] dark:text-[#A3A3A3]'
                         }`}
                       >
                         <ThumbsDown size={16} strokeWidth={1.75} />

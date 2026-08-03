@@ -34,27 +34,8 @@ interface DocumentUploadModalProps {
 const SUPPORTED_TYPES_LABEL = 'PDF, DOCX, PPT, PPTX, TXT, MD, CSV, XLSX, JPEG, PNG, WEBP, ZIP (Max 50MB)';
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
-const getFileIcon = (filename: string) => {
-  const ext = filename.split('.').pop()?.toLowerCase() || '';
-  if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) {
-    return <ImageIcon size={22} className="text-emerald-500" />;
-  }
-  if (['zip', 'rar', '7z'].includes(ext)) {
-    return <Archive size={22} className="text-amber-500" />;
-  }
-  if (['pdf'].includes(ext)) {
-    return <FileText size={22} className="text-rose-500" />;
-  }
-  if (['docx', 'doc'].includes(ext)) {
-    return <FileText size={22} className="text-blue-500" />;
-  }
-  if (['ppt', 'pptx'].includes(ext)) {
-    return <FileText size={22} className="text-orange-500" />;
-  }
-  if (['csv', 'xlsx', 'xls'].includes(ext)) {
-    return <FileText size={22} className="text-green-500" />;
-  }
-  return <File size={22} className="text-[#1E4DB7] dark:text-[#60A5FA]" />;
+const getFileIcon = (_filename: string) => {
+  return <FileText size={22} className="text-[#111827] dark:text-[#FAFAFA]" />;
 };
 
 export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
@@ -94,12 +75,10 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
     });
 
     setItems((prev) => [...prev, ...newItems]);
-    // Automatically trigger upload sequence for queued items
     newItems.filter((i) => i.status === 'queued').forEach((item) => uploadSingleFile(item));
   };
 
   const uploadSingleFile = async (item: UploadItem) => {
-    // Update status to uploading
     setItems((prev) =>
       prev.map((i) => (i.id === item.id ? { ...i, status: 'uploading', progress: 20 } : i))
     );
@@ -109,13 +88,11 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
     formData.append('folder_name', item.folderName);
 
     try {
-      // Stage 1: Uploading
       await new Promise((r) => setTimeout(r, 600));
       setItems((prev) =>
         prev.map((i) => (i.id === item.id ? { ...i, status: 'parsing', progress: 55 } : i))
       );
 
-      // Stage 2: Parsing & Vectorizing simulation / API call
       const res = await fetch('/api/v1/documents/upload', {
         method: 'POST',
         body: formData,
@@ -193,51 +170,51 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
-          className="w-full max-w-2xl overflow-hidden rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] shadow-2xl flex flex-col max-h-[90vh]"
+          className="w-full max-w-2xl overflow-hidden rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-lg flex flex-col max-h-[90vh]"
         >
           {/* Modal Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2E8F0] dark:border-[#334155] bg-[#F8FAFC] dark:bg-[#0F172A]/50 shrink-0">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-[#F3F4F6] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] shrink-0">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-[#0E2A6D] text-[#D9A441] shadow-sm">
-                <UploadCloud size={22} />
+              <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center">
+                <UploadCloud size={20} />
               </div>
               <div>
-                <h2 className="font-heading text-lg font-bold text-[#0E2A6D] dark:text-[#F8FAFC] flex items-center gap-2">
+                <h2 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
                   Upload Study Materials
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#1E4DB7]/10 text-[#1E4DB7] dark:text-[#60A5FA] font-bold">
+                  <span className="text-[12px] px-2 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] font-medium">
                     AI Auto-Indexed
                   </span>
                 </h2>
-                <p className="text-xs text-[#64748B] dark:text-[#94A3B8]">
+                <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
                   Drag files or select from your computer for instant summary & AI chat
                 </p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-[#64748B] hover:text-[#1F2937] dark:hover:text-[#F8FAFC] hover:bg-[#F5F7FB] dark:hover:bg-[#334155] transition"
+              className="p-1.5 rounded-[8px] text-[#6B7280] hover:text-[#111827] dark:hover:text-[#FAFAFA] transition cursor-pointer"
             >
               <X size={20} />
             </button>
           </div>
 
           {/* Modal Content */}
-          <div className="p-6 overflow-y-auto space-y-5 flex-1 custom-scrollbar">
+          <div className="p-6 overflow-y-auto space-y-5 flex-1">
             {/* Target Folder Selector */}
-            <div className="flex items-center justify-between gap-4 p-3 rounded-xl bg-[#F8FAFC] dark:bg-[#0F172A]/50 border border-[#E2E8F0] dark:border-[#334155]">
-              <div className="flex items-center gap-2 text-sm font-semibold text-[#0E2A6D] dark:text-[#F8FAFC]">
-                <Folder size={18} className="text-[#D9A441]" />
+            <div className="flex items-center justify-between gap-4 p-3 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A]">
+              <div className="flex items-center gap-2 text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">
+                <Folder size={18} />
                 <span>Upload to Folder:</span>
               </div>
               <select
                 value={selectedFolder}
                 onChange={(e) => setSelectedFolder(e.target.value)}
-                className="h-9 px-3 rounded-lg border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-sm font-medium text-[#1F2937] dark:text-[#F8FAFC] outline-none focus:border-[#1E4DB7]"
+                className="h-9 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] outline-none"
               >
                 {folders.map((f) => (
                   <option key={f} value={f}>
@@ -253,10 +230,10 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`relative flex flex-col items-center justify-center p-8 rounded-2xl border-2 border-dashed cursor-pointer transition-all ${
+              className={`relative flex flex-col items-center justify-center p-8 rounded-[12px] border-2 border-dashed cursor-pointer transition-all duration-150 ${
                 isDragging
-                  ? 'border-[#1E4DB7] bg-[#1E4DB7]/10 scale-[1.01]'
-                  : 'border-[#CBD5E1] dark:border-[#334155] hover:border-[#1E4DB7] bg-[#F8FAFC]/50 dark:bg-[#0F172A]/30 hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B]'
+                  ? 'border-[#111827] dark:border-[#FAFAFA] bg-[#F9FAFB] dark:bg-[#232323]'
+                  : 'border-[#D1D5DB] dark:border-[#2A2A2A] hover:border-[#111827] dark:hover:border-[#FAFAFA] bg-[#FFFFFF] dark:bg-[#181818]'
               }`}
             >
               <input
@@ -271,13 +248,13 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                   }
                 }}
               />
-              <div className="w-16 h-16 mb-3 rounded-2xl bg-gradient-to-tr from-[#0E2A6D] to-[#1E4DB7] text-white flex items-center justify-center shadow-lg shadow-[#0E2A6D]/20">
-                <UploadCloud size={32} />
+              <div className="w-14 h-14 mb-3 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shadow-xs">
+                <UploadCloud size={28} />
               </div>
-              <p className="font-heading font-bold text-base text-[#0E2A6D] dark:text-[#F8FAFC]">
-                Drag & Drop files here or <span className="text-[#1E4DB7] dark:text-[#60A5FA] underline">Browse</span>
+              <p className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA]">
+                Drag & Drop files here or <span className="underline cursor-pointer">Browse</span>
               </p>
-              <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-1 text-center">
+              <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] mt-1 text-center">
                 {SUPPORTED_TYPES_LABEL}
               </p>
             </div>
@@ -285,23 +262,23 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
             {/* Upload Queue */}
             {items.length > 0 && (
               <div className="space-y-3">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8]">
+                <h4 className="text-[12px] font-semibold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                   Uploading Files ({items.length})
                 </h4>
-                <div className="space-y-2 max-h-56 overflow-y-auto pr-1 custom-scrollbar">
+                <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
                   {items.map((item) => (
                     <div
                       key={item.id}
-                      className="p-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#0F172A]/40 flex flex-col gap-2"
+                      className="p-3 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] flex flex-col gap-2"
                     >
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                           {getFileIcon(item.file.name)}
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-semibold text-[#1F2937] dark:text-[#F8FAFC]">
+                            <p className="truncate text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">
                               {item.file.name}
                             </p>
-                            <p className="text-xs text-[#64748B] dark:text-[#94A3B8]">
+                            <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
                               {(item.file.size / (1024 * 1024)).toFixed(2)} MB • {item.folderName}
                             </p>
                           </div>
@@ -310,14 +287,14 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                         {/* Status badge & action button */}
                         <div className="flex items-center gap-2">
                           {item.status === 'success' && (
-                            <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full">
+                            <span className="flex items-center gap-1 text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] px-2.5 py-1 rounded-[6px]">
                               <CheckCircle2 size={14} /> Ready
                             </span>
                           )}
                           {item.status === 'error' && (
                             <button
                               onClick={() => retryItem(item)}
-                              className="flex items-center gap-1 text-xs font-bold text-rose-600 dark:text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-full hover:bg-rose-500/20 transition"
+                              className="flex items-center gap-1 text-[12px] font-medium text-[#DC2626] border border-[#DC2626] px-2.5 py-1 rounded-[6px] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
                             >
                               <RotateCcw size={14} /> Retry
                             </button>
@@ -325,7 +302,7 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                           {(item.status === 'uploading' ||
                             item.status === 'parsing' ||
                             item.status === 'vectorizing') && (
-                            <span className="flex items-center gap-1.5 text-xs font-bold text-[#1E4DB7] dark:text-[#60A5FA] bg-[#1E4DB7]/10 px-2.5 py-1 rounded-full">
+                            <span className="flex items-center gap-1.5 text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] px-2.5 py-1 rounded-[6px]">
                               <Loader2 size={14} className="animate-spin" />
                               {item.status === 'uploading' && 'Uploading...'}
                               {item.status === 'parsing' && 'Extracting text...'}
@@ -334,7 +311,7 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                           )}
                           <button
                             onClick={() => removeItem(item.id)}
-                            className="p-1 rounded-lg text-[#64748B] hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950 transition"
+                            className="p-1 rounded-[6px] text-[#6B7280] hover:text-[#DC2626] transition cursor-pointer"
                           >
                             <X size={16} />
                           </button>
@@ -343,16 +320,16 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
 
                       {/* Progress bar */}
                       {item.status !== 'error' && (
-                        <div className="w-full bg-[#E2E8F0] dark:bg-[#334155] h-1.5 rounded-full overflow-hidden">
+                        <div className="w-full bg-[#E5E7EB] dark:bg-[#2A2A2A] h-1.5 rounded-full overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${item.progress}%` }}
-                            className="h-full bg-gradient-to-r from-[#0E2A6D] to-[#1E4DB7]"
+                            className="h-full bg-[#111827] dark:bg-[#FAFAFA]"
                           />
                         </div>
                       )}
                       {item.errorMessage && (
-                        <p className="text-xs text-rose-500 font-medium flex items-center gap-1">
+                        <p className="text-[12px] text-[#DC2626] font-medium flex items-center gap-1">
                           <AlertCircle size={14} /> {item.errorMessage}
                         </p>
                       )}
@@ -364,13 +341,13 @@ export const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
           </div>
 
           {/* Modal Footer */}
-          <div className="flex items-center justify-between px-6 py-4 border-t border-[#E2E8F0] dark:border-[#334155] bg-[#F8FAFC] dark:bg-[#0F172A]/50 shrink-0">
-            <span className="text-xs text-[#64748B] dark:text-[#94A3B8] flex items-center gap-1">
-              <Sparkles size={14} className="text-[#D9A441]" /> Vector search enabled automatically
+          <div className="flex items-center justify-between px-6 py-4 border-t border-[#F3F4F6] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] shrink-0">
+            <span className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1">
+              <Sparkles size={14} /> Vector search enabled automatically
             </span>
             <button
               onClick={onClose}
-              className="px-6 py-2.5 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white font-semibold text-sm shadow-md transition"
+              className="h-10 px-6 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition cursor-pointer"
             >
               Done
             </button>

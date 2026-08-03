@@ -213,16 +213,16 @@ export const DocumentAIActionModal: React.FC<DocumentAIActionModalProps> = ({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const actionList: { id: AIActionType; label: string; icon: any; color: string }[] = [
-    { id: 'summarize', label: 'Summarize', icon: BookOpen, color: 'text-amber-500' },
-    { id: 'explain', label: 'Explain', icon: Brain, color: 'text-blue-500' },
-    { id: 'notes', label: 'Generate Notes', icon: FileText, color: 'text-emerald-500' },
-    { id: 'questions', label: 'Exam Questions', icon: Target, color: 'text-rose-500' },
-    { id: 'mcq', label: 'MCQ Generator', icon: HelpCircle, color: 'text-purple-500' },
-    { id: 'flashcards', label: 'Flashcards', icon: Layers, color: 'text-indigo-500' },
-    { id: 'revision', label: 'Revision Notes', icon: Sparkles, color: 'text-amber-600' },
-    { id: 'translate', label: 'Translate', icon: Globe, color: 'text-cyan-500' },
-    { id: 'extract', label: 'Extract Text', icon: FileText, color: 'text-[#1E4DB7]' },
+  const actionTabs: { id: AIActionType; label: string; icon: any }[] = [
+    { id: 'summarize', label: 'Summary', icon: BookOpen },
+    { id: 'explain', label: 'Explain', icon: Brain },
+    { id: 'notes', label: 'Revision Notes', icon: FileText },
+    { id: 'questions', label: 'Exam Qs', icon: Target },
+    { id: 'mcq', label: 'MCQ Quiz', icon: HelpCircle },
+    { id: 'flashcards', label: 'Flashcards', icon: Layers },
+    { id: 'translate', label: 'Translate', icon: Globe },
+    { id: 'revision', label: 'Revision', icon: Sparkles },
+    { id: 'extract', label: 'Extract', icon: FileText },
   ];
 
   return (
@@ -243,20 +243,20 @@ export const DocumentAIActionModal: React.FC<DocumentAIActionModalProps> = ({
               </span>
             </div>
 
-            {actionList.map((act) => {
+            {actionTabs.map((act) => {
               const Icon = act.icon;
               const isActive = activeAction === act.id;
               return (
                 <button
                   key={act.id}
                   onClick={() => setActiveAction(act.id)}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap md:whitespace-normal ${
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-[10px] text-[14px] font-medium transition-all duration-150 whitespace-nowrap cursor-pointer ${
                     isActive
-                      ? 'bg-white dark:bg-[#1E293B] text-[#1E4DB7] dark:text-[#60A5FA] border border-[#E2E8F0] dark:border-[#334155] shadow-sm'
-                      : 'text-[#64748B] dark:text-[#94A3B8] hover:bg-[#E2E8F0]/40 dark:hover:bg-[#1E293B]/50 hover:text-[#1F2937] dark:hover:text-[#F8FAFC]'
+                      ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                      : 'bg-[#FFFFFF] dark:bg-[#181818] text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
                   }`}
                 >
-                  <Icon size={16} className={act.color} />
+                  <Icon size={16} className={isActive ? 'text-[#FFFFFF] dark:text-[#111111]' : 'text-[#111827] dark:text-[#FAFAFA]'} />
                   <span>{act.label}</span>
                 </button>
               );

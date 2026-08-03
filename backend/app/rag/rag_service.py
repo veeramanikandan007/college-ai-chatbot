@@ -137,6 +137,17 @@ class RAGService:
             logger.exception('Unable to auto-build RAG index on startup: %s', exc)
 
     def retrieve_context(self, question: str, top_k: int = 5) -> List[Dict[str, Any]]:
-        """Retrieve top 5 relevant context chunks for a user question."""
+        """Retrieve top-k relevant context chunks for a user question."""
         return self.retriever.retrieve(question, top_k=top_k)
+
+    def retrieve_context_with_confidence(self, question: str, top_k: int = 5):
+        """
+        Phase 3 & 4: Retrieve chunks AND overall confidence label.
+
+        Returns:
+            (chunks: List[Dict], overall_confidence: str)
+            overall_confidence is one of: HIGH, MEDIUM, LOW, NONE
+        """
+        return self.retriever.retrieve_with_summary(question, top_k=top_k)
+
 

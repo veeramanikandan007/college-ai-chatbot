@@ -175,138 +175,139 @@ export default function DocumentHubPage() {
 
   const pinnedDocs = useMemo(() => documents.filter((d) => d.is_pinned), [documents]);
 
-  const getFileBadgeColor = (ext: string) => {
-    const e = ext.toLowerCase();
-    if (['pdf'].includes(e)) return 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20';
-    if (['docx', 'doc'].includes(e)) return 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20';
-    if (['ppt', 'pptx'].includes(e)) return 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20';
-    if (['xlsx', 'csv'].includes(e)) return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20';
-    if (['png', 'jpg', 'webp'].includes(e)) return 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20';
-    return 'bg-[#1E4DB7]/10 text-[#1E4DB7] dark:text-[#60A5FA] border-[#1E4DB7]/20';
+  const getFileBadgeColor = (_ext: string) => {
+    return 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border-zinc-200 dark:border-zinc-700';
   };
 
   const getFileIcon = (ext: string) => {
     const e = ext.toLowerCase();
-    if (['jpg', 'jpeg', 'png', 'webp'].includes(e)) return <ImageIcon size={20} className="text-purple-500" />;
-    if (['zip', 'rar'].includes(e)) return <Archive size={20} className="text-amber-500" />;
-    if (['pdf'].includes(e)) return <FileText size={20} className="text-rose-500" />;
-    if (['docx', 'doc'].includes(e)) return <FileText size={20} className="text-blue-500" />;
-    if (['ppt', 'pptx'].includes(e)) return <FileText size={20} className="text-orange-500" />;
-    return <File size={20} className="text-[#1E4DB7] dark:text-[#60A5FA]" />;
+    if (['jpg', 'jpeg', 'png', 'webp'].includes(e)) return <ImageIcon size={20} className="text-zinc-700 dark:text-zinc-300" />;
+    if (['zip', 'rar'].includes(e)) return <Archive size={20} className="text-zinc-700 dark:text-zinc-300" />;
+    if (['docx', 'doc', 'pdf', 'ppt', 'pptx'].includes(e)) return <FileText size={20} className="text-zinc-700 dark:text-zinc-300" />;
+    return <File size={20} className="text-zinc-700 dark:text-zinc-300" />;
   };
 
   return (
-    <div className="w-full h-full overflow-y-auto p-4 md:p-8 bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] transition-colors duration-300 font-body">
-      <div className="mx-auto max-w-7xl space-y-6">
-        {/* Header Title & Top Controls */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div>
-            <h1 className="font-heading font-bold text-2xl md:text-3xl tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC] flex items-center gap-3">
-              <div className="p-3 rounded-2xl bg-gradient-to-tr from-[#0E2A6D] to-[#1E4DB7] text-[#D9A441] shadow-lg shadow-[#0E2A6D]/20">
-                <BookOpen size={28} />
-              </div>
-              AI Document Hub
-            </h1>
-            <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-1">
-              Upload, organize, search, and chat with your study materials using CollegeMate AI
-            </p>
+    <div className="w-full h-full overflow-y-auto p-4 md:p-8 bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] transition-colors duration-300 font-sans">
+      <div className="mx-auto max-w-6xl space-y-6">
+        
+        {/* ==================================================
+            PAGE HEADER (White Header Card)
+            ================================================== */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0 shadow-xs">
+              <Folder size={24} className="stroke-[2.2]" />
+            </div>
+            <div>
+              <h1 className="text-[32px] font-bold tracking-tight text-[#111827] dark:text-[#FAFAFA] leading-tight">
+                AI Document Hub
+              </h1>
+              <p className="text-[14px] text-[#4B5563] dark:text-[#A3A3A3] mt-1">
+                Upload, organize, search, and chat with your study materials using CollegeMate AI
+              </p>
+            </div>
           </div>
 
-          {/* Upload & New Folder Action Buttons */}
+          {/* Action Buttons */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsFolderOpen(true)}
-              className="h-11 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#0E2A6D] dark:text-[#F8FAFC] font-semibold text-xs md:text-sm flex items-center gap-2 shadow-xs hover:border-[#1E4DB7] transition"
+              className="h-10 px-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-all duration-150 text-[14px] font-medium flex items-center gap-2 cursor-pointer"
             >
-              <FolderPlus size={18} className="text-[#D9A441]" />
+              <FolderPlus size={16} />
               <span>New Folder</span>
             </button>
 
             <button
               onClick={() => setIsUploadOpen(true)}
-              className="h-11 px-5 rounded-xl bg-gradient-to-r from-[#0E2A6D] to-[#1E4DB7] hover:from-[#153B8A] hover:to-[#2563EB] text-white font-semibold text-xs md:text-sm flex items-center gap-2 shadow-md transition"
+              className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition-all duration-150 flex items-center gap-2 cursor-pointer"
             >
-              <UploadCloud size={20} />
+              <UploadCloud size={18} />
               <span>Upload Document</span>
             </button>
           </div>
         </div>
 
-        {/* Quick Statistics Overview Banner */}
+        {/* ==================================================
+            DOCUMENT DASHBOARD OVERVIEW CARDS
+            ================================================== */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="p-4 md:p-5 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] shadow-xs flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-[#0E2A6D]/10 dark:bg-[#60A5FA]/20 text-[#0E2A6D] dark:text-[#60A5FA]">
-              <FileText size={22} />
-            </div>
+          <div className="p-5 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold text-[#64748B] dark:text-[#94A3B8]">Total Documents</p>
-              <p className="text-lg font-heading font-bold text-[#1F2937] dark:text-[#F8FAFC]">
-                {documents.length} Files
+              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Total Documents</p>
+              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">
+                {documents.length}
               </p>
+            </div>
+            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center shrink-0">
+              <FileText size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
             </div>
           </div>
 
-          <div className="p-4 md:p-5 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] shadow-xs flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-amber-500/10 text-[#D9A441]">
-              <Pin size={22} />
-            </div>
+          <div className="p-5 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold text-[#64748B] dark:text-[#94A3B8]">Pinned Files</p>
-              <p className="text-lg font-heading font-bold text-[#1F2937] dark:text-[#F8FAFC]">
-                {pinnedDocs.length} Pinned
+              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Pinned Files</p>
+              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">
+                {pinnedDocs.length}
               </p>
+            </div>
+            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center shrink-0">
+              <Pin size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
             </div>
           </div>
 
-          <div className="p-4 md:p-5 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] shadow-xs flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-purple-500/10 text-purple-500">
-              <Layers size={22} />
-            </div>
+          <div className="p-5 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold text-[#64748B] dark:text-[#94A3B8]">RAG Embeddings</p>
-              <p className="text-lg font-heading font-bold text-[#1F2937] dark:text-[#F8FAFC]">
-                {documents.reduce((acc, d) => acc + (d.chunk_count || 0), 0)} Vector Chunks
+              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">AI Indexed Files</p>
+              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">
+                {documents.reduce((acc, d) => acc + (d.chunk_count ? 1 : 0), 0)}
               </p>
+            </div>
+            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center shrink-0">
+              <Layers size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
             </div>
           </div>
 
-          <div className="p-4 md:p-5 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] shadow-xs flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-500">
-              <Sparkles size={22} />
-            </div>
+          <div className="p-5 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold text-[#64748B] dark:text-[#94A3B8]">Storage Used</p>
-              <p className="text-lg font-heading font-bold text-[#1F2937] dark:text-[#F8FAFC]">
+              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Storage Used</p>
+              <p className="text-[20px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-2">
                 {(documents.reduce((acc, d) => acc + (d.file_size || 0), 0) / (1024 * 1024)).toFixed(1)} MB / 50MB
               </p>
+            </div>
+            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center shrink-0">
+              <Sparkles size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
             </div>
           </div>
         </div>
 
-        {/* PINNED DOCUMENTS SECTION */}
+        {/* ==================================================
+            PINNED DOCUMENTS SECTION
+            ================================================== */}
         {pinnedDocs.length > 0 && activeCategory === 'all' && (
           <div className="space-y-3">
-            <h3 className="font-heading text-base font-bold text-[#0E2A6D] dark:text-[#F8FAFC] flex items-center gap-2">
-              <Pin size={18} className="text-[#D9A441]" />
-              Pinned Documents
+            <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+              <Pin size={18} className="text-[#111827] dark:text-[#FAFAFA]" />
+              <span>Pinned Documents</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {pinnedDocs.map((doc) => (
                 <div
                   key={doc.id}
-                  className="p-4 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] shadow-sm hover:border-[#1E4DB7]/40 transition-all flex flex-col justify-between space-y-3 relative group"
+                  className="p-5 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs hover:border-[#111827] dark:hover:border-[#FAFAFA] transition-all duration-150 flex flex-col justify-between space-y-3"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="p-2.5 rounded-xl bg-[#F8FAFC] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155]">
+                      <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center shrink-0">
                         {getFileIcon(doc.file_type)}
                       </div>
                       <div className="min-w-0">
-                        <h4 className="font-heading font-bold text-sm text-[#1F2937] dark:text-[#F8FAFC] truncate">
+                        <h4 className="font-bold text-[14px] text-[#111827] dark:text-[#FAFAFA] truncate">
                           {doc.original_name}
                         </h4>
-                        <p className="text-xs text-[#64748B] dark:text-[#94A3B8]">
+                        <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
                           {doc.folder_name} • {(doc.file_size / (1024 * 1024)).toFixed(2)} MB
                         </p>
                       </div>
@@ -314,27 +315,27 @@ export default function DocumentHubPage() {
 
                     <button
                       onClick={() => handleTogglePin(doc.id)}
-                      className="p-1.5 rounded-lg text-[#D9A441] bg-amber-500/10 hover:bg-amber-500/20 transition"
+                      className="p-1.5 rounded-[8px] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
                       title="Unpin document"
                     >
                       <Pin size={16} />
                     </button>
                   </div>
 
-                  <p className="text-xs text-[#64748B] dark:text-[#94A3B8] line-clamp-2">
+                  <p className="text-[14px] text-[#4B5563] dark:text-[#A3A3A3] line-clamp-2 leading-relaxed">
                     {doc.summary || 'AI Auto-generated document overview'}
                   </p>
 
-                  <div className="flex items-center justify-between pt-2 border-t border-[#E2E8F0] dark:border-[#334155]">
+                  <div className="flex items-center justify-between pt-3 border-t border-[#F3F4F6] dark:border-[#2A2A2A]">
                     <button
                       onClick={() => setChattingDoc(doc)}
-                      className="px-3 py-1.5 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition"
+                      className="h-8 px-3 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium flex items-center gap-1.5 shadow-xs transition cursor-pointer"
                     >
                       <MessageSquare size={14} /> Ask AI
                     </button>
                     <button
                       onClick={() => setViewingDoc(doc)}
-                      className="px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-xs font-bold text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F8FAFC] transition"
+                      className="h-8 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
                     >
                       View
                     </button>
@@ -345,10 +346,12 @@ export default function DocumentHubPage() {
           </div>
         )}
 
-        {/* Filter Navigation Bar & Search Toolbar */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
-          {/* Category Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1 lg:pb-0">
+        {/* ==================================================
+            FILTER NAVIGATION BAR & SEARCH TOOLBAR
+            ================================================== */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs">
+          {/* Category Chips */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0">
             {[
               { id: 'all', label: 'All Files', icon: BookOpen },
               { id: 'recent', label: 'Recent', icon: Clock },
@@ -362,23 +365,24 @@ export default function DocumentHubPage() {
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition whitespace-nowrap ${
+                  className={`h-9 px-3.5 rounded-[10px] text-[14px] font-medium flex items-center gap-2 transition-all duration-150 whitespace-nowrap cursor-pointer ${
                     isActive
-                      ? 'bg-[#0E2A6D] text-white shadow-sm'
-                      : 'text-[#64748B] dark:text-[#94A3B8] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] hover:text-[#1F2937] dark:hover:text-[#F8FAFC]'
+                      ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                      : 'bg-[#FFFFFF] dark:bg-[#181818] text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
                   }`}
                 >
-                  <Icon size={15} /> {cat.label}
+                  <Icon size={15} className={isActive ? 'text-[#FFFFFF] dark:text-[#111111]' : 'text-[#111827] dark:text-[#FAFAFA]'} />
+                  <span>{cat.label}</span>
                 </button>
               );
             })}
 
             {/* Folder Dropdown Filter */}
-            <div className="h-6 w-[1px] bg-[#E2E8F0] dark:bg-[#334155] mx-1" />
+            <div className="h-6 w-[1px] bg-[#E5E7EB] dark:bg-[#2A2A2A] mx-1" />
             <select
               value={['all', 'recent', 'pinned', 'favorites', 'shared'].includes(activeCategory) ? '' : activeCategory}
               onChange={(e) => setActiveCategory(e.target.value || 'all')}
-              className="h-9 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F8FAFC] dark:bg-[#0F172A] text-xs font-bold text-[#0E2A6D] dark:text-[#F8FAFC] outline-none"
+              className="h-9 px-3 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] outline-none"
             >
               <option value="">Folders ({folders.length})</option>
               {folders.map((f) => (
@@ -391,48 +395,48 @@ export default function DocumentHubPage() {
 
           {/* Search, Sort & View Controls */}
           <div className="flex items-center gap-3">
-            {/* Search Input */}
+            {/* Search Bar */}
             <div className="relative flex-1 sm:w-64">
               <input
                 type="text"
-                placeholder="Search title, content, tags..."
+                placeholder="Search title, content..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-10 px-3 pl-9 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F8FAFC] dark:bg-[#0F172A] text-xs font-medium text-[#1F2937] dark:text-[#F8FAFC] outline-none focus:border-[#1E4DB7] transition"
+                className="w-full h-10 px-3 pl-9 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA]"
               />
-              <Search size={16} className="absolute left-3 top-3 text-[#64748B] pointer-events-none" />
+              <Search size={16} className="absolute left-3 top-3 text-[#6B7280] pointer-events-none" />
             </div>
 
             {/* Sort Dropdown */}
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F8FAFC] dark:bg-[#0F172A] text-xs font-semibold text-[#475569] dark:text-[#CBD5E1] outline-none"
+              className="h-10 px-3 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] outline-none"
             >
               <option value="date">Sort: Date</option>
               <option value="name">Sort: Name</option>
               <option value="size">Sort: Size</option>
-              <option value="subject">Sort: Subject</option>
+              <option value="subject">Sort: Folder</option>
             </select>
 
-            {/* View Mode Toggle */}
-            <div className="flex items-center p-1 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F8FAFC] dark:bg-[#0F172A]">
+            {/* View Toggle */}
+            <div className="flex items-center p-1 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-1.5 rounded-lg transition ${
+                className={`p-1.5 rounded-[8px] transition cursor-pointer ${
                   viewMode === 'grid'
-                    ? 'bg-white dark:bg-[#1E293B] text-[#0E2A6D] dark:text-[#60A5FA] shadow-xs'
-                    : 'text-[#64748B]'
+                    ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                    : 'text-[#6B7280] hover:text-[#111827]'
                 }`}
               >
                 <Grid size={16} />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-1.5 rounded-lg transition ${
+                className={`p-1.5 rounded-[8px] transition cursor-pointer ${
                   viewMode === 'list'
-                    ? 'bg-white dark:bg-[#1E293B] text-[#0E2A6D] dark:text-[#60A5FA] shadow-xs'
-                    : 'text-[#64748B]'
+                    ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                    : 'text-[#6B7280] hover:text-[#111827]'
                 }`}
               >
                 <List size={16} />
@@ -441,19 +445,24 @@ export default function DocumentHubPage() {
           </div>
         </div>
 
-        {/* DOCUMENT GRID / LIST VIEW */}
+        {/* ==================================================
+            DOCUMENT CARDS GRID / LIST VIEW & EMPTY STATE
+            ================================================== */}
         {filteredDocuments.length === 0 ? (
-          <div className="py-20 flex flex-col items-center justify-center text-center bg-white dark:bg-[#1E293B] rounded-2xl border border-dashed border-[#E2E8F0] dark:border-[#334155]">
-            <BookOpen size={48} className="text-[#64748B] opacity-30 mb-3" />
-            <h3 className="font-heading font-bold text-lg text-[#1F2937] dark:text-[#F8FAFC]">
-              No documents found
+          /* EMPTY STATE */
+          <div className="py-20 flex flex-col items-center justify-center text-center bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-dashed border-[#E5E7EB] dark:border-[#2A2A2A] p-8 shadow-xs">
+            <div className="w-16 h-16 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center mb-4 text-[#6B7280]">
+              <BookOpen size={32} />
+            </div>
+            <h3 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+              No Documents Available
             </h3>
-            <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-1 max-w-sm">
-              Upload your lecture notes, PDFs, or assignments to start using AI features.
+            <p className="text-[14px] text-[#4B5563] dark:text-[#A3A3A3] mt-1 max-w-sm">
+              Upload your first document to organize and interact with it using AI.
             </p>
             <button
               onClick={() => setIsUploadOpen(true)}
-              className="mt-4 px-5 py-2.5 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-xs font-bold flex items-center gap-2 shadow-md transition"
+              className="mt-5 h-10 px-6 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium flex items-center gap-2 shadow-xs transition cursor-pointer"
             >
               <UploadCloud size={16} /> Upload First Document
             </button>
@@ -466,20 +475,20 @@ export default function DocumentHubPage() {
                 key={doc.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs hover:shadow-md hover:border-[#1E4DB7]/40 transition-all flex flex-col justify-between group"
+                className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs hover:border-[#111827] dark:hover:border-[#FAFAFA] transition-all duration-150 flex flex-col justify-between space-y-4"
               >
                 {/* Header */}
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="p-3 rounded-xl bg-[#F8FAFC] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] shrink-0">
+                      <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center shrink-0">
                         {getFileIcon(doc.file_type)}
                       </div>
                       <div className="min-w-0">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border uppercase ${getFileBadgeColor(doc.file_type)}`}>
+                        <span className="text-[12px] font-semibold px-2 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] uppercase">
                           {doc.folder_name || 'General'}
                         </span>
-                        <h3 className="font-heading font-bold text-sm text-[#1F2937] dark:text-[#F8FAFC] mt-1 truncate">
+                        <h3 className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA] mt-1 truncate">
                           {doc.original_name}
                         </h3>
                       </div>
@@ -488,49 +497,41 @@ export default function DocumentHubPage() {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => handleTogglePin(doc.id)}
-                        className={`p-1.5 rounded-lg transition ${
-                          doc.is_pinned
-                            ? 'text-[#D9A441] bg-amber-500/10'
-                            : 'text-[#64748B] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A]'
-                        }`}
+                        className="p-1.5 rounded-[8px] text-[#6B7280] hover:text-[#111827] dark:hover:text-[#FAFAFA] transition cursor-pointer"
                       >
-                        <Pin size={16} />
+                        <Pin size={16} className={doc.is_pinned ? 'fill-current text-[#111827] dark:text-[#FAFAFA]' : ''} />
                       </button>
                       <button
                         onClick={() => handleToggleFavorite(doc.id)}
-                        className={`p-1.5 rounded-lg transition ${
-                          doc.is_favorite
-                            ? 'text-amber-500 fill-amber-500 bg-amber-500/10'
-                            : 'text-[#64748B] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A]'
-                        }`}
+                        className="p-1.5 rounded-[8px] text-[#6B7280] hover:text-[#111827] dark:hover:text-[#FAFAFA] transition cursor-pointer"
                       >
-                        <Star size={16} />
+                        <Star size={16} className={doc.is_favorite ? 'fill-current text-[#111827] dark:text-[#FAFAFA]' : ''} />
                       </button>
                     </div>
                   </div>
 
-                  <p className="text-xs text-[#64748B] dark:text-[#94A3B8] line-clamp-3 leading-relaxed">
+                  <p className="text-[14px] text-[#4B5563] dark:text-[#A3A3A3] line-clamp-3 leading-relaxed">
                     {doc.summary || 'AI overview available for this document.'}
                   </p>
                 </div>
 
                 {/* AI Quick Actions Pill Bar */}
-                <div className="py-3 border-t border-b border-[#E2E8F0] dark:border-[#334155] my-3">
-                  <div className="flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1">
+                <div className="py-3 border-t border-b border-[#F3F4F6] dark:border-[#2A2A2A]">
+                  <div className="flex items-center gap-2 overflow-x-auto pb-1">
                     <button
                       onClick={() => {
                         navigate(`/quiz?docId=${doc.id}&docName=${encodeURIComponent(doc.original_name)}`);
                       }}
-                      className="px-2.5 py-1 rounded-lg bg-[#0E2A6D] text-white font-bold text-[11px] hover:bg-[#153B8A] transition shrink-0 flex items-center gap-1 shadow-xs"
+                      className="h-7 px-3 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[12px] flex items-center gap-1 transition cursor-pointer shrink-0"
                     >
-                      <Sparkles size={12} className="text-[#D9A441]" /> Quiz
+                      <Sparkles size={12} /> Quiz
                     </button>
                     <button
                       onClick={() => {
                         setAiActionDoc(doc);
                         setInitialAIAction('summarize');
                       }}
-                      className="px-2.5 py-1 rounded-lg bg-[#F8FAFC] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] text-[11px] font-bold text-[#0E2A6D] dark:text-[#60A5FA] hover:border-[#1E4DB7] transition shrink-0"
+                      className="h-7 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer shrink-0"
                     >
                       Summarize
                     </button>
@@ -539,7 +540,7 @@ export default function DocumentHubPage() {
                         setAiActionDoc(doc);
                         setInitialAIAction('explain');
                       }}
-                      className="px-2.5 py-1 rounded-lg bg-[#F8FAFC] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] text-[11px] font-bold text-blue-600 dark:text-blue-400 hover:border-blue-500 transition shrink-0"
+                      className="h-7 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer shrink-0"
                     >
                       Explain
                     </button>
@@ -548,55 +549,46 @@ export default function DocumentHubPage() {
                         setAiActionDoc(doc);
                         setInitialAIAction('flashcards');
                       }}
-                      className="px-2.5 py-1 rounded-lg bg-[#F8FAFC] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:border-indigo-500 transition shrink-0"
+                      className="h-7 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer shrink-0"
                     >
                       Flashcards
-                    </button>
-                    <button
-                      onClick={() => {
-                        setAiActionDoc(doc);
-                        setInitialAIAction('mcq');
-                      }}
-                      className="px-2.5 py-1 rounded-lg bg-[#F8FAFC] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] text-[11px] font-bold text-purple-600 dark:text-purple-400 hover:border-purple-500 transition shrink-0"
-                    >
-                      MCQ
                     </button>
                   </div>
                 </div>
 
                 {/* Footer Controls */}
                 <div className="flex items-center justify-between">
-                  <div className="text-[11px] text-[#64748B] dark:text-[#94A3B8]">
+                  <div className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
                     {(doc.file_size / (1024 * 1024)).toFixed(2)} MB
                   </div>
 
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleReadAloud(doc.summary || doc.original_name)}
-                      className="p-1.5 rounded-lg text-[#0E2A6D] dark:text-[#60A5FA] bg-[#0E2A6D]/10 dark:bg-[#60A5FA]/10 hover:bg-[#0E2A6D]/20 transition"
+                      className="p-2 rounded-[8px] text-[#111827] dark:text-[#FAFAFA] border border-[#D1D5DB] dark:border-[#2A2A2A] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
                       title="Read Aloud"
                     >
-                      <Volume2 size={16} />
+                      <Volume2 size={14} />
                     </button>
                     <button
                       onClick={() => setViewingDoc(doc)}
-                      className="p-1.5 rounded-lg text-[#64748B] hover:text-[#0E2A6D] dark:hover:text-[#F8FAFC] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] transition"
+                      className="p-2 rounded-[8px] text-[#111827] dark:text-[#FAFAFA] border border-[#D1D5DB] dark:border-[#2A2A2A] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
                       title="View Document"
                     >
-                      <Eye size={16} />
+                      <Eye size={14} />
                     </button>
                     <button
                       onClick={() => setChattingDoc(doc)}
-                      className="px-3.5 py-1.5 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition"
+                      className="h-8 px-3 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium flex items-center gap-1.5 shadow-xs transition cursor-pointer"
                     >
                       <MessageSquare size={14} /> Ask AI
                     </button>
                     <button
                       onClick={() => handleDeleteDoc(doc.id)}
-                      className="p-1.5 rounded-lg text-[#64748B] hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950 transition"
+                      className="p-2 rounded-[8px] text-[#DC2626] border border-[#D1D5DB] dark:border-[#2A2A2A] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
                       title="Delete"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 </div>
@@ -605,22 +597,22 @@ export default function DocumentHubPage() {
           </div>
         ) : (
           /* LIST VIEW */
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs overflow-hidden">
-            <div className="divide-y divide-[#E2E8F0] dark:divide-[#334155]">
+          <div className="bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs overflow-hidden">
+            <div className="divide-y divide-[#F3F4F6] dark:divide-[#2A2A2A]">
               {filteredDocuments.map((doc) => (
                 <div
                   key={doc.id}
-                  className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-[#F8FAFC] dark:hover:bg-[#0F172A]/40 transition"
+                  className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-all duration-150"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="p-2.5 rounded-xl bg-[#F8FAFC] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] shrink-0">
+                    <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center shrink-0">
                       {getFileIcon(doc.file_type)}
                     </div>
                     <div className="min-w-0">
-                      <h4 className="font-heading font-bold text-sm text-[#1F2937] dark:text-[#F8FAFC] truncate">
+                      <h4 className="font-bold text-[14px] text-[#111827] dark:text-[#FAFAFA] truncate">
                         {doc.original_name}
                       </h4>
-                      <p className="text-xs text-[#64748B] dark:text-[#94A3B8]">
+                      <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
                         {doc.folder_name} • {(doc.file_size / (1024 * 1024)).toFixed(2)} MB • {doc.chunk_count || 5} Vector Chunks
                       </p>
                     </div>
@@ -632,19 +624,19 @@ export default function DocumentHubPage() {
                         setAiActionDoc(doc);
                         setInitialAIAction('summarize');
                       }}
-                      className="px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-xs font-bold text-[#0E2A6D] dark:text-[#60A5FA] hover:bg-white dark:hover:bg-[#1E293B] transition"
+                      className="h-8 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
                     >
                       Summarize
                     </button>
                     <button
                       onClick={() => setViewingDoc(doc)}
-                      className="px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-xs font-bold text-[#475569] dark:text-[#CBD5E1] hover:bg-white dark:hover:bg-[#1E293B] transition"
+                      className="h-8 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
                     >
                       View
                     </button>
                     <button
                       onClick={() => setChattingDoc(doc)}
-                      className="px-4 py-1.5 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition"
+                      className="h-8 px-4 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium flex items-center gap-1.5 shadow-xs transition cursor-pointer"
                     >
                       <MessageSquare size={14} /> Ask AI
                     </button>

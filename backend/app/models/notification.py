@@ -14,6 +14,7 @@ class Notification(Base):
     priority = Column(String(20), nullable=False, default="normal") # 'high', 'normal', 'low'
     icon = Column(String(50), nullable=True) # e.g. 'bell', 'alert-triangle'
     is_read = Column(Boolean, default=False, nullable=False)
+    is_pinned = Column(Boolean, default=False, nullable=False)
     action_url = Column(String(255), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)

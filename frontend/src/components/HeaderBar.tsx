@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   PanelLeft,
   Bot,
-  MessageSquareMore,
+  Search,
   Sun,
   Moon,
   LogIn,
@@ -11,9 +11,9 @@ import {
 import { useTheme } from '../context/ThemeContext';
 import { useSidebar } from '../context/SidebarContext';
 import { useAuth } from '../hooks/useAuth';
+import { useCommandPalette } from '../context/CommandPaletteContext';
 import UserAvatar from './UserAvatar';
 import { NotificationBell } from './notifications/NotificationBell';
-import { themeToggleVariants, buttonHover } from '../lib/animations';
 
 interface HeaderBarProps {
   currentChatTitle: string;
@@ -32,126 +32,87 @@ export default function HeaderBar({
   const { isDarkMode, toggleTheme } = useTheme();
   const { toggleSidebar } = useSidebar();
   const { user } = useAuth();
+  const { openPalette } = useCommandPalette();
 
   return (
-    <motion.header
-      initial={{ y: -12, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-      className="sticky top-0 z-30 border-b border-[#E2E8F0] dark:border-[#334155] bg-white/95 dark:bg-[#111827]/95 backdrop-blur-md shadow-xs select-none transition-colors duration-200"
-    >
-      {/* Header Height: 64px, Vertical Center Alignment */}
-      <div className="flex h-[64px] w-full items-center justify-between px-4 sm:px-6">
-        {/* Left: Mobile Toggle & Branding */}
-        <div className="flex items-center gap-3">
-          <motion.button
-            variants={buttonHover}
-            initial="rest"
-            whileHover="hover"
-            whileTap="tap"
-            onClick={toggleSidebar}
-            className="flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#1E293B] text-[#0E2A6D] dark:text-[#60A5FA] hover:bg-[#E2E8F0] dark:hover:bg-[#334155] transition-colors lg:hidden shrink-0"
-            title="Toggle Sidebar Menu"
-          >
-            <PanelLeft size={16} strokeWidth={1.75} />
-          </motion.button>
+    <header className="sticky top-0 z-30 h-[64px] w-full border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#111111] backdrop-blur-md select-none transition-colors duration-150">
+      <div className="flex h-full w-full items-center justify-between px-3 sm:px-6 gap-2">
 
-          {/* Logo + Brand — 34x34 container, 16px Bot icon, League Spartan 18px 700 */}
-          <Link to="/" className="flex items-center gap-2.5">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ duration: 0.18 }}
-              className="flex h-[34px] w-[34px] items-center justify-center rounded-[10px] bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white shadow-xs border border-[#D9A441]/30 shrink-0"
-            >
-              <Bot size={16} strokeWidth={1.75} />
-            </motion.div>
-            <div className="hidden sm:block">
-              <span className="font-heading font-bold text-[16px] tracking-tight text-[#0E2A6D] dark:text-[#F8FAFC] transition-colors">
-                CollegeMate AI
-              </span>
+        {/* 1. Left: Menu Button & Brand */}
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={toggleSidebar}
+            className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-colors lg:hidden shrink-0 cursor-pointer"
+            title="Open Navigation Menu"
+          >
+            <PanelLeft size={18} />
+          </button>
+
+          <Link to="/" className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111] border border-[#111827] dark:border-[#FAFAFA] shrink-0">
+              <Bot size={18} />
             </div>
+            <span className="hidden sm:inline-block font-bold text-[15px] text-[#111827] dark:text-[#FAFAFA] tracking-tight">
+              CollegeMate AI
+            </span>
           </Link>
         </div>
 
-        {/* Center: Current Chat Title Search Pill — Chat Title in Inter 14px 600 */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.05, duration: 0.2 }}
-          className="flex flex-1 items-center justify-center px-4 max-w-md"
-        >
-          <div className="flex h-[36px] items-center gap-2 truncate text-center font-body font-semibold text-[14px] text-[#1F2937] dark:text-[#F8FAFC] rounded-full bg-[#F5F7FB] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] px-3.5 shadow-xs transition-colors">
-            <MessageSquareMore size={16} strokeWidth={1.75} className="text-[#0E2A6D] dark:text-[#60A5FA] shrink-0" />
-            <span className="truncate">{currentChatTitle || 'New Conversation'}</span>
-          </div>
-        </motion.div>
+        {/* 2. Center: Compact Search Bar (40px Height, 10px Radius, Centered Placeholder) */}
+        <div className="flex flex-1 items-center justify-center max-w-xs sm:max-w-md px-1">
+          <button
+            type="button"
+            onClick={openPalette}
+            aria-label="Search CollegeMate AI"
+            className="flex h-[40px] w-full items-center justify-between rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] px-3 text-[#6B7280] dark:text-[#A3A3A3] hover:border-[#111827] dark:hover:border-[#FAFAFA] transition-all cursor-pointer truncate"
+          >
+            <div className="flex items-center justify-center gap-2 w-full sm:w-auto truncate">
+              <Search size={16} className="text-[#6B7280] dark:text-[#A3A3A3] shrink-0" />
+              <span className="truncate text-[13px] sm:text-[14px] text-center sm:text-left">
+                {currentChatTitle || 'Search CollegeMate AI'}
+              </span>
+            </div>
+            <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[11px] font-mono font-medium text-[#6B7280] dark:text-[#A3A3A3] bg-[#FFFFFF] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] rounded-[6px] shrink-0">
+              Ctrl K
+            </kbd>
+          </button>
+        </div>
 
-        {/* Right: Action Buttons — All Buttons 40x40px, Icons 16px */}
-        <div className="flex items-center gap-2.5">
-          {/* Theme Toggle */}
-          <motion.button
+        {/* 3. Right: Action Buttons (All 40x40px, 10px Radius) */}
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Theme Toggle Button */}
+          <button
             onClick={toggleTheme}
             title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#1E293B] text-[#0E2A6D] dark:text-[#D9A441] hover:bg-[#E2E8F0] dark:hover:bg-[#334155] transition-colors overflow-hidden shrink-0"
+            className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-colors cursor-pointer shrink-0"
           >
-            <AnimatePresence mode="wait" initial={false}>
-              {isDarkMode ? (
-                <motion.span
-                  key="sun"
-                  variants={themeToggleVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  className="flex items-center justify-center"
-                >
-                  <Sun size={16} strokeWidth={1.75} />
-                </motion.span>
-              ) : (
-                <motion.span
-                  key="moon"
-                  variants={themeToggleVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  className="flex items-center justify-center"
-                >
-                  <Moon size={16} strokeWidth={1.75} />
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.button>
+            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
 
           {/* Notification Bell */}
-          <div className="flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#1E293B] transition-colors hover:bg-[#E2E8F0] dark:hover:bg-[#334155] shrink-0">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-colors shrink-0">
             {isLoggedIn && <NotificationBell />}
           </div>
 
-          {/* Profile Avatar Button or Login */}
+          {/* Profile Avatar Button (36px Mobile, 40px Desktop) */}
           {isLoggedIn ? (
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <UserAvatar
-                user={user}
-                size="header"
-                onClick={onOpenProfile}
-                className="shadow-xs cursor-pointer"
-              />
-            </motion.div>
+            <UserAvatar
+              user={user}
+              size="header"
+              onClick={onOpenProfile}
+              className="cursor-pointer"
+            />
           ) : (
-            <motion.button
+            <button
               onClick={onOpenLogin}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              className="flex h-10 items-center gap-2 rounded-[12px] bg-[#0E2A6D] hover:bg-[#153B8A] px-3.5 font-body text-[14px] font-semibold text-white shadow-xs transition-colors shrink-0"
+              className="flex h-10 items-center gap-2 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] px-3.5 text-[14px] font-medium transition cursor-pointer shrink-0"
             >
-              <LogIn size={16} strokeWidth={1.75} />
-              <span>Login</span>
-            </motion.button>
+              <LogIn size={16} />
+              <span className="hidden sm:inline">Login</span>
+            </button>
           )}
         </div>
       </div>
-    </motion.header>
+    </header>
   );
 }

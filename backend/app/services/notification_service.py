@@ -58,6 +58,20 @@ def mark_all_as_read(db: Session, user_id: int):
     db.query(Notification).filter(Notification.user_id == user_id, Notification.is_read == False).update({"is_read": True})
     db.commit()
 
+def toggle_pin(db: Session, notification_id: int, user_id: int):
+    notification = db.query(Notification).filter(Notification.id == notification_id, Notification.user_id == user_id).first()
+    if notification:
+        notification.is_pinned = not notification.is_pinned
+        db.commit()
+        db.refresh(notification)
+        return notification
+    return None
+
+def clear_all(db: Session, user_id: int):
+    db.query(Notification).filter(Notification.user_id == user_id).delete()
+    db.commit()
+    return True
+
 def delete_notification(db: Session, notification_id: int, user_id: int):
     notification = db.query(Notification).filter(Notification.id == notification_id, Notification.user_id == user_id).first()
     if notification:
@@ -83,6 +97,8 @@ async def create_notification(db: Session, notification_in: NotificationCreate):
             "priority": db_notification.priority,
             "icon": db_notification.icon,
             "is_read": db_notification.is_read,
+            "is_pinned": db_notification.is_pinned,
+            "action_url": db_notification.action_url,
             "created_at": db_notification.created_at.isoformat() if db_notification.created_at else None
         }
     }, notification_in.user_id)

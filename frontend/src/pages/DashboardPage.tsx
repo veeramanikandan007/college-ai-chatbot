@@ -365,10 +365,9 @@ export default function DashboardPage() {
   // Render — Chat content only (no Sidebar, no Header, no ProfileDrawer)
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <main className="flex flex-1 flex-col overflow-hidden bg-white dark:bg-[#0F172A] shadow-xs relative w-full">
-
-      {/* Voice HUD Overlay */}
-      <div className="absolute top-0 left-0 right-0 z-10 w-full max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto px-4 pt-4 space-y-2 pointer-events-none">
+    <main className="flex-1 flex flex-col h-full bg-[#FFFFFF] dark:bg-[#09090B] text-[#111827] dark:text-[#FAFAFA] overflow-hidden relative">
+      {/* Voice Assistant Floating State Overlays */}
+      <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none">
         <div className="pointer-events-auto">
           <WakeStatusBanner
             state={assistantState}
@@ -396,7 +395,7 @@ export default function DashboardPage() {
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-3 sm:px-6 py-4">
         {sessionsLoading ? (
           <div className="flex items-center justify-center h-full">
-            <div className="w-10 h-10 rounded-full border-4 border-primary dark:border-secondary border-t-transparent animate-spin" />
+            <div className="w-8 h-8 rounded-full border-2 border-zinc-900 dark:border-zinc-100 border-t-transparent animate-spin" />
           </div>
         ) : activeMessages.length === 0 ? (
           <SuggestedQuestions
@@ -423,7 +422,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Input Bar */}
-      <div className="border-t border-[#E2E8F0] dark:border-slate-800 bg-white dark:bg-slate-900 p-3 sm:p-4 relative">
+      <div className="border-t border-zinc-200 dark:border-zinc-800 bg-[#FFFFFF] dark:bg-[#09090B] p-3 sm:p-4 relative">
         <div className="w-full max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto relative transition-all duration-300 ease-in-out">
           <VoiceInputBar
             promptInput={promptInput}
@@ -440,15 +439,15 @@ export default function DashboardPage() {
             }}
           />
 
-          <div className="mt-2 flex items-center justify-between text-[11px] font-medium text-[#94A3B8] dark:text-slate-500">
+          <div className="mt-2 flex items-center justify-between text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
             <div className="flex items-center gap-1">
-              <Info className="h-3 w-3 text-accent dark:text-secondary" />
+              <Info className="h-3 w-3 text-zinc-400 dark:text-zinc-500" />
               <span>CollegeMate AI displays verified college information.</span>
             </div>
             {activeMessages.length > 0 && (
               <button
                 onClick={() => setIsExportOpen(true)}
-                className="flex items-center gap-1 text-accent dark:text-secondary hover:underline"
+                className="flex items-center gap-1 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:underline"
               >
                 <Download className="h-3 w-3" />
                 <span>Export Chat</span>

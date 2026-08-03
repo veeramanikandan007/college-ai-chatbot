@@ -72,33 +72,33 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto">
-      <div className="relative w-full max-w-3xl bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 my-8 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+      <div className="relative w-full max-w-3xl bg-[#FFFFFF] dark:bg-[#181818] rounded-[16px] shadow-lg border border-[#D1D5DB] dark:border-[#3F3F46] my-8 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-purple-50/50 dark:bg-purple-950/20">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
               <Sparkles size={20} />
             </div>
             <div>
-              <h2 className="text-lg font-bold font-heading text-slate-900 dark:text-white">
+              <h2 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
                 AI Question Paper Analysis
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
                 {paper.subject_name} ({paper.subject_code}) - {paper.academic_year}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1 rounded text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA] cursor-pointer"
           >
             <X size={20} />
           </button>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex items-center gap-1 border-b border-slate-100 dark:border-slate-800 px-6 pt-3 bg-slate-50/30 dark:bg-slate-900/20 overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-1.5 border-b border-[#E5E7EB] dark:border-[#2A2A2A] px-6 pt-3 bg-[#F8FAFC] dark:bg-[#111111] overflow-x-auto">
           {[
             { id: 'pattern', label: 'Pattern & Weightage' },
             { id: 'repeated', label: 'Important & Repeated' },
@@ -108,10 +108,10 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`px-4 py-2.5 text-xs font-bold rounded-t-xl whitespace-nowrap transition-all border-b-2 ${
+              className={`h-9 px-4 text-[14px] font-medium rounded-[8px] transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === tab.id
-                  ? 'border-purple-600 text-purple-600 dark:border-purple-400 dark:text-purple-400 bg-white dark:bg-[#1E293B]'
-                  : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                  ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                  : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
               }`}
             >
               {tab.label}
@@ -120,11 +120,11 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
         </div>
 
         {/* Body Content */}
-        <div className="p-6 max-h-[70vh] overflow-y-auto">
+        <div className="p-6 max-h-[70vh] overflow-y-auto space-y-4">
           {loadingAnalysis ? (
             <div className="py-16 flex flex-col items-center justify-center text-center">
-              <div className="h-10 w-10 animate-spin rounded-full border-4 border-purple-600 border-t-transparent mb-4" />
-              <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#111827] dark:border-[#FAFAFA] border-t-transparent mb-4" />
+              <p className="text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA]">
                 Synthesizing AI Analysis...
               </p>
             </div>
@@ -134,31 +134,31 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
               {activeTab === 'pattern' && (
                 <div className="space-y-4">
                   {/* Pattern Box */}
-                  <div className="p-4 rounded-xl bg-purple-50/50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-900/40">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 mb-1 flex items-center gap-1.5">
+                  <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A]">
+                    <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA] mb-1 flex items-center gap-1.5">
                       <ListFilter size={15} />
                       Question Paper Pattern
                     </h4>
-                    <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed">
+                    <p className="text-[14px] text-[#4B5563] dark:text-[#D4D4D4] whitespace-pre-wrap leading-relaxed">
                       {analysis.question_pattern}
                     </p>
                   </div>
 
                   {/* Weightage Analysis */}
                   <div className="space-y-2">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                       Topic Weightage Breakdown
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       {analysis.weightage_analysis.map((w, idx) => (
                         <div
                           key={idx}
-                          className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800"
+                          className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A]"
                         >
-                          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                          <span className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
                             {w.topic}
                           </span>
-                          <p className="text-lg font-bold font-heading text-purple-600 dark:text-purple-400 mt-1">
+                          <p className="text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">
                             {w.weightage}
                           </p>
                         </div>
@@ -172,24 +172,24 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
               {activeTab === 'repeated' && (
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                    <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-2">
                       Repeated Questions Across Years
                     </h4>
                     <div className="space-y-2">
                       {analysis.repeated_questions.map((q, idx) => (
                         <div
                           key={idx}
-                          className="p-3.5 rounded-xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 flex items-start justify-between gap-3"
+                          className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-start justify-between gap-3 text-[14px]"
                         >
-                          <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-normal">
+                          <p className="text-[#4B5563] dark:text-[#D4D4D4] leading-normal">
                             {q}
                           </p>
                           <button
                             onClick={() => copyToClipboard(q)}
-                            className="p-1 rounded-lg text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/40"
+                            className="p-1 rounded text-[#6B7280] hover:text-[#111827] dark:hover:text-[#FAFAFA] cursor-pointer"
                             title="Copy question"
                           >
-                            <Copy size={15} />
+                            <Copy size={16} />
                           </button>
                         </div>
                       ))}
@@ -197,14 +197,14 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
                   </div>
 
                   <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                    <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-2">
                       Frequently Asked Topics
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {analysis.frequently_asked_topics.map((t, idx) => (
                         <span
                           key={idx}
-                          className="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium border border-slate-200 dark:border-slate-700"
+                          className="px-3 py-1 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium"
                         >
                           {t}
                         </span>
@@ -219,25 +219,25 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
                 <div className="space-y-4">
                   {/* Difficulty Cards */}
                   <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                    <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-2">
                       Difficulty Level Breakdown
                     </h4>
                     <div className="grid grid-cols-3 gap-3">
-                      <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40 text-center">
-                        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">Easy</span>
-                        <p className="text-xl font-bold text-slate-900 dark:text-white mt-1">
+                      <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-center">
+                        <span className="text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA]">Easy</span>
+                        <p className="text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">
                           {analysis.difficulty_analysis.easy_percentage}%
                         </p>
                       </div>
-                      <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 text-center">
-                        <span className="text-xs font-bold text-amber-600 dark:text-amber-400">Medium</span>
-                        <p className="text-xl font-bold text-slate-900 dark:text-white mt-1">
+                      <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-center">
+                        <span className="text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA]">Medium</span>
+                        <p className="text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">
                           {analysis.difficulty_analysis.medium_percentage}%
                         </p>
                       </div>
-                      <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/40 text-center">
-                        <span className="text-xs font-bold text-rose-600 dark:text-rose-400">Hard</span>
-                        <p className="text-xl font-bold text-slate-900 dark:text-white mt-1">
+                      <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-center">
+                        <span className="text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA]">Hard</span>
+                        <p className="text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">
                           {analysis.difficulty_analysis.hard_percentage}%
                         </p>
                       </div>
@@ -246,14 +246,14 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
 
                   {/* Unit-wise Distribution */}
                   <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                    <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mb-2">
                       Unit-wise Marks Distribution
                     </h4>
                     <div className="space-y-2">
                       {analysis.unit_wise_distribution.map((u, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs">
-                          <span className="font-bold text-slate-700 dark:text-slate-300">{u.unit}</span>
-                          <span className="font-semibold text-purple-600 dark:text-purple-400">{u.marks} Marks ({u.percentage}%)</span>
+                        <div key={idx} className="flex items-center justify-between p-3 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[14px]">
+                          <span className="font-bold text-[#111827] dark:text-[#FAFAFA]">{u.unit}</span>
+                          <span className="font-medium text-[#6B7280] dark:text-[#A3A3A3]">{u.marks} Marks ({u.percentage}%)</span>
                         </div>
                       ))}
                     </div>
@@ -264,7 +264,7 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
               {/* Tab 4: AI Question Generator */}
               {activeTab === 'generator' && (
                 <div className="space-y-4">
-                  <div className="flex flex-wrap items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800">
+                  <div className="flex flex-wrap items-center gap-2 pb-2 border-b border-[#E5E7EB] dark:border-[#2A2A2A]">
                     {[
                       { id: 'mcqs', label: 'MCQs' },
                       { id: '2_marks', label: '2 Marks' },
@@ -276,10 +276,10 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
                       <button
                         key={t.id}
                         onClick={() => handleGenerateQuestions(t.id as any)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                        className={`h-9 px-3.5 rounded-[8px] text-[12px] font-medium transition-all cursor-pointer ${
                           genType === t.id
-                            ? 'bg-purple-600 text-white shadow-xs'
-                            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                            ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                            : 'bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
                         }`}
                       >
                         {t.label}
@@ -289,30 +289,30 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
 
                   {loadingGen ? (
                     <div className="py-12 flex flex-col items-center justify-center text-center">
-                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-600 border-t-transparent mb-2" />
-                      <p className="text-xs font-bold text-slate-500">Generating AI Questions...</p>
+                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#111827] dark:border-[#FAFAFA] border-t-transparent mb-2" />
+                      <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Generating AI Questions...</p>
                     </div>
                   ) : generatedQuestions.length > 0 ? (
                     <div className="space-y-3">
                       {generatedQuestions.map((q, idx) => (
-                        <div key={idx} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs space-y-2">
+                        <div key={idx} className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[14px] space-y-2">
                           <div className="flex items-start justify-between gap-2">
-                            <p className="font-bold text-slate-900 dark:text-white text-sm">
+                            <p className="font-bold text-[#111827] dark:text-[#FAFAFA]">
                               {idx + 1}. {q.question}
                             </p>
                             <button
                               onClick={() => copyToClipboard(`${q.question}\n${q.answer || ''}`)}
-                              className="p-1 rounded text-slate-400 hover:text-purple-600"
+                              className="p-1 rounded text-[#6B7280] hover:text-[#111827] cursor-pointer"
                               title="Copy"
                             >
-                              <Copy size={14} />
+                              <Copy size={16} />
                             </button>
                           </div>
 
                           {q.options && (
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
                               {q.options.map((opt, oIdx) => (
-                                <span key={oIdx} className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-medium">
+                                <span key={oIdx} className="px-2.5 py-1 rounded-[6px] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] border border-[#D1D5DB] dark:border-[#3F3F46] font-medium text-[12px]">
                                   {opt}
                                 </span>
                               ))}
@@ -320,21 +320,15 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
                           )}
 
                           {q.answer && (
-                            <div className="p-2 rounded-lg bg-emerald-50/60 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 font-medium border border-emerald-200 dark:border-emerald-900/40">
+                            <div className="p-2.5 rounded-[6px] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] border border-[#D1D5DB] dark:border-[#3F3F46] font-medium text-[12px]">
                               <strong>Answer:</strong> {q.answer}
                             </div>
-                          )}
-
-                          {q.explanation && (
-                            <p className="text-slate-500 italic">
-                              <strong>Explanation:</strong> {q.explanation}
-                            </p>
                           )}
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div className="py-8 text-center text-slate-500 text-xs">
+                    <div className="py-8 text-center text-[#6B7280] dark:text-[#A3A3A3] text-[14px]">
                       Click any question type above to generate AI practice questions.
                     </div>
                   )}
@@ -342,17 +336,17 @@ export const QuestionPaperAnalysisModal: React.FC<QuestionPaperAnalysisModalProp
               )}
             </>
           ) : (
-            <div className="py-12 text-center text-slate-500 text-xs">
+            <div className="py-12 text-center text-[#6B7280] dark:text-[#A3A3A3] text-[14px]">
               No analysis data available.
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40">
+        <div className="flex items-center justify-end px-6 py-4 border-t border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
           <button
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#0E2A6D] text-white hover:bg-[#0E2A6D]/90 transition-colors shadow-xs"
+            className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs cursor-pointer"
           >
             Close Analysis
           </button>
