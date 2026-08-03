@@ -87,25 +87,25 @@ export const StudyTasksList: React.FC<StudyTasksListProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+    <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-5">
       {/* Header & Controls */}
-      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-        <div className="flex items-center gap-2">
-          <div className="p-2 rounded-xl bg-[#0E2A6D]/10 text-[#0E2A6D] dark:bg-[#60A5FA]/10 dark:text-[#60A5FA]">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 pb-4 border-b border-[#F3F4F6] dark:border-[#2A2A2A]">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
             <CheckSquare size={20} />
           </div>
           <div>
-            <h3 className="text-base font-bold font-heading text-slate-900 dark:text-white">
+            <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
               Scheduled Study Tasks
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
               Manage, track, and complete daily study roadmap tasks
             </p>
           </div>
         </div>
 
         {/* Date Filter Tabs */}
-        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl">
+        <div className="flex flex-wrap items-center bg-[#F8FAFC] dark:bg-[#111111] p-1.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46]">
           {[
             { id: 'today', label: 'Today' },
             { id: 'tomorrow', label: 'Tomorrow' },
@@ -116,10 +116,10 @@ export const StudyTasksList: React.FC<StudyTasksListProps> = ({
             <button
               key={tab.id}
               onClick={() => handleDateFilterChange(tab.id as any)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`h-9 px-3.5 text-[14px] font-medium rounded-[8px] transition-all cursor-pointer ${
                 dateFilter === tab.id
-                  ? 'bg-white dark:bg-[#1E293B] text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                  ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                  : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
               }`}
             >
               {tab.label}
@@ -129,140 +129,125 @@ export const StudyTasksList: React.FC<StudyTasksListProps> = ({
       </div>
 
       {/* Sub-bar Search & Status Filter */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
         {/* Search Input */}
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A3A3A3]" size={18} />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Search tasks, subjects, descriptions..."
-            className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
+            className="w-full h-10 pl-10 pr-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
           />
         </div>
 
         {/* Status Pills */}
-        <div className="flex items-center gap-2 text-xs font-semibold">
-          <span className="text-slate-400">Status:</span>
+        <div className="flex items-center gap-2 text-[14px]">
+          <span className="text-[#6B7280] dark:text-[#A3A3A3] font-medium">Status:</span>
           {(['all', 'Pending', 'Completed'] as const).map((st) => (
             <button
               key={st}
               onClick={() => handleStatusFilterChange(st)}
-              className={`px-2.5 py-1 rounded-lg transition-all ${
+              className={`h-8 px-3 rounded-[6px] text-[12px] font-medium transition-all cursor-pointer ${
                 statusFilter === st
-                  ? 'bg-[#0E2A6D] text-white dark:bg-[#60A5FA] dark:text-slate-950 font-bold'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                  ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                  : 'border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
               }`}
             >
-              {st === 'all' ? 'All Status' : st}
+              {st}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Task List Items */}
+      {/* Tasks Grid / List */}
       {loading ? (
-        <div className="py-12 text-center text-slate-400 text-xs">
-          Loading tasks roadmap...
+        <div className="py-16 flex flex-col items-center justify-center text-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#111827] dark:border-[#FAFAFA] border-t-transparent mb-3" />
+          <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
+            Loading scheduled study tasks...
+          </p>
         </div>
       ) : tasks.length > 0 ? (
-        <div className="space-y-2.5">
-          {tasks.map((task) => {
-            const isDone = task.status === 'Completed';
-
-            const typeBadge =
-              task.task_type === 'Revision'
-                ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                : task.task_type === 'PYQP Analysis'
-                ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400'
-                : task.task_type === 'Quiz Practice'
-                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                : 'bg-blue-500/10 text-blue-600 dark:text-blue-400';
-
-            return (
-              <div
-                key={task.id}
-                className={`flex items-start justify-between gap-3 p-4 rounded-xl border transition-all ${
-                  isDone
-                    ? 'bg-slate-50/50 dark:bg-slate-900/30 border-slate-200/60 dark:border-slate-800/60 opacity-70'
-                    : 'bg-white dark:bg-[#1E293B] border-slate-200 dark:border-slate-800 hover:border-[#0E2A6D]/40 dark:hover:border-[#60A5FA]/40 shadow-xs'
-                }`}
-              >
-                {/* Left Checkbox & Task Details */}
-                <div className="flex items-start gap-3 min-w-0">
-                  <button
-                    onClick={() => handleToggleStatus(task)}
-                    className="mt-0.5 text-slate-400 hover:text-[#0E2A6D] dark:hover:text-[#60A5FA] transition-colors"
+        <div className="space-y-3">
+          {tasks.map((task) => (
+            <div
+              key={task.id}
+              className="p-5 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+            >
+              <div className="flex items-start gap-3">
+                <button
+                  onClick={() => handleToggleStatus(task)}
+                  className="mt-0.5 text-[#111827] dark:text-[#FAFAFA] hover:opacity-70 transition cursor-pointer"
+                >
+                  {task.status === 'Completed' ? (
+                    <CheckSquare size={22} />
+                  ) : (
+                    <Square size={22} />
+                  )}
+                </button>
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]">
+                      {task.subject_code}
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
+                      {task.task_type}
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
+                      {task.priority} Priority
+                    </span>
+                  </div>
+                  <h4
+                    className={`text-[16px] font-bold ${
+                      task.status === 'Completed'
+                        ? 'line-through text-[#6B7280] dark:text-[#A3A3A3]'
+                        : 'text-[#111827] dark:text-[#FAFAFA]'
+                    }`}
                   >
-                    {isDone ? (
-                      <CheckSquare size={20} className="text-emerald-500 fill-emerald-500/10" />
-                    ) : (
-                      <Square size={20} />
-                    )}
-                  </button>
+                    {task.title}
+                  </h4>
+                  {task.description && (
+                    <p className="text-[14px] text-[#4B5563] dark:text-[#D4D4D4]">
+                      {task.description}
+                    </p>
+                  )}
+                </div>
+              </div>
 
-                  <div className="space-y-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#0E2A6D] text-white dark:bg-[#D9A441] dark:text-slate-950">
-                        {task.subject_code}
-                      </span>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${typeBadge}`}>
-                        {task.task_type}
-                      </span>
-                      <span
-                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
-                          task.priority === 'High'
-                            ? 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40'
-                            : 'text-slate-500 bg-slate-100 dark:bg-slate-800'
-                        }`}
-                      >
-                        {task.priority}
-                      </span>
-                    </div>
-
-                    <h4
-                      className={`text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-snug ${
-                        isDone ? 'line-through text-slate-400 dark:text-slate-500' : ''
-                      }`}
-                    >
-                      {task.title}
-                    </h4>
-
-                    {task.description && (
-                      <p className="text-xs text-slate-500 dark:text-slate-400 leading-normal">
-                        {task.description}
-                      </p>
-                    )}
-
-                    <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400 pt-0.5">
-                      <span className="inline-flex items-center gap-1 font-medium">
-                        <Calendar size={13} />
-                        {task.scheduled_date}
-                      </span>
-                      <span className="inline-flex items-center gap-1 font-medium">
-                        <Clock3 size={13} />
-                        {task.duration_minutes} mins
-                      </span>
-                    </div>
+              <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#E5E7EB] dark:border-[#2A2A2A]">
+                <div className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] text-right space-y-0.5">
+                  <div className="flex items-center gap-1 font-medium">
+                    <Calendar size={14} />
+                    <span>{task.scheduled_date}</span>
+                  </div>
+                  <div className="flex items-center gap-1 font-medium">
+                    <Clock3 size={14} />
+                    <span>{task.duration_minutes} mins</span>
                   </div>
                 </div>
 
-                {/* Right Actions */}
                 <button
                   onClick={() => handleDeleteTask(task.id)}
                   title="Delete Task"
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+                  className="h-9 w-9 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
                 >
                   <Trash2 size={16} />
                 </button>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       ) : (
-        <div className="py-12 text-center text-slate-400 text-xs">
-          No study tasks match the selected filters.
+        <div className="py-16 text-center bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] p-8 shadow-xs space-y-3">
+          <BookOpen className="mx-auto text-[#6B7280] dark:text-[#A3A3A3] opacity-40" size={48} />
+          <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+            No Study Plan Available
+          </h3>
+          <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] max-w-sm mx-auto">
+            Generate your personalized AI study plan to organize your learning efficiently.
+          </p>
         </div>
       )}
     </div>

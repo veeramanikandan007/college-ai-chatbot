@@ -1,0 +1,35 @@
+OCR Scan Source: test_bst_lecture.jpg
+
+Lecture Notes: Binary Search Tree (BST)
+
+I. Introduction to Binary Search Tree
+    * Definition: A binary search tree is a binary tree where each node has a comparable value
+    * Properties: Each node has at most two children (left child and right child)
+
+II. Characteristics of Binary Search Tree
+    * For each node, all elements in the left subtree are less than the node
+    * For each node, all elements in the right subtree are greater than the node
+    * For each node, all elements in the left subtree and right subtree must also follow the above rules
+
+III. Operations on Binary Search Tree
+    * Insertion: Adding a new node to the tree
+    * Deletion: Removing a node from the tree
+    * Search: Finding a specific node in the tree
+
+IV. Types of Binary Search Tree
+    * Full Binary Search Tree: Every node has two children
+    * Empty Binary Search Tree: The tree has no nodes
+    * Balanced Binary Search Tree: The height of the left and right subtrees of every node differs by at most one
+
+V. Advantages and Disadvantages of Binary Search Tree
+    * Advantages: Efficient search, insertion, and deletion operations
+    * Disadvantages: Can become unbalanced, leading to poor performance
+
+VI. Applications of Binary Search Tree
+    * Database indexing
+    * File systems
+    * Compilers
+
+VII. Conclusion
+    * Binary search trees are a fundamental data structure in computer science
+    * Understanding the properties and operations of binary search trees is crucial for efficient data storage and retrieval.

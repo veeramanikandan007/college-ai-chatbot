@@ -32,6 +32,9 @@ from app.models.faculty import (
     FacultyQuizResultModel,
     FacultyTimetableRequestModel,
 )
+from app.models.note import NoteModel
+from app.models.ocr import OCRScanModel
+from app.models.workspace import WorkspaceModel
 from app.models.admin import (
     AdminAuditLogModel,
     AdminDepartmentModel,
@@ -41,6 +44,9 @@ from app.models.admin import (
 )
 
 __all__ = [
+    "NoteModel",
+    "OCRScanModel",
+    "WorkspaceModel",
     "User",
     "ChatSession",
     "ChatMessage",

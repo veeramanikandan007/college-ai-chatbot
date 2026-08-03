@@ -11,7 +11,10 @@ from datetime import date, datetime, timedelta, timezone
 
 def init_db(db: Optional[Session] = None):
     # Import all models to ensure they are registered with Base.metadata
-    from app.models import user, chat, document, student, notification, quiz, attendance, placement, timetable, assignment, question_paper, study_planner, mock_interview, student_analytics
+    from app.models import user, chat, document, student, notification, quiz, attendance, placement, timetable, assignment, question_paper, study_planner, mock_interview, student_analytics, note, ocr, workspace
+    from app.models.note import NoteModel
+    from app.models.ocr import OCRScanModel
+    from app.models.workspace import WorkspaceModel
     from app.models.assignment import AssignmentModel
     from app.models.question_paper import QuestionPaperModel
     from app.models.study_planner import StudyPlanModel, StudyTaskModel, StudyReminderModel
@@ -34,6 +37,44 @@ def init_db(db: Optional[Session] = None):
             with engine.connect() as conn:
                 conn.execute(text("DROP TABLE subjects"))
                 conn.commit()
+
+    if "resume_profiles" in inspector.get_table_names():
+        columns = [c["name"] for c in inspector.get_columns("resume_profiles")]
+        with engine.connect() as conn:
+            if "template" not in columns:
+                conn.execute(text("ALTER TABLE resume_profiles ADD COLUMN template VARCHAR DEFAULT 'modern'"))
+            if "created_at" not in columns:
+                conn.execute(text("ALTER TABLE resume_profiles ADD COLUMN created_at DATETIME"))
+            if "suggestions" not in columns:
+                conn.execute(text("ALTER TABLE resume_profiles ADD COLUMN suggestions TEXT"))
+            conn.commit()
+
+    if "uploaded_documents" in inspector.get_table_names():
+        columns = [c["name"] for c in inspector.get_columns("uploaded_documents")]
+        with engine.connect() as conn:
+            if "folder_name" not in columns:
+                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN folder_name VARCHAR DEFAULT 'General'"))
+            if "is_pinned" not in columns:
+                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN is_pinned BOOLEAN DEFAULT 0"))
+            if "is_favorite" not in columns:
+                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN is_favorite BOOLEAN DEFAULT 0"))
+            if "is_indexed" not in columns:
+                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN is_indexed BOOLEAN DEFAULT 0"))
+            if "chunk_count" not in columns:
+                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN chunk_count INTEGER DEFAULT 0"))
+            if "summary" not in columns:
+                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN summary TEXT"))
+            if "keywords" not in columns:
+                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN keywords TEXT"))
+            if "topics" not in columns:
+                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN topics TEXT"))
+            if "estimated_reading_time" not in columns:
+                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN estimated_reading_time INTEGER DEFAULT 5"))
+            if "difficulty" not in columns:
+                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN difficulty VARCHAR DEFAULT 'Intermediate'"))
+            if "extracted_text" not in columns:
+                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN extracted_text TEXT"))
+            conn.commit()
 
     Base.metadata.create_all(bind=engine)
 

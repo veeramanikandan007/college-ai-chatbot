@@ -32,13 +32,13 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
   return (
     <div 
       ref={dropdownRef}
-      className="absolute right-0 top-14 w-80 sm:w-96 bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden z-50 flex flex-col max-h-[85vh]"
+      className="absolute right-0 top-14 w-80 sm:w-96 bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] shadow-2xl border border-[#D1D5DB] dark:border-[#3F3F46] overflow-hidden z-50 flex flex-col max-h-[85vh]"
     >
-      <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
-        <h2 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+      <div className="p-4 border-b border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-between bg-[#F8FAFC] dark:bg-[#111111]">
+        <h2 className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
           Notifications
           {unreadCount > 0 && (
-            <span className="bg-[#163D8C] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+            <span className="bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111] text-[10px] font-bold px-2 py-0.5 rounded-[4px]">
               {unreadCount} new
             </span>
           )}
@@ -47,7 +47,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
         {unreadCount > 0 && (
           <button 
             onClick={() => markAllAsRead()}
-            className="text-xs text-[#163D8C] dark:text-blue-400 hover:underline flex items-center gap-1"
+            className="text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA] hover:underline flex items-center gap-1 cursor-pointer"
           >
             <Check size={14} />
             Mark all read
@@ -55,10 +55,10 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto divide-y divide-[#E5E7EB] dark:divide-[#2A2A2A]">
         {isLoading ? (
           <div className="p-8 flex justify-center">
-            <Loader2 className="animate-spin text-slate-400" />
+            <Loader2 className="animate-spin text-[#6B7280] dark:text-[#A3A3A3]" />
           </div>
         ) : notifications.length > 0 ? (
           notifications.slice(0, 10).map((notif) => (
@@ -70,16 +70,16 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
             />
           ))
         ) : (
-          <div className="p-8 text-center text-slate-500 text-sm">
+          <div className="p-8 text-center text-[#6B7280] dark:text-[#A3A3A3] text-[14px]">
             You're all caught up!
           </div>
         )}
       </div>
 
-      <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80 text-center">
+      <div className="p-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-center">
         <button 
           onClick={() => { onClose(); navigate('/notifications'); }}
-          className="text-sm font-medium text-[#163D8C] dark:text-blue-400 hover:underline"
+          className="text-[13px] font-bold text-[#111827] dark:text-[#FAFAFA] hover:underline cursor-pointer"
         >
           View all notifications
         </button>

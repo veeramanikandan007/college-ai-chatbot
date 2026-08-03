@@ -22,13 +22,13 @@ export const StudyAnalyticsBanner: React.FC<StudyAnalyticsBannerProps> = ({
 }) => {
   if (loading) {
     return (
-      <div className="bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs animate-pulse space-y-4">
-        <div className="h-6 w-48 bg-slate-200 dark:bg-slate-700 rounded-md" />
+      <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs animate-pulse space-y-4">
+        <div className="h-6 w-48 bg-[#F8FAFC] dark:bg-[#111111] rounded-[6px]" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="h-20 bg-slate-100 dark:bg-slate-800 rounded-xl" />
-          <div className="h-20 bg-slate-100 dark:bg-slate-800 rounded-xl" />
-          <div className="h-20 bg-slate-100 dark:bg-slate-800 rounded-xl" />
-          <div className="h-20 bg-slate-100 dark:bg-slate-800 rounded-xl" />
+          <div className="h-20 bg-[#F8FAFC] dark:bg-[#111111] rounded-[10px]" />
+          <div className="h-20 bg-[#F8FAFC] dark:bg-[#111111] rounded-[10px]" />
+          <div className="h-20 bg-[#F8FAFC] dark:bg-[#111111] rounded-[10px]" />
+          <div className="h-20 bg-[#F8FAFC] dark:bg-[#111111] rounded-[10px]" />
         </div>
       </div>
     );
@@ -37,28 +37,28 @@ export const StudyAnalyticsBanner: React.FC<StudyAnalyticsBannerProps> = ({
   if (!analytics) return null;
 
   return (
-    <div className="bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-5">
+    <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-5">
       {/* Top Banner Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-[#0E2A6D]/10 text-[#0E2A6D] dark:bg-[#60A5FA]/10 dark:text-[#60A5FA]">
-            <Target size={22} />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#F3F4F6] dark:border-[#2A2A2A]">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+            <Target size={20} />
           </div>
           <div>
-            <h2 className="text-base font-bold font-heading text-slate-900 dark:text-white">
+            <h2 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
               AI Exam Preparation Analytics
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
               Live automated tracking across all study subjects & modules
             </p>
           </div>
         </div>
 
         {/* Exam Countdown Pill */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900/50">
+        <div className="px-4 py-2 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
           <Clock3 size={18} />
-          <span className="text-xs font-bold">
-            Exam Countdown: <strong className="text-base font-extrabold">{analytics.days_to_exam} Days Left</strong>
+          <span className="text-[12px] font-medium">
+            Exam Countdown: <strong className="text-[16px] font-bold">{analytics.days_to_exam} Days Left</strong>
           </span>
         </div>
       </div>
@@ -66,62 +66,62 @@ export const StudyAnalyticsBanner: React.FC<StudyAnalyticsBannerProps> = ({
       {/* Grid Metrics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Daily Progress */}
-        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-2">
+        <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-              <CheckCircle2 size={15} className="text-emerald-500" />
+            <span className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1.5">
+              <CheckCircle2 size={15} />
               Daily Progress
             </span>
-            <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
+            <span className="text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA]">
               {analytics.daily_progress_percentage}%
             </span>
           </div>
-          <div className="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-[#E5E7EB] dark:bg-[#2A2A2A] rounded-full overflow-hidden">
             <div
-              className="h-full bg-emerald-500 rounded-full transition-all duration-300"
+              className="h-full bg-[#111827] dark:bg-[#FAFAFA] rounded-full transition-all duration-300"
               style={{ width: `${Math.min(analytics.daily_progress_percentage, 100)}%` }}
             />
           </div>
         </div>
 
         {/* Weekly Progress */}
-        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-2">
+        <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-              <TrendingUp size={15} className="text-[#0E2A6D] dark:text-[#60A5FA]" />
+            <span className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1.5">
+              <TrendingUp size={15} />
               Weekly Progress
             </span>
-            <span className="text-xs font-extrabold text-[#0E2A6D] dark:text-[#60A5FA]">
+            <span className="text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA]">
               {analytics.weekly_progress_percentage}%
             </span>
           </div>
-          <div className="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-[#E5E7EB] dark:bg-[#2A2A2A] rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#0E2A6D] dark:bg-[#60A5FA] rounded-full transition-all duration-300"
+              className="h-full bg-[#111827] dark:bg-[#FAFAFA] rounded-full transition-all duration-300"
               style={{ width: `${Math.min(analytics.weekly_progress_percentage, 100)}%` }}
             />
           </div>
         </div>
 
         {/* Study Hours */}
-        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-1">
-          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-            <Clock3 size={15} className="text-purple-500" />
+        <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-1">
+          <span className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1.5">
+            <Clock3 size={15} />
             Study Hours Completed
           </span>
-          <p className="text-lg font-bold font-heading text-slate-900 dark:text-white">
+          <p className="text-[20px] font-bold text-[#111827] dark:text-[#FAFAFA]">
             {analytics.total_study_hours_completed} / {analytics.total_study_hours_allocated} hrs
           </p>
         </div>
 
         {/* Topics Count */}
-        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-1">
-          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-            <BookOpen size={15} className="text-[#D9A441]" />
+        <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-1">
+          <span className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3] flex items-center gap-1.5">
+            <BookOpen size={15} />
             Topics Progress
           </span>
-          <p className="text-lg font-bold font-heading text-slate-900 dark:text-white">
-            {analytics.completed_topics_count} Completed <span className="text-xs font-normal text-slate-400">({analytics.remaining_topics_count} left)</span>
+          <p className="text-[20px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+            {analytics.completed_topics_count} Completed <span className="text-[12px] font-normal text-[#6B7280] dark:text-[#A3A3A3]">({analytics.remaining_topics_count} left)</span>
           </p>
         </div>
       </div>

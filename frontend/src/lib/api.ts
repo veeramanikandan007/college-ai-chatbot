@@ -35,7 +35,21 @@ export const fetchApi = async (endpoint: string, options: RequestInit = {}, time
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new ApiError(response.status, errorData.detail || response.statusText);
+      const detail = errorData.detail;
+      let errorMessage: string;
+      if (!detail) {
+        errorMessage = response.statusText || 'An error occurred';
+      } else if (typeof detail === 'string') {
+        errorMessage = detail;
+      } else if (Array.isArray(detail)) {
+        // FastAPI validation errors: [{loc, msg, type}, ...]
+        errorMessage = detail.map((e: any) => e?.msg || JSON.stringify(e)).join(', ');
+      } else if (typeof detail === 'object') {
+        errorMessage = detail.msg || detail.message || JSON.stringify(detail);
+      } else {
+        errorMessage = String(detail);
+      }
+      throw new ApiError(response.status, errorMessage);
     }
 
     const text = await response.text();

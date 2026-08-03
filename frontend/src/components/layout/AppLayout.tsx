@@ -146,7 +146,7 @@ export default function AppLayout() {
       : 'CollegeMate AI';
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] transition-colors duration-200">
+    <div className="flex h-screen w-screen overflow-hidden bg-[#FFFFFF] dark:bg-[#09090B] text-[#111827] dark:text-[#FAFAFA] transition-colors duration-200">
       {/* ── Sidebar — mounted ONCE, never remounted ── */}
       <Sidebar
         conversations={sessions}

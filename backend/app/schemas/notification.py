@@ -15,11 +15,13 @@ class NotificationCreate(NotificationBase):
 
 class NotificationUpdate(BaseModel):
     is_read: Optional[bool] = None
+    is_pinned: Optional[bool] = None
 
 class NotificationResponse(NotificationBase):
     id: int
     user_id: int
     is_read: bool
+    is_pinned: bool = False
     created_at: datetime
     updated_at: datetime
 

@@ -224,9 +224,9 @@ export const FacultyAttendanceManager: React.FC<Props> = ({ selectedSubject, sel
           <p className="text-caption font-bold uppercase text-amber-600 dark:text-amber-400">Late</p>
           <p className="font-heading font-bold text-xl text-amber-600 dark:text-amber-400">{lateCount}</p>
         </div>
-        <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-center">
-          <p className="text-caption font-bold uppercase text-purple-600 dark:text-purple-400">Percentage</p>
-          <p className="font-heading font-bold text-xl text-purple-600 dark:text-purple-400">{percentage}%</p>
+        <div className="p-3 rounded-xl bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-center">
+          <p className="text-[11px] font-bold uppercase text-[#6B7280] dark:text-[#A3A3A3]">Percentage</p>
+          <p className="font-bold text-xl text-[#111827] dark:text-[#FAFAFA]">{percentage}%</p>
         </div>
       </div>
 

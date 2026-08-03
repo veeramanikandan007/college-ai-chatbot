@@ -35,77 +35,63 @@ export const QuestionPaperCard: React.FC<QuestionPaperCardProps> = ({
 }) => {
   const isBookmarked = paper.is_bookmarked;
 
-  const examTypeBadge =
-    paper.exam_type === 'University Exam'
-      ? 'bg-[#0E2A6D]/10 text-[#0E2A6D] dark:bg-[#60A5FA]/10 dark:text-[#60A5FA] border-[#0E2A6D]/20 dark:border-[#60A5FA]/20'
-      : paper.exam_type === 'Model Exam'
-      ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-900/50'
-      : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-900/50';
-
   return (
-    <div className="group relative flex flex-col justify-between bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-xs hover:shadow-md hover:border-[#0E2A6D]/40 dark:hover:border-[#D9A441]/40 transition-all duration-200">
-      <div>
+    <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col justify-between space-y-4">
+      <div className="space-y-3">
         {/* Header Metadata Pills */}
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-2">
-            {/* Subject Code & Regulation */}
-            <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-md bg-[#0E2A6D] text-white dark:bg-[#D9A441] dark:text-slate-950">
+            <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center gap-1">
               <BookOpen size={12} />
               {paper.subject_code}
             </span>
 
-            <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+            <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
               {paper.regulation}
             </span>
 
-            {/* Exam Type Pill */}
-            <span className={`inline-flex items-center text-xs font-bold px-2.5 py-0.5 rounded-md border ${examTypeBadge}`}>
+            <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
               {paper.exam_type}
             </span>
           </div>
 
-          {/* Bookmark Button */}
           <button
             onClick={() => onToggleBookmark(paper.id)}
             title={isBookmarked ? 'Remove Bookmark' : 'Bookmark Paper'}
-            className={`p-1.5 rounded-lg transition-colors ${
-              isBookmarked
-                ? 'bg-amber-500/10 text-amber-500 dark:text-amber-400'
-                : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
+            className="h-8 w-8 rounded-[6px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center transition cursor-pointer"
           >
-            <Bookmark size={18} className={isBookmarked ? 'fill-current' : ''} />
+            <Bookmark size={16} className={isBookmarked ? 'fill-current' : ''} />
           </button>
         </div>
 
         {/* Paper Title */}
-        <h3 className="text-base font-bold font-heading text-slate-900 dark:text-white group-hover:text-[#0E2A6D] dark:group-hover:text-[#60A5FA] transition-colors leading-snug">
+        <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] leading-snug">
           {paper.title}
         </h3>
 
-        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
-          <span className="inline-flex items-center gap-1 font-medium">
-            <Calendar size={13} className="text-slate-400" />
-            Year: <strong className="text-slate-700 dark:text-slate-300">{paper.academic_year}</strong> (Sem {paper.semester})
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">
+          <span className="inline-flex items-center gap-1">
+            <Calendar size={14} />
+            Year: <strong className="text-[#111827] dark:text-[#FAFAFA]">{paper.academic_year}</strong> (Sem {paper.semester})
           </span>
 
           {paper.faculty_name && (
-            <span className="inline-flex items-center gap-1 font-medium">
-              <User size={13} className="text-slate-400" />
-              Faculty: <strong className="text-slate-700 dark:text-slate-300">{paper.faculty_name}</strong>
+            <span className="inline-flex items-center gap-1">
+              <User size={14} />
+              Faculty: <strong className="text-[#111827] dark:text-[#FAFAFA]">{paper.faculty_name}</strong>
             </span>
           )}
         </div>
 
-        <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 font-medium">
-          Department: <span className="text-slate-800 dark:text-slate-200 font-semibold">{paper.department}</span>
+        <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">
+          Department: <span className="text-[#111827] dark:text-[#FAFAFA] font-medium">{paper.department}</span>
         </p>
       </div>
 
       {/* Footer Metrics & Actions */}
-      <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+      <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex flex-wrap items-center justify-between gap-3">
         {/* Metric Badges */}
-        <div className="flex items-center gap-3 text-xs font-semibold text-slate-400">
+        <div className="flex items-center gap-3 text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
           <span className="inline-flex items-center gap-1" title="Views">
             <Eye size={14} />
             {paper.view_count}
@@ -122,50 +108,45 @@ export const QuestionPaperCard: React.FC<QuestionPaperCardProps> = ({
 
         {/* Action Controls */}
         <div className="flex items-center gap-1.5">
-          {/* PDF Preview Button */}
           <button
             onClick={() => onPreview(paper)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#0E2A6D] text-white hover:bg-[#0E2A6D]/90 transition-all shadow-xs"
+            className="h-9 px-3.5 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium shadow-xs transition flex items-center gap-1.5 cursor-pointer"
           >
             <Eye size={14} />
             <span>Preview</span>
           </button>
 
-          {/* AI Analysis Button */}
           <button
             onClick={() => onAnalysis(paper)}
-            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20 border border-purple-200 dark:border-purple-900/50 transition-all"
+            className="h-9 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center gap-1 cursor-pointer"
             title="AI Analysis & Pattern"
           >
             <Sparkles size={14} />
             <span>AI Insights</span>
           </button>
 
-          {/* AI RAG Chat Button */}
           <button
             onClick={() => onChat(paper)}
-            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-900/50 transition-all"
+            className="h-9 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center gap-1 cursor-pointer"
             title="Ask AI about this Paper"
           >
             <MessageSquare size={14} />
-            <span>RAG Chat</span>
+            <span>Ask AI</span>
           </button>
 
-          {/* Share Button */}
           <button
             onClick={() => onShare(paper)}
             title="Share Paper"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="h-9 w-9 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
           >
             <Share2 size={16} />
           </button>
 
-          {/* Delete Button */}
           {onDelete && (
             <button
               onClick={() => onDelete(paper.id)}
               title="Delete Paper"
-              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+              className="h-9 w-9 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
             >
               <Trash2 size={16} />
             </button>

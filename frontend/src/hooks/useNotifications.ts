@@ -144,6 +144,22 @@ export const useNotifications = (filterType?: string, unreadOnly = false) => {
     },
   });
 
+  const togglePin = useMutation({
+    mutationFn: NotificationAPI.togglePin,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+    },
+  });
+
+  const clearAll = useMutation({
+    mutationFn: NotificationAPI.clearAll,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+    },
+  });
+
   const deleteNotification = useMutation({
     mutationFn: NotificationAPI.deleteNotification,
     onSuccess: () => {
@@ -159,6 +175,8 @@ export const useNotifications = (filterType?: string, unreadOnly = false) => {
     unreadCount: unreadCountQuery.data?.unread_count || 0,
     markAsRead: markAsRead.mutate,
     markAllAsRead: markAllAsRead.mutate,
+    togglePin: togglePin.mutate,
+    clearAll: clearAll.mutate,
     deleteNotification: deleteNotification.mutate,
   };
 };

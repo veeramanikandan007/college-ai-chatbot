@@ -24,64 +24,55 @@ export const MockInterviewCard: React.FC<MockInterviewCardProps> = ({
 }) => {
   const isCompleted = interview.status === 'Completed';
 
-  const typeBadge =
-    interview.interview_type === 'HR'
-      ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-      : interview.interview_type === 'Coding'
-      ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400'
-      : interview.interview_type === 'Aptitude'
-      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-      : 'bg-[#0E2A6D]/10 text-[#0E2A6D] dark:bg-[#60A5FA]/10 dark:text-[#60A5FA]';
-
   return (
-    <div className="flex flex-col justify-between p-5 rounded-2xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 hover:border-[#0E2A6D]/40 dark:hover:border-[#60A5FA]/40 shadow-xs transition-all space-y-4">
+    <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col justify-between space-y-4">
       {/* Top Header */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-md ${typeBadge}`}>
+            <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]">
               {interview.interview_type}
             </span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+            <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
               {interview.difficulty}
             </span>
           </div>
 
           {isCompleted ? (
-            <span className="text-xs font-black font-heading px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800">
+            <span className="px-2.5 py-0.5 rounded-[6px] text-[14px] font-bold bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
               {interview.overall_score}%
             </span>
           ) : (
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400">
+            <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
               In Progress
             </span>
           )}
         </div>
 
-        <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug line-clamp-2">
+        <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] leading-snug line-clamp-2">
           {interview.title}
         </h3>
 
-        <p className="text-xs text-slate-500 dark:text-slate-400">
-          Target Role: <strong className="text-slate-700 dark:text-slate-200">{interview.target_role}</strong>
+        <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">
+          Target Role: <strong className="text-[#111827] dark:text-[#FAFAFA]">{interview.target_role}</strong>
         </p>
 
         {interview.feedback_summary && (
-          <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed italic">
+          <p className="text-[14px] text-[#4B5563] dark:text-[#D4D4D4] line-clamp-2 leading-relaxed italic">
             "{interview.feedback_summary}"
           </p>
         )}
       </div>
 
       {/* Footer Info & Actions */}
-      <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-        <div className="flex items-center gap-3 text-[11px] text-slate-400 font-medium">
+      <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
           <span className="inline-flex items-center gap-1">
-            <Clock3 size={13} />
+            <Clock3 size={14} />
             {interview.duration_minutes} mins
           </span>
           <span className="inline-flex items-center gap-1">
-            <Calendar size={13} />
+            <Calendar size={14} />
             {new Date(interview.created_at).toLocaleDateString()}
           </span>
         </div>
@@ -90,7 +81,7 @@ export const MockInterviewCard: React.FC<MockInterviewCardProps> = ({
           {isCompleted && (
             <button
               onClick={() => onViewFeedback(interview)}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#0E2A6D] text-white text-xs font-bold hover:bg-[#0E2A6D]/90 transition-all shadow-xs"
+              className="h-9 px-3.5 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium shadow-xs transition flex items-center gap-1.5 cursor-pointer"
             >
               <FileText size={14} />
               <span>Feedback</span>
@@ -100,7 +91,7 @@ export const MockInterviewCard: React.FC<MockInterviewCardProps> = ({
           <button
             onClick={() => onDelete(interview.id)}
             title="Delete Session"
-            className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+            className="h-9 w-9 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
           >
             <Trash2 size={16} />
           </button>

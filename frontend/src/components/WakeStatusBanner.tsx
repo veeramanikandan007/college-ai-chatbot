@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mic, BrainCircuit, Volume2, MicOff, Sparkles } from 'lucide-react';
+import { Mic, BrainCircuit, Volume2, MicOff } from 'lucide-react';
 
 export type AssistantVoiceState = 'IDLE' | 'WAKING' | 'LISTENING' | 'PROCESSING' | 'SPEAKING';
 
@@ -12,40 +12,49 @@ export default function WakeStatusBanner({ state, onStopListening }: WakeStatusB
   if (state === 'IDLE') return null;
 
   return (
-    <div className="flex items-center justify-between px-6 py-3 border-b border-slate-200/80 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-900/25 transition-all duration-300 animate-fade-in">
+    <div className="flex items-center justify-between px-6 py-3
+                    border-b border-[#E5E7EB] dark:border-[#2A2A2A]
+                    bg-[#F8FAFC] dark:bg-[#111111]
+                    transition-all duration-300 animate-fade-in">
       <div className="flex items-center gap-3">
         {state === 'WAKING' && (
           <>
-            <div className="w-2.5 h-2.5 rounded-full bg-secondary pulse-gold shrink-0" />
-            <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
-              Hands-Free Assistant Active. Say <strong className="text-primary dark:text-secondary">"Hey CollegeMate"</strong> or <strong className="text-primary dark:text-secondary">"Hello CollegeMate"</strong>.
+            <div className="relative w-2 h-2 shrink-0">
+              <span className="absolute inset-0 rounded-full bg-[#111827] dark:bg-[#FAFAFA] animate-ping opacity-30" />
+              <span className="relative inline-block w-2 h-2 rounded-full bg-[#111827] dark:bg-[#FAFAFA]" />
+            </div>
+            <span className="text-xs font-semibold text-[#6B7280] dark:text-[#A3A3A3]">
+              Hands-Free Assistant Active. Say{' '}
+              <strong className="text-[#111827] dark:text-[#FAFAFA]">&ldquo;Hey CollegeMate&rdquo;</strong>{' '}
+              or{' '}
+              <strong className="text-[#111827] dark:text-[#FAFAFA]">&ldquo;Hello CollegeMate&rdquo;</strong>.
             </span>
           </>
         )}
         {state === 'LISTENING' && (
           <>
-            <div className="relative w-2.5 h-2.5 shrink-0">
-              <span className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-75" />
-              <span className="relative inline-block w-2.5 h-2.5 rounded-full bg-red-500" />
+            <div className="relative w-2 h-2 shrink-0">
+              <span className="absolute inset-0 rounded-full bg-[#111827] dark:bg-[#FAFAFA] animate-ping opacity-40" />
+              <span className="relative inline-block w-2 h-2 rounded-full bg-[#111827] dark:bg-[#FAFAFA]" />
             </div>
-            <span className="text-xs font-bold text-red-500 dark:text-secondary">
-              Hearing query... Speak now.
+            <span className="text-xs font-bold text-[#111827] dark:text-[#FAFAFA] uppercase tracking-wider">
+              Hearing query… Speak now.
             </span>
           </>
         )}
         {state === 'PROCESSING' && (
           <>
-            <BrainCircuit size={14} className="text-primary dark:text-secondary animate-spin shrink-0" />
-            <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
-              Searching Mount Zion College documents...
+            <BrainCircuit size={14} className="text-[#6B7280] dark:text-[#A3A3A3] animate-spin shrink-0" />
+            <span className="text-xs font-semibold text-[#6B7280] dark:text-[#A3A3A3]">
+              Searching Mount Zion College documents…
             </span>
           </>
         )}
         {state === 'SPEAKING' && (
           <>
-            <Volume2 size={14} className="text-primary dark:text-secondary animate-bounce shrink-0" />
-            <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
-              Speaking response...
+            <Volume2 size={14} className="text-[#6B7280] dark:text-[#A3A3A3] animate-bounce shrink-0" />
+            <span className="text-xs font-semibold text-[#6B7280] dark:text-[#A3A3A3]">
+              Speaking response…
             </span>
           </>
         )}
@@ -54,10 +63,18 @@ export default function WakeStatusBanner({ state, onStopListening }: WakeStatusB
       <button
         onClick={onStopListening}
         title="Turn off hands-free voice control"
-        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-[10px] font-extrabold tracking-wider uppercase text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 transition"
+        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[8px]
+                   border border-[#D1D5DB] dark:border-[#3F3F46]
+                   bg-[#FFFFFF] dark:bg-[#181818]
+                   text-[10px] font-bold tracking-wider uppercase
+                   text-[#6B7280] dark:text-[#A3A3A3]
+                   hover:bg-[#111827] dark:hover:bg-[#FFFFFF]
+                   hover:text-[#FFFFFF] dark:hover:text-[#111111]
+                   hover:border-[#111827] dark:hover:border-[#FFFFFF]
+                   transition"
       >
         <MicOff size={11} />
-        Stop Listening
+        Stop
       </button>
     </div>
   );

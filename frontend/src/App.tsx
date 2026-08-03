@@ -26,6 +26,10 @@ const HomePage = lazy(() => import('./pages/HomePage'));
 const PlacementHubPage = lazy(() => import('./pages/student/PlacementHubPage'));
 const QuizGeneratorPage = lazy(() => import('./pages/student/QuizGeneratorPage'));
 const DocumentHubPage = lazy(() => import('./pages/student/DocumentHubPage'));
+const AINotesGeneratorPage = lazy(() => import('./pages/student/AINotesGeneratorPage'));
+const AIOCRScannerPage = lazy(() => import('./pages/student/AIOCRScannerPage'));
+const AIResumeBuilderPage = lazy(() => import('./pages/student/AIResumeBuilderPage'));
+const AIWorkspacePage = lazy(() => import('./pages/student/AIWorkspacePage'));
 const AttendancePage = lazy(() => import('./pages/student/AttendancePage'));
 const TimetablePage = lazy(() => import('./pages/student/TimetablePage'));
 const AssignmentsPage = lazy(() => import('./pages/student/AssignmentsPage'));
@@ -48,83 +52,97 @@ const PageLoader = () => (
   </div>
 );
 
+import { CommandPaletteProvider } from './context/CommandPaletteContext';
+import { CommandPalette } from './components/common/CommandPalette';
+
 function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider>
         <SidebarProvider>
-          <ToastProvider>
-            <AuthProvider>
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
-                  {/* ── Public routes ── */}
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/register" element={<RegisterPage />} />
-                  <Route path="/access-denied" element={<AccessDeniedPage />} />
+          <CommandPaletteProvider>
+            <ToastProvider>
+              <AuthProvider>
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
+                    {/* ── Public routes ── */}
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/access-denied" element={<AccessDeniedPage />} />
 
-                  {/* ── Student Protected routes (AppLayout with Student Sidebar) ── */}
-                  <Route
-                    element={
-                      <ProtectedRoute allowedRoles={['student']}>
-                        <AppLayout />
-                      </ProtectedRoute>
-                    }
-                  >
-                    <Route path="/dashboard" element={<DashboardPage />} />
-                    <Route path="/documents" element={<DocumentHubPage />} />
-                    <Route path="/placement" element={<PlacementHubPage />} />
-                    <Route path="/placement-hub" element={<PlacementHubPage />} />
-                    <Route path="/quiz" element={<QuizGeneratorPage />} />
-                    <Route path="/quiz-generator" element={<QuizGeneratorPage />} />
-                    <Route path="/attendance" element={<AttendancePage />} />
-                    <Route path="/timetable" element={<TimetablePage />} />
-                    <Route path="/assignments" element={<AssignmentsPage />} />
-                    <Route path="/question-papers" element={<QuestionPapersPage />} />
-                    <Route path="/study-planner" element={<StudyPlannerPage />} />
-                    <Route path="/mock-interviews" element={<MockInterviewsPage />} />
-                    <Route path="/analytics" element={<StudentAnalyticsPage />} />
-                    <Route path="/notes" element={<NotesPage />} />
-                    <Route path="/notifications" element={<NotificationsPage />} />
-                    <Route path="/events" element={<EventsPage />} />
-                    <Route path="/library" element={<LibraryPage />} />
-                    <Route path="/fees" element={<FeesPage />} />
-                    <Route path="/settings" element={<SettingsPage />} />
-                    <Route path="/profile" element={<ProfilePage />} />
-                  </Route>
+                    {/* ── Student Protected routes (AppLayout with Student Sidebar) ── */}
+                    <Route
+                      element={
+                        <ProtectedRoute allowedRoles={['student', 'faculty', 'admin']}>
+                          <AppLayout />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route path="/dashboard" element={<DashboardPage />} />
+                      <Route path="/workspaces" element={<AIWorkspacePage />} />
+                      <Route path="/workspaces/:id" element={<AIWorkspacePage />} />
+                      <Route path="/ai-ocr" element={<AIOCRScannerPage />} />
+                      <Route path="/ocr-scanner" element={<AIOCRScannerPage />} />
+                      <Route path="/ai-notes" element={<AINotesGeneratorPage />} />
+                      <Route path="/notes-generator" element={<AINotesGeneratorPage />} />
+                      <Route path="/documents" element={<DocumentHubPage />} />
+                      <Route path="/placement" element={<PlacementHubPage />} />
+                      <Route path="/placement-hub" element={<PlacementHubPage />} />
+                      <Route path="/resume-builder" element={<AIResumeBuilderPage />} />
+                      <Route path="/placement/resume" element={<AIResumeBuilderPage />} />
+                      <Route path="/quiz" element={<QuizGeneratorPage />} />
+                      <Route path="/quiz-generator" element={<QuizGeneratorPage />} />
+                      <Route path="/attendance" element={<AttendancePage />} />
+                      <Route path="/timetable" element={<TimetablePage />} />
+                      <Route path="/assignments" element={<AssignmentsPage />} />
+                      <Route path="/question-papers" element={<QuestionPapersPage />} />
+                      <Route path="/study-planner" element={<StudyPlannerPage />} />
+                      <Route path="/mock-interviews" element={<MockInterviewsPage />} />
+                      <Route path="/analytics" element={<StudentAnalyticsPage />} />
+                      <Route path="/notes" element={<NotesPage />} />
+                      <Route path="/notifications" element={<NotificationsPage />} />
+                      <Route path="/events" element={<EventsPage />} />
+                      <Route path="/library" element={<LibraryPage />} />
+                      <Route path="/fees" element={<FeesPage />} />
+                      <Route path="/settings" element={<SettingsPage />} />
+                      <Route path="/profile" element={<ProfilePage />} />
+                    </Route>
 
-                  {/* ── Faculty Protected routes (AppLayout with Faculty Sidebar) ── */}
-                  <Route
-                    element={
-                      <ProtectedRoute allowedRoles={['faculty', 'admin']}>
-                        <AppLayout />
-                      </ProtectedRoute>
-                    }
-                  >
-                    <Route path="/faculty" element={<FacultyPortalPage />} />
-                    <Route path="/faculty-portal" element={<FacultyPortalPage />} />
-                  </Route>
+                    {/* ── Faculty Protected routes (AppLayout with Faculty Sidebar) ── */}
+                    <Route
+                      element={
+                        <ProtectedRoute allowedRoles={['faculty', 'admin']}>
+                          <AppLayout />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route path="/faculty" element={<FacultyPortalPage />} />
+                      <Route path="/faculty-portal" element={<FacultyPortalPage />} />
+                    </Route>
 
-                  {/* ── Admin-only route ── */}
-                  <Route
-                    path="/admin"
-                    element={
-                      <ProtectedRoute allowedRoles={['admin']}>
-                        <AdminDashboardPage />
-                      </ProtectedRoute>
-                    }
-                  />
+                    {/* ── Admin-only route ── */}
+                    <Route
+                      path="/admin"
+                      element={
+                        <ProtectedRoute allowedRoles={['admin']}>
+                          <AdminDashboardPage />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                  {/* Catch-all */}
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-              </Suspense>
+                    {/* Catch-all */}
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </Suspense>
 
-              {/* Global overlays — rendered outside routes, always visible */}
-              <FloatingVoicePlayer />
-              <ToastContainer />
-            </AuthProvider>
-          </ToastProvider>
+                {/* Global overlays — rendered outside routes, always visible */}
+                <CommandPalette />
+                <FloatingVoicePlayer />
+                <ToastContainer />
+              </AuthProvider>
+            </ToastProvider>
+          </CommandPaletteProvider>
         </SidebarProvider>
       </ThemeProvider>
     </ErrorBoundary>

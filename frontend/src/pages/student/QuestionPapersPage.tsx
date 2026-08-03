@@ -11,7 +11,14 @@ import {
   Sparkles,
   Layers,
   CircleAlert,
-  Plus
+  Plus,
+  Building2,
+  Calendar,
+  Eye,
+  Download,
+  Brain,
+  MessageSquare,
+  FileCheck2,
 } from 'lucide-react';
 import {
   QuestionPaper,
@@ -143,249 +150,301 @@ export const QuestionPapersPage: React.FC = () => {
     setActiveTab('all');
   };
 
-  return (
-    <div className="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-slate-950 p-4 sm:p-6 md:p-8 space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2.5 rounded-xl bg-[#0E2A6D] text-white dark:bg-[#60A5FA] dark:text-slate-950">
-              <FileText size={22} />
-            </div>
-            <h1 className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
-              Previous Year Question Papers
-            </h1>
-          </div>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            Browse, search, preview, analyze, download, and ask AI questions about university & internal exam papers.
-          </p>
-        </div>
+  // Dashboard Overview Metrics
+  const totalPapersCount = papers.length;
+  const uniqueDeptsCount = meta?.departments.length || 6;
+  const uniqueYearsCount = meta?.years.length || 5;
 
-        {/* Upload Action Button */}
-        <div className="flex items-center gap-3">
+  return (
+    <div className="w-full h-full overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 md:p-8 transition-colors">
+      <div className="w-full max-w-[1600px] mx-auto space-y-8">
+
+        {/* ========================================================================= */}
+        {/* 1. PAGE HEADER CARD                                                       */}
+        {/* ========================================================================= */}
+        <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 md:p-8 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <FileText size={24} />
+            </div>
+            <div>
+              <h1 className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight flex items-center gap-3">
+                Previous Year Question Papers
+                <span className="text-[12px] font-medium px-2.5 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
+                  Academic Library
+                </span>
+              </h1>
+              <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-1">
+                Browse, search, preview, analyze, download, and ask AI questions about university & internal exam papers.
+              </p>
+            </div>
+          </div>
+
           <button
             onClick={() => setIsUploadOpen(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0E2A6D] text-white text-xs font-bold hover:bg-[#0E2A6D]/90 transition-all shadow-xs"
+            className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition flex items-center gap-2 cursor-pointer shrink-0"
           >
             <Plus size={16} />
-            <span>Upload Papers (Admin)</span>
+            <span>Upload Paper</span>
           </button>
         </div>
-      </div>
 
-      {/* Filter Tabs & Search Bar */}
-      <div className="bg-white dark:bg-[#1E293B] p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-        {/* Top Controls Bar */}
-        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
-          {/* Navigation Tabs */}
-          <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl">
-            <button
-              onClick={() => setActiveTab('all')}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                activeTab === 'all'
-                  ? 'bg-white dark:bg-[#1E293B] text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-              }`}
-            >
-              <Layers size={14} />
-              <span>All Papers</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('bookmarks')}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                activeTab === 'bookmarks'
-                  ? 'bg-white dark:bg-[#1E293B] text-amber-600 dark:text-amber-400 shadow-xs'
-                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-              }`}
-            >
-              <Bookmark size={14} />
-              <span>Bookmarks</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('history')}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                activeTab === 'history'
-                  ? 'bg-white dark:bg-[#1E293B] text-[#0E2A6D] dark:text-[#60A5FA] shadow-xs'
-                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-              }`}
-            >
-              <History size={14} />
-              <span>Recently Viewed</span>
-            </button>
+        {/* ========================================================================= */}
+        {/* 2. DASHBOARD OVERVIEW CARDS                                               */}
+        {/* ========================================================================= */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between">
+            <div>
+              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Total Papers</p>
+              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{totalPapersCount}</p>
+            </div>
+            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
+              <FileText size={20} />
+            </div>
           </div>
 
-          {/* Search Box */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by subject name, code, faculty, year..."
-              className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-[#0E2A6D] dark:focus:ring-[#60A5FA]"
-            />
+          <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between">
+            <div>
+              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Departments</p>
+              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{uniqueDeptsCount}</p>
+            </div>
+            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
+              <Building2 size={20} />
+            </div>
+          </div>
+
+          <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between">
+            <div>
+              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Academic Years</p>
+              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{uniqueYearsCount}</p>
+            </div>
+            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
+              <Calendar size={20} />
+            </div>
+          </div>
+
+          <div className="p-6 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] border border-[#111827] dark:border-[#FAFAFA] shadow-xs flex items-center justify-between">
+            <div>
+              <p className="text-[14px] font-medium opacity-80">AI RAG Analysis</p>
+              <p className="text-[32px] font-bold mt-1">Ready</p>
+            </div>
+            <div className="w-10 h-10 rounded-[10px] bg-[#FFFFFF] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
+              <Brain size={20} />
+            </div>
           </div>
         </div>
 
-        {/* Dropdown Filters (Department, Semester, Year, Regulation, Exam Type, Sort) */}
-        {activeTab === 'all' && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-            {/* Department */}
-            <select
-              value={selectedDept}
-              onChange={(e) => setSelectedDept(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-medium focus:outline-none"
-            >
-              <option value="">All Departments</option>
-              {meta?.departments.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
+        {/* ========================================================================= */}
+        {/* 3. SEARCH & FILTER TOOLBAR                                                */}
+        {/* ========================================================================= */}
+        <div className="bg-[#FFFFFF] dark:bg-[#181818] p-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-4">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+            {/* View Tabs */}
+            <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46]">
+              <button
+                onClick={() => setActiveTab('all')}
+                className={`h-9 px-4 text-[14px] font-medium rounded-[8px] transition-all cursor-pointer flex items-center gap-2 ${
+                  activeTab === 'all'
+                    ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                    : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                }`}
+              >
+                <Layers size={16} />
+                <span>All Papers</span>
+              </button>
 
-            {/* Semester */}
-            <select
-              value={selectedSem}
-              onChange={(e) => setSelectedSem(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-medium focus:outline-none"
-            >
-              <option value="">All Semesters</option>
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
-                <option key={s} value={String(s)}>
-                  Semester {s}
-                </option>
-              ))}
-            </select>
+              <button
+                onClick={() => setActiveTab('bookmarks')}
+                className={`h-9 px-4 text-[14px] font-medium rounded-[8px] transition-all cursor-pointer flex items-center gap-2 ${
+                  activeTab === 'bookmarks'
+                    ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                    : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                }`}
+              >
+                <Bookmark size={16} />
+                <span>Bookmarks</span>
+              </button>
 
-            {/* Year */}
-            <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-medium focus:outline-none"
-            >
-              <option value="">All Academic Years</option>
-              {meta?.years.map((y) => (
-                <option key={y} value={String(y)}>
-                  {y}
-                </option>
-              ))}
-            </select>
+              <button
+                onClick={() => setActiveTab('history')}
+                className={`h-9 px-4 text-[14px] font-medium rounded-[8px] transition-all cursor-pointer flex items-center gap-2 ${
+                  activeTab === 'history'
+                    ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
+                    : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                }`}
+              >
+                <History size={16} />
+                <span>Recently Viewed</span>
+              </button>
+            </div>
 
-            {/* Regulation */}
-            <select
-              value={selectedRegulation}
-              onChange={(e) => setSelectedRegulation(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-medium focus:outline-none"
-            >
-              <option value="">All Regulations</option>
-              {meta?.regulations.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
+            {/* Search Input Bar */}
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A3A3A3]" size={18} />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by subject name, code, faculty, year..."
+                className="w-full h-10 pl-10 pr-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
+              />
+            </div>
+          </div>
 
-            {/* Exam Type */}
-            <select
-              value={selectedExamType}
-              onChange={(e) => setSelectedExamType(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-medium focus:outline-none"
-            >
-              <option value="">All Exam Types</option>
-              <option value="University Exam">University Exam</option>
-              <option value="Model Exam">Model Exam</option>
-              <option value="Internal">Internal</option>
-            </select>
+          {/* Filter Dropdowns Grid */}
+          {activeTab === 'all' && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-3 border-t border-[#F3F4F6] dark:border-[#2A2A2A]">
+              <select
+                value={selectedDept}
+                onChange={(e) => setSelectedDept(e.target.value)}
+                className="h-10 px-3 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer"
+              >
+                <option value="">All Departments</option>
+                {meta?.departments.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
 
-            {/* Reset Filters */}
+              <select
+                value={selectedSem}
+                onChange={(e) => setSelectedSem(e.target.value)}
+                className="h-10 px-3 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer"
+              >
+                <option value="">All Semesters</option>
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+                  <option key={s} value={String(s)}>
+                    Semester {s}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+                className="h-10 px-3 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer"
+              >
+                <option value="">All Academic Years</option>
+                {meta?.years.map((y) => (
+                  <option key={y} value={String(y)}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={selectedRegulation}
+                onChange={(e) => setSelectedRegulation(e.target.value)}
+                className="h-10 px-3 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer"
+              >
+                <option value="">All Regulations</option>
+                {meta?.regulations.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={selectedExamType}
+                onChange={(e) => setSelectedExamType(e.target.value)}
+                className="h-10 px-3 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer"
+              >
+                <option value="">All Exam Types</option>
+                <option value="University Exam">University Exam</option>
+                <option value="Model Exam">Model Exam</option>
+                <option value="Internal">Internal</option>
+              </select>
+
+              <button
+                onClick={handleResetFilters}
+                className="h-10 px-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <RotateCcw size={16} />
+                <span>Reset</span>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* ========================================================================= */}
+        {/* 4. QUESTION PAPERS GRID                                                   */}
+        {/* ========================================================================= */}
+        {loading ? (
+          <div className="py-24 flex flex-col items-center justify-center text-center">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#111827] dark:border-[#FAFAFA] border-t-transparent mb-4" />
+            <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
+              Loading Question Papers Database...
+            </p>
+          </div>
+        ) : error ? (
+          <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-center shadow-xs">
+            <CircleAlert className="mx-auto text-[#6B7280] dark:text-[#A3A3A3] mb-2" size={32} />
+            <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">Failed to load question papers</h3>
+            <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-1">{error}</p>
+          </div>
+        ) : papers.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {papers.map((paper) => (
+              <QuestionPaperCard
+                key={paper.id}
+                paper={paper}
+                onPreview={(p) => setPreviewPaper(p)}
+                onAnalysis={(p) => setAnalysisPaper(p)}
+                onChat={(p) => setChatPaper(p)}
+                onToggleBookmark={handleToggleBookmark}
+                onDelete={handleDeletePaper}
+                onShare={handleSharePaper}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="py-20 text-center bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] p-8 shadow-xs space-y-3">
+            <FileText className="mx-auto text-[#6B7280] dark:text-[#A3A3A3] opacity-40" size={48} />
+            <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+              No Question Papers Available
+            </h3>
+            <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] max-w-sm mx-auto">
+              Upload or import previous year papers to build your academic library.
+            </p>
             <button
               onClick={handleResetFilters}
-              className="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition-colors"
+              className="mt-2 h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs cursor-pointer inline-flex items-center gap-2"
             >
-              <RotateCcw size={14} />
-              <span>Reset</span>
+              <span>Clear Filters</span>
             </button>
           </div>
         )}
+
+        {/* Modals & Slide-over Drawers */}
+        <QuestionPaperPdfViewer
+          isOpen={!!previewPaper}
+          onClose={() => setPreviewPaper(null)}
+          title={previewPaper?.title || ''}
+          pdfUrl={previewPaper?.file_url || ''}
+          fileName={previewPaper?.file_name || 'paper.pdf'}
+        />
+
+        <QuestionPaperAnalysisModal
+          isOpen={!!analysisPaper}
+          onClose={() => setAnalysisPaper(null)}
+          paper={analysisPaper}
+        />
+
+        <QuestionPaperChatDrawer
+          isOpen={!!chatPaper}
+          onClose={() => setChatPaper(null)}
+          paper={chatPaper}
+        />
+
+        <QuestionPaperUploadModal
+          isOpen={isUploadOpen}
+          onClose={() => setIsUploadOpen(false)}
+          onSuccess={fetchPapers}
+          meta={meta}
+        />
       </div>
-
-      {/* Main Papers Grid / List */}
-      {loading ? (
-        <div className="py-24 flex flex-col items-center justify-center text-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#0E2A6D] dark:border-[#60A5FA] border-t-transparent mb-4" />
-          <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
-            Loading Question Papers Database...
-          </p>
-        </div>
-      ) : error ? (
-        <div className="p-6 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-center">
-          <CircleAlert className="mx-auto text-rose-500 mb-2" size={28} />
-          <h3 className="text-base font-bold text-slate-900 dark:text-white">Failed to load question papers</h3>
-          <p className="text-xs text-rose-600 dark:text-rose-400 mt-1">{error}</p>
-        </div>
-      ) : papers.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {papers.map((paper) => (
-            <QuestionPaperCard
-              key={paper.id}
-              paper={paper}
-              onPreview={(p) => setPreviewPaper(p)}
-              onAnalysis={(p) => setAnalysisPaper(p)}
-              onChat={(p) => setChatPaper(p)}
-              onToggleBookmark={handleToggleBookmark}
-              onDelete={handleDeletePaper}
-              onShare={handleSharePaper}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="py-20 text-center bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-xs">
-          <FileText className="mx-auto text-slate-300 dark:text-slate-600 mb-3" size={44} />
-          <h3 className="text-base font-bold text-slate-900 dark:text-white">
-            No question papers found
-          </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-1">
-            There are no question papers matching your search or filter options.
-          </p>
-          <button
-            onClick={handleResetFilters}
-            className="mt-4 px-4 py-2 rounded-xl text-xs font-bold bg-[#0E2A6D] text-white hover:bg-[#0E2A6D]/90 shadow-xs"
-          >
-            Clear Filters
-          </button>
-        </div>
-      )}
-
-      {/* Modals & Slide-over Drawers */}
-      <QuestionPaperPdfViewer
-        isOpen={!!previewPaper}
-        onClose={() => setPreviewPaper(null)}
-        title={previewPaper?.title || ''}
-        pdfUrl={previewPaper?.file_url || ''}
-        fileName={previewPaper?.file_name || 'paper.pdf'}
-      />
-
-      <QuestionPaperAnalysisModal
-        isOpen={!!analysisPaper}
-        onClose={() => setAnalysisPaper(null)}
-        paper={analysisPaper}
-      />
-
-      <QuestionPaperChatDrawer
-        isOpen={!!chatPaper}
-        onClose={() => setChatPaper(null)}
-        paper={chatPaper}
-      />
-
-      <QuestionPaperUploadModal
-        isOpen={isUploadOpen}
-        onClose={() => setIsUploadOpen(false)}
-        onSuccess={fetchPapers}
-        meta={meta}
-      />
     </div>
   );
 };

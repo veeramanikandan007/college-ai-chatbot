@@ -35,36 +35,30 @@ export const MockInterviewFeedbackModal: React.FC<MockInterviewFeedbackModalProp
     showToast('Report print / PDF export initiated', 'info');
   };
 
-  const getScoreColor = (score: number) => {
-    if (score >= 85) return 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-300 dark:border-emerald-800';
-    if (score >= 70) return 'text-[#0E2A6D] dark:text-[#60A5FA] bg-[#0E2A6D]/10 border-[#0E2A6D]/30';
-    return 'text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-300 dark:border-amber-800';
-  };
-
   const metricsList = [
-    { label: 'Technical Accuracy', score: evaluation.technical_accuracy_score, color: 'bg-emerald-500' },
-    { label: 'Communication', score: evaluation.communication_score, color: 'bg-[#0E2A6D] dark:bg-[#60A5FA]' },
-    { label: 'Confidence', score: evaluation.confidence_score, color: 'bg-purple-500' },
-    { label: 'Fluency', score: evaluation.fluency_score, color: 'bg-blue-500' },
-    { label: 'Grammar', score: evaluation.grammar_score, color: 'bg-[#D9A441]' },
-    { label: 'Professionalism', score: evaluation.professionalism_score, color: 'bg-indigo-500' },
-    { label: 'Completeness', score: evaluation.completeness_score, color: 'bg-teal-500' },
+    { label: 'Technical Accuracy', score: evaluation.technical_accuracy_score },
+    { label: 'Communication', score: evaluation.communication_score },
+    { label: 'Confidence', score: evaluation.confidence_score },
+    { label: 'Fluency', score: evaluation.fluency_score },
+    { label: 'Grammar', score: evaluation.grammar_score },
+    { label: 'Professionalism', score: evaluation.professionalism_score },
+    { label: 'Completeness', score: evaluation.completeness_score },
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto print:p-0 print:bg-white print:static">
-      <div className="relative w-full max-w-4xl bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 my-8 overflow-hidden print:shadow-none print:border-none">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto print:p-0 print:bg-white print:static">
+      <div className="relative w-full max-w-4xl bg-[#FFFFFF] dark:bg-[#181818] rounded-[16px] shadow-lg border border-[#D1D5DB] dark:border-[#3F3F46] my-8 overflow-hidden print:shadow-none print:border-none">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-[#0E2A6D]/5 dark:bg-[#60A5FA]/10 print:bg-white">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] print:bg-white">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-purple-600 text-white">
-              <Award size={24} />
+            <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <Award size={20} />
             </div>
             <div>
-              <h2 className="text-xl font-bold font-heading text-slate-900 dark:text-white">
+              <h2 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
                 AI Interview Evaluation & Feedback Report
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
                 Detailed 7-metric evaluation, strengths, weaknesses, and model answers
               </p>
             </div>
@@ -73,14 +67,14 @@ export const MockInterviewFeedbackModal: React.FC<MockInterviewFeedbackModalProp
           <div className="flex items-center gap-2 print:hidden">
             <button
               onClick={handlePrintPdfReport}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0E2A6D] text-white text-xs font-bold hover:bg-[#0E2A6D]/90 transition-all shadow-xs"
+              className="h-9 px-4 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium shadow-xs transition flex items-center gap-1.5 cursor-pointer"
             >
-              <Download size={16} />
+              <Download size={14} />
               <span>Download PDF Report</span>
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="p-1 rounded text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA] cursor-pointer"
             >
               <X size={20} />
             </button>
@@ -90,44 +84,44 @@ export const MockInterviewFeedbackModal: React.FC<MockInterviewFeedbackModalProp
         {/* Evaluation Body */}
         <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto print:max-h-none print:overflow-visible">
           {/* Top Banner: Overall Score & Summary */}
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6 p-6 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6 p-6 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A]">
             <div className="space-y-2 flex-1">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              <span className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                 Overall Interview Score
               </span>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white leading-relaxed">
+              <h3 className="text-[16px] font-bold text-[#111827] dark:text-[#FAFAFA] leading-relaxed">
                 {evaluation.feedback_summary}
               </h3>
             </div>
 
             {/* Score Pill */}
-            <div className="flex flex-col items-center justify-center p-4 min-w-[140px] rounded-2xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-xs">
-              <span className="text-3xl font-black font-heading text-purple-600 dark:text-purple-400">
+            <div className="flex flex-col items-center justify-center p-4 min-w-[140px] rounded-[10px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs">
+              <span className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA]">
                 {evaluation.overall_score}%
               </span>
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mt-0.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3] mt-0.5">
                 {evaluation.overall_score >= 85 ? 'Excellent' : evaluation.overall_score >= 70 ? 'Proficient' : 'Needs Practice'}
               </span>
             </div>
           </div>
 
-          {/* 7 Radar/Bar Metrics Grid */}
+          {/* 7 Metrics Grid */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold font-heading text-slate-900 dark:text-white flex items-center gap-2">
-              <BarChart3 size={18} className="text-[#0E2A6D] dark:text-[#60A5FA]" />
+            <h4 className="text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+              <BarChart3 size={18} />
               7-Dimension Competency Scores
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {metricsList.map((m) => (
-                <div key={m.label} className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-1.5">
-                  <div className="flex items-center justify-between text-xs font-bold">
-                    <span className="text-slate-700 dark:text-slate-300">{m.label}</span>
-                    <span className="text-slate-900 dark:text-white">{m.score}%</span>
+                <div key={m.label} className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-2">
+                  <div className="flex items-center justify-between text-[12px] font-medium">
+                    <span className="text-[#6B7280] dark:text-[#A3A3A3]">{m.label}</span>
+                    <span className="text-[#111827] dark:text-[#FAFAFA] font-bold">{m.score}%</span>
                   </div>
-                  <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                  <div className="w-full h-2 bg-[#E5E7EB] dark:bg-[#2A2A2A] rounded-full overflow-hidden">
                     <div
-                      className={`h-full ${m.color} rounded-full transition-all duration-300`}
+                      className="h-full bg-[#111827] dark:bg-[#FAFAFA] rounded-full transition-all duration-300"
                       style={{ width: `${Math.min(m.score, 100)}%` }}
                     />
                   </div>
@@ -139,15 +133,15 @@ export const MockInterviewFeedbackModal: React.FC<MockInterviewFeedbackModalProp
           {/* Strengths & Weaknesses Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Strengths */}
-            <div className="p-4 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 space-y-2">
-              <h5 className="text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
-                <CheckCircle2 size={16} className="text-emerald-500" />
+            <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-2">
+              <h5 className="text-[12px] font-bold uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1.5">
+                <CheckCircle2 size={16} />
                 Key Strengths
               </h5>
-              <ul className="space-y-1 text-xs text-emerald-900 dark:text-emerald-200">
+              <ul className="space-y-1 text-[14px] text-[#4B5563] dark:text-[#D4D4D4]">
                 {evaluation.strengths.map((str, idx) => (
                   <li key={idx} className="flex items-start gap-1.5">
-                    <span className="text-emerald-500">•</span>
+                    <span>•</span>
                     <span>{str}</span>
                   </li>
                 ))}
@@ -155,15 +149,15 @@ export const MockInterviewFeedbackModal: React.FC<MockInterviewFeedbackModalProp
             </div>
 
             {/* Weaknesses & Improvements */}
-            <div className="p-4 rounded-xl bg-rose-50/50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/50 space-y-2">
-              <h5 className="text-xs font-bold text-rose-800 dark:text-rose-300 flex items-center gap-1.5">
-                <AlertTriangle size={16} className="text-rose-500" />
+            <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-2">
+              <h5 className="text-[12px] font-bold uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1.5">
+                <AlertTriangle size={16} />
                 Areas for Improvement
               </h5>
-              <ul className="space-y-1 text-xs text-rose-900 dark:text-rose-200">
+              <ul className="space-y-1 text-[14px] text-[#4B5563] dark:text-[#D4D4D4]">
                 {evaluation.weaknesses.map((w, idx) => (
                   <li key={idx} className="flex items-start gap-1.5">
-                    <span className="text-rose-500">•</span>
+                    <span>•</span>
                     <span>{w}</span>
                   </li>
                 ))}
@@ -173,8 +167,8 @@ export const MockInterviewFeedbackModal: React.FC<MockInterviewFeedbackModalProp
 
           {/* Question Breakdown with Model Answers */}
           <div className="space-y-3 pt-2">
-            <h4 className="text-sm font-bold font-heading text-slate-900 dark:text-white flex items-center gap-2">
-              <BookOpen size={18} className="text-purple-500" />
+            <h4 className="text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+              <BookOpen size={18} />
               Question-by-Question Transcript & Model Answers
             </h4>
 
@@ -182,44 +176,48 @@ export const MockInterviewFeedbackModal: React.FC<MockInterviewFeedbackModalProp
               {evaluation.qa_logs.map((qa) => (
                 <div
                   key={qa.id}
-                  className="p-4 rounded-xl bg-slate-50/70 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-2.5"
+                  className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-2.5 text-[14px]"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-extrabold uppercase tracking-wider text-[#0E2A6D] dark:text-[#60A5FA]">
+                    <span className="text-[12px] font-bold uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA]">
                       Question #{qa.question_number}
                     </span>
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-600 dark:text-purple-400">
+                    <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA]">
                       Score: {qa.score}%
                     </span>
                   </div>
 
-                  <p className="text-xs font-bold text-slate-900 dark:text-white">
+                  <p className="font-bold text-[#111827] dark:text-[#FAFAFA]">
                     {qa.question_text}
                   </p>
 
-                  <div className="p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1">
-                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                      Student Answer:
-                    </span>
-                    <p className="text-xs text-slate-700 dark:text-slate-300 italic leading-relaxed">
-                      "{qa.student_answer || 'No answer submitted'}"
-                    </p>
-                  </div>
+                  {qa.student_answer && (
+                    <div className="p-3 rounded-[6px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46]">
+                      <strong className="text-[#6B7280] dark:text-[#A3A3A3] text-[12px] block">Your Answer:</strong>
+                      <p className="text-[#111827] dark:text-[#FAFAFA]">{qa.student_answer}</p>
+                    </div>
+                  )}
 
                   {qa.model_answer && (
-                    <div className="p-3 rounded-lg bg-purple-50/40 dark:bg-purple-950/20 border border-purple-200/50 dark:border-purple-900/40 space-y-1">
-                      <span className="text-[11px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">
-                        AI Recommended Model Answer:
-                      </span>
-                      <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-                        {qa.model_answer}
-                      </p>
+                    <div className="p-3 rounded-[6px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46]">
+                      <strong className="text-[#6B7280] dark:text-[#A3A3A3] text-[12px] block">Suggested Model Answer:</strong>
+                      <p className="text-[#111827] dark:text-[#FAFAFA]">{qa.model_answer}</p>
                     </div>
                   )}
                 </div>
               ))}
             </div>
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-end px-6 py-4 border-t border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] print:hidden">
+          <button
+            onClick={onClose}
+            className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs cursor-pointer"
+          >
+            Close Evaluation
+          </button>
         </div>
       </div>
     </div>
