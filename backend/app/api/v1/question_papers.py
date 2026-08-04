@@ -587,7 +587,7 @@ def generate_ai_questions(
 
 
 @router.post("/{id}/rag-chat", response_model=PaperRagChatResponse)
-def question_paper_rag_chat(
+async def question_paper_rag_chat(
     id: int,
     payload: PaperRagChatRequest,
     db: Session = Depends(deps.get_db),
@@ -617,9 +617,10 @@ def question_paper_rag_chat(
     # Generate answer with LLM engine
     answer = ""
     try:
-        from llm_engine import get_llm_response
+        from app.services.ai_service import AIService
+        ai_service = AIService()
         prompt = f"Question Paper: {title}\nContext:\n{context_text}\nStudent Question: {user_q}\nInstructions: Provide an accurate, comprehensive, step-by-step solution."
-        answer = get_llm_response(prompt)
+        answer = await ai_service.get_chat_answer(message=prompt, db=db, current_user=current_user)
     except Exception:
         answer = (
             f"Answer for Question: '{user_q}' ({title}):\n\n"

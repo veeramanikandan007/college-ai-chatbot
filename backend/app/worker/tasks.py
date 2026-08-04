@@ -3,7 +3,7 @@ from pathlib import Path
 from app.worker.celery_app import celery_app
 from app.rag.rag_service import RAGService
 from app.core.logging import get_logger
-from app.database.session import get_db
+from app.database.engine import get_db
 from app.models.document import UploadedDocument
 from sqlalchemy.orm import Session
 

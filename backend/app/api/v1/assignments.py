@@ -360,7 +360,7 @@ def download_assignment_file(filename: str):
 
 
 @router.post("/{id}/ai-action", response_model=AssignmentAiResponse)
-def run_assignment_ai_action(
+async def run_assignment_ai_action(
     id: int,
     payload: AssignmentAiRequest,
     db: Session = Depends(deps.get_db),
@@ -378,13 +378,13 @@ def run_assignment_ai_action(
 
     # Try LLM engine if key exists
     llm_output = None
-    if settings.GEMINI_API_KEY:
-        try:
-            from llm_engine import get_llm_response
-            prompt = f"Assignment Title: {title}\nSubject: {subject}\nDescription: {description}\nTask: Perform '{action}' for this assignment."
-            llm_output = get_llm_response(prompt)
-        except Exception:
-            llm_output = None
+    try:
+        from app.services.ai_service import AIService
+        ai_service = AIService()
+        prompt = f"Assignment Title: {title}\nSubject: {subject}\nDescription: {description}\nTask: Perform '{action}' for this assignment."
+        llm_output = await ai_service.get_chat_answer(message=prompt, db=db, current_user=current_user)
+    except Exception:
+        llm_output = None
 
     result_text = ""
     checklist_items = None

@@ -72,8 +72,10 @@ class HybridRetriever:
             return []
 
         try:
+            logger.debug("QUERY: %s", question)
             # 1. Vector Search
             raw_vector_results = self.vector_store.query(query_text=question, n_results=top_k * 2)
+            logger.debug("VECTOR RESULTS: %s", raw_vector_results)
             
             # 2. Keyword Search (BM25)
             bm25_results = []
@@ -89,6 +91,8 @@ class HybridRetriever:
                         chunk = self.corpus_chunks[idx].copy()
                         chunk['bm25_score'] = float(scores[idx])
                         bm25_results.append(chunk)
+            
+            logger.debug("BM25 RESULTS: %s", bm25_results)
 
             # 3. Reciprocal Rank Fusion (RRF)
             fused_results = self._reciprocal_rank_fusion(raw_vector_results, bm25_results, top_k=top_k + 5)
@@ -97,7 +101,10 @@ class HybridRetriever:
             enriched = self._enrich_fused(fused_results)
             deduplicated = _mmr_deduplicate(enriched)
             
-            return deduplicated[:top_k]
+            final_context = deduplicated[:top_k]
+            logger.debug("FINAL CONTEXT: %s", final_context)
+            
+            return final_context
         except Exception as exc:
             logger.exception("Hybrid Retrieval failed for question: %s", question)
             return []

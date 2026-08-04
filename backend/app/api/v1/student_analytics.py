@@ -363,7 +363,7 @@ def _get_chart_data(user_id: int, db: Session) -> AnalyticsChartsData:
     )
 
 
-def _generate_ai_insights(user_id: int, db: Session, overview: AnalyticsOverview) -> List[AiInsightItem]:
+async def _generate_ai_insights(user_id: int, db: Session, overview: AnalyticsOverview, current_user: Optional[User] = None) -> List[AiInsightItem]:
     """Use Gemini LLM to generate personalized insights; fallback to rule-based insights."""
     insights = []
 
@@ -450,7 +450,8 @@ def _generate_ai_insights(user_id: int, db: Session, overview: AnalyticsOverview
 
     # Try Gemini LLM for one personalized insight
     try:
-        from llm_engine import get_llm_response
+        from app.services.ai_service import AIService
+        ai_service = AIService()
         prompt = (
             f"You are an AI academic advisor for a college student. Based on their performance metrics:\n"
             f"- Attendance: {overview.attendance_percentage}%\n"
@@ -461,7 +462,7 @@ def _generate_ai_insights(user_id: int, db: Session, overview: AnalyticsOverview
             f"Generate one personalized, actionable insight in 2 sentences. Mention a specific subject or area. "
             f"Return JSON with keys: type (one of: success|warning|tip|info), title (short), message (2 sentences), subject."
         )
-        llm_response = get_llm_response(prompt)
+        llm_response = await ai_service.get_chat_answer(message=prompt, db=db, current_user=current_user)
         import re
         m = re.search(r"\{.*\}", llm_response, re.DOTALL)
         if m:
@@ -491,14 +492,14 @@ def get_analytics_overview(
 
 
 @router.get("/ai-insights", response_model=AiInsightsResponse)
-def get_ai_insights(
+async def get_ai_insights(
     db: Session = Depends(deps.get_db),
     current_user: Optional[User] = Depends(deps.get_current_user_optional)
 ):
     """Generate personalized AI insights from Gemini LLM based on student performance data."""
     user_id = current_user.id if current_user else 1
     overview = _get_overview_metrics(user_id, db)
-    insights = _generate_ai_insights(user_id, db, overview)
+    insights = await _generate_ai_insights(user_id, db, overview, current_user)
     return AiInsightsResponse(insights=insights, generated_at=datetime.now(timezone.utc))
 
 
@@ -637,7 +638,7 @@ def delete_goal(
 
 
 @router.get("/export", response_model=AnalyticsExportPayload)
-def export_analytics(
+async def export_analytics(
     db: Session = Depends(deps.get_db),
     current_user: Optional[User] = Depends(deps.get_current_user_optional)
 ):
@@ -645,7 +646,7 @@ def export_analytics(
     user_id = current_user.id if current_user else 1
     overview = _get_overview_metrics(user_id, db)
     charts = _get_chart_data(user_id, db)
-    insights = _generate_ai_insights(user_id, db, overview)
+    insights = await _generate_ai_insights(user_id, db, overview, current_user)
 
     goals = db.query(StudentGoalModel).filter(StudentGoalModel.user_id == user_id).all()
     goals_resp = [build_goal_response(g) for g in goals]
