@@ -793,14 +793,17 @@ export default function Sidebar({
                 </button>
               </div>
 
-              {/* Navigation Actions — Height 44px, Font 15px, Icon 20px */}
+              {/* Navigation Actions — Height 36px, Font 13.5px, Icon 18px, Soft Gray Active State & Framer Motion Animation */}
               <div className="flex flex-col gap-1 shrink-0 mb-3 max-h-[40vh] overflow-y-auto no-scrollbar">
                 {getNavItemsForRole(user?.role).map((item) => {
                   const Icon = item.icon;
                   if (item.isAction) {
                     return (
-                      <button
+                      <motion.button
                         key={item.id}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        transition={{ duration: 0.2 }}
                         onClick={() => {
                           if (location.pathname !== '/dashboard') {
                             navigate('/dashboard?newChat=true');
@@ -809,32 +812,43 @@ export default function Sidebar({
                           }
                           setIsOpen(false);
                         }}
-                        className="h-[40px] w-full rounded-[10px] font-bold text-[13px] transition-all bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] shadow-xs flex items-center justify-between px-3.5 cursor-pointer shrink-0"
+                        className="w-full h-[38px] rounded-lg font-body font-medium transition-all duration-150 bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 flex items-center justify-between px-3 text-[14px] cursor-pointer shrink-0"
                       >
-                        <div className="flex items-center gap-3">
-                          <Icon size={20} />
+                        <div className="flex items-center gap-[10px]">
+                          <Icon size={18} strokeWidth={1.75} className="shrink-0" />
                           <span>{item.label}</span>
                         </div>
-                      </button>
+                        <span className="font-body text-[11px] opacity-70">Ctrl+N</span>
+                      </motion.button>
                     );
                   }
 
                   const isActive = checkIsActive(item);
 
                   return (
-                    <Link
+                    <motion.div
                       key={item.id}
-                      to={item.path}
-                      onClick={() => setIsOpen(false)}
-                      className={`h-[40px] rounded-[10px] text-[13.5px] transition-all flex items-center gap-3 px-3.5 shrink-0 ${
-                        isActive
-                          ? 'bg-[#F1F5F9] dark:bg-[#1A1A1A] text-[#111827] dark:text-[#FAFAFA] font-semibold border border-[#E2E8F0] dark:border-[#2A2A2A]'
-                          : 'text-[#4B5563] dark:text-[#A3A3A3] font-medium hover:bg-[#F8FAFC] dark:hover:bg-[#232323] hover:text-[#111827] dark:hover:text-[#FAFAFA]'
-                      }`}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      transition={{ duration: 0.2 }}
                     >
-                      <Icon size={20} className="shrink-0" />
-                      <span>{item.label}</span>
-                    </Link>
+                      <Link
+                        to={item.path}
+                        onClick={() => setIsOpen(false)}
+                        className={`w-full h-[36px] rounded-lg transition-all duration-150 flex items-center gap-[10px] px-3 font-body text-[13.5px] shrink-0 ${
+                          isActive
+                            ? 'bg-zinc-100 dark:bg-[#1A1A1A] text-zinc-900 dark:text-[#FAFAFA] font-semibold'
+                            : 'text-zinc-600 dark:text-[#A3A3A3] font-medium bg-transparent hover:bg-zinc-100/70 dark:hover:bg-[#1A1A1A]/50 hover:text-zinc-900 dark:hover:text-zinc-100'
+                        }`}
+                      >
+                        <Icon
+                          size={18}
+                          strokeWidth={1.75}
+                          className={`${isActive ? 'text-zinc-900 dark:text-[#FAFAFA]' : 'text-zinc-500 dark:text-[#A3A3A3]'} shrink-0`}
+                        />
+                        <span>{item.label}</span>
+                      </Link>
+                    </motion.div>
                   );
                 })}
               </div>
