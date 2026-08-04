@@ -1,6 +1,6 @@
-﻿import { useEffect } from 'react';
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import UserAvatar from './UserAvatar';
 import {
@@ -13,6 +13,10 @@ import {
   PieChart,
   Award,
   BadgeCheck,
+  GraduationCap,
+  Briefcase,
+  MapPin,
+  Users,
 } from 'lucide-react';
 
 interface ProfileDrawerProps {
@@ -23,6 +27,7 @@ interface ProfileDrawerProps {
 
 export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDrawerProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
 
   useEffect(() => {
@@ -36,6 +41,9 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
   }, [isOpen, onClose]);
 
   if (!user) return null;
+
+  const isFaculty = user.role === 'faculty' || location.pathname.startsWith('/faculty');
+  const isAdmin = user.role === 'admin';
 
   return (
     <AnimatePresence>
@@ -62,11 +70,11 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
               <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#2A2A2A] pb-4">
                 <div className="flex items-center gap-2.5">
                   <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]">
-                    <UserCheck className="h-5 w-5" />
+                    {isFaculty ? <GraduationCap className="h-5 w-5" /> : <UserCheck className="h-5 w-5" />}
                   </div>
                   <div>
                     <p className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
-                      Student Account
+                      {isFaculty ? 'Faculty Account' : isAdmin ? 'Admin Account' : 'Student Account'}
                     </p>
                     <h2 className="font-bold text-[18px] text-[#111827] dark:text-[#FAFAFA]">Profile Details</h2>
                   </div>
@@ -83,34 +91,61 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
               <div className="my-5 flex items-center gap-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] p-4 shadow-xs">
                 <UserAvatar user={user} size="lg" />
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA] truncate">{user.name}</h3>
-                  <p className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">ID: {user.student_id || 'STU23911'}</p>
+                  <h3 className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA] truncate">
+                    {isFaculty && !user.name.toLowerCase().startsWith('dr') && !user.name.toLowerCase().startsWith('prof')
+                      ? `Dr. ${user.name}`
+                      : user.name}
+                  </h3>
+                  <p className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
+                    ID: {user.employee_id || (isFaculty ? 'FAC10204' : user.student_id || 'STU23911')}
+                  </p>
                   <span className="mt-1 inline-flex items-center gap-1 rounded-[6px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] px-2 py-0.5 text-[11px] font-normal uppercase tracking-wider">
                     <BadgeCheck size={12} className="shrink-0" />
-                    <span>{user.role === 'admin' ? 'Administrator' : 'Verified Student'}</span>
+                    <span>{isAdmin ? 'Administrator' : isFaculty ? 'Verified Faculty' : 'Verified Student'}</span>
                   </span>
                 </div>
               </div>
 
               {/* Metrics Cards */}
-              <div className="mb-5 grid grid-cols-2 gap-3">
-                <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] p-3 text-center">
-                  <div className="flex items-center justify-center gap-1 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
-                    <PieChart className="h-3.5 w-3.5" />
-                    <span>Attendance</span>
+              {isFaculty ? (
+                <div className="mb-5 grid grid-cols-2 gap-3">
+                  <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] p-3 text-center">
+                    <div className="flex items-center justify-center gap-1 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                      <GraduationCap className="h-3.5 w-3.5" />
+                      <span>Classes</span>
+                    </div>
+                    <p className="font-bold text-[20px] text-[#111827] dark:text-[#FAFAFA] mt-0.5">42</p>
+                    <span className="text-[11px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Conducted</span>
                   </div>
-                  <p className="font-bold text-[20px] text-[#111827] dark:text-[#FAFAFA] mt-0.5">94%</p>
-                  <span className="text-[11px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Excellent</span>
-                </div>
-                <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] p-3 text-center">
-                  <div className="flex items-center justify-center gap-1 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
-                    <Award className="h-3.5 w-3.5" />
-                    <span>CGPA</span>
+                  <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] p-3 text-center">
+                    <div className="flex items-center justify-center gap-1 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                      <Users className="h-3.5 w-3.5" />
+                      <span>Students</span>
+                    </div>
+                    <p className="font-bold text-[20px] text-[#111827] dark:text-[#FAFAFA] mt-0.5">180</p>
+                    <span className="text-[11px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Enrolled</span>
                   </div>
-                  <p className="font-bold text-[20px] text-[#111827] dark:text-[#FAFAFA] mt-0.5">8.9</p>
-                  <span className="text-[11px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Top 5%</span>
                 </div>
-              </div>
+              ) : (
+                <div className="mb-5 grid grid-cols-2 gap-3">
+                  <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] p-3 text-center">
+                    <div className="flex items-center justify-center gap-1 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                      <PieChart className="h-3.5 w-3.5" />
+                      <span>Attendance</span>
+                    </div>
+                    <p className="font-bold text-[20px] text-[#111827] dark:text-[#FAFAFA] mt-0.5">94%</p>
+                    <span className="text-[11px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Excellent</span>
+                  </div>
+                  <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] p-3 text-center">
+                    <div className="flex items-center justify-center gap-1 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                      <Award className="h-3.5 w-3.5" />
+                      <span>CGPA</span>
+                    </div>
+                    <p className="font-bold text-[20px] text-[#111827] dark:text-[#FAFAFA] mt-0.5">8.9</p>
+                    <span className="text-[11px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Top 5%</span>
+                  </div>
+                </div>
+              )}
 
               {/* Profile Info Details List */}
               <div className="flex-1 space-y-3 text-[14px]">
@@ -119,19 +154,45 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                     <Building2 className="h-3.5 w-3.5" />
                     <span>Department</span>
                   </div>
-                  <p className="mt-1 font-bold text-[#111827] dark:text-[#FAFAFA]">{user.department || 'Computer Science'}</p>
-                </div>
-
-                <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] p-3.5">
-                  <div className="flex items-center gap-1.5 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
-                    <Calendar className="h-3.5 w-3.5" />
-                    <span>Year & Semester</span>
-                  </div>
                   <p className="mt-1 font-bold text-[#111827] dark:text-[#FAFAFA]">
-                    {user.year ? `Year ${user.year}` : '3rd Year'}{' '}
-                    {user.semester ? `• Semester ${user.semester}` : '• Semester 6'}
+                    {user.department || 'Computer Science & Engineering'}
                   </p>
                 </div>
+
+                {isFaculty ? (
+                  <>
+                    <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] p-3.5">
+                      <div className="flex items-center gap-1.5 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                        <Briefcase className="h-3.5 w-3.5" />
+                        <span>Designation & Qualification</span>
+                      </div>
+                      <p className="mt-1 font-bold text-[#111827] dark:text-[#FAFAFA]">
+                        {user.designation || 'Associate Professor'} • {user.qualification || 'Ph.D. in CS'}
+                      </p>
+                    </div>
+
+                    <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] p-3.5">
+                      <div className="flex items-center gap-1.5 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                        <MapPin className="h-3.5 w-3.5" />
+                        <span>Office Location</span>
+                      </div>
+                      <p className="mt-1 font-bold text-[#111827] dark:text-[#FAFAFA]">
+                        {user.office_location || 'Academic Block B • Room 304'}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] p-3.5">
+                    <div className="flex items-center gap-1.5 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                      <Calendar className="h-3.5 w-3.5" />
+                      <span>Year & Semester</span>
+                    </div>
+                    <p className="mt-1 font-bold text-[#111827] dark:text-[#FAFAFA]">
+                      {user.year ? `Year ${user.year}` : '3rd Year'}{' '}
+                      {user.semester ? `• Semester ${user.semester}` : '• Semester 6'}
+                    </p>
+                  </div>
+                )}
 
                 <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] p-3.5">
                   <div className="flex items-center gap-1.5 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">

@@ -1,4 +1,4 @@
-﻿import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   PanelLeft,
@@ -32,7 +32,10 @@ export default function HeaderBar({
   const { isDarkMode, toggleTheme } = useTheme();
   const { toggleSidebar } = useSidebar();
   const { user } = useAuth();
+  const location = useLocation();
   const { openPalette } = useCommandPalette();
+
+  const isFacultyContext = user?.role === 'faculty' || location.pathname.startsWith('/faculty');
 
   return (
     <header className="sticky top-0 z-30 h-[64px] w-full border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#111111] backdrop-blur-md select-none transition-colors duration-150">
@@ -58,25 +61,28 @@ export default function HeaderBar({
           </Link>
         </div>
 
-        {/* 2. Center: Compact Search Bar (40px Height, 10px Radius, Centered Placeholder) */}
-        <div className="flex flex-1 items-center justify-center max-w-xs sm:max-w-md px-1">
-          <button
-            type="button"
-            onClick={openPalette}
-            aria-label="Search CollegeMate AI"
-            className="flex h-[40px] w-full items-center justify-between rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] px-3 text-[#6B7280] dark:text-[#A3A3A3] hover:border-[#111827] dark:hover:border-[#FAFAFA] transition-all cursor-pointer truncate"
-          >
-            <div className="flex items-center justify-center gap-2 w-full sm:w-auto truncate">
-              <Search size={16} className="text-[#6B7280] dark:text-[#A3A3A3] shrink-0" />
-              <span className="truncate text-[13px] sm:text-[14px] text-center sm:text-left">
-                {currentChatTitle || 'Search CollegeMate AI'}
-              </span>
-            </div>
-            <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[11px] font-mono font-medium text-[#6B7280] dark:text-[#A3A3A3] bg-[#FFFFFF] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] rounded-[6px] shrink-0">
-              Ctrl K
-            </kbd>
-          </button>
-        </div>
+        {/* 2. Center: Compact Search Bar (Hidden for Faculty) */}
+        {!isFacultyContext && (
+          <div className="flex flex-1 items-center justify-center max-w-xs sm:max-w-md px-1">
+            <button
+              type="button"
+              onClick={openPalette}
+              aria-label="Search CollegeMate AI"
+              className="flex h-[40px] w-full items-center justify-between rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] px-3 text-[#6B7280] dark:text-[#A3A3A3] hover:border-[#111827] dark:hover:border-[#FAFAFA] transition-all cursor-pointer truncate"
+            >
+              <div className="flex items-center justify-center gap-2 w-full sm:w-auto truncate">
+                <Search size={16} className="text-[#6B7280] dark:text-[#A3A3A3] shrink-0" />
+                <span className="truncate text-[13px] sm:text-[14px] text-center sm:text-left">
+                  {currentChatTitle || 'Search CollegeMate AI'}
+                </span>
+              </div>
+              <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[11px] font-mono font-medium text-[#6B7280] dark:text-[#A3A3A3] bg-[#FFFFFF] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] rounded-[6px] shrink-0">
+                Ctrl K
+              </kbd>
+            </button>
+          </div>
+        )}
+
 
         {/* 3. Right: Action Buttons (All 40x40px, 10px Radius) */}
         <div className="flex items-center gap-2 shrink-0">

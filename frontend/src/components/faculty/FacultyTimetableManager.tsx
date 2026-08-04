@@ -52,57 +52,58 @@ export const FacultyTimetableManager: React.FC = () => {
   const periods = [1, 2, 3, 4, 5, 6];
 
   return (
-    <div className="space-y-6 font-body">
+    <div className="space-y-6 font-sans">
       {/* ── Top Controls ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs">
         <div>
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Faculty Teaching Timetable</h3>
-          <p className="text-small text-[#64748B] dark:text-[#94A3B8]">Inspect period slots, free hours, and submit period substitution requests.</p>
+          <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Faculty Teaching Timetable</h3>
+          <p className="text-[15px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mt-0.5">Inspect period slots, free hours, and submit period substitution requests.</p>
         </div>
 
         <button
           onClick={() => setShowRequestModal(true)}
-          className="h-10 px-4 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-caption font-bold flex items-center gap-2 transition shrink-0"
+          className="h-[40px] px-4 rounded-[12px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-white dark:text-[#111111] text-[15px] font-semibold flex items-center gap-2 transition cursor-pointer shrink-0"
         >
           <RefreshCw size={16} /> Request Timetable Change
         </button>
       </div>
 
       {/* ── Weekly Timetable Grid ── */}
-      <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs overflow-hidden">
+      <div className="bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-center border-collapse font-body text-caption">
+          <table className="w-full text-center border-collapse font-sans text-[14px]">
             <thead>
-              <tr className="border-b border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] font-heading font-bold uppercase text-[#64748B] dark:text-[#94A3B8]">
-                <th className="py-3 px-4 text-left">Day / Period</th>
+              <tr className="border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[12px] font-semibold uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA]">
+                <th className="py-3.5 px-6 text-left">Day / Period</th>
                 {periods.map((p) => (
-                  <th key={p} className="py-3 px-4">Period {p}</th>
+                  <th key={p} className="py-3.5 px-6">Period {p}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#334155]">
+            <tbody className="divide-y divide-[#E5E7EB] dark:divide-[#2A2A2A]">
               {days.map((day) => (
-                <tr key={day} className="hover:bg-[#F5F7FB]/50 dark:hover:bg-[#0F172A]/50">
-                  <td className="py-4 px-4 font-heading font-bold text-left text-[#0E2A6D] dark:text-[#60A5FA] bg-[#F5F7FB]/30 dark:bg-[#0F172A]/30">
+                <tr key={day} className="hover:bg-[#F8FAFC] dark:hover:bg-[#141414] transition">
+                  <td className="py-4 px-6 font-semibold text-left text-[#111827] dark:text-[#FAFAFA] bg-[#F8FAFC]/50 dark:bg-[#111111]/50">
                     {day}
                   </td>
                   {periods.map((p) => {
                     const match = schedules.find((s) => s.day_of_week === day && s.period_number === p);
                     return (
-                      <td key={p} className="py-3 px-2">
+                      <td key={p} className="py-3 px-3">
                         {match ? (
-                          <div className="p-2.5 rounded-xl bg-[#0E2A6D]/10 dark:bg-[#60A5FA]/20 border border-[#0E2A6D]/20 text-center space-y-0.5">
-                            <span className="font-heading font-bold text-body text-[#0E2A6D] dark:text-[#60A5FA] block">{match.subject_code}</span>
-                            <span className="text-caption font-semibold text-[#475569] dark:text-[#CBD5E1] block">Sec {match.section} · {match.classroom}</span>
+                          <div className="p-2.5 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-white dark:text-[#111111] text-center space-y-0.5 shadow-xs">
+                            <span className="font-bold text-[14px] block">{match.subject_code}</span>
+                            <span className="text-[12px] opacity-80 block">Sec {match.section} · {match.classroom}</span>
                           </div>
                         ) : (
-                          <span className="inline-block px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-small">
+                          <span className="inline-block px-2.5 py-1 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] text-[#6B7280] dark:text-[#A1A1AA] font-medium text-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A]">
                             Free Hour
                           </span>
                         )}
                       </td>
                     );
                   })}
+
                 </tr>
               ))}
             </tbody>
@@ -112,66 +113,66 @@ export const FacultyTimetableManager: React.FC = () => {
 
       {/* ── Request Timetable Change Modal ── */}
       {showRequestModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl border border-[#E2E8F0] dark:border-[#334155]">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#334155] pb-3">
-              <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Request Period Swap / Change</h3>
-              <button onClick={() => setShowRequestModal(false)} className="text-[#64748B] hover:text-[#1F2937]">
-                <X size={20} />
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4" onClick={() => setShowRequestModal(false)}>
+          <div className="w-full max-w-md bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-2xl space-y-5" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB] dark:border-[#2A2A2A]">
+              <h3 className="text-[20px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Request Period Swap / Change</h3>
+              <button onClick={() => setShowRequestModal(false)} className="h-8 w-8 rounded-[8px] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center text-[#111827] dark:text-[#FAFAFA]">
+                <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleRequestChange} className="space-y-3">
+            <form onSubmit={handleRequestChange} className="space-y-4">
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Date</label>
+                <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Date</label>
                 <input
                   type="date"
                   value={requestDate}
                   onChange={(e) => setRequestDate(e.target.value)}
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                  className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Current Period</label>
+                  <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Current Period</label>
                   <input
                     type="number"
                     value={currentPeriod}
                     onChange={(e) => setCurrentPeriod(Number(e.target.value))}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Requested Period</label>
+                  <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Requested Period</label>
                   <input
                     type="number"
                     value={requestedPeriod}
                     onChange={(e) => setRequestedPeriod(Number(e.target.value))}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Reason for Change</label>
+                <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Reason for Change</label>
                 <textarea
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                   rows={3}
-                  className="w-full p-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                  className="w-full p-3 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none resize-none"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
+              <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowRequestModal(false)}
-                  className="h-10 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-caption font-bold text-[#64748B]"
+                  className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]"
                 >
                   Cancel
                 </button>
-                <button type="submit" className="h-10 px-4 rounded-xl bg-[#0E2A6D] text-white text-caption font-bold">
+                <button type="submit" className="h-[40px] px-5 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium cursor-pointer">
                   Submit Request
                 </button>
               </div>

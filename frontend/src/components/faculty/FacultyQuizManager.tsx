@@ -92,67 +92,67 @@ export const FacultyQuizManager: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 font-body">
+    <div className="space-y-6 font-sans">
       {/* ── Top Bar ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs">
         <div>
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Course Quizzes</h3>
-          <p className="text-small text-[#64748B] dark:text-[#94A3B8]">Create online quizzes, control publishing, and inspect student performance scores.</p>
+          <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Course Quizzes</h3>
+          <p className="text-[15px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mt-0.5">Create online quizzes, control publishing, and inspect student performance scores.</p>
         </div>
 
         <button
           onClick={() => setShowCreateModal(true)}
-          className="h-10 px-4 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-caption font-bold flex items-center gap-2 transition shrink-0"
+          className="h-[40px] px-4 rounded-[12px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-white dark:text-[#111111] text-[15px] font-semibold flex items-center gap-2 transition cursor-pointer shrink-0"
         >
           <Plus size={18} /> Create Quiz
         </button>
       </div>
 
       {/* ── Quizzes Grid ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {quizzes.map((q) => (
           <div
             key={q.id}
-            className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#1E4DB7]/40 transition"
+            className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#111827]/40 dark:hover:border-[#FAFAFA]/40 transition group"
           >
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className={`text-caption font-bold uppercase px-2.5 py-0.5 rounded ${
-                  q.is_published ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-slate-100 text-[#64748B]'
+                <span className={`text-[12px] font-normal uppercase px-2.5 py-0.5 rounded-[6px] border border-[#E5E7EB] dark:border-[#2A2A2A] ${
+                  q.is_published ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]' : 'bg-[#F8FAFC] dark:bg-[#111111] text-[#6B7280] dark:text-[#A1A1AA]'
                 }`}>
                   {q.is_published ? 'Published' : 'Draft'}
                 </span>
-                <button onClick={() => handleDeleteQuiz(q.id)} className="p-1 text-[#64748B] hover:text-rose-600 rounded">
+                <button onClick={() => handleDeleteQuiz(q.id)} className="p-1.5 text-[#6B7280] hover:text-rose-600 rounded-[6px] transition cursor-pointer">
                   <Trash2 size={16} />
                 </button>
               </div>
 
-              <h4 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">{q.title}</h4>
-              <p className="text-caption text-[#64748B] dark:text-[#94A3B8]">
+              <h4 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight">{q.title}</h4>
+              <p className="text-[15px] font-medium text-[#6B7280] dark:text-[#A1A1AA]">
                 {q.subject_code} · Sec {q.section} · {q.num_questions} Questions
               </p>
             </div>
 
-            <div className="pt-3 border-t border-[#E2E8F0] dark:border-[#334155] space-y-2">
-              <div className="flex items-center justify-between text-caption text-[#64748B]">
-                <span>Duration: <strong className="text-[#1F2937] dark:text-[#F8FAFC]">{q.duration_minutes} mins</strong></span>
-                <span>Total Marks: <strong className="text-[#1F2937] dark:text-[#F8FAFC]">{q.total_marks}</strong></span>
+            <div className="pt-4 border-t border-[#E5E7EB] dark:border-[#2A2A2A] space-y-3">
+              <div className="flex items-center justify-between text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">
+                <span>Duration: <strong className="font-semibold text-[#111827] dark:text-[#FAFAFA]">{q.duration_minutes} mins</strong></span>
+                <span>Total Marks: <strong className="font-semibold text-[#111827] dark:text-[#FAFAFA]">{q.total_marks}</strong></span>
               </div>
 
               <div className="flex items-center gap-2 pt-1">
                 <button
                   onClick={() => handleTogglePublish(q.id)}
-                  className={`flex-1 h-9 rounded-xl text-caption font-bold flex items-center justify-center gap-1 transition ${
+                  className={`flex-1 h-[38px] rounded-[10px] text-[14px] font-medium flex items-center justify-center gap-1.5 transition cursor-pointer ${
                     q.is_published
-                      ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20'
-                      : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                      ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20'
+                      : 'bg-[#111827] text-white dark:bg-[#FAFAFA] dark:text-[#111111]'
                   }`}
                 >
                   <Play size={14} /> {q.is_published ? 'Unpublish' : 'Publish'}
                 </button>
                 <button
                   onClick={() => handleViewScores(q)}
-                  className="h-9 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-caption font-bold text-[#0E2A6D] dark:text-[#60A5FA] flex items-center gap-1"
+                  className="h-[38px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1.5 transition cursor-pointer"
                 >
                   <Eye size={14} /> Scores
                 </button>
@@ -164,88 +164,88 @@ export const FacultyQuizManager: React.FC = () => {
 
       {/* ── Create Quiz Modal ── */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl border border-[#E2E8F0] dark:border-[#334155]">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#334155] pb-3">
-              <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Create Quiz</h3>
-              <button onClick={() => setShowCreateModal(false)} className="text-[#64748B] hover:text-[#1F2937]">
-                <X size={20} />
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4" onClick={() => setShowCreateModal(false)}>
+          <div className="w-full max-w-md bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-2xl space-y-5" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB] dark:border-[#2A2A2A]">
+              <h3 className="text-[20px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Create Quiz</h3>
+              <button onClick={() => setShowCreateModal(false)} className="h-8 w-8 rounded-[8px] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center text-[#111827] dark:text-[#FAFAFA]">
+                <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateQuiz} className="space-y-3">
+            <form onSubmit={handleCreateQuiz} className="space-y-4">
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Quiz Title</label>
+                <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Quiz Title</label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Database Systems Unit 2 Quiz"
                   required
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                  className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Subject Code</label>
+                  <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Subject Code</label>
                   <input
                     type="text"
                     value={subjectCode}
                     onChange={(e) => setSubjectCode(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Section</label>
+                  <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Section</label>
                   <input
                     type="text"
                     value={section}
                     onChange={(e) => setSection(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Questions</label>
+                  <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Questions</label>
                   <input
                     type="number"
                     value={numQuestions}
                     onChange={(e) => setNumQuestions(Number(e.target.value))}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Duration (Mins)</label>
+                  <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Duration (Mins)</label>
                   <input
                     type="number"
                     value={durationMinutes}
                     onChange={(e) => setDurationMinutes(Number(e.target.value))}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Total Marks</label>
+                  <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Total Marks</label>
                   <input
                     type="number"
                     value={totalMarks}
                     onChange={(e) => setTotalMarks(Number(e.target.value))}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
+              <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="h-10 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-caption font-bold text-[#64748B]"
+                  className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]"
                 >
                   Cancel
                 </button>
-                <button type="submit" className="h-10 px-4 rounded-xl bg-[#0E2A6D] text-white text-caption font-bold">
+                <button type="submit" className="h-[40px] px-5 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium cursor-pointer">
                   Create Quiz
                 </button>
               </div>
@@ -256,28 +256,28 @@ export const FacultyQuizManager: React.FC = () => {
 
       {/* ── View Scores Modal ── */}
       {showScoresModal && selectedQuiz && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-xl border border-[#E2E8F0] dark:border-[#334155]">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#334155] pb-3">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4" onClick={() => setShowScoresModal(false)}>
+          <div className="w-full max-w-xl bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-2xl space-y-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB] dark:border-[#2A2A2A]">
               <div>
-                <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">
+                <h3 className="text-[20px] font-semibold text-[#111827] dark:text-[#FAFAFA]">
                   Student Performance Scores: {selectedQuiz.title}
                 </h3>
-                <p className="text-caption text-[#64748B]">{selectedQuiz.subject_code} · Sec {selectedQuiz.section}</p>
+                <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">{selectedQuiz.subject_code} · Sec {selectedQuiz.section}</p>
               </div>
-              <button onClick={() => setShowScoresModal(false)} className="text-[#64748B] hover:text-[#1F2937]">
-                <X size={20} />
+              <button onClick={() => setShowScoresModal(false)} className="h-8 w-8 rounded-[8px] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center text-[#111827] dark:text-[#FAFAFA]">
+                <X size={16} />
               </button>
             </div>
 
-            <div className="space-y-2 max-h-80 overflow-y-auto">
+            <div className="space-y-2 max-h-80 overflow-y-auto no-scrollbar">
               {quizScores.length === 0 ? (
-                <p className="py-8 text-center text-caption text-[#64748B]">No student attempts recorded yet.</p>
+                <p className="py-8 text-center text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">No student attempts recorded yet.</p>
               ) : (
                 quizScores.map((sc) => (
-                  <div key={sc.id} className="p-3 rounded-xl bg-[#F5F7FB] dark:bg-[#0F172A] flex items-center justify-between text-body">
-                    <span className="font-heading font-bold text-[#1F2937] dark:text-[#F8FAFC]">{sc.student_name}</span>
-                    <span className="font-heading font-bold text-emerald-600 dark:text-emerald-400">
+                  <div key={sc.id} className="p-3.5 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-between">
+                    <span className="font-semibold text-[15px] text-[#111827] dark:text-[#FAFAFA]">{sc.student_name}</span>
+                    <span className="font-semibold text-[15px] text-emerald-600 dark:text-emerald-400">
                       {sc.score} / {sc.total_marks} ({Math.round((sc.score / sc.total_marks) * 100)}%)
                     </span>
                   </div>

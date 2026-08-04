@@ -302,6 +302,9 @@ export default function Sidebar({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  const isFacultyContext = user?.role === 'faculty' || location.pathname.startsWith('/faculty');
+  const effectiveRole = isFacultyContext ? 'faculty' : (user?.role || 'student');
+
   const checkIsActive = useCallback(
     (item: { path: string; matchPaths?: string[] }) => {
       const currentPath = location.pathname;
@@ -531,7 +534,7 @@ export default function Sidebar({
       <motion.aside
         ref={desktopRef}
         initial={false}
-        animate={{ width: isCollapsed ? 72 : 320 }}
+        animate={{ width: isCollapsed ? 72 : 260 }}
         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
         className="hidden lg:flex flex-col h-[100dvh] shrink-0 border-r border-[#E2E8F0] dark:border-[#2A2A2A] bg-white dark:bg-[#0A0A0A] relative z-40 overflow-hidden select-none py-[16px] px-[12px] box-border"
       >
@@ -590,7 +593,7 @@ export default function Sidebar({
         <div className="flex-1 flex flex-col min-h-0 gap-1.5">
           {/* Main Action Links — Rendered dynamically from central navigation config */}
           <div className="flex flex-col gap-1 shrink-0 max-h-[45vh] overflow-y-auto no-scrollbar">
-            {getNavItemsForRole(user?.role).map((item) => {
+            {getNavItemsForRole(effectiveRole).map((item) => {
               const Icon = item.icon;
               if (item.isAction) {
                 return (
@@ -650,7 +653,7 @@ export default function Sidebar({
             })}
 
             {/* Search Button (Collapsed mode) — Student Only */}
-            {isCollapsed && user?.role === 'student' && (
+            {isCollapsed && !isFacultyContext && user?.role === 'student' && (
               <SidebarTooltip label="Search Conversations (Ctrl + K)" isCollapsed={isCollapsed}>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -668,7 +671,7 @@ export default function Sidebar({
           </div>
 
           {/* Search Input & Scrollable History — Student Only */}
-          {!isCollapsed && user?.role === 'student' && (
+          {!isCollapsed && !isFacultyContext && user?.role === 'student' && (
             <div className="flex-1 flex flex-col min-h-0 gap-[8px] mt-1">
               <div className="relative flex items-center shrink-0">
                 <Search size={16} strokeWidth={1.75} className="absolute left-3 text-[#9CA3AF] dark:text-[#737373] pointer-events-none" />
@@ -719,16 +722,18 @@ export default function Sidebar({
               }`}
           >
             <div className="flex items-center gap-3 min-w-0">
-              <SidebarTooltip label={user?.name || (user?.role === 'admin' ? 'Administrator' : user?.role === 'faculty' ? 'Faculty' : 'Student Account')} isCollapsed={isCollapsed}>
+              <SidebarTooltip label={user?.name || (isFacultyContext ? 'Faculty Account' : 'Student Account')} isCollapsed={isCollapsed}>
                 <UserAvatar user={user} size="sm" />
               </SidebarTooltip>
               {!isCollapsed && (
                 <div className="flex flex-col min-w-0">
-                  <span className="truncate text-[15px] font-normal text-[#1F2937] dark:text-[#F8FAFC]">
-                    {user?.name || 'Student Account'}
+                  <span className="truncate text-[15px] font-semibold text-zinc-900 dark:text-[#FAFAFA]">
+                    {isFacultyContext && user?.name && !user.name.toLowerCase().startsWith('dr') && !user.name.toLowerCase().startsWith('prof')
+                      ? `Dr. ${user.name}`
+                      : user?.name || 'Dr. Aris Thorne'}
                   </span>
-                  <span className="truncate text-[13px] text-[#64748B] dark:text-[#A3A3A3]">
-                    {user?.role === 'admin' ? 'Administrator' : user?.role === 'faculty' ? 'Faculty' : 'Student'}
+                  <span className="truncate text-[13px] font-medium text-[#64748B] dark:text-[#A3A3A3]">
+                    {user?.role === 'admin' ? 'Administrator' : isFacultyContext ? 'Faculty' : 'Student'}
                   </span>
                 </div>
               )}
@@ -739,7 +744,7 @@ export default function Sidebar({
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.25 }}
                 onClick={handleLogout}
-                className="w-[36px] h-[36px] rounded-xl flex items-center justify-center shrink-0 text-[#64748B] dark:text-[#A3A3A3] hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-[#EF4444] transition-all duration-250"
+                className="w-[36px] h-[36px] rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#111111] flex items-center justify-center shrink-0 text-[#111827] dark:text-[#FAFAFA] hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 transition cursor-pointer"
               >
                 <LogOut size={18} strokeWidth={1.75} />
               </motion.button>
@@ -763,7 +768,7 @@ export default function Sidebar({
               className="fixed inset-0 bg-black/60 backdrop-blur-xs"
             />
 
-            {/* Mobile Drawer (Width: 300px, Height: 100dvh, Monochrome System) */}
+            {/* Mobile Drawer (Width: 260px, Height: 100dvh, Monochrome System) */}
             <motion.div
               ref={drawerRef}
               onTouchStart={handleTouchStart}
@@ -772,7 +777,7 @@ export default function Sidebar({
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-              className="relative flex h-[100dvh] w-[300px] flex-col border-r border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#111111] shadow-2xl z-10 overflow-hidden py-4 px-3 box-border pb-[env(safe-area-inset-bottom,16px)]"
+              className="relative flex h-[100dvh] w-[260px] flex-col border-r border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#111111] shadow-2xl z-10 overflow-hidden py-4 px-3 box-border pb-[env(safe-area-inset-bottom,16px)]"
             >
               {/* Header — Height 64px fixed */}
               <div className="flex items-center justify-between shrink-0 mb-3 h-[64px] border-b border-[#E5E7EB] dark:border-[#2A2A2A] pb-2">
@@ -793,17 +798,14 @@ export default function Sidebar({
                 </button>
               </div>
 
-              {/* Navigation Actions — Height 36px, Font 13.5px, Icon 18px, Soft Gray Active State & Framer Motion Animation */}
-              <div className="flex flex-col gap-1 shrink-0 mb-3 max-h-[40vh] overflow-y-auto no-scrollbar">
-                {getNavItemsForRole(user?.role).map((item) => {
+              {/* Navigation Actions — Height 44px, Font 15px, Icon 20px */}
+              <div className="flex flex-col gap-1 shrink-0 mb-3 max-h-[50vh] overflow-y-auto no-scrollbar">
+                {getNavItemsForRole(effectiveRole).map((item) => {
                   const Icon = item.icon;
                   if (item.isAction) {
                     return (
-                      <motion.button
+                      <button
                         key={item.id}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        transition={{ duration: 0.2 }}
                         onClick={() => {
                           if (location.pathname !== '/dashboard') {
                             navigate('/dashboard?newChat=true');
@@ -812,49 +814,38 @@ export default function Sidebar({
                           }
                           setIsOpen(false);
                         }}
-                        className="w-full h-[38px] rounded-lg font-body font-medium transition-all duration-150 bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 flex items-center justify-between px-3 text-[14px] cursor-pointer shrink-0"
+                        className="h-[40px] w-full rounded-[10px] font-bold text-[13px] transition-all bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] shadow-xs flex items-center justify-between px-3.5 cursor-pointer shrink-0"
                       >
-                        <div className="flex items-center gap-[10px]">
-                          <Icon size={18} strokeWidth={1.75} className="shrink-0" />
+                        <div className="flex items-center gap-3">
+                          <Icon size={20} />
                           <span>{item.label}</span>
                         </div>
-                        <span className="font-body text-[11px] opacity-70">Ctrl+N</span>
-                      </motion.button>
+                      </button>
                     );
                   }
 
                   const isActive = checkIsActive(item);
 
                   return (
-                    <motion.div
+                    <Link
                       key={item.id}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      transition={{ duration: 0.2 }}
+                      to={item.path}
+                      onClick={() => setIsOpen(false)}
+                      className={`h-[40px] rounded-lg text-[14px] transition-all flex items-center gap-3 px-3 shrink-0 ${
+                        isActive
+                          ? 'bg-zinc-100 dark:bg-[#1A1A1A] text-zinc-900 dark:text-[#FAFAFA] font-semibold border border-zinc-200/80 dark:border-[#2A2A2A]'
+                          : 'text-zinc-600 dark:text-[#A3A3A3] font-medium bg-transparent hover:bg-zinc-100/70 dark:hover:bg-[#1A1A1A]/50 hover:text-zinc-900 dark:hover:text-zinc-100'
+                      }`}
                     >
-                      <Link
-                        to={item.path}
-                        onClick={() => setIsOpen(false)}
-                        className={`w-full h-[36px] rounded-lg transition-all duration-150 flex items-center gap-[10px] px-3 font-body text-[13.5px] shrink-0 ${
-                          isActive
-                            ? 'bg-zinc-100 dark:bg-[#1A1A1A] text-zinc-900 dark:text-[#FAFAFA] font-semibold'
-                            : 'text-zinc-600 dark:text-[#A3A3A3] font-medium bg-transparent hover:bg-zinc-100/70 dark:hover:bg-[#1A1A1A]/50 hover:text-zinc-900 dark:hover:text-zinc-100'
-                        }`}
-                      >
-                        <Icon
-                          size={18}
-                          strokeWidth={1.75}
-                          className={`${isActive ? 'text-zinc-900 dark:text-[#FAFAFA]' : 'text-zinc-500 dark:text-[#A3A3A3]'} shrink-0`}
-                        />
-                        <span>{item.label}</span>
-                      </Link>
-                    </motion.div>
+                      <Icon size={18} className={`${isActive ? 'text-zinc-900 dark:text-[#FAFAFA]' : 'text-zinc-500 dark:text-[#A3A3A3]'} shrink-0`} />
+                      <span>{item.label}</span>
+                    </Link>
                   );
                 })}
               </div>
 
               {/* Search Bar & Chat History — Student Only */}
-              {user?.role === 'student' && (
+              {!isFacultyContext && user?.role === 'student' && (
                 <>
                   <div className="relative flex items-center shrink-0 mb-2">
                     <Search size={16} className="absolute left-3 text-[#9CA3AF] dark:text-[#737373] pointer-events-none" />
@@ -897,15 +888,17 @@ export default function Sidebar({
 
               {/* Safe Area Profile Bottom Bar — Fixed at bottom */}
               <div className="flex shrink-0 flex-col pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] mt-auto">
-                <div className="flex items-center justify-between gap-2 rounded-[12px] p-2 bg-[#F8FAFC] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46]">
+                <div className="flex items-center justify-between gap-2 rounded-[14px] p-2.5 bg-[#F8FAFC] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A]">
                   <div className="flex items-center gap-3 min-w-0">
                     <UserAvatar user={user} size="sm" />
                     <div className="flex flex-col min-w-0">
                       <span className="truncate text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA]">
-                        {user?.name || (user?.role === 'admin' ? 'Administrator' : user?.role === 'faculty' ? 'Faculty Member' : 'Student Account')}
+                        {isFacultyContext && user?.name && !user.name.toLowerCase().startsWith('dr') && !user.name.toLowerCase().startsWith('prof')
+                          ? `Dr. ${user.name}`
+                          : user?.name || 'Dr. Aris Thorne'}
                       </span>
-                      <span className="truncate text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
-                        {user?.role === 'admin' ? 'Administrator' : user?.role === 'faculty' ? 'Faculty' : 'Student'}
+                      <span className="truncate text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
+                        {user?.role === 'admin' ? 'Administrator' : isFacultyContext ? 'Faculty' : 'Student'}
                       </span>
                     </div>
                   </div>
@@ -916,9 +909,9 @@ export default function Sidebar({
                       handleLogout();
                     }}
                     title="Log out"
-                    className="w-[36px] h-[36px] rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#111111] flex items-center justify-center shrink-0 text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition"
+                    className="w-[36px] h-[36px] rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#111111] flex items-center justify-center shrink-0 text-[#111827] dark:text-[#FAFAFA] hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 transition cursor-pointer"
                   >
-                    <LogOut size={16} />
+                    <LogOut size={18} />
                   </button>
                 </div>
               </div>
