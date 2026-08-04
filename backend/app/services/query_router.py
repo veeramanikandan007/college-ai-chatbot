@@ -79,6 +79,11 @@ class QueryRouter:
             r"\b(how\s+many|what\s+is\s+my|when\s+is\s+my|do\s+i\s+have|check\s+my)\b"
         ]
 
+        # Fast regex for general non-campus queries to save LLM routing overhead
+        self.general_patterns = [
+            r"^\s*(explain|what is|whats|how to|how do|write|create|code|define|difference between|summarize|tell me|who is|where is|why does|list|can you|give me)\b"
+        ]
+
     def resolve_action_intent(self, message: str) -> str | None:
         """
         Fast regex-based action intent resolver for the Copilot.
@@ -125,6 +130,11 @@ class QueryRouter:
             return "HYBRID"
         elif has_personal:
             return "PERSONAL"
+
+        # 5. Fast regex detection for general questions
+        for pattern in self.general_patterns:
+            if re.search(pattern, msg_lower) and not has_campus_rule:
+                return "GENERAL"
 
         # 5. LLM-based intelligent classification
         if self.llm:

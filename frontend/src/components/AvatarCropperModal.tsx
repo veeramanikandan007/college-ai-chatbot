@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Crop, Check, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
-import { compressAndCropAvatar } from '../services/avatarService';
+import { Crop, X, Check, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 
 interface AvatarCropperModalProps {
   isOpen: boolean;
@@ -10,116 +9,98 @@ interface AvatarCropperModalProps {
   onCropComplete: (croppedDataUrl: string) => void;
 }
 
-export const AvatarCropperModal: React.FC<AvatarCropperModalProps> = ({
+export default function AvatarCropperModal({
   isOpen,
   onClose,
   imageSrc,
   onCropComplete,
-}) => {
-  const [zoom, setZoom] = useState(1);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [imageNaturalSize, setImageNaturalSize] = useState({ w: 400, h: 400 });
+}: AvatarCropperModalProps) {
+  const [zoom, setZoom] = useState<number>(1);
+  const [offset, setOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const isDraggingRef = useRef(false);
-  const startPosRef = useRef({ x: 0, y: 0 });
 
-  useEffect(() => {
-    if (imageSrc) {
-      const img = new Image();
-      img.onload = () => {
-        setImageNaturalSize({ w: img.naturalWidth, h: img.naturalHeight });
-      };
-      img.src = imageSrc;
-      setZoom(1);
-      setOffset({ x: 0, y: 0 });
-    }
-  }, [imageSrc]);
-
-  if (!isOpen || !imageSrc) return null;
+  if (!isOpen) return null;
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    isDraggingRef.current = true;
-    startPosRef.current = { x: e.clientX - offset.x, y: e.clientY - offset.y };
+    setIsDragging(true);
+    setDragStart({ eX: e.clientX, eY: e.clientY, oX: offset.x, oY: offset.y } as any);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDraggingRef.current) return;
+    if (!isDragging) return;
+    const dx = e.clientX - (dragStart as any).eX;
+    const dy = e.clientY - (dragStart as any).eY;
     setOffset({
-      x: e.clientX - startPosRef.current.x,
-      y: e.clientY - startPosRef.current.y,
+      x: (dragStart as any).oX + dx,
+      y: (dragStart as any).oY + dy,
     });
   };
 
   const handleMouseUp = () => {
-    isDraggingRef.current = false;
+    setIsDragging(false);
   };
 
-  const handleConfirmCrop = async () => {
-    setIsProcessing(true);
-    try {
-      // Calculate crop rectangle in natural image dimensions
-      const minDimension = Math.min(imageNaturalSize.w, imageNaturalSize.h);
-      const cropW = minDimension / zoom;
-      const cropH = minDimension / zoom;
-      const cropX = Math.max(0, (imageNaturalSize.w - cropW) / 2 - offset.x * (cropW / 240));
-      const cropY = Math.max(0, (imageNaturalSize.h - cropH) / 2 - offset.y * (cropH / 240));
+  const handleConfirmCrop = () => {
+    const canvas = document.createElement('canvas');
+    const size = 300; // Output avatar size 300x300
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
 
-      const croppedUrl = await compressAndCropAvatar(
-        imageSrc,
-        {
-          x: cropX,
-          y: cropY,
-          width: cropW,
-          height: cropH,
-        },
-        400
-      );
+    if (!ctx) return;
 
-      onCropComplete(croppedUrl);
-      onClose();
-    } catch (err) {
-      console.error('Cropping error:', err);
-    } finally {
-      setIsProcessing(false);
-    }
+    const img = new Image();
+    img.src = imageSrc;
+    img.onload = () => {
+      ctx.clearRect(0, 0, size, size);
+
+      // Draw circular clip
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+      ctx.clip();
+
+      const viewportSize = 240; // Size of circular viewport DOM element
+      const scaleFactor = size / viewportSize;
+
+      const drawWidth = img.width * zoom * scaleFactor;
+      const drawHeight = img.height * zoom * scaleFactor;
+
+      const drawX = size / 2 - drawWidth / 2 + offset.x * scaleFactor;
+      const drawY = size / 2 - drawHeight / 2 + offset.y * scaleFactor;
+
+      ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+      const dataUrl = canvas.toDataURL('image/png');
+      onCropComplete(dataUrl);
+    };
   };
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 font-body select-none">
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="absolute inset-0 bg-[#0E2A6D]/40 backdrop-blur-xs"
-        />
-
-        {/* Dialog Container */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs select-none font-sans">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="relative w-full max-w-md rounded-[18px] border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] p-6 shadow-2xl overflow-hidden text-[#1F2937] dark:text-[#F8FAFC]"
+          className="relative w-full max-w-md rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] p-6 shadow-2xl overflow-hidden text-[#111827] dark:text-[#FAFAFA]"
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#334155] pb-3 mb-4">
-            <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0E2A6D] text-white shadow-xs border border-[#D9A441]/30">
-                <Crop size={18} strokeWidth={1.75} />
+          <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#2A2A2A] pb-4 mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+                <Crop size={18} />
               </div>
-              <h3 className="font-heading font-bold text-[18px] text-[#0E2A6D] dark:text-[#F8FAFC]">
+              <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">
                 Crop Profile Picture (1:1)
               </h3>
             </div>
             <button
               onClick={onClose}
-              className="rounded-xl p-1.5 text-[#64748B] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] transition"
+              className="w-8 h-8 rounded-[8px] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-[#FAFAFA] transition"
             >
-              <X size={18} strokeWidth={1.75} />
+              <X size={18} />
             </button>
           </div>
 
@@ -131,7 +112,7 @@ export const AvatarCropperModal: React.FC<AvatarCropperModalProps> = ({
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
-              className="relative w-[240px] h-[240px] rounded-full overflow-hidden border-4 border-[#0E2A6D] dark:border-[#D9A441] shadow-lg cursor-grab active:cursor-grabbing bg-[#0F172A]"
+              className="relative w-[240px] h-[240px] rounded-full overflow-hidden border-4 border-[#111827] dark:border-[#FAFAFA] shadow-lg cursor-grab active:cursor-grabbing bg-[#0A0A0A]"
             >
               <img
                 src={imageSrc}
@@ -143,19 +124,19 @@ export const AvatarCropperModal: React.FC<AvatarCropperModalProps> = ({
                 className="w-full h-full object-cover transition-transform duration-75 pointer-events-none"
               />
             </div>
-            <p className="mt-2 text-caption text-[#64748B] dark:text-[#94A3B8]">
+            <p className="mt-3 text-[13px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">
               Drag to position photo inside circle
             </p>
           </div>
 
           {/* Controls: Zoom & Reset */}
-          <div className="flex items-center justify-between gap-4 mb-6 px-4 bg-[#F5F7FB] dark:bg-[#0F172A] p-3 rounded-xl">
+          <div className="flex items-center justify-between gap-3 mb-6 px-4 bg-[#F8FAFC] dark:bg-[#111111] p-3 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A]">
             <button
               onClick={() => setZoom((z) => Math.max(0.8, z - 0.2))}
-              className="p-1.5 rounded-lg text-[#64748B] hover:bg-white dark:hover:bg-[#1E293B]"
+              className="p-1.5 rounded-[8px] text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B] transition"
               title="Zoom Out"
             >
-              <ZoomOut size={18} strokeWidth={1.75} />
+              <ZoomOut size={18} />
             </button>
 
             <input
@@ -165,15 +146,15 @@ export const AvatarCropperModal: React.FC<AvatarCropperModalProps> = ({
               step="0.1"
               value={zoom}
               onChange={(e) => setZoom(parseFloat(e.target.value))}
-              className="w-full h-1.5 bg-[#E2E8F0] dark:bg-[#334155] rounded-lg appearance-none cursor-pointer accent-[#0E2A6D]"
+              className="w-full h-1.5 bg-[#E5E7EB] dark:bg-[#2A2A2A] rounded-lg appearance-none cursor-pointer accent-[#111827] dark:accent-[#FAFAFA]"
             />
 
             <button
               onClick={() => setZoom((z) => Math.min(2.5, z + 0.2))}
-              className="p-1.5 rounded-lg text-[#64748B] hover:bg-white dark:hover:bg-[#1E293B]"
+              className="p-1.5 rounded-[8px] text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B] transition"
               title="Zoom In"
             >
-              <ZoomIn size={18} strokeWidth={1.75} />
+              <ZoomIn size={18} />
             </button>
 
             <button
@@ -181,10 +162,10 @@ export const AvatarCropperModal: React.FC<AvatarCropperModalProps> = ({
                 setZoom(1);
                 setOffset({ x: 0, y: 0 });
               }}
-              className="p-1.5 rounded-lg text-[#64748B] hover:bg-white dark:hover:bg-[#1E293B]"
+              className="p-1.5 rounded-[8px] text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B] transition"
               title="Reset Zoom"
             >
-              <RotateCcw size={16} strokeWidth={1.75} />
+              <RotateCcw size={16} />
             </button>
           </div>
 
@@ -192,23 +173,20 @@ export const AvatarCropperModal: React.FC<AvatarCropperModalProps> = ({
           <div className="flex items-center justify-end gap-3">
             <button
               onClick={onClose}
-              className="h-[44px] px-5 rounded-[14px] border border-[#E2E8F0] dark:border-[#334155] font-heading font-bold text-[15px] text-[#64748B] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] transition"
+              className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] font-medium text-[14px] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleConfirmCrop}
-              disabled={isProcessing}
-              className="h-[44px] px-6 rounded-[14px] bg-[#0E2A6D] hover:bg-[#153B8A] text-white font-heading font-bold text-[15px] shadow-xs flex items-center gap-2 transition disabled:opacity-50"
+              className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] transition flex items-center justify-center gap-2 cursor-pointer shadow-xs"
             >
-              <Check size={18} strokeWidth={1.75} />
-              <span>{isProcessing ? 'Saving...' : 'Apply & Save'}</span>
+              <Check size={16} />
+              <span>Apply & Save</span>
             </button>
           </div>
         </motion.div>
       </div>
     </AnimatePresence>
   );
-};
-
-export default AvatarCropperModal;
+}

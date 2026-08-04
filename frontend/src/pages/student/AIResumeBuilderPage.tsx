@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FileText,
@@ -241,29 +241,30 @@ export default function AIResumeBuilderPage() {
       `}</style>
 
       {/* 1440px Centered Max Content Width Container */}
-      <div className="w-full max-w-[1440px] mx-auto space-y-6">
+      <div className="w-full max-w-[1440px] mx-auto space-y-8">
         
-        {/* Compact Hero Header (Matching AI Study Planner layout) */}
-        <div className="no-print bg-[#FFFFFF] dark:bg-[#18181B] p-4 sm:p-5 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
-            <div className="w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
-              <FileText size={22} />
+        {/* Page Hero Header (With Dedicated Covered Image Background) */}
+        <div className="no-print relative overflow-hidden bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6 min-h-[120px]">
+
+          <div className="relative z-10 flex items-center gap-4 min-w-0">
+            <div className="w-12 h-12 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0 shadow-sm">
+              <FileText size={24} />
             </div>
-            <div className="min-w-0 flex-1">
-              <h1 className="text-[20px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-[1.2] truncate">
+            <div className="min-w-0 space-y-1">
+              <h1 className="text-[30px] font-semibold text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-tight truncate">
                 AI Resume Builder
               </h1>
-              <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] mt-0.5 truncate">
+              <p className="text-[15px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">
                 Create ATS-optimized, high-impact technical resumes with 1-click AI enhancements.
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2 sm:gap-3 shrink-0 w-full lg:w-auto pt-2 lg:pt-0 border-t lg:border-t-0 border-[#E5E7EB] dark:border-[#27272A]">
+          <div className="relative z-10 flex flex-wrap items-center justify-between sm:justify-end gap-3 shrink-0 w-full lg:w-auto">
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="h-[38px] sm:h-[40px] px-3.5 sm:px-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[13px] sm:text-[14px] font-[500] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0 active:scale-[0.98]"
+              className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0 shadow-xs"
             >
               {isSaving ? <RefreshCw size={16} className="animate-spin" /> : <Check size={16} />}
               <span>Save Draft</span>
@@ -272,7 +273,7 @@ export default function AIResumeBuilderPage() {
             <button
               onClick={handleRunATS}
               disabled={evaluatingATS}
-              className="h-[38px] sm:h-[40px] px-3.5 sm:px-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[13px] sm:text-[14px] font-[500] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0 active:scale-[0.98]"
+              className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0 shadow-xs"
             >
               {evaluatingATS ? <RefreshCw size={16} className="animate-spin" /> : <BarChart3 size={16} />}
               <span>Check ATS Score</span>
@@ -280,7 +281,7 @@ export default function AIResumeBuilderPage() {
 
             <button
               onClick={handlePrintPDF}
-              className="h-[38px] sm:h-[40px] px-[16px] sm:px-[18px] rounded-[12px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-[500] transition flex items-center justify-center gap-2 cursor-pointer shrink-0 active:scale-[0.98]"
+              className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium transition flex items-center justify-center gap-2 cursor-pointer shrink-0"
             >
               <Printer size={16} />
               <span>Download PDF</span>
@@ -288,53 +289,53 @@ export default function AIResumeBuilderPage() {
           </div>
         </div>
 
-        {/* Dashboard Overview Cards Banner (88px Height matching Study Analytics Banner) */}
-        <div className="no-print grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 select-none">
-          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
-            <div className="min-w-0 flex-1 space-y-0.5">
-              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Total Resumes</p>
-              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">1 Draft</p>
-              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Active profile</p>
+        {/* 4 Statistics Cards Grid (2x2 Mobile, 4-Col Desktop, 24px Gap) */}
+        <div className="no-print grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
+            <div className="min-w-0 flex-1 space-y-1">
+              <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">Total Resumes</p>
+              <p className="text-[28px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight truncate">1 Draft</p>
+              <p className="text-[12px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">Active profile</p>
             </div>
-            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
-              <FileText size={18} />
+            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-3">
+              <FileText size={20} />
             </div>
           </div>
 
-          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
-            <div className="min-w-0 flex-1 space-y-0.5">
-              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">ATS Compatibility</p>
-              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">
+          <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
+            <div className="min-w-0 flex-1 space-y-1">
+              <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">ATS Compatibility</p>
+              <p className="text-[28px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight truncate">
                 {atsResult ? `${atsResult.overall_score}%` : '88%'}
               </p>
-              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Industry parser rating</p>
+              <p className="text-[12px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">Industry rating</p>
             </div>
-            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
-              <BarChart3 size={18} />
+            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-3">
+              <BarChart3 size={20} />
             </div>
           </div>
 
-          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
-            <div className="min-w-0 flex-1 space-y-0.5">
-              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Active Template</p>
-              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate capitalize">
+          <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
+            <div className="min-w-0 flex-1 space-y-1">
+              <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">Active Template</p>
+              <p className="text-[28px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight truncate capitalize">
                 {resumeData.template}
               </p>
-              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Modern tech layout</p>
+              <p className="text-[12px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">Single-page layout</p>
             </div>
-            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
-              <Layers size={18} />
+            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-3">
+              <Layout size={20} />
             </div>
           </div>
 
-          <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
-            <div className="min-w-0 flex-1 space-y-0.5">
-              <p className="text-[12px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Exports & Downloads</p>
-              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">12 PDF Downloads</p>
-              <p className="text-[11px] sm:text-[13px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Campus placement</p>
+          <div className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
+            <div className="min-w-0 flex-1 space-y-1">
+              <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">AI Enhancements</p>
+              <p className="text-[28px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight truncate">Enabled</p>
+              <p className="text-[12px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">Action verbs engine</p>
             </div>
-            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
-              <Download size={18} />
+            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-3">
+              <Sparkles size={20} />
             </div>
           </div>
         </div>

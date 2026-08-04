@@ -41,11 +41,30 @@ SYSTEM_RAG_PROMPT = (
 
 class AIService:
     def __init__(self) -> None:
-        # Initialize Google Gemini as primary LLM if configured
+        # 1. Primary fast LLM: Groq (Ultra-fast LPU inference)
+        api_key = settings.GROQ_API_KEY or os.getenv('GROQ_API_KEY')
+        self.model_name = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
+        if api_key and api_key.startswith('gsk_'):
+            try:
+                self.llm = ChatGroq(
+                    temperature=0.2,
+                    groq_api_key=get_api_key(),
+                    model_name=get_model_name(),
+                    max_tokens=1000
+                )
+                logger.info("Initialized Groq LLM with model: %s", self.model_name)
+            except Exception as e:
+                logger.warning("Groq initialization failed: %s", e)
+                self.llm = None
+        else:
+            logger.warning("AIService: Groq API key not configured or invalid.")
+            self.llm = None
+
+        # 2. Google Gemini LLM (only if configured with a valid key starting with AIza)
         gemini_key = settings.GEMINI_API_KEY or os.getenv('GEMINI_API_KEY')
         raw_model = os.getenv('GEMINI_MODEL', 'gemini-2.0-flash').replace('models/', '')
         self.gemini_model_name = raw_model if 'gemini' in raw_model else 'gemini-2.0-flash'
-        if gemini_key:
+        if gemini_key and gemini_key.startswith('AIza'):
             try:
                 from langchain_google_genai import ChatGoogleGenerativeAI
                 self.gemini_llm = ChatGoogleGenerativeAI(
@@ -61,23 +80,15 @@ class AIService:
         else:
             self.gemini_llm = None
 
-        api_key = settings.GROQ_API_KEY or os.getenv('GROQ_API_KEY')
-        self.model_name = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
-        if api_key:
-            self.llm = ChatGroq(
-                temperature=0.2,
-                groq_api_key=get_api_key(),
-                model_name=get_model_name(),
-                max_tokens=1000
-            )
-        else:
-            logger.warning("AIService: Groq API key not configured. LLM features disabled.")
-            self.llm = None
-
-        # Try initializing Ollama Qwen2.5 if available locally
+        # 3. Check if local Ollama server is actively running before setting ollama_llm
+        self.ollama_llm = None
         try:
-            from langchain_community.chat_models import ChatOllama
-            self.ollama_llm = ChatOllama(model="qwen2.5", temperature=0.2)
+            import urllib.request
+            req = urllib.request.Request("http://127.0.0.1:11434/api/version")
+            with urllib.request.urlopen(req, timeout=0.2) as response:
+                if response.status == 200:
+                    from langchain_community.chat_models import ChatOllama
+                    self.ollama_llm = ChatOllama(model="qwen2.5", temperature=0.2)
         except Exception:
             self.ollama_llm = None
             
@@ -279,45 +290,35 @@ class AIService:
             HumanMessage(content=user_prompt)
         ]
         
-        # 1. Attempt Google Gemini LLM if configured
+        # 1. Primary fast LLM: Groq (Ultra-fast LPU inference)
+        if self.llm:
+            try:
+                response = await asyncio.wait_for(self.llm.ainvoke(messages), timeout=8.0)
+                if response and response.content:
+                    return str(response.content)
+            except Exception as exc:
+                logger.warning('Groq request failed: %s', exc)
+
+        # 2. Backup LLM: Google Gemini
         if self.gemini_llm:
             try:
                 logger.info('Calling Google Gemini LLM (%s)', self.gemini_model_name)
-                res = await self.gemini_llm.ainvoke(messages)
+                res = await asyncio.wait_for(self.gemini_llm.ainvoke(messages), timeout=8.0)
                 if res and res.content:
                     return str(res.content)
             except Exception as e:
-                logger.warning('Google Gemini LLM failed/unavailable, falling back to backup LLM: %s', e)
+                logger.warning('Google Gemini LLM failed/unavailable: %s', e)
 
-        # 2. Attempt Ollama Qwen2.5 if available locally
+        # 3. Backup LLM: Local Ollama (if active)
         if self.ollama_llm:
             try:
-                logger.info('Calling local Ollama Qwen2.5')
-                res = await self.ollama_llm.ainvoke(messages)
+                res = await asyncio.wait_for(self.ollama_llm.ainvoke(messages), timeout=4.0)
                 if res and res.content:
                     return str(res.content)
             except Exception as e:
-                logger.warning('Ollama Qwen2.5 failed/unavailable, falling back to Groq: %s', e)
+                logger.warning('Ollama failed/unavailable: %s', e)
 
-        # 3. Groq Fallback
-        if not self.llm:
-            return RAG_FALLBACK_RESPONSE
-
-        retries = 3
-        backoff = 1.0
-        response = None
-
-        for attempt in range(retries):
-            try:
-                response = await self.llm.ainvoke(messages)
-                break
-            except Exception as exc:
-                logger.warning('Groq request failed on attempt %s: %s', attempt + 1, exc)
-                if attempt < retries - 1:
-                    await asyncio.sleep(backoff)
-                    backoff *= 2.0
-
-        return str(response.content) if response and response.content else RAG_FALLBACK_RESPONSE
+        return RAG_FALLBACK_RESPONSE
 
     def _build_context(self, context_chunks: list) -> str:
         if not context_chunks:
@@ -428,7 +429,9 @@ class AIService:
             valid_chunks = [c for c in context_chunks if c.get('distance', 0) < 1.5]
 
             if not valid_chunks:
-                yield RAG_FALLBACK_RESPONSE
+                system_instruction = f"You are CampusMate AI. Answer the user's question clearly and naturally. {language_instruction}"
+                async for chunk in self._stream_llm_response(normalized_message, system_instruction):
+                    yield chunk
                 return
             
             context_text = self._build_context(valid_chunks)
@@ -451,25 +454,7 @@ class AIService:
             HumanMessage(content=user_prompt)
         ]
 
-        if self.gemini_llm:
-            try:
-                logger.info('Streaming with Google Gemini LLM (%s)', self.gemini_model_name)
-                async for chunk in self.gemini_llm.astream(messages):
-                    if chunk.content:
-                        yield str(chunk.content)
-                return
-            except Exception as e:
-                logger.warning('Google Gemini LLM stream failed/unavailable, falling back: %s', e)
-
-        if self.ollama_llm:
-            try:
-                async for chunk in self.ollama_llm.astream(messages):
-                    if chunk.content:
-                        yield str(chunk.content)
-                return
-            except Exception as e:
-                logger.warning('Ollama stream failed, falling back to Groq: %s', e)
-
+        # 1. Primary fast LLM: Groq (Ultra-fast LPU streaming)
         if self.llm:
             try:
                 async for chunk in self.llm.astream(messages):
@@ -478,6 +463,27 @@ class AIService:
                 return
             except Exception as exc:
                 logger.warning('Groq stream request failed: %s', exc)
+
+        # 2. Backup LLM: Google Gemini
+        if self.gemini_llm:
+            try:
+                logger.info('Streaming with Google Gemini LLM (%s)', self.gemini_model_name)
+                async for chunk in self.gemini_llm.astream(messages):
+                    if chunk.content:
+                        yield str(chunk.content)
+                return
+            except Exception as e:
+                logger.warning('Google Gemini LLM stream failed/unavailable: %s', e)
+
+        # 3. Backup LLM: Local Ollama
+        if self.ollama_llm:
+            try:
+                async for chunk in self.ollama_llm.astream(messages):
+                    if chunk.content:
+                        yield str(chunk.content)
+                return
+            except Exception as e:
+                logger.warning('Ollama stream failed: %s', e)
 
         yield RAG_FALLBACK_RESPONSE
 

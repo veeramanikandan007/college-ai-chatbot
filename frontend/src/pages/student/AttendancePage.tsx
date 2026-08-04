@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Award,
@@ -278,8 +278,8 @@ export default function AttendancePage() {
                   className="transition-all duration-1000 ease-out"
                 />
               </svg>
-              <div className="absolute inset-0 flex items-center justify-center font-heading font-bold text-sm text-[#D9A441]">
-                {data.overall_risk_level === 'Safe' ? '🟢 Safe' : data.overall_risk_level === 'Warning' ? '🟡 Warning' : '🔴 Critical'}
+              <div className="absolute inset-0 flex items-center justify-center font-heading font-semibold text-xs text-[#FFFFFF]">
+                {data.overall_risk_level}
               </div>
             </div>
           </div>

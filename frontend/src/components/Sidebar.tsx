@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
@@ -786,10 +786,10 @@ export default function Sidebar({
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="w-[40px] h-[40px] rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
-                  title="Close Menu"
+                  className="w-[40px] h-[40px] rounded-xl flex items-center justify-center shrink-0 text-[#64748B] dark:text-[#A3A3A3] hover:bg-[#F5F7FB] dark:hover:bg-[#181818] transition-all duration-200 cursor-pointer"
+                  title="Close sidebar"
                 >
-                  <X size={20} />
+                  <PanelLeftClose size={20} strokeWidth={1.75} />
                 </button>
               </div>
 

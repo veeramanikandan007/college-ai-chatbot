@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Briefcase,
@@ -380,37 +380,37 @@ export default function PlacementHubPage() {
   }
 
   return (
-    <div className="w-full h-full overflow-x-hidden overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 md:p-8 transition-colors select-none font-sans">
+    <div className="w-full h-full overflow-x-hidden overflow-y-auto bg-[#F8FAFC] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 lg:p-8 transition-colors select-none font-sans">
       {/* 1440px Centered Max Content Width Container */}
-      <div className="w-full max-w-[1440px] mx-auto space-y-6">
+      <div className="w-full max-w-[1440px] mx-auto space-y-8">
 
-        {/* Compact Hero Header (Matching AI Study Planner layout) */}
-        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-4 sm:p-5 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="flex items-start sm:items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
-            <div className="w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
-              <Briefcase size={22} />
+        {/* Page Hero Header (With Dedicated Covered Image Background) */}
+        <div className="relative overflow-hidden bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6 min-h-[120px]">
+
+          <div className="relative z-10 flex items-center gap-4 min-w-0">
+            <div className="w-12 h-12 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0 shadow-sm">
+              <Briefcase size={24} />
             </div>
-            <div className="min-w-0 flex-1">
-              <h1 className="text-[20px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-[1.2]">
+            <div className="min-w-0 space-y-1">
+              <h1 className="text-[30px] font-semibold text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-tight truncate">
                 AI Placement Hub
               </h1>
-              <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] mt-0.5 sm:truncate">
-                Campus drives, ATS readiness, coding practice, mock interviews, and career guidance in one workflow.
+              <p className="text-[15px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">
+                Prepare for campus drives, track eligible companies, and practice coding challenges.
               </p>
             </div>
           </div>
-
           <button
             onClick={() => setActiveTab('drives')}
-            className="h-[38px] sm:h-[40px] px-4 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-[500] transition cursor-pointer shrink-0 active:scale-[0.98] w-full lg:w-auto"
+            className="relative z-10 h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] transition flex items-center justify-center gap-2 cursor-pointer shrink-0 w-full sm:w-auto"
           >
             Explore Drives
           </button>
         </div>
 
         {/* Single-Row Navigation Tab Bar */}
-        <div className="w-full bg-[#F8FAFC] dark:bg-[#111111] p-1.5 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46]">
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar flex-nowrap min-h-[44px]">
+        <div className="w-full bg-[#FFFFFF] dark:bg-[#18181B] p-2 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar flex-nowrap min-h-[40px]">
             {[
               { id: 'drives', label: 'Drives & Companies', icon: Building2 },
               { id: 'tracker', label: 'Tracker', icon: Layers },
@@ -427,13 +427,13 @@ export default function PlacementHubPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`h-[36px] px-3.5 text-[14px] font-[500] rounded-[8px] transition cursor-pointer whitespace-nowrap flex items-center justify-center gap-2 shrink-0 active:scale-[0.98] ${
+                  className={`h-[36px] px-4 text-[14px] font-medium rounded-[8px] transition cursor-pointer whitespace-nowrap flex items-center justify-center gap-2 shrink-0 ${
                     isActive
                       ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
-                      : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
+                      : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323]'
                   }`}
                 >
-                  <Icon size={15} />
+                  <Icon size={16} />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -441,8 +441,8 @@ export default function PlacementHubPage() {
           </div>
         </div>
 
-        {/* Overview Cards Banner (88px Height matching Study Analytics Banner) */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3 select-none">
+        {/* 5 Statistics Cards Grid (2x2 Mobile, 5-Col Desktop, 24px Gap) */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 select-none">
           {[
             { label: 'Eligible Companies', value: stats.eligible_companies, icon: Building2 },
             { label: 'Applied Jobs', value: applications.length, icon: Layers },
@@ -454,15 +454,15 @@ export default function PlacementHubPage() {
             return (
               <div
                 key={idx}
-                className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md"
+                className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between"
               >
-                <div className="min-w-0 flex-1 space-y-0.5">
-                  <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">{stat.label}</p>
-                  <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">{stat.value}</p>
-                  <p className="text-[12px] sm:text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Placement status</p>
+                <div className="min-w-0 flex-1 space-y-1">
+                  <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">{stat.label}</p>
+                  <p className="text-[28px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight truncate">{stat.value}</p>
+                  <p className="text-[12px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">Placement status</p>
                 </div>
-                <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2">
-                  <Icon size={18} />
+                <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-3">
+                  <Icon size={20} />
                 </div>
               </div>
             );
