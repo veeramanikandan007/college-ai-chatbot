@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Activity, BookOpen, Brain, ClipboardList, CalendarDays, Zap } from 'lucide-react';
 import type { StreakData } from '../../api/studentAnalytics';
 
@@ -105,10 +105,13 @@ export const StreaksTrackerWidget: React.FC<Props> = ({ streaks, loading }) => {
       </div>
 
       {!loading && streaks && (
-        <div className="p-3.5 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-center text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA]">
-          {Math.max(...[streaks.daily_study_streak, streaks.quiz_streak, streaks.attendance_streak, streaks.assignment_streak]) >= 7
-            ? '🔥 You are on a hot streak! Keep the momentum going every day.'
-            : '⚡ Build your streak by studying, attending, and solving quizzes every day.'}
+        <div className="p-3.5 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-center text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center gap-2">
+          <Zap size={16} className="text-[#111827] dark:text-[#FAFAFA] shrink-0" />
+          <span>
+            {Math.max(...[streaks.daily_study_streak, streaks.quiz_streak, streaks.attendance_streak, streaks.assignment_streak]) >= 7
+              ? 'You are on a hot streak! Keep the momentum going every day.'
+              : 'Build your streak by studying, attending, and solving quizzes every day.'}
+          </span>
         </div>
       )}
     </div>

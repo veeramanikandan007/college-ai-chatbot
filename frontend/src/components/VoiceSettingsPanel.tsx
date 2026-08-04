@@ -1,6 +1,6 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Volume2, Gauge, RefreshCw, Mic, Wifi, WifiOff, Sliders, X, Play, RotateCcw } from 'lucide-react';
+import { Volume2, Gauge, RefreshCw, Mic, Wifi, WifiOff, Sliders, X, Play, RotateCcw, Globe, Languages } from 'lucide-react';
 import { voiceManager, type TTSStatus } from '../services/ttsService';
 
 export interface VoiceSettings {
@@ -135,14 +135,14 @@ export default function VoiceSettingsPanel({ settings, onChange, onClose }: Voic
           <div className="rounded-2xl border border-slate-200 dark:border-[#2A2A2A] p-4 space-y-2.5 bg-[#FAFAFA] dark:bg-[#0A0A0A]/40">
             <p className="text-[10px] font-medium text-muted uppercase tracking-wider">TTS Engine Status</p>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[12px] font-normal text-body">🇬🇧 English Engine</span>
+              <span className="text-[12px] font-normal text-body flex items-center gap-1.5"><Globe size={13} /> English Engine</span>
               <span className={`text-[11px] font-medium flex items-center gap-1 ${ttsStatus.english.ready ? 'text-success' : 'text-warning'}`}>
                 {ttsStatus.english.ready ? <Wifi size={11} /> : <WifiOff size={11} />}
                 {ttsStatus.english.provider}
               </span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[12px] font-normal text-body">🇮🇳 Tamil Engine</span>
+              <span className="text-[12px] font-normal text-body flex items-center gap-1.5"><Languages size={13} /> Tamil Engine</span>
               <span className={`text-[11px] font-medium flex items-center gap-1 ${ttsStatus.tamil.ready ? 'text-success' : 'text-warning'}`}>
                 {ttsStatus.tamil.ready ? <Wifi size={11} /> : <WifiOff size={11} />}
                 {ttsStatus.tamil.provider}
@@ -177,12 +177,12 @@ export default function VoiceSettingsPanel({ settings, onChange, onClose }: Voic
                   <span className={`relative z-10 transition-colors duration-150 ${isActive ? 'text-[#FFFFFF] dark:text-[#111111]' : 'text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA]'}`}>
                     {lang === 'en-US' ? (
                       <span className="flex items-center gap-1.5">
-                        <span className="text-[11px]">🇬🇧</span>
+                        <Globe size={13} />
                         English (en-US)
                       </span>
                     ) : (
                       <span className="flex items-center gap-1.5">
-                        <span className="text-[11px]">🇮🇳</span>
+                        <Languages size={13} />
                         தமிழ் (ta-IN)
                       </span>
                     )}

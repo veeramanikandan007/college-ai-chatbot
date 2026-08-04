@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ClipboardList,
   CalendarDays,
@@ -177,33 +177,33 @@ export default function AssignmentsPage() {
   ];
 
   return (
-    <div className="w-full h-full overflow-x-hidden overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 md:p-8 transition-colors select-none font-sans">
+    <div className="w-full h-full overflow-x-hidden overflow-y-auto bg-[#F8FAFC] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 lg:p-8 transition-colors select-none font-sans">
       {/* 1440px Centered Max Content Width Container */}
-      <div className="w-full max-w-[1440px] mx-auto space-y-6">
+      <div className="w-full max-w-[1440px] mx-auto space-y-8">
 
-        {/* Compact Hero Header (Matching AI Study Planner layout) */}
-        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-4 sm:p-5 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="flex items-start sm:items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
-            <div className="w-[40px] h-[40px] sm:w-[44px] sm:h-[44px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
-              <ClipboardList size={22} />
+        {/* Page Hero Header */}
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="w-12 h-12 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <ClipboardList size={24} />
             </div>
-            <div className="min-w-0 flex-1">
-              <h1 className="text-[20px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-[1.2]">
+            <div className="min-w-0 space-y-1">
+              <h1 className="text-[30px] font-semibold text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-tight truncate">
                 Smart Assignments
               </h1>
-              <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] mt-0.5 truncate">
+              <p className="text-[15px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">
                 Organize, track, and complete college assignments with AI assistance.
               </p>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
             {/* View Switcher: Grid, List, Calendar */}
-            <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] min-h-[44px]">
+            <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1.5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] overflow-x-auto no-scrollbar">
               <button
                 onClick={() => setViewMode('grid')}
                 title="Grid View"
-                className={`h-[36px] flex-1 sm:flex-none px-3.5 text-[14px] font-[500] rounded-[8px] transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap active:scale-[0.98] ${
+                className={`h-[36px] px-3.5 text-[14px] font-medium rounded-[8px] transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   viewMode === 'grid'
                     ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
                     : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
@@ -216,7 +216,7 @@ export default function AssignmentsPage() {
               <button
                 onClick={() => setViewMode('list')}
                 title="List View"
-                className={`h-[36px] flex-1 sm:flex-none px-3.5 text-[14px] font-[500] rounded-[8px] transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap active:scale-[0.98] ${
+                className={`h-[36px] px-3.5 text-[14px] font-medium rounded-[8px] transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   viewMode === 'list'
                     ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
                     : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
@@ -229,7 +229,7 @@ export default function AssignmentsPage() {
               <button
                 onClick={() => setViewMode('calendar')}
                 title="Calendar View"
-                className={`h-[36px] flex-1 sm:flex-none px-3.5 text-[14px] font-[500] rounded-[8px] transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap active:scale-[0.98] ${
+                className={`h-[36px] px-3.5 text-[14px] font-medium rounded-[8px] transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   viewMode === 'calendar'
                     ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
                     : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
@@ -242,10 +242,10 @@ export default function AssignmentsPage() {
 
             <button
               onClick={openCreateModal}
-              className="h-[38px] sm:h-[40px] px-4 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-[500] shadow-xs cursor-pointer active:scale-[0.98] flex items-center justify-center gap-2"
+              className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] transition flex items-center justify-center gap-2 cursor-pointer shrink-0"
             >
-              <Plus size={16} />
-              <span>Create Assignment</span>
+              <Plus size={18} />
+              <span>New Assignment</span>
             </button>
           </div>
         </div>

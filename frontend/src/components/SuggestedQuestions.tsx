@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -127,53 +127,43 @@ export default function SuggestedQuestions({
     <div className="w-full max-w-6xl mx-auto px-4 py-6 select-none font-body space-y-8">
 
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION (LARGE WELCOME CARD)                                      */}
+      {/* 1. HERO SECTION (LARGE WELCOME CARD - FULLY COVERED IMAGE)                 */}
       {/* ========================================================================= */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: 'easeOut' }}
-        className="relative overflow-hidden rounded-[20px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#111111] p-8 shadow-xs"
+        className="relative overflow-hidden rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#0F172A] shadow-xs min-h-[140px] sm:min-h-[150px] flex items-center justify-between"
       >
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center relative z-10">
-          
-          {/* Left Text Column */}
-          <div className="md:col-span-7 space-y-4">
-            <div className="space-y-1">
-              <span className="text-[13px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
-                {greeting}
-              </span>
-              <h1 className="text-[24px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight">
-                Welcome back, {studentName} 👋
-              </h1>
-              <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A3A3A3]">
-                Mount Zion College of Engineering and Technology
-              </p>
-            </div>
 
-            {/* AI Online Status Pill */}
-            <div className="inline-flex items-center gap-2 rounded-full bg-[#F8FAFC] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] px-3.5 py-1.5 shadow-xs">
-              <span className="relative flex h-2.5 w-2.5 items-center justify-center">
+        {/* Left Text Column Content */}
+        <div className="relative z-10 px-5 py-4 sm:px-6 sm:py-5 flex flex-col justify-center space-y-1.5 min-w-0 max-w-[680px]">
+          <div className="flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+            <span>{greeting}</span>
+            <span>•</span>
+            <span>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</span>
+          </div>
+
+          <h1 className="text-[20px] sm:text-[24px] font-bold text-[#111827] dark:text-[#FAFAFA] leading-tight tracking-tight">
+            Welcome back, {studentName}
+          </h1>
+
+          <p className="text-[12.5px] sm:text-[13.5px] font-normal text-[#6B7280] dark:text-[#A3A3A3] truncate">
+            Mount Zion College of Engineering and Technology • Smart AI Student Portal
+          </p>
+
+          {/* AI Online Status Pill */}
+          <div className="pt-1">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#DCFCE7] dark:bg-[#14532D]/60 border border-[#86EFAC]/60 dark:border-[#22C55E]/40 px-3 py-0.5 text-[#15803D] dark:text-[#4ADE80]">
+              <span className="relative flex h-2 w-2 items-center justify-center">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#22C55E] opacity-75" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#22C55E]" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#22C55E]" />
               </span>
-              <span className="text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA]">
+              <span className="text-[11px] font-semibold">
                 AI Online & Ready
               </span>
             </div>
           </div>
-
-          {/* Right Vector Illustration Column */}
-          <div className="md:col-span-5 flex justify-center md:justify-end">
-            <div className="relative w-full max-w-[280px] sm:max-w-[320px] aspect-[4/3] rounded-[16px] overflow-hidden border border-[#E5E7EB]/60 dark:border-[#2A2A2A]/60 bg-[#F8FAFC] dark:bg-[#181818]">
-              <img
-                src="/hero_illustration.png"
-                alt="CollegeMate AI SaaS Illustration"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-
         </div>
       </motion.div>
 

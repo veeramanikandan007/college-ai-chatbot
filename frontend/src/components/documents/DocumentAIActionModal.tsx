@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -456,8 +456,9 @@ export const DocumentAIActionModal: React.FC<DocumentAIActionModalProps> = ({
                           })}
                         </div>
                         {showResults && (
-                          <p className="text-xs text-[#6B7280] dark:text-[#A3A3A3] pt-2 border-t border-[#E5E7EB] dark:border-[#2A2A2A]">
-                            💡 <span className="font-medium">Explanation:</span> {q.explanation}
+                          <p className="text-xs text-[#6B7280] dark:text-[#A3A3A3] pt-2 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center gap-1.5">
+                            <Sparkles size={13} className="text-[#111827] dark:text-[#FAFAFA] shrink-0" />
+                            <span><span className="font-medium">Explanation:</span> {q.explanation}</span>
                           </p>
                         )}
                       </div>

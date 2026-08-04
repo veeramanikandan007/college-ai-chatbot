@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { GraduationCap, Lock, Mail, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Bot, Lock, Mail, Eye, EyeOff, Loader2, ArrowRight, Sparkles } from 'lucide-react';
 import { fetchApi, ApiError } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
@@ -49,30 +49,39 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] transition-colors duration-200 font-body">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] flex items-center justify-center shadow-md mb-4 border border-[#D9A441]/30">
-            <GraduationCap className="w-8 h-8 text-white" />
+    <div className="min-h-screen flex flex-col justify-center items-center px-4 py-12 bg-[#F8FAFC] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] transition-colors duration-200 font-sans select-none">
+      <div className="w-full max-w-md space-y-6">
+        
+        {/* Brand Header */}
+        <div className="flex flex-col items-center text-center space-y-3">
+          <Link to="/" className="w-12 h-12 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shadow-md transition-transform hover:scale-105">
+            <Bot size={24} />
+          </Link>
+          <div className="space-y-1">
+            <h1 className="text-[30px] font-semibold text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-tight">
+              {APP_NAME}
+            </h1>
+            <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">
+              {COLLEGE_NAME}
+            </p>
           </div>
-          <h1 className="font-heading text-section font-extrabold tracking-[0.02em] text-[#0E2A6D] dark:text-[#F8FAFC]">{APP_NAME}</h1>
-          <p className="font-heading text-caption font-bold tracking-[0.02em] uppercase text-[#64748B] dark:text-[#94A3B8] mt-1">{COLLEGE_NAME}</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white dark:bg-[#1E293B] rounded-xl p-8 border border-[#E2E8F0] dark:border-[#334155] shadow-xs transition-colors duration-200">
-          <h2 className="font-heading text-card font-bold tracking-[0.02em] text-[#1F2937] dark:text-[#F8FAFC] mb-1">Welcome back</h2>
-          <p className="text-small text-[#64748B] dark:text-[#94A3B8] mb-6">Sign in to access your campus AI dashboard.</p>
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] p-6 sm:p-8 border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs space-y-6">
+          <div className="space-y-1">
+            <h2 className="text-[20px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Welcome back</h2>
+            <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">Sign in to access your campus AI dashboard.</p>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
             <div className="space-y-1.5">
-              <label htmlFor="login-email" className="ty-label text-[#1F2937] dark:text-[#F8FAFC]">
+              <label htmlFor="login-email" className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">
                 Email address
               </label>
               <div className="relative flex items-center">
-                <Mail className="absolute left-3.5 w-4 h-4 text-[#64748B] pointer-events-none" />
+                <Mail className="absolute left-3.5 w-4 h-4 text-[#6B7280] dark:text-[#A1A1AA] pointer-events-none" />
                 <input
                   id="login-email"
                   type="email"
@@ -80,7 +89,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@mzce.edu"
-                  className="w-full h-11 pl-11 pr-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] text-body outline-none transition duration-180 focus:border-[#1E4DB7] focus:ring-2 focus:ring-[#1E4DB7]/10"
+                  className="w-full h-[40px] pl-10 pr-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none transition focus:border-[#111827] dark:focus:border-[#FAFAFA]"
                   required
                 />
               </div>
@@ -88,11 +97,11 @@ export default function LoginPage() {
 
             {/* Password */}
             <div className="space-y-1.5">
-              <label htmlFor="login-password" className="ty-label text-[#1F2937] dark:text-[#F8FAFC]">
+              <label htmlFor="login-password" className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">
                 Password
               </label>
               <div className="relative flex items-center">
-                <Lock className="absolute left-3.5 w-4 h-4 text-[#64748B] pointer-events-none" />
+                <Lock className="absolute left-3.5 w-4 h-4 text-[#6B7280] dark:text-[#A1A1AA] pointer-events-none" />
                 <input
                   id="login-password"
                   type={showPassword ? 'text' : 'password'}
@@ -100,13 +109,13 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full h-11 pl-11 pr-10 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-[#1F2937] dark:text-[#F8FAFC] text-body outline-none transition duration-180 focus:border-[#1E4DB7] focus:ring-2 focus:ring-[#1E4DB7]/10"
+                  className="w-full h-[40px] pl-10 pr-10 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none transition focus:border-[#111827] dark:focus:border-[#FAFAFA]"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 text-[#64748B] hover:text-[#1F2937] dark:hover:text-[#F8FAFC] transition-colors"
+                  className="absolute right-3.5 text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-[#FAFAFA] transition"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -117,20 +126,28 @@ export default function LoginPage() {
               id="login-submit"
               type="submit"
               disabled={loading}
-              className="w-full h-11 flex items-center justify-center gap-2 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white font-btn shadow-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full h-[40px] flex items-center justify-center gap-2 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed shadow-xs"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
               {loading ? 'Signing in…' : 'Sign in'}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-small text-[#64748B] dark:text-[#94A3B8]">
+          <p className="text-center text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA] pt-2 border-t border-[#E5E7EB] dark:border-[#2A2A2A]">
             New to {APP_NAME}?{' '}
-            <Link to="/register" className="font-semibold text-[#0E2A6D] dark:text-[#D9A441] hover:underline transition-colors">
+            <Link to="/register" className="font-semibold text-[#111827] dark:text-[#FAFAFA] hover:underline transition">
               Create an account
             </Link>
           </p>
         </div>
+
+        {/* Back to Home Link */}
+        <div className="text-center">
+          <Link to="/" className="text-[13px] font-medium text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-[#FAFAFA] transition">
+            ← Back to Landing Page
+          </Link>
+        </div>
+
       </div>
     </div>
   );
