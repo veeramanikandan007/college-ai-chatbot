@@ -2,6 +2,11 @@ import axios from 'axios';
 
 const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8000') + '/api/v1/faculty';
 
+const getAuthHeader = () => {
+  const token = localStorage.getItem('token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
 export interface FacultyProfile {
   id: number;
   user_id: number;
@@ -235,12 +240,12 @@ export const facultyApi = {
   },
 
   getTimetable: async (): Promise<FacultyScheduleItem[]> => {
-    const res = await axios.get(`${API_BASE}/timetable`);
+    const res = await axios.get(`${API_BASE}/timetable`, { headers: getAuthHeader() });
     return res.data;
   },
 
   requestTimetableChange: async (data: { request_date: string; current_period: number; requested_period: number; reason: string }) => {
-    const res = await axios.post(`${API_BASE}/timetable/change-request`, data);
+    const res = await axios.post(`${API_BASE}/timetable/change-request`, data, { headers: getAuthHeader() });
     return res.data;
   },
 
