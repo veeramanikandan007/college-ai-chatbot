@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Settings2, ShieldCheck, Save, Key, Database, Mail, HardDrive, ListFilter } from 'lucide-react';
 import { adminDashboardApi, AdminSettings, AdminAuditLog } from '../../api/adminDashboard';
 import { useToast } from '../../context/ToastContext';
+import { PageHeader } from '../ui/PageHeader';
+import { Button } from '../ui/Button';
+import { DashboardCard } from '../ui/DashboardCard';
+import { SectionHeader } from '../ui/SectionHeader';
+import { PageContainer } from '../ui/PageContainer';
+import { FormSection } from '../ui/FormSection';
+import { Input } from '../ui/Input';
 
 export const AdminSettingsManager: React.FC = () => {
   const { showToast } = useToast();
@@ -64,118 +72,99 @@ export const AdminSettingsManager: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 font-body">
-      <div className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
-        <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">System Configuration & Security Governance</h3>
-        <p className="text-small text-[#64748B] dark:text-[#94A3B8]">Configure campus parameters, AI service keys, mail server settings, and inspect administrative audit logs.</p>
-      </div>
+    <PageContainer className="font-body">
+      <PageHeader
+        title="System Configuration & Security Governance"
+        description="Configure campus parameters, AI service keys, mail server settings, and inspect administrative audit logs."
+        icon={Settings2}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Settings Form */}
-        <div className="bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs space-y-4">
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] flex items-center gap-2">
-            <Settings2 className="text-[#0E2A6D] dark:text-[#60A5FA]" size={20} />
-            System Parameters
-          </h3>
+        <DashboardCard className="space-y-6">
+          <SectionHeader title="System Parameters" icon={Settings2} />
 
-          <form onSubmit={handleSaveSettings} className="space-y-3">
-            <div>
-              <label className="text-caption font-bold text-[#64748B]">Institution Name</label>
-              <input
+          <form onSubmit={handleSaveSettings}>
+            <FormSection>
+              <Input
+                label="Institution Name"
                 type="text"
                 value={collegeName}
                 onChange={(e) => setCollegeName(e.target.value)}
-                className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
               />
-            </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-caption font-bold text-[#64748B]">College Code</label>
-                <input
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="College Code"
                   type="text"
                   value={collegeCode}
                   onChange={(e) => setCollegeCode(e.target.value)}
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
                 />
-              </div>
-              <div>
-                <label className="text-caption font-bold text-[#64748B]">AI Model Engine</label>
-                <input
+                <Input
+                  label="AI Model Engine"
                   type="text"
                   value={aiProvider}
                   onChange={(e) => setAiProvider(e.target.value)}
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
                 />
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-caption font-bold text-[#64748B]">SMTP Host</label>
-                <input
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="SMTP Host"
                   type="text"
                   value={smtpHost}
                   onChange={(e) => setSmtpHost(e.target.value)}
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
                 />
-              </div>
-              <div>
-                <label className="text-caption font-bold text-[#64748B]">SMTP Port</label>
-                <input
+                <Input
+                  label="SMTP Port"
                   type="number"
                   value={smtpPort}
                   onChange={(e) => setSmtpPort(Number(e.target.value))}
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
                 />
               </div>
-            </div>
 
-            <div>
-              <label className="text-caption font-bold text-[#64748B]">Storage Limit (GB)</label>
-              <input
+              <Input
+                label="Storage Limit (GB)"
                 type="number"
                 value={storageLimitGb}
                 onChange={(e) => setStorageLimitGb(Number(e.target.value))}
-                className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
               />
-            </div>
+            </FormSection>
 
-            <div className="pt-2">
-              <button
-                type="submit"
-                disabled={saving}
-                className="h-10 px-4 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-caption font-bold flex items-center gap-2 transition disabled:opacity-50"
-              >
-                <Save size={16} /> {saving ? 'Saving...' : 'Save Settings'}
-              </button>
+            <div className="pt-6 mt-6 border-t border-[#E2E8F0] dark:border-[#2A2A2A] flex justify-end">
+              <Button type="submit" variant="primary" isLoading={saving} leftIcon={<Save size={16} />}>
+                Save Settings
+              </Button>
             </div>
           </form>
-        </div>
+        </DashboardCard>
 
         {/* Audit Logs Stream */}
-        <div className="bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs space-y-4">
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] flex items-center gap-2">
-            <ShieldCheck className="text-emerald-600 dark:text-emerald-400" size={20} />
-            Security & Admin Audit Logs
-          </h3>
+        <DashboardCard className="space-y-4">
+          <SectionHeader title="Security & Admin Audit Logs" icon={ShieldCheck} iconColor="text-emerald-500" />
 
-          <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
+          <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 no-scrollbar">
             {auditLogs.map((log) => (
-              <div key={log.id} className="p-3 rounded-xl bg-[#F5F7FB] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] space-y-1">
+              <div key={log.id} className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-heading font-bold text-caption text-[#0E2A6D] dark:text-[#60A5FA]">{log.action}</span>
-                  <span className="text-small text-[#64748B]">{new Date(log.created_at).toLocaleTimeString()}</span>
+                  <span className="font-heading font-bold text-sm text-blue-600 dark:text-blue-400">{log.action}</span>
+                  <span className="text-xs font-medium text-zinc-500">{new Date(log.created_at).toLocaleTimeString()}</span>
                 </div>
-                <p className="text-caption text-[#475569] dark:text-[#CBD5E1]">
+                <p className="text-xs text-zinc-600 dark:text-zinc-400">
                   Target: {log.target_type} ({log.target_id || 'N/A'}) · {log.details || 'Action completed successfully.'}
                 </p>
-                <p className="text-small font-mono text-[#64748B]">User: {log.user_email || 'admin@campusmate.edu'} · IP: {log.ip_address}</p>
+                <div className="pt-2 mt-2 border-t border-zinc-200 dark:border-zinc-700/50 flex justify-between">
+                  <span className="text-[11px] font-mono text-zinc-500">User: {log.user_email || 'admin@campusmate.edu'}</span>
+                  <span className="text-[11px] font-mono text-zinc-500">IP: {log.ip_address}</span>
+                </div>
               </div>
             ))}
+            {auditLogs.length === 0 && (
+              <div className="text-sm text-zinc-500 text-center py-10">No audit logs found.</div>
+            )}
           </div>
-        </div>
+        </DashboardCard>
       </div>
-    </div>
+    </PageContainer>
   );
 };

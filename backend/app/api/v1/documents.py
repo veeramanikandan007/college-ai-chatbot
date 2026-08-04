@@ -11,6 +11,7 @@ from app.rag.rag_service import RAGService
 from app.services.ai_service import AIService
 from app.core.config import settings
 from app.core.logging import get_logger
+from app.worker.tasks import process_document_task
 
 logger = get_logger(__name__)
 
@@ -215,19 +216,27 @@ async def upload_document(
         "category": folder_name or "General",
         "is_pinned": False,
         "is_favorite": False,
-        "is_indexed": True,
+        "is_indexed": False,  # Changed to False until Celery job finishes
         "chunk_count": max(3, file_size // 150000),
-        "summary": f"Auto-generated AI overview for {file.filename}. Covers primary concepts, key formulas, and structural outline.",
-        "keywords": ["Study Material", "Lecture Notes", "Exam Prep", "CollegeMate AI"],
-        "topics": ["Core Concepts", "Important Definitions", "Practice Problems"],
+        "summary": "Processing document...",
+        "keywords": [],
+        "topics": [],
         "estimated_reading_time": max(2, file_size // (500 * 1024)),
         "difficulty": "Intermediate",
-        "extracted_text": extracted_preview,
+        "extracted_text": "Processing document via background job...",
         "created_at": datetime.utcnow().isoformat() + "Z"
     }
 
     _DOCUMENT_STORE.insert(0, new_doc)
-    return {"message": "Document uploaded and indexed successfully!", "document": new_doc}
+
+    # Dispatch Background Task
+    try:
+        process_document_task.delay(str(dest_path), new_id)
+        logger.info(f"Dispatched background processing for {new_id}")
+    except Exception as e:
+        logger.error(f"Failed to dispatch Celery task: {e}")
+
+    return {"message": "Document uploaded and processing in background!", "document": new_doc}
 
 @router.get("/{doc_id}")
 async def get_document(doc_id: int):

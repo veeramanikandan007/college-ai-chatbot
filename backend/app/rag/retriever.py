@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Dict, List, Tuple
+import difflib
 
 from app.rag.embedding_service import EmbeddingService
 from app.rag.vector_store import VectorStore
@@ -26,19 +27,35 @@ def _score_to_confidence(score: float) -> str:
     return "LOW"
 
 
-def _mmr_deduplicate(results: List[Dict[str, Any]], diversity_threshold: float = 0.05) -> List[Dict[str, Any]]:
+def _mmr_deduplicate(results: List[Dict[str, Any]], similarity_threshold: float = 0.85) -> List[Dict[str, Any]]:
     """
-    Simple MMR-style deduplication: drop chunks whose content is nearly identical
-    (same first 120 characters) to a previously selected chunk so the LLM receives
-    diverse evidence rather than repeated passages.
+    Semantic MMR-style deduplication: drop chunks whose content is highly similar
+    to a previously selected chunk using SequenceMatcher to avoid redundant context.
     """
-    seen_fingerprints: set[str] = set()
     unique: List[Dict[str, Any]] = []
+    
     for chunk in results:
-        fingerprint = chunk.get("content", "")[:120].strip().lower()
-        if fingerprint not in seen_fingerprints:
-            seen_fingerprints.add(fingerprint)
+        content = chunk.get("content", "").strip()
+        if not content:
+            continue
+            
+        is_duplicate = False
+        for u in unique:
+            u_content = u.get("content", "")
+            # Quick check if exact match
+            if content == u_content:
+                is_duplicate = True
+                break
+                
+            # Semantic similarity check using SequenceMatcher
+            similarity = difflib.SequenceMatcher(None, content[:200], u_content[:200]).ratio()
+            if similarity > similarity_threshold:
+                is_duplicate = True
+                break
+                
+        if not is_duplicate:
             unique.append(chunk)
+            
     return unique
 
 

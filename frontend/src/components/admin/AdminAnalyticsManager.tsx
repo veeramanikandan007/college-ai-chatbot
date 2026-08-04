@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, Users, HardDrive, Award, Activity } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { BarChart3, HardDrive, Award } from 'lucide-react';
 import { adminDashboardApi, AdminAnalyticsMaster } from '../../api/adminDashboard';
+import { PageHeader } from '../ui/PageHeader';
+import { Table, Column } from '../ui/Table';
+import { DashboardCard } from '../ui/DashboardCard';
+import { SectionHeader } from '../ui/SectionHeader';
+import { PageContainer } from '../ui/PageContainer';
 
 export const AdminAnalyticsManager: React.FC = () => {
   const [data, setData] = useState<AdminAnalyticsMaster | null>(null);
@@ -23,92 +29,74 @@ export const AdminAnalyticsManager: React.FC = () => {
   };
 
   if (loading || !data) {
-    return <div className="p-8 text-center text-caption text-[#64748B] animate-pulse">Loading analytics engine...</div>;
+    return <div className="p-8 text-center text-sm text-zinc-500 animate-pulse">Loading analytics engine...</div>;
   }
 
+  const columns: Column<any>[] = [
+    { key: 'reg_no', header: 'Register Number', render: (s) => <span className="font-mono font-bold text-blue-600 dark:text-blue-400">{s.reg_no}</span> },
+    { key: 'name', header: 'Student Name', render: (s) => <span className="font-semibold text-zinc-900 dark:text-zinc-100">{s.name}</span> },
+    { key: 'dept', header: 'Department', render: (s) => <span className="text-sm text-zinc-500">{s.dept}</span> },
+    { key: 'cgpa', header: 'CGPA', render: (s) => <span className="font-bold text-emerald-600 dark:text-emerald-400">{s.cgpa}</span> },
+    { key: 'attendance', header: 'Attendance %', render: (s) => <span className="font-semibold text-zinc-900 dark:text-zinc-100">{s.attendance}%</span> },
+  ];
+
   return (
-    <div className="space-y-6 font-body">
-      <div className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
-        <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">System & Academic Analytics Intelligence</h3>
-        <p className="text-small text-[#64748B] dark:text-[#94A3B8]">Deep analytics on user activity, module adoption, storage breakdown, and student performance.</p>
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="System & Academic Analytics Intelligence"
+        description="Deep analytics on user activity, module adoption, storage breakdown, and student performance."
+        icon={BarChart3}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Most Used Modules */}
-        <div className="bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs space-y-4">
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] flex items-center gap-2">
-            <BarChart3 className="text-[#0E2A6D] dark:text-[#60A5FA]" size={20} />
-            Most Used Modules
-          </h3>
+        <DashboardCard className="space-y-4">
+          <SectionHeader title="Most Used Modules" icon={BarChart3} />
 
-          <div className="space-y-3">
+          <div className="space-y-4 pt-2">
             {data.most_used_modules.map((m, idx) => (
-              <div key={idx} className="space-y-1">
-                <div className="flex justify-between text-caption font-semibold">
-                  <span className="text-[#1F2937] dark:text-[#F8FAFC]">{m.module}</span>
-                  <span className="text-[#0E2A6D] dark:text-[#60A5FA] font-bold">{m.usage_count} sessions</span>
+              <div key={idx} className="space-y-1.5">
+                <div className="flex justify-between text-xs font-semibold">
+                  <span className="text-zinc-900 dark:text-zinc-100">{m.module}</span>
+                  <span className="text-blue-600 dark:text-blue-400 font-bold">{m.usage_count} sessions</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                <div className="w-full h-2 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-[#0E2A6D] to-[#1E4DB7] dark:from-[#60A5FA] dark:to-[#3B82F6] rounded-full"
+                    className="h-full bg-blue-500 rounded-full"
                     style={{ width: `${Math.min(100, (m.usage_count / 1500) * 100)}%` }}
                   />
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </DashboardCard>
 
         {/* Storage Distribution */}
-        <div className="bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs space-y-4">
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] flex items-center gap-2">
-            <HardDrive className="text-[#D9A441]" size={20} />
-            Storage Category Breakdown
-          </h3>
+        <DashboardCard className="space-y-4">
+          <SectionHeader title="Storage Category Breakdown" icon={HardDrive} iconColor="text-amber-500" />
 
-          <div className="space-y-3">
+          <div className="space-y-3 pt-2">
             {data.storage_distribution.map((s, idx) => (
-              <div key={idx} className="p-3.5 rounded-xl bg-[#F5F7FB] dark:bg-[#0F172A] flex items-center justify-between text-body font-semibold">
-                <span className="text-[#1F2937] dark:text-[#F8FAFC]">{s.category}</span>
-                <span className="font-mono text-caption text-[#D9A441] font-bold">{s.size_gb} GB</span>
+              <div key={idx} className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 flex items-center justify-between text-sm font-medium border border-zinc-100 dark:border-zinc-800">
+                <span className="text-zinc-900 dark:text-zinc-100">{s.category}</span>
+                <span className="font-mono text-amber-600 dark:text-amber-400 font-bold">{s.size_gb} GB</span>
               </div>
             ))}
           </div>
-        </div>
+        </DashboardCard>
       </div>
 
       {/* Top Performing Students Roster */}
-      <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs p-6 space-y-4">
-        <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] flex items-center gap-2">
-          <Award className="text-emerald-600 dark:text-emerald-400" size={20} />
-          Top Performing Academic Rankers
-        </h3>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-body font-body">
-            <thead>
-              <tr className="border-b border-[#E2E8F0] dark:border-[#334155] text-caption font-bold uppercase text-[#64748B]">
-                <th className="py-2.5 px-4">Register Number</th>
-                <th className="py-2.5 px-4">Student Name</th>
-                <th className="py-2.5 px-4">Department</th>
-                <th className="py-2.5 px-4 text-center">CGPA</th>
-                <th className="py-2.5 px-4 text-center">Attendance %</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#334155]">
-              {data.top_performing_students.map((st, idx) => (
-                <tr key={idx} className="hover:bg-[#F5F7FB]/50 dark:hover:bg-[#0F172A]/50">
-                  <td className="py-3 px-4 font-mono font-bold text-caption text-[#0E2A6D] dark:text-[#60A5FA]">{st.reg_no}</td>
-                  <td className="py-3 px-4 font-heading font-bold text-[#1F2937] dark:text-[#F8FAFC]">{st.name}</td>
-                  <td className="py-3 px-4 text-caption text-[#64748B]">{st.dept}</td>
-                  <td className="py-3 px-4 text-center font-bold text-emerald-600 dark:text-emerald-400">{st.cgpa}</td>
-                  <td className="py-3 px-4 text-center font-semibold text-[#1F2937] dark:text-[#F8FAFC]">{st.attendance}%</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <DashboardCard className="p-0 md:p-0 overflow-hidden">
+        <SectionHeader title="Top Performing Academic Rankers" icon={Award} iconColor="text-emerald-500" className="p-5 pb-0" />
+        <div className="p-5">
+          <Table
+            columns={columns}
+            data={data.top_performing_students}
+            searchable={false}
+          />
         </div>
-      </div>
-    </div>
+      </DashboardCard>
+    </PageContainer>
   );
 };

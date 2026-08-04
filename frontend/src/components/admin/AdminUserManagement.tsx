@@ -1,47 +1,73 @@
-import React, { useState, useEffect } from 'react';
-import { Users, Plus, Trash2, Key, ShieldCheck, Search, Filter, X, UserCheck, UserX } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { Users, Plus, Trash2, Key, ShieldCheck, UserCheck, UserX, UserSearch } from 'lucide-react';
 import { adminDashboardApi, AdminUser } from '../../api/adminDashboard';
 import { useToast } from '../../context/ToastContext';
+import { Table, Column } from '../ui/Table';
+import { Dialog } from '../ui/Dialog';
+import { Badge } from '../ui/Badge';
+import { Button } from '../ui/Button';
+import { PageHeader } from '../ui/PageHeader';
+import { FilterBar, FilterOption } from '../ui/FilterBar';
+import { DashboardCard } from '../ui/DashboardCard';
+import { Input } from '../ui/Input';
+import { FormSection } from '../ui/FormSection';
+import { PageContainer } from '../ui/PageContainer';
 
 interface Props {
-  selectedRole: string;
-  selectedDept: string;
-  selectedStatus: string;
-  searchQuery: string;
+  searchQuery?: string;
+  selectedRole?: string;
+  selectedDept?: string;
+  selectedStatus?: string;
 }
 
-export const AdminUserManagement: React.FC<Props> = ({
-  selectedRole,
-  selectedDept,
-  selectedStatus,
-  searchQuery,
+const roleOptions: FilterOption[] = [
+  { id: 'All', label: 'All Roles' },
+  { id: 'student', label: 'Student' },
+  { id: 'faculty', label: 'Faculty' },
+  { id: 'admin', label: 'Admin' },
+];
+
+const statusOptions: FilterOption[] = [
+  { id: 'All', label: 'All Status' },
+  { id: 'active', label: 'Active' },
+  { id: 'suspended', label: 'Suspended' },
+];
+
+export const AdminUserManagement: React.FC<Props> = ({ 
+  searchQuery = '',
+  selectedRole: propsSelectedRole = 'All',
+  selectedDept = 'All',
+  selectedStatus: propsSelectedStatus = 'All' 
 }) => {
   const { showToast } = useToast();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  
+  const [selectedRole, setSelectedRole] = useState(propsSelectedRole);
+  const [selectedStatus, setSelectedStatus] = useState(propsSelectedStatus);
 
-  // Create Form State
+  // Modals
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [resetModalUser, setResetModalUser] = useState<AdminUser | null>(null);
+
+  // Form State
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('student');
   const [department, setDepartment] = useState('Computer Science & Engineering');
   const [password, setPassword] = useState('CollegeMate@2026');
-
-  // Password reset state
-  const [resetModalUser, setResetModalUser] = useState<AdminUser | null>(null);
   const [newPassword, setNewPassword] = useState('CollegeMate@2026');
 
   useEffect(() => {
     fetchUsers();
-  }, [selectedRole, selectedDept, selectedStatus, searchQuery]);
+  }, [selectedRole, searchQuery]);
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
       const data = await adminDashboardApi.getUsers({
         role: selectedRole !== 'All' ? selectedRole : undefined,
-        department: selectedDept !== 'All' ? selectedDept : undefined,
         search: searchQuery,
       });
       setUsers(data);
@@ -52,25 +78,25 @@ export const AdminUserManagement: React.FC<Props> = ({
     }
   };
 
+  const filteredUsers = useMemo(() => {
+    return users.filter(u => {
+      if (selectedStatus === 'active' && !u.is_active) return false;
+      if (selectedStatus === 'suspended' && u.is_active) return false;
+      return true;
+    });
+  }, [users, selectedStatus]);
+
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim()) return;
 
     try {
-      await adminDashboardApi.createUser({
-        name,
-        email,
-        role,
-        department,
-        password,
-      });
+      await adminDashboardApi.createUser({ name, email, role, department, password });
       showToast(`User ${name} created successfully.`, 'success');
       setShowCreateModal(false);
-      setName('');
-      setEmail('');
+      setName(''); setEmail('');
       fetchUsers();
     } catch (err: any) {
-      console.error('Error creating user:', err);
       showToast(err.response?.data?.detail || 'Failed to create user.', 'error');
     }
   };
@@ -80,9 +106,7 @@ export const AdminUserManagement: React.FC<Props> = ({
       const updated = await adminDashboardApi.toggleUserStatus(user.id);
       showToast(`User ${user.name} is now ${updated.is_active ? 'Active' : 'Suspended'}.`, 'info');
       fetchUsers();
-    } catch (err) {
-      console.error('Error toggling user status:', err);
-    }
+    } catch (err) {}
   };
 
   const handleResetPassword = async () => {
@@ -91,9 +115,7 @@ export const AdminUserManagement: React.FC<Props> = ({
       await adminDashboardApi.resetUserPassword(resetModalUser.id, newPassword);
       showToast(`Password reset for ${resetModalUser.name}.`, 'success');
       setResetModalUser(null);
-    } catch (err) {
-      console.error('Error resetting password:', err);
-    }
+    } catch (err) {}
   };
 
   const handleDeleteUser = async (id: number, userName: string) => {
@@ -102,239 +124,136 @@ export const AdminUserManagement: React.FC<Props> = ({
       await adminDashboardApi.deleteUser(id);
       showToast(`User ${userName} deleted.`, 'info');
       fetchUsers();
-    } catch (err) {
-      console.error('Error deleting user:', err);
-    }
+    } catch (err) {}
   };
 
-  return (
-    <div className="space-y-6 font-body">
-      {/* ── Top Bar Controls ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
+  const columns: Column<AdminUser>[] = [
+    {
+      key: 'name',
+      header: 'User Name & Email',
+      sortable: true,
+      render: (u) => (
         <div>
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">User & Role Management</h3>
-          <p className="text-small text-[#64748B] dark:text-[#94A3B8]">Manage student, faculty, and administrator accounts, roles, and status.</p>
+          <div className="font-semibold text-zinc-900 dark:text-zinc-100">{u.name}</div>
+          <div className="text-xs text-zinc-500">{u.email}</div>
         </div>
+      )
+    },
+    {
+      key: 'role',
+      header: 'Role',
+      sortable: true,
+      render: (u) => {
+        let variant: 'success' | 'warning' | 'error' | 'info' | 'neutral' = 'info';
+        if (u.role === 'admin') variant = 'error';
+        if (u.role === 'faculty') variant = 'warning';
+        return <Badge variant={variant} className="capitalize">{u.role}</Badge>;
+      }
+    },
+    {
+      key: 'department',
+      header: 'Department',
+      sortable: true,
+      render: (u) => <span className="text-sm text-zinc-600 dark:text-zinc-400">{u.department || 'General'}</span>
+    },
+    {
+      key: 'is_active',
+      header: 'Status',
+      sortable: true,
+      render: (u) => (
+        <Badge variant={u.is_active ? 'success' : 'neutral'}>
+          {u.is_active ? 'Active' : 'Suspended'}
+        </Badge>
+      )
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      render: (u) => (
+        <div className="flex items-center justify-end gap-1">
+          <Button variant="ghost" size="sm" onClick={() => handleToggleStatus(u)} title={u.is_active ? 'Suspend' : 'Activate'}>
+            {u.is_active ? <UserX size={16} className="text-amber-500" /> : <UserCheck size={16} className="text-emerald-500" />}
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => setResetModalUser(u)} title="Reset Password">
+            <Key size={16} className="text-blue-500" />
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => handleDeleteUser(u.id, u.name)} title="Delete">
+            <Trash2 size={16} className="text-red-500" />
+          </Button>
+        </div>
+      )
+    }
+  ];
 
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="h-10 px-4 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-caption font-bold flex items-center gap-2 transition shrink-0"
-        >
-          <Plus size={18} /> Add User
-        </button>
+  return (
+    <PageContainer>
+      <PageHeader
+        title="User & Role Management"
+        description="Manage student, faculty, and administrator accounts, roles, and status."
+        icon={Users}
+        actionText="Add User"
+        actionIcon={Plus}
+        onActionClick={() => setShowCreateModal(true)}
+      />
+
+      <div className="flex flex-col sm:flex-row gap-4">
+        <FilterBar options={roleOptions} activeId={selectedRole} onSelect={setSelectedRole} />
+        <FilterBar options={statusOptions} activeId={selectedStatus} onSelect={setSelectedStatus} />
       </div>
 
-      {/* ── Users Table ── */}
-      <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse font-body text-body">
-            <thead>
-              <tr className="border-b border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-caption font-bold uppercase tracking-[0.05em] text-[#64748B] dark:text-[#94A3B8]">
-                <th className="py-3.5 px-4">User Name & Email</th>
-                <th className="py-3.5 px-4">Role</th>
-                <th className="py-3.5 px-4">Department</th>
-                <th className="py-3.5 px-4 text-center">Account Status</th>
-                <th className="py-3.5 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#334155]">
-              {users.map((u) => (
-                <tr key={u.id} className="hover:bg-[#F5F7FB]/50 dark:hover:bg-[#0F172A]/50 transition">
-                  <td className="py-3.5 px-4">
-                    <h4 className="font-heading font-bold text-[#1F2937] dark:text-[#F8FAFC]">{u.name}</h4>
-                    <p className="text-caption text-[#64748B]">{u.email}</p>
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <span
-                      className={`inline-block px-2.5 py-0.5 rounded-md text-caption font-bold capitalize ${
-                        u.role === 'admin'
-                          ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
-                          : u.role === 'faculty'
-                          ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                          : 'bg-[#0E2A6D]/10 text-[#0E2A6D] dark:text-[#60A5FA]'
-                      }`}
-                    >
-                      {u.role}
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 text-caption text-[#475569] dark:text-[#CBD5E1]">
-                    {u.department || 'General'}
-                  </td>
-                  <td className="py-3.5 px-4 text-center">
-                    <span
-                      className={`inline-block px-2.5 py-0.5 rounded-md text-caption font-bold ${
-                        u.is_active
-                          ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                          : 'bg-slate-100 text-[#64748B]'
-                      }`}
-                    >
-                      {u.is_active ? 'Active' : 'Suspended'}
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 text-right">
-                    <div className="flex items-center justify-end gap-1.5">
-                      <button
-                        onClick={() => handleToggleStatus(u)}
-                        title={u.is_active ? 'Suspend Account' : 'Activate Account'}
-                        className={`p-1.5 rounded-lg transition ${
-                          u.is_active ? 'text-amber-600 hover:bg-amber-50 dark:hover:bg-slate-800' : 'text-emerald-600 hover:bg-emerald-50'
-                        }`}
-                      >
-                        {u.is_active ? <UserX size={16} /> : <UserCheck size={16} />}
-                      </button>
+      <DashboardCard className="p-0 md:p-0 overflow-hidden">
+        <Table
+          columns={columns}
+          data={filteredUsers}
+          isLoading={loading}
+          searchable={false} 
+          emptyMessage="No users match the current filters."
+        />
+      </DashboardCard>
 
-                      <button
-                        onClick={() => setResetModalUser(u)}
-                        title="Reset Password"
-                        className="p-1.5 text-[#64748B] hover:text-[#0E2A6D] hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
-                      >
-                        <Key size={16} />
-                      </button>
-
-                      <button
-                        onClick={() => handleDeleteUser(u.id, u.name)}
-                        title="Delete User"
-                        className="p-1.5 text-[#64748B] hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800 rounded-lg"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-
-              {users.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="py-12 text-center text-caption text-[#64748B]">
-                    No user accounts match the current query.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* ── Create User Modal ── */}
-      {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl border border-[#E2E8F0] dark:border-[#334155]">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#334155] pb-3">
-              <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Create User Account</h3>
-              <button onClick={() => setShowCreateModal(false)} className="text-[#64748B] hover:text-[#1F2937]">
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateUser} className="space-y-3">
+      {/* Create User Dialog */}
+      <Dialog isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Create User Account">
+        <form id="create-user-form" onSubmit={handleCreateUser}>
+          <FormSection>
+            <Input label="Full Name" type="text" value={name} onChange={e => setName(e.target.value)} required />
+            <Input label="Email Address" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Full Name</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Dr. Rajesh Kannan"
-                  required
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
-                />
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#475569] dark:text-[#CBD5E1] mb-1.5">System Role</label>
+                <select value={role} onChange={e => setRole(e.target.value)} className="w-full h-10 px-3 bg-white dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] rounded-[10px] text-sm text-[#1F2937] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#1E4DB7]/30 focus:border-[#1E4DB7] transition-all duration-200">
+                  <option value="student">Student</option>
+                  <option value="faculty">Faculty</option>
+                  <option value="admin">Administrator</option>
+                </select>
               </div>
-
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Email Address</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. rajesh@campusmate.edu"
-                  required
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
-                />
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#475569] dark:text-[#CBD5E1] mb-1.5">Department</label>
+                <select value={department} onChange={e => setDepartment(e.target.value)} className="w-full h-10 px-3 bg-white dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] rounded-[10px] text-sm text-[#1F2937] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#1E4DB7]/30 focus:border-[#1E4DB7] transition-all duration-200">
+                  <option value="Computer Science & Engineering">CS & Engineering</option>
+                  <option value="Information Technology">Information Technology</option>
+                  <option value="Electronics & Communication">Electronics & Comm</option>
+                </select>
               </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-caption font-bold text-[#64748B]">System Role</label>
-                  <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
-                  >
-                    <option value="student">Student</option>
-                    <option value="faculty">Faculty</option>
-                    <option value="admin">Administrator</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-caption font-bold text-[#64748B]">Department</label>
-                  <select
-                    value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
-                  >
-                    <option value="Computer Science & Engineering">CS & Engineering</option>
-                    <option value="Information Technology">Information Technology</option>
-                    <option value="Electronics & Communication">Electronics & Comm</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-caption font-bold text-[#64748B]">Initial Password</label>
-                <input
-                  type="text"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  className="h-10 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-caption font-bold text-[#64748B]"
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="h-10 px-4 rounded-xl bg-[#0E2A6D] text-white text-caption font-bold">
-                  Create User
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ── Password Reset Modal ── */}
-      {resetModalUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl border border-[#E2E8F0] dark:border-[#334155]">
-            <h4 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">
-              Reset Password for {resetModalUser.name}
-            </h4>
-
-            <div>
-              <label className="text-caption font-bold text-[#64748B]">New Password</label>
-              <input
-                type="text"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
-              />
             </div>
-
-            <div className="flex items-center justify-end gap-2">
-              <button onClick={() => setResetModalUser(null)} className="h-9 px-3 text-caption font-bold text-[#64748B]">
-                Cancel
-              </button>
-              <button onClick={handleResetPassword} className="h-9 px-4 rounded-xl bg-[#0E2A6D] text-white text-caption font-bold">
-                Reset Password
-              </button>
-            </div>
-          </div>
+            <Input label="Initial Password" type="text" value={password} onChange={e => setPassword(e.target.value)} />
+          </FormSection>
+        </form>
+        <div className="flex justify-end gap-2 mt-6">
+          <Button variant="ghost" onClick={() => setShowCreateModal(false)}>Cancel</Button>
+          <Button variant="primary" type="submit" form="create-user-form">Create User</Button>
         </div>
-      )}
-    </div>
+      </Dialog>
+
+      {/* Password Reset Dialog */}
+      <Dialog isOpen={!!resetModalUser} onClose={() => setResetModalUser(null)} title={`Reset Password for ${resetModalUser?.name}`}>
+        <FormSection>
+          <Input label="New Password" type="text" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
+        </FormSection>
+        <div className="flex justify-end gap-2 mt-6">
+          <Button variant="ghost" onClick={() => setResetModalUser(null)}>Cancel</Button>
+          <Button variant="primary" onClick={handleResetPassword}>Reset Password</Button>
+        </div>
+      </Dialog>
+    </PageContainer>
   );
 };

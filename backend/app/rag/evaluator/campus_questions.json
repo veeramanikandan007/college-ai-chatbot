@@ -1,0 +1,17 @@
+[
+  {
+    "question": "What are the college bus timings?",
+    "expected_answer": "Bus schedule information or timing details for transport",
+    "category": "transport"
+  },
+  {
+    "question": "What is the attendance policy?",
+    "expected_answer": "Minimum 75% attendance is required",
+    "category": "academics"
+  },
+  {
+    "question": "Where is the library located and what are its timings?",
+    "expected_answer": "Central Library timings and location details",
+    "category": "facilities"
+  }
+]

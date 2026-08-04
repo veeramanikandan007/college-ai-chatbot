@@ -8,7 +8,7 @@ from datetime import datetime
 
 from app.rag.document_loader import DocumentLoader
 from app.rag.embedding_service import EmbeddingService
-from app.rag.retriever import Retriever
+from app.rag.hybrid_retriever import HybridRetriever
 from app.rag.text_splitter import TextSplitter
 from app.rag.vector_store import VectorStore
 from app.core.logging import get_logger
@@ -31,7 +31,7 @@ class RAGService:
         self.text_splitter = TextSplitter(chunk_size=1000, chunk_overlap=200)
         self.embedding_service = EmbeddingService()
         self.vector_store = VectorStore()
-        self.retriever = Retriever(self.embedding_service, self.vector_store)
+        self.retriever = HybridRetriever(self.embedding_service, self.vector_store)
 
     def process_and_index_file(self, file_path: Path | str) -> Dict[str, Any]:
         """Read single file, clean text, chunk (1000/200), generate embeddings, update ChromaDB."""
@@ -119,6 +119,9 @@ class RAGService:
                 chunks = self.text_splitter.split_documents(documents)
                 indexed = self.vector_store.add_chunks(chunks)
                 total_chunks += indexed
+
+        if total_chunks > 0:
+            self.retriever._init_bm25()
 
         logger.info('RAG index build completed. Total chunks indexed: %s', total_chunks)
         return total_chunks

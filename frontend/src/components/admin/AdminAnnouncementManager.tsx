@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Bell, Plus, Trash2, X, ShieldCheck } from 'lucide-react';
 import { adminDashboardApi, AdminAnnouncement } from '../../api/adminDashboard';
 import { useToast } from '../../context/ToastContext';
+import { PageHeader } from '../ui/PageHeader';
+import { Button } from '../ui/Button';
+import { Dialog } from '../ui/Dialog';
+import { Table, Column } from '../ui/Table';
+import { Badge } from '../ui/Badge';
+import { DashboardCard } from '../ui/DashboardCard';
+import { FormSection } from '../ui/FormSection';
+import { PageContainer } from '../ui/PageContainer';
+import { Input } from '../ui/Input';
 
 export const AdminAnnouncementManager: React.FC = () => {
   const { showToast } = useToast();
@@ -44,13 +54,12 @@ export const AdminAnnouncementManager: React.FC = () => {
         target_filter: targetFilter,
         priority,
       });
-      showToast('Announcement broadcast successfully to target audience.', 'success');
+      showToast('Announcement broadcast successfully.', 'success');
       setShowModal(false);
       setTitle('');
       setContent('');
       fetchAnnouncements();
     } catch (err) {
-      console.error('Error creating announcement:', err);
       showToast('Failed to broadcast announcement.', 'error');
     }
   };
@@ -61,132 +70,113 @@ export const AdminAnnouncementManager: React.FC = () => {
       await adminDashboardApi.deleteAnnouncement(id);
       showToast('Announcement deleted.', 'info');
       fetchAnnouncements();
-    } catch (err) {
-      console.error('Error deleting announcement:', err);
-    }
+    } catch (err) {}
   };
 
+  const columns: Column<AdminAnnouncement>[] = [
+    {
+      key: 'title',
+      header: 'Announcement',
+      sortable: true,
+      render: (a) => (
+        <div className="max-w-md">
+          <div className="font-semibold text-zinc-900 dark:text-zinc-100">{a.title}</div>
+          <div className="text-xs text-zinc-500 mt-1 line-clamp-2">{a.content}</div>
+        </div>
+      )
+    },
+    {
+      key: 'target',
+      header: 'Target Audience',
+      render: (a) => (
+        <Badge variant="info">
+          {a.target_type} ({a.target_filter})
+        </Badge>
+      )
+    },
+    {
+      key: 'priority',
+      header: 'Priority',
+      sortable: true,
+      render: (a) => {
+        const v = a.priority === 'High' ? 'error' : a.priority === 'Normal' ? 'info' : 'neutral';
+        return <Badge variant={v}>{a.priority}</Badge>;
+      }
+    },
+    {
+      key: 'date',
+      header: 'Date',
+      sortable: true,
+      render: (a) => <span className="text-sm text-zinc-500">{new Date(a.created_at).toLocaleDateString()}</span>
+    },
+    {
+      key: 'actions',
+      header: '',
+      render: (a) => (
+        <div className="flex justify-end">
+          <Button variant="ghost" size="sm" onClick={() => handleDeleteAnnouncement(a.id)}>
+            <Trash2 size={16} className="text-red-500" />
+          </Button>
+        </div>
+      )
+    }
+  ];
+
   return (
-    <div className="space-y-6 font-body">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
-        <div>
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Campus Announcement & Broadcast Center</h3>
-          <p className="text-small text-[#64748B] dark:text-[#94A3B8]">Broadcast targeted notifications to students, faculty, departments, or semesters.</p>
-        </div>
+    <PageContainer>
+      <PageHeader
+        title="Campus Announcement & Broadcast Center"
+        description="Broadcast targeted notifications to students, faculty, departments, or semesters."
+        icon={Bell}
+        actionText="New Broadcast"
+        actionIcon={Plus}
+        onActionClick={() => setShowModal(true)}
+      />
 
-        <button
-          onClick={() => setShowModal(true)}
-          className="h-10 px-4 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-caption font-bold flex items-center gap-2 transition shrink-0"
-        >
-          <Plus size={18} /> New Broadcast
-        </button>
-      </div>
+      <DashboardCard className="p-0 md:p-0 overflow-hidden">
+        <Table
+          columns={columns}
+          data={announcements}
+          isLoading={loading}
+          searchable={true}
+          searchPlaceholder="Search announcements..."
+          emptyMessage="No announcements found."
+        />
+      </DashboardCard>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {announcements.map((a) => (
-          <div
-            key={a.id}
-            className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs space-y-3 flex flex-col justify-between"
-          >
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-caption font-bold uppercase px-2.5 py-0.5 rounded bg-[#0E2A6D]/10 text-[#0E2A6D] dark:text-[#60A5FA]">
-                  Target: {a.target_type} ({a.target_filter})
-                </span>
-                <button onClick={() => handleDeleteAnnouncement(a.id)} className="p-1 text-[#64748B] hover:text-rose-600 rounded">
-                  <Trash2 size={16} />
-                </button>
-              </div>
+      <Dialog isOpen={showModal} onClose={() => setShowModal(false)} title="New Announcement Broadcast">
+        <form id="announcement-form" onSubmit={handleCreateAnnouncement}>
+          <FormSection>
+            <Input label="Announcement Title" type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Model Exam Schedule & Guidelines" required />
 
-              <h4 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">{a.title}</h4>
-              <p className="text-caption text-[#475569] dark:text-[#CBD5E1] line-clamp-3">{a.content}</p>
-            </div>
-
-            <div className="pt-3 border-t border-[#E2E8F0] dark:border-[#334155] flex items-center justify-between text-caption text-[#64748B]">
-              <span>Priority: <strong className="text-[#1F2937] dark:text-[#F8FAFC]">{a.priority}</strong></span>
-              <span>{new Date(a.created_at).toLocaleDateString()}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* ── Create Announcement Modal ── */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl border border-[#E2E8F0] dark:border-[#334155]">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#334155] pb-3">
-              <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">New Announcement Broadcast</h3>
-              <button onClick={() => setShowModal(false)} className="text-[#64748B]">
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateAnnouncement} className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Announcement Title</label>
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. Model Exam Schedule & Guidelines"
-                  required
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
-                />
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#475569] dark:text-[#CBD5E1] mb-1.5">Target Group</label>
+                <select value={targetType} onChange={e => setTargetType(e.target.value)} className="w-full h-10 px-3 bg-white dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] rounded-[10px] text-sm text-[#1F2937] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#1E4DB7]/30 focus:border-[#1E4DB7] transition-all duration-200">
+                  <option value="Entire College">Entire College</option>
+                  <option value="Department">Department</option>
+                  <option value="Semester">Semester</option>
+                  <option value="Faculty">Faculty Only</option>
+                </select>
               </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-caption font-bold text-[#64748B]">Target Group</label>
-                  <select
-                    value={targetType}
-                    onChange={(e) => setTargetType(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
-                  >
-                    <option value="Entire College">Entire College</option>
-                    <option value="Department">Department</option>
-                    <option value="Semester">Semester</option>
-                    <option value="Faculty">Faculty Only</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-caption font-bold text-[#64748B]">Priority</label>
-                  <select
-                    value={priority}
-                    onChange={(e) => setPriority(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
-                  >
-                    <option value="High">High</option>
-                    <option value="Normal">Normal</option>
-                    <option value="Low">Low</option>
-                  </select>
-                </div>
-              </div>
-
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Content</label>
-                <textarea
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  rows={4}
-                  placeholder="Enter full announcement details..."
-                  required
-                  className="w-full p-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
-                />
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#475569] dark:text-[#CBD5E1] mb-1.5">Priority</label>
+                <select value={priority} onChange={e => setPriority(e.target.value)} className="w-full h-10 px-3 bg-white dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] rounded-[10px] text-sm text-[#1F2937] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#1E4DB7]/30 focus:border-[#1E4DB7] transition-all duration-200">
+                  <option value="High">High</option>
+                  <option value="Normal">Normal</option>
+                  <option value="Low">Low</option>
+                </select>
               </div>
+            </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setShowModal(false)} className="h-10 px-4 rounded-xl border border-[#E2E8F0] text-caption font-bold text-[#64748B]">
-                  Cancel
-                </button>
-                <button type="submit" className="h-10 px-4 rounded-xl bg-[#0E2A6D] text-white text-caption font-bold">
-                  Broadcast Announcement
-                </button>
-              </div>
-            </form>
-          </div>
+            <Input label="Content" type="text" value={content} onChange={e => setContent(e.target.value)} placeholder="Enter full announcement details..." required />
+          </FormSection>
+        </form>
+        <div className="flex justify-end gap-2 mt-6">
+          <Button variant="ghost" onClick={() => setShowModal(false)}>Cancel</Button>
+          <Button variant="primary" type="submit" form="announcement-form">Broadcast Announcement</Button>
         </div>
-      )}
-    </div>
+      </Dialog>
+    </PageContainer>
   );
 };

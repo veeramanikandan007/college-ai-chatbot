@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Upload, Trash2, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { FileText, Upload, Trash2, RefreshCw } from 'lucide-react';
 import { adminDashboardApi } from '../../api/adminDashboard';
 import { useToast } from '../../context/ToastContext';
+import { PageHeader } from '../ui/PageHeader';
+import { Button } from '../ui/Button';
+import { Table, Column } from '../ui/Table';
+import { Badge } from '../ui/Badge';
+import { DashboardCard } from '../ui/DashboardCard';
+import { PageContainer } from '../ui/PageContainer';
 
 export const AdminDocumentManager: React.FC = () => {
   const { showToast } = useToast();
-  const [documents, setDocuments] = useState<string[]>([]);
+  const [documents, setDocuments] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [rebuilding, setRebuilding] = useState(false);
@@ -18,7 +25,12 @@ export const AdminDocumentManager: React.FC = () => {
     try {
       setLoading(true);
       const res = await adminDashboardApi.getDocuments();
-      setDocuments(res.documents || []);
+      const docs = res.documents || [];
+      const mappedDocs = docs.map((d: any, i: number) => ({
+        id: i,
+        filename: typeof d === 'string' ? d : d.filename,
+      }));
+      setDocuments(mappedDocs);
     } catch (err) {
       console.error('Error fetching documents:', err);
     } finally {
@@ -72,63 +84,67 @@ export const AdminDocumentManager: React.FC = () => {
     }
   };
 
+  const columns: Column<any>[] = [
+    {
+      key: 'filename',
+      header: 'Document Name',
+      sortable: true,
+      render: (doc) => (
+        <div className="flex items-center gap-3">
+          <FileText size={18} className="text-blue-500" />
+          <span className="font-semibold text-zinc-900 dark:text-zinc-100">{doc.filename}</span>
+        </div>
+      )
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      render: () => <Badge variant="success">Indexed</Badge>
+    },
+    {
+      key: 'actions',
+      header: '',
+      render: (doc) => (
+        <div className="flex justify-end">
+          <Button variant="ghost" size="sm" onClick={() => handleDeleteDocument(doc.filename)}>
+            <Trash2 size={16} className="text-red-500" />
+          </Button>
+        </div>
+      )
+    }
+  ];
+
   return (
-    <div className="space-y-6 font-body">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
-        <div>
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">AI Document Hub & RAG Index Manager</h3>
-          <p className="text-small text-[#64748B] dark:text-[#94A3B8]">Upload syllabus PDFs, college regulation manuals, and trigger ChromaDB vector index rebuilds.</p>
+    <PageContainer>
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div className="flex-1">
+          <PageHeader
+            title="AI Document Hub & RAG Index Manager"
+            description="Upload syllabus PDFs, college regulation manuals, and trigger ChromaDB vector index rebuilds."
+            icon={FileText}
+          />
         </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleRebuildIndex}
-            disabled={rebuilding}
-            className="h-10 px-3.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] hover:bg-[#F5F7FB] text-caption font-bold text-[#0E2A6D] dark:text-[#60A5FA] flex items-center gap-2 transition disabled:opacity-50"
-          >
-            <RefreshCw size={16} className={rebuilding ? 'animate-spin' : ''} /> {rebuilding ? 'Rebuilding...' : 'Rebuild RAG Index'}
-          </button>
-
-          <label className="h-10 px-4 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-caption font-bold flex items-center gap-2 transition cursor-pointer shrink-0">
-            <Upload size={18} /> {uploading ? 'Uploading...' : 'Upload PDF / DOCX'}
-            <input type="file" accept=".pdf,.docx,.txt" onChange={handleFileUpload} className="hidden" />
-          </label>
+        <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
+          <Button variant="outline" onClick={handleRebuildIndex} isLoading={rebuilding} leftIcon={<RefreshCw size={16} />}>
+            Rebuild RAG Index
+          </Button>
+          <Button variant="primary" isLoading={uploading} leftIcon={<Upload size={16} />} onClick={() => document.getElementById('doc-upload')?.click()}>
+            Upload PDF / DOCX
+          </Button>
+          <input type="file" id="doc-upload" accept=".pdf,.docx,.txt" onChange={handleFileUpload} className="hidden" />
         </div>
       </div>
 
-      {/* Document Roster */}
-      <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs p-6 space-y-4">
-        <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] flex items-center gap-2">
-          <FileText className="text-[#0E2A6D] dark:text-[#60A5FA]" size={20} />
-          Indexed Knowledge Documents ({documents.length})
-        </h3>
-
-        <div className="space-y-3">
-          {documents.map((doc, idx) => (
-            <div
-              key={idx}
-              className="p-4 rounded-xl bg-[#F5F7FB] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] flex items-center justify-between gap-3"
-            >
-              <div className="flex items-center gap-3">
-                <FileText size={20} className="text-[#1E4DB7] dark:text-[#60A5FA]" />
-                <span className="font-heading font-bold text-body text-[#1F2937] dark:text-[#F8FAFC]">{typeof doc === 'string' ? doc : (doc as any).filename || 'Indexed Document'}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-caption font-bold px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                  Indexed
-                </span>
-                <button
-                  onClick={() => handleDeleteDocument(typeof doc === 'string' ? doc : (doc as any).filename)}
-                  className="p-1.5 text-[#64748B] hover:text-rose-600 rounded"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+      <DashboardCard className="p-0 md:p-0 overflow-hidden">
+        <Table
+          columns={columns}
+          data={documents}
+          isLoading={loading}
+          searchable={true}
+          searchPlaceholder="Search documents..."
+          emptyMessage="No documents found."
+        />
+      </DashboardCard>
+    </PageContainer>
   );
 };
