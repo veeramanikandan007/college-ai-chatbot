@@ -41,28 +41,35 @@ from app.schemas.faculty import (
 router = APIRouter(dependencies=[Depends(require_faculty)])
 
 
-def _get_or_create_faculty_profile(db: Session, user_id: int = 1) -> FacultyProfileModel:
-    profile = db.query(FacultyProfileModel).filter(FacultyProfileModel.user_id == user_id).first()
+def _get_or_create_faculty_profile(db: Session, user: User) -> FacultyProfileModel:
+    profile = db.query(FacultyProfileModel).filter(FacultyProfileModel.user_id == user.id).first()
     if not profile:
+        emp_id = getattr(user, 'employee_id', None) or f"FAC-{user.id:04d}"
         profile = FacultyProfileModel(
-            user_id=user_id,
-            employee_id="FAC-2026-088",
-            department="Computer Science & Engineering",
-            designation="Senior Assistant Professor",
-            office_room="Block B - 302",
+            user_id=user.id,
+            employee_id=emp_id,
+            department=getattr(user, 'department', None) or "Computer Science & Engineering",
+            designation=getattr(user, 'designation', None) or "Senior Assistant Professor",
+            office_room=getattr(user, 'office_location', None) or "Block B - 302",
             assigned_subjects="CS8591 Computer Networks, CS8492 Database Management Systems",
             assigned_sections="A, B",
         )
-        db.add(profile)
-        db.commit()
-        db.refresh(profile)
+        try:
+            db.add(profile)
+            db.commit()
+            db.refresh(profile)
+        except Exception:
+            db.rollback()
+            profile = db.query(FacultyProfileModel).filter(FacultyProfileModel.user_id == user.id).first()
+            if not profile:
+                profile = db.query(FacultyProfileModel).first()
     return profile
 
 
 # 1. Faculty Dashboard Overview
 @router.get("/dashboard", response_model=FacultyDashboardResponse)
-def get_faculty_dashboard(db: Session = Depends(get_db)):
-    profile = _get_or_create_faculty_profile(db)
+def get_faculty_dashboard(current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
+    profile = _get_or_create_faculty_profile(db, current_user)
 
     # Schedules
     schedules = db.query(FacultyScheduleModel).filter(FacultyScheduleModel.faculty_id == profile.id).all()
@@ -114,6 +121,7 @@ def get_faculty_attendance(
     subject_code: Optional[str] = None,
     section: Optional[str] = None,
     attendance_date: Optional[date] = None,
+    current_user: User = Depends(require_faculty),
     db: Session = Depends(get_db),
 ):
     query = db.query(FacultyAttendanceRecordModel)
@@ -129,8 +137,8 @@ def get_faculty_attendance(
 
 
 @router.post("/attendance", response_model=AttendanceRecordResponse)
-def mark_single_attendance(data: AttendanceMarkInput, db: Session = Depends(get_db)):
-    profile = _get_or_create_faculty_profile(db)
+def mark_single_attendance(data: AttendanceMarkInput, current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
+    profile = _get_or_create_faculty_profile(db, current_user)
     record = FacultyAttendanceRecordModel(
         faculty_id=profile.id,
         student_id=data.student_id,
@@ -149,8 +157,8 @@ def mark_single_attendance(data: AttendanceMarkInput, db: Session = Depends(get_
 
 
 @router.post("/attendance/bulk", response_model=List[AttendanceRecordResponse])
-def mark_bulk_attendance(data: BulkAttendanceInput, db: Session = Depends(get_db)):
-    profile = _get_or_create_faculty_profile(db)
+def mark_bulk_attendance(data: BulkAttendanceInput, current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
+    profile = _get_or_create_faculty_profile(db, current_user)
     result = []
     for item in data.records:
         record = FacultyAttendanceRecordModel(
@@ -173,7 +181,7 @@ def mark_bulk_attendance(data: BulkAttendanceInput, db: Session = Depends(get_db
 
 
 @router.put("/attendance/{record_id}", response_model=AttendanceRecordResponse)
-def edit_attendance_record(record_id: int, status_val: str = Query(...), remarks: Optional[str] = Query(None), db: Session = Depends(get_db)):
+def edit_attendance_record(record_id: int, status_val: str = Query(...), remarks: Optional[str] = Query(None), current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
     record = db.query(FacultyAttendanceRecordModel).filter(FacultyAttendanceRecordModel.id == record_id).first()
     if not record:
         raise HTTPException(status_code=404, detail="Attendance record not found")
@@ -187,8 +195,8 @@ def edit_attendance_record(record_id: int, status_val: str = Query(...), remarks
 
 # 3. Assignment Management
 @router.get("/assignments", response_model=List[FacultyAssignmentResponse])
-def get_faculty_assignments(db: Session = Depends(get_db)):
-    profile = _get_or_create_faculty_profile(db)
+def get_faculty_assignments(current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
+    profile = _get_or_create_faculty_profile(db, current_user)
     assignments = db.query(FacultyAssignmentModel).filter(FacultyAssignmentModel.faculty_id == profile.id).all()
     result = []
     for a in assignments:
@@ -202,8 +210,8 @@ def get_faculty_assignments(db: Session = Depends(get_db)):
 
 
 @router.post("/assignments", response_model=FacultyAssignmentResponse)
-def create_faculty_assignment(data: FacultyAssignmentInput, db: Session = Depends(get_db)):
-    profile = _get_or_create_faculty_profile(db)
+def create_faculty_assignment(data: FacultyAssignmentInput, current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
+    profile = _get_or_create_faculty_profile(db, current_user)
     assignment = FacultyAssignmentModel(
         faculty_id=profile.id,
         title=data.title,
@@ -224,7 +232,7 @@ def create_faculty_assignment(data: FacultyAssignmentInput, db: Session = Depend
 
 
 @router.put("/assignments/{assignment_id}", response_model=FacultyAssignmentResponse)
-def edit_faculty_assignment(assignment_id: int, data: FacultyAssignmentInput, db: Session = Depends(get_db)):
+def edit_faculty_assignment(assignment_id: int, data: FacultyAssignmentInput, current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
     assignment = db.query(FacultyAssignmentModel).filter(FacultyAssignmentModel.id == assignment_id).first()
     if not assignment:
         raise HTTPException(status_code=404, detail="Assignment not found")
@@ -245,7 +253,7 @@ def edit_faculty_assignment(assignment_id: int, data: FacultyAssignmentInput, db
 
 
 @router.delete("/assignments/{assignment_id}")
-def delete_faculty_assignment(assignment_id: int, db: Session = Depends(get_db)):
+def delete_faculty_assignment(assignment_id: int, current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
     assignment = db.query(FacultyAssignmentModel).filter(FacultyAssignmentModel.id == assignment_id).first()
     if not assignment:
         raise HTTPException(status_code=404, detail="Assignment not found")
@@ -255,13 +263,13 @@ def delete_faculty_assignment(assignment_id: int, db: Session = Depends(get_db))
 
 
 @router.get("/assignments/{assignment_id}/submissions", response_model=List[FacultySubmissionResponse])
-def get_assignment_submissions(assignment_id: int, db: Session = Depends(get_db)):
+def get_assignment_submissions(assignment_id: int, current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
     submissions = db.query(FacultySubmissionModel).filter(FacultySubmissionModel.assignment_id == assignment_id).all()
     return [FacultySubmissionResponse.model_validate(s) for s in submissions]
 
 
 @router.post("/submissions/{submission_id}/grade", response_model=FacultySubmissionResponse)
-def grade_student_submission(submission_id: int, data: GradeSubmissionInput, db: Session = Depends(get_db)):
+def grade_student_submission(submission_id: int, data: GradeSubmissionInput, current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
     sub = db.query(FacultySubmissionModel).filter(FacultySubmissionModel.id == submission_id).first()
     if not sub:
         raise HTTPException(status_code=404, detail="Submission not found")
@@ -275,15 +283,15 @@ def grade_student_submission(submission_id: int, data: GradeSubmissionInput, db:
 
 # 4. Question Paper Management
 @router.get("/question-papers", response_model=List[FacultyQuestionPaperResponse])
-def get_faculty_question_papers(db: Session = Depends(get_db)):
-    profile = _get_or_create_faculty_profile(db)
+def get_faculty_question_papers(current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
+    profile = _get_or_create_faculty_profile(db, current_user)
     papers = db.query(FacultyQuestionPaperModel).filter(FacultyQuestionPaperModel.faculty_id == profile.id).all()
     return [FacultyQuestionPaperResponse.model_validate(p) for p in papers]
 
 
 @router.post("/question-papers", response_model=FacultyQuestionPaperResponse)
-def upload_faculty_question_paper(data: FacultyQuestionPaperInput, db: Session = Depends(get_db)):
-    profile = _get_or_create_faculty_profile(db)
+def upload_faculty_question_paper(data: FacultyQuestionPaperInput, current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
+    profile = _get_or_create_faculty_profile(db, current_user)
     paper = FacultyQuestionPaperModel(
         faculty_id=profile.id,
         title=data.title,
@@ -302,7 +310,7 @@ def upload_faculty_question_paper(data: FacultyQuestionPaperInput, db: Session =
 
 
 @router.delete("/question-papers/{paper_id}")
-def delete_faculty_question_paper(paper_id: int, db: Session = Depends(get_db)):
+def delete_faculty_question_paper(paper_id: int, current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
     paper = db.query(FacultyQuestionPaperModel).filter(FacultyQuestionPaperModel.id == paper_id).first()
     if not paper:
         raise HTTPException(status_code=404, detail="Question paper not found")
@@ -313,15 +321,15 @@ def delete_faculty_question_paper(paper_id: int, db: Session = Depends(get_db)):
 
 # 5. Quiz Management
 @router.get("/quizzes", response_model=List[FacultyQuizResponse])
-def get_faculty_quizzes(db: Session = Depends(get_db)):
-    profile = _get_or_create_faculty_profile(db)
+def get_faculty_quizzes(current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
+    profile = _get_or_create_faculty_profile(db, current_user)
     quizzes = db.query(FacultyQuizModel).filter(FacultyQuizModel.faculty_id == profile.id).all()
     return [FacultyQuizResponse.model_validate(q) for q in quizzes]
 
 
 @router.post("/quizzes", response_model=FacultyQuizResponse)
-def create_faculty_quiz(data: FacultyQuizInput, db: Session = Depends(get_db)):
-    profile = _get_or_create_faculty_profile(db)
+def create_faculty_quiz(data: FacultyQuizInput, current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
+    profile = _get_or_create_faculty_profile(db, current_user)
     quiz = FacultyQuizModel(
         faculty_id=profile.id,
         title=data.title,
@@ -340,7 +348,7 @@ def create_faculty_quiz(data: FacultyQuizInput, db: Session = Depends(get_db)):
 
 
 @router.put("/quizzes/{quiz_id}/publish", response_model=FacultyQuizResponse)
-def toggle_publish_quiz(quiz_id: int, db: Session = Depends(get_db)):
+def toggle_publish_quiz(quiz_id: int, current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
     quiz = db.query(FacultyQuizModel).filter(FacultyQuizModel.id == quiz_id).first()
     if not quiz:
         raise HTTPException(status_code=404, detail="Quiz not found")
@@ -351,7 +359,7 @@ def toggle_publish_quiz(quiz_id: int, db: Session = Depends(get_db)):
 
 
 @router.delete("/quizzes/{quiz_id}")
-def delete_faculty_quiz(quiz_id: int, db: Session = Depends(get_db)):
+def delete_faculty_quiz(quiz_id: int, current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
     quiz = db.query(FacultyQuizModel).filter(FacultyQuizModel.id == quiz_id).first()
     if not quiz:
         raise HTTPException(status_code=404, detail="Quiz not found")
@@ -361,15 +369,15 @@ def delete_faculty_quiz(quiz_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/quizzes/{quiz_id}/scores", response_model=List[FacultyQuizResultResponse])
-def get_quiz_student_scores(quiz_id: int, db: Session = Depends(get_db)):
+def get_quiz_student_scores(quiz_id: int, current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
     results = db.query(FacultyQuizResultModel).filter(FacultyQuizResultModel.quiz_id == quiz_id).all()
     return [FacultyQuizResultResponse.model_validate(r) for r in results]
 
 
 # 6. Timetable & Change Requests
 @router.get("/timetable", response_model=List[FacultyScheduleItem])
-def get_faculty_timetable(db: Session = Depends(get_db)):
-    profile = _get_or_create_faculty_profile(db)
+def get_faculty_timetable(current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
+    profile = _get_or_create_faculty_profile(db, current_user)
     schedules = db.query(FacultyScheduleModel).filter(FacultyScheduleModel.faculty_id == profile.id).all()
     return [
         FacultyScheduleItem(
@@ -388,8 +396,8 @@ def get_faculty_timetable(db: Session = Depends(get_db)):
 
 
 @router.post("/timetable/change-request", response_model=FacultyTimetableRequestResponse)
-def request_timetable_change(data: FacultyTimetableRequestInput, db: Session = Depends(get_db)):
-    profile = _get_or_create_faculty_profile(db)
+def request_timetable_change(data: FacultyTimetableRequestInput, current_user: User = Depends(require_faculty), db: Session = Depends(get_db)):
+    profile = _get_or_create_faculty_profile(db, current_user)
     req = FacultyTimetableRequestModel(
         faculty_id=profile.id,
         request_date=data.request_date,
@@ -411,6 +419,7 @@ def get_student_roster(
     semester: Optional[int] = None,
     section: Optional[str] = None,
     search: Optional[str] = None,
+    current_user: User = Depends(require_faculty),
     db: Session = Depends(get_db),
 ):
     # Retrieve student users
