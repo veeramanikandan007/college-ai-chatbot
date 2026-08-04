@@ -826,10 +826,10 @@ export default function Sidebar({
                       key={item.id}
                       to={item.path}
                       onClick={() => setIsOpen(false)}
-                      className={`h-[40px] rounded-[10px] text-[13px] font-medium transition-all flex items-center gap-3 px-3.5 shrink-0 ${
+                      className={`h-[40px] rounded-[10px] text-[13.5px] transition-all flex items-center gap-3 px-3.5 shrink-0 ${
                         isActive
-                          ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] font-bold'
-                          : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] hover:text-[#111827] dark:hover:text-[#FAFAFA]'
+                          ? 'bg-[#F1F5F9] dark:bg-[#1A1A1A] text-[#111827] dark:text-[#FAFAFA] font-semibold border border-[#E2E8F0] dark:border-[#2A2A2A]'
+                          : 'text-[#4B5563] dark:text-[#A3A3A3] font-medium hover:bg-[#F8FAFC] dark:hover:bg-[#232323] hover:text-[#111827] dark:hover:text-[#FAFAFA]'
                       }`}
                     >
                       <Icon size={20} className="shrink-0" />
