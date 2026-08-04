@@ -202,17 +202,17 @@ export const facultyApi = {
   },
 
   getQuestionPapers: async (): Promise<FacultyQuestionPaper[]> => {
-    const res = await axios.get(`${API_BASE}/question-papers`);
+    const res = await axios.get(`${API_BASE}/question-papers`, { headers: getAuthHeader() });
     return res.data;
   },
 
   uploadQuestionPaper: async (data: Partial<FacultyQuestionPaper>): Promise<FacultyQuestionPaper> => {
-    const res = await axios.post(`${API_BASE}/question-papers`, data);
+    const res = await axios.post(`${API_BASE}/question-papers`, data, { headers: getAuthHeader() });
     return res.data;
   },
 
   deleteQuestionPaper: async (id: number): Promise<void> => {
-    await axios.delete(`${API_BASE}/question-papers/${id}`);
+    await axios.delete(`${API_BASE}/question-papers/${id}`, { headers: getAuthHeader() });
   },
 
   getQuizzes: async (): Promise<FacultyQuiz[]> => {
