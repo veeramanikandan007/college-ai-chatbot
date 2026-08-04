@@ -320,7 +320,16 @@ export default function HomePage() {
             >
               <div className="relative rounded-[24px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] p-4 sm:p-6 shadow-2xl overflow-hidden">
                 {/* Visual Banner Graphics */}
-                <div className="w-full h-[280px] sm:h-[360px] rounded-[16px] overflow-hidden bg-gradient-to-br from-[#F8FAFC] via-[#F1F5F9] to-[#E2E8F0] dark:from-[#111111] dark:via-[#18181B] dark:to-[#09090B] border border-[#E5E7EB] dark:border-[#2A2A2A] relative flex items-center justify-center" />
+                <div className="w-full h-[280px] sm:h-[360px] rounded-[16px] overflow-hidden bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] relative flex items-center justify-center">
+                  <img
+                    src="/hero_illustration.png"
+                    alt="CollegeMate AI SaaS Illustration"
+                    className="w-full h-full object-cover rounded-[16px]"
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = 'none';
+                    }}
+                  />
+                </div>
 
                 {/* Floating Interactive Widget 1: Attendance */}
                 <motion.div
