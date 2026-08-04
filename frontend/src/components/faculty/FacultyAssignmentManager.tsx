@@ -201,91 +201,91 @@ export const FacultyAssignmentManager: React.FC = () => {
 
       {/* ── Create / Edit Modal ── */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl border border-[#E2E8F0] dark:border-[#334155]">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#334155] pb-3">
-              <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4" onClick={() => setShowCreateModal(false)}>
+          <div className="w-full max-w-md bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-2xl space-y-5" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB] dark:border-[#2A2A2A]">
+              <h3 className="text-[20px] font-semibold text-[#111827] dark:text-[#FAFAFA]">
                 {selectedAssignment ? 'Edit Assignment' : 'Create New Assignment'}
               </h3>
-              <button onClick={() => setShowCreateModal(false)} className="text-[#64748B] hover:text-[#1F2937]">
-                <X size={20} />
+              <button onClick={() => setShowCreateModal(false)} className="h-8 w-8 rounded-[8px] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center text-[#111827] dark:text-[#FAFAFA]">
+                <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateOrEdit} className="space-y-3">
+            <form onSubmit={handleCreateOrEdit} className="space-y-4">
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Assignment Title</label>
+                <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Assignment Title</label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. TCP/IP Protocol Analysis"
                   required
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                  className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Subject Code</label>
+                  <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Subject Code</label>
                   <input
                     type="text"
                     value={subjectCode}
                     onChange={(e) => setSubjectCode(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Section</label>
+                  <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Section</label>
                   <input
                     type="text"
                     value={section}
                     onChange={(e) => setSection(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Due Date</label>
+                  <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Due Date</label>
                   <input
                     type="date"
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Max Marks</label>
+                  <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Max Marks</label>
                   <input
                     type="number"
                     value={maxMarks}
                     onChange={(e) => setMaxMarks(Number(e.target.value))}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Description & Guidelines</label>
+                <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Description & Guidelines</label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
-                  className="w-full p-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                  className="w-full p-3 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none resize-none"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
+              <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="h-10 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-caption font-bold text-[#64748B]"
+                  className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]"
                 >
                   Cancel
                 </button>
-                <button type="submit" className="h-10 px-4 rounded-xl bg-[#0E2A6D] text-white text-caption font-bold">
+                <button type="submit" className="h-[40px] px-5 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium cursor-pointer">
                   {selectedAssignment ? 'Update' : 'Create'}
                 </button>
               </div>
@@ -296,34 +296,34 @@ export const FacultyAssignmentManager: React.FC = () => {
 
       {/* ── Submissions Review Drawer / Modal ── */}
       {showSubmissionsDrawer && selectedAssignment && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl max-w-3xl w-full p-6 space-y-4 shadow-xl border border-[#E2E8F0] dark:border-[#334155]">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#334155] pb-3">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4" onClick={() => setShowSubmissionsDrawer(false)}>
+          <div className="w-full max-w-2xl bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-2xl space-y-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB] dark:border-[#2A2A2A]">
               <div>
-                <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">
+                <h3 className="text-[20px] font-semibold text-[#111827] dark:text-[#FAFAFA]">
                   Submissions for {selectedAssignment.title}
                 </h3>
-                <p className="text-caption text-[#64748B]">{selectedAssignment.subject_code} · Sec {selectedAssignment.section}</p>
+                <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">{selectedAssignment.subject_code} · Sec {selectedAssignment.section}</p>
               </div>
-              <button onClick={() => setShowSubmissionsDrawer(false)} className="text-[#64748B] hover:text-[#1F2937]">
-                <X size={20} />
+              <button onClick={() => setShowSubmissionsDrawer(false)} className="h-8 w-8 rounded-[8px] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center text-[#111827] dark:text-[#FAFAFA]">
+                <X size={16} />
               </button>
             </div>
 
-            <div className="space-y-3 max-h-96 overflow-y-auto">
+            <div className="space-y-3 max-h-96 overflow-y-auto no-scrollbar">
               {submissions.length === 0 ? (
-                <p className="py-8 text-center text-caption text-[#64748B]">No submissions yet for this assignment.</p>
+                <p className="py-8 text-center text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">No submissions yet for this assignment.</p>
               ) : (
                 submissions.map((sub) => (
-                  <div key={sub.id} className="p-4 rounded-xl bg-[#F5F7FB] dark:bg-[#0F172A] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div key={sub.id} className="p-4 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="font-heading font-bold text-body text-[#1F2937] dark:text-[#F8FAFC]">{sub.student_name}</h4>
-                        <span className="font-mono text-caption text-[#0E2A6D] dark:text-[#60A5FA]">({sub.register_number})</span>
+                        <h4 className="font-semibold text-[15px] text-[#111827] dark:text-[#FAFAFA]">{sub.student_name}</h4>
+                        <span className="font-mono text-[13px] text-[#6B7280] dark:text-[#A1A1AA]">({sub.register_number})</span>
                       </div>
-                      <p className="text-caption text-[#64748B]">{sub.submission_text || 'Submitted document attached.'}</p>
+                      <p className="text-[13px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">{sub.submission_text || 'Submitted document attached.'}</p>
                       {sub.grade && (
-                        <p className="text-caption font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+                        <p className="text-[13px] font-medium text-emerald-600 dark:text-emerald-400 mt-1">
                           Grade: {sub.grade} · Remark: {sub.remarks || 'None'}
                         </p>
                       )}
@@ -336,7 +336,7 @@ export const FacultyAssignmentManager: React.FC = () => {
                           setGradeInput(sub.grade || 'A');
                           setRemarksInput(sub.remarks || 'Good work.');
                         }}
-                        className="h-8 px-3 rounded-lg bg-[#0E2A6D] text-white text-caption font-bold"
+                        className="h-8 px-3.5 rounded-[8px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] text-[13px] font-medium transition cursor-pointer"
                       >
                         {sub.status === 'Graded' ? 'Edit Grade' : 'Grade'}
                       </button>
@@ -351,18 +351,18 @@ export const FacultyAssignmentManager: React.FC = () => {
 
       {/* ── Grade Submission Sub-Modal ── */}
       {gradingSubmission && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl border border-[#E2E8F0] dark:border-[#334155]">
-            <h4 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4" onClick={() => setGradingSubmission(null)}>
+          <div className="w-full max-w-md bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-2xl space-y-4" onClick={(e) => e.stopPropagation()}>
+            <h4 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">
               Grade {gradingSubmission.student_name}
             </h4>
 
             <div>
-              <label className="text-caption font-bold text-[#64748B]">Grade Awarded</label>
+              <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Grade Awarded</label>
               <select
                 value={gradeInput}
                 onChange={(e) => setGradeInput(e.target.value)}
-                className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer"
               >
                 <option value="O (Outstanding)">O (Outstanding)</option>
                 <option value="A+ (Excellent)">A+ (Excellent)</option>
@@ -374,20 +374,20 @@ export const FacultyAssignmentManager: React.FC = () => {
             </div>
 
             <div>
-              <label className="text-caption font-bold text-[#64748B]">Faculty Remarks</label>
+              <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Faculty Remarks</label>
               <textarea
                 value={remarksInput}
                 onChange={(e) => setRemarksInput(e.target.value)}
                 rows={2}
-                className="w-full p-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                className="w-full p-3 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none resize-none"
               />
             </div>
 
-            <div className="flex items-center justify-end gap-2">
-              <button onClick={() => setGradingSubmission(null)} className="h-9 px-3 text-caption font-bold text-[#64748B]">
+            <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-end gap-3">
+              <button onClick={() => setGradingSubmission(null)} className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">
                 Cancel
               </button>
-              <button onClick={handleSaveGrade} className="h-9 px-4 rounded-xl bg-[#0E2A6D] text-white text-caption font-bold">
+              <button onClick={handleSaveGrade} className="h-[40px] px-5 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium cursor-pointer">
                 Save Grade
               </button>
             </div>

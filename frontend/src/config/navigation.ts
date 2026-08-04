@@ -204,7 +204,7 @@ export const mainNavItems: NavItem[] = [
   },
   {
     id: 'faculty-timetable',
-    label: 'Time Tables',
+    label: 'Timetable',
     path: '/faculty?tab=timetable',
     icon: CalendarDays,
     colorClass: 'text-zinc-700 dark:text-zinc-300',

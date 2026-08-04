@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   PanelLeft,
@@ -32,7 +32,10 @@ export default function HeaderBar({
   const { isDarkMode, toggleTheme } = useTheme();
   const { toggleSidebar } = useSidebar();
   const { user } = useAuth();
+  const location = useLocation();
   const { openPalette } = useCommandPalette();
+
+  const isFacultyContext = user?.role === 'faculty' || location.pathname.startsWith('/faculty');
 
   return (
     <header className="sticky top-0 z-30 h-[64px] w-full border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#111111] backdrop-blur-md select-none transition-colors duration-150">
@@ -59,7 +62,7 @@ export default function HeaderBar({
         </div>
 
         {/* 2. Center: Compact Search Bar (Hidden for Faculty) */}
-        {user?.role !== 'faculty' && (
+        {!isFacultyContext && (
           <div className="flex flex-1 items-center justify-center max-w-xs sm:max-w-md px-1">
             <button
               type="button"

@@ -144,13 +144,13 @@ export const FacultyQuestionPaperManager: React.FC = () => {
               </p>
             </div>
 
-            <div className="pt-3 border-t border-[#E2E8F0] dark:border-[#334155] flex items-center justify-between text-caption text-[#64748B]">
-              <span>Academic Year: <strong className="text-[#1F2937] dark:text-[#F8FAFC]">{p.academic_year}</strong></span>
+            <div className="pt-4 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-between text-[13px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">
+              <span>Academic Year: <strong className="text-[#111827] dark:text-[#FAFAFA]">{p.academic_year}</strong></span>
               <a
                 href={p.pdf_url || '#'}
                 target="_blank"
                 rel="noreferrer"
-                className="h-8 px-3 rounded-lg bg-[#F5F7FB] dark:bg-[#0F172A] hover:bg-[#1E4DB7]/10 text-caption font-bold text-[#0E2A6D] dark:text-[#60A5FA] flex items-center gap-1 transition"
+                className="h-8 px-3 rounded-[8px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[13px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B] flex items-center gap-1.5 transition"
               >
                 <FileText size={14} /> PDF
               </a>
@@ -161,65 +161,65 @@ export const FacultyQuestionPaperManager: React.FC = () => {
 
       {/* ── Upload Modal ── */}
       {showUploadModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl border border-[#E2E8F0] dark:border-[#334155]">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#334155] pb-3">
-              <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Upload Question Paper</h3>
-              <button onClick={() => setShowUploadModal(false)} className="text-[#64748B] hover:text-[#1F2937]">
-                <X size={20} />
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4" onClick={() => setShowUploadModal(false)}>
+          <div className="w-full max-w-md bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-2xl space-y-5" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB] dark:border-[#2A2A2A]">
+              <h3 className="text-[20px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Upload Question Paper</h3>
+              <button onClick={() => setShowUploadModal(false)} className="h-8 w-8 rounded-[8px] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center text-[#111827] dark:text-[#FAFAFA]">
+                <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleUploadPaper} className="space-y-3">
+            <form onSubmit={handleUploadPaper} className="space-y-4">
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Paper Title</label>
+                <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Paper Title</label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Computer Networks Model Exam 2026"
                   required
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                  className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Subject Name</label>
+                  <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Subject Name</label>
                   <input
                     type="text"
                     value={subjectName}
                     onChange={(e) => setSubjectName(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Subject Code</label>
+                  <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Subject Code</label>
                   <input
                     type="text"
                     value={subjectCode}
                     onChange={(e) => setSubjectCode(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Semester</label>
+                  <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Semester</label>
                   <input
                     type="number"
                     value={semester}
                     onChange={(e) => setSemester(Number(e.target.value))}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Exam Type</label>
+                  <label className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] block mb-1">Exam Type</label>
                   <select
                     value={examType}
                     onChange={(e) => setExamType(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer"
                   >
                     <option value="Model Exam">Model Exam</option>
                     <option value="End Semester">End Semester</option>
@@ -228,15 +228,15 @@ export const FacultyQuestionPaperManager: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
+              <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowUploadModal(false)}
-                  className="h-10 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-caption font-bold text-[#64748B]"
+                  className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]"
                 >
                   Cancel
                 </button>
-                <button type="submit" className="h-10 px-4 rounded-xl bg-[#0E2A6D] text-white text-caption font-bold">
+                <button type="submit" className="h-[40px] px-5 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium cursor-pointer">
                   Upload Paper
                 </button>
               </div>

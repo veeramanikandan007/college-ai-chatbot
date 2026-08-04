@@ -87,7 +87,7 @@ export default function FacultyPortalPage() {
               <h1 className="text-[30px] font-semibold text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-tight truncate">
                 Faculty Portal
               </h1>
-              <p className="text-[15px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">
+              <p className="text-[14px] sm:text-[15px] font-normal text-[#6B7280] dark:text-[#A1A1AA] line-clamp-2 sm:line-clamp-none">
                 Academic management system for class schedules, attendance, assignments, and student evaluation.
               </p>
             </div>

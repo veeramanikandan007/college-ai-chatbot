@@ -138,15 +138,15 @@ export const FacultyAttendanceManager: React.FC<Props> = ({ selectedSubject, sel
   return (
     <div className="space-y-6 font-body">
       {/* ── Top Controls Bar ── */}
-      <div className="bg-[#FFFFFF] dark:bg-[#111111] p-5 rounded-[16px] border border-[#E5E5E5] dark:border-[#2A2A2A] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-5 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
-            <Filter size={16} className="text-[#525252]" />
-            <label className="text-[14px] font-medium text-[#525252] dark:text-[#A3A3A3]">Subject:</label>
+            <Filter size={16} className="text-[#6B7280] dark:text-[#A1A1AA]" />
+            <label className="text-[14px] font-medium text-[#6B7280] dark:text-[#A1A1AA]">Subject:</label>
             <select
               value={subjectCode}
               onChange={(e) => setSubjectCode(e.target.value)}
-              className="h-10 rounded-[10px] border border-[#E5E5E5] dark:border-[#2A2A2A] bg-[#F8F8F8] dark:bg-[#18181B] px-3.5 text-[14px] font-normal text-[#111111] dark:text-[#FAFAFA] outline-none cursor-pointer"
+              className="h-10 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] px-3.5 text-[14px] font-normal text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer"
             >
               <option value="CS8591">CS8591 Computer Networks</option>
               <option value="CS8492">CS8492 Database Management</option>
@@ -155,11 +155,11 @@ export const FacultyAttendanceManager: React.FC<Props> = ({ selectedSubject, sel
           </div>
 
           <div className="flex items-center gap-2">
-            <label className="text-[14px] font-medium text-[#525252] dark:text-[#A3A3A3]">Section:</label>
+            <label className="text-[14px] font-medium text-[#6B7280] dark:text-[#A1A1AA]">Section:</label>
             <select
               value={section}
               onChange={(e) => setSection(e.target.value)}
-              className="h-10 rounded-[10px] border border-[#E5E5E5] dark:border-[#2A2A2A] bg-[#F8F8F8] dark:bg-[#18181B] px-3.5 text-[14px] font-normal text-[#111111] dark:text-[#FAFAFA] outline-none cursor-pointer"
+              className="h-10 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] px-3.5 text-[14px] font-normal text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer"
             >
               <option value="A">Section A</option>
               <option value="B">Section B</option>
@@ -168,12 +168,12 @@ export const FacultyAttendanceManager: React.FC<Props> = ({ selectedSubject, sel
           </div>
 
           <div className="flex items-center gap-2">
-            <label className="text-[14px] font-medium text-[#525252] dark:text-[#A3A3A3]">Date:</label>
+            <label className="text-[14px] font-medium text-[#6B7280] dark:text-[#A1A1AA]">Date:</label>
             <input
               type="date"
               value={attendanceDate}
               onChange={(e) => setAttendanceDate(e.target.value)}
-              className="h-10 rounded-[10px] border border-[#E5E5E5] dark:border-[#2A2A2A] bg-[#F8F8F8] dark:bg-[#18181B] px-3.5 text-[14px] font-normal text-[#111111] dark:text-[#FAFAFA] outline-none cursor-pointer"
+              className="h-10 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] px-3.5 text-[14px] font-normal text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer"
             />
           </div>
         </div>
@@ -182,7 +182,7 @@ export const FacultyAttendanceManager: React.FC<Props> = ({ selectedSubject, sel
           <button
             type="button"
             onClick={handleMarkAllPresent}
-            className="h-[40px] px-4 rounded-[10px] border border-[#D4D4D4] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] hover:bg-[#F3F3F3] dark:hover:bg-[#232323] text-[14px] sm:text-[15px] font-semibold text-[#111111] dark:text-[#FAFAFA] flex items-center justify-center gap-2 whitespace-nowrap shrink-0 transition cursor-pointer flex-1 sm:flex-none"
+            className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] hover:bg-[#F8FAFC] dark:hover:bg-[#111111] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center gap-2 whitespace-nowrap shrink-0 transition cursor-pointer flex-1 sm:flex-none"
           >
             <Check size={16} /> Mark All Present
           </button>
@@ -190,7 +190,7 @@ export const FacultyAttendanceManager: React.FC<Props> = ({ selectedSubject, sel
           <button
             type="button"
             onClick={handleExportCSV}
-            className="h-[40px] px-4 rounded-[10px] border border-[#D4D4D4] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] hover:bg-[#F3F3F3] dark:hover:bg-[#232323] text-[14px] sm:text-[15px] font-semibold text-[#525252] dark:text-[#A3A3A3] flex items-center justify-center gap-2 whitespace-nowrap shrink-0 transition cursor-pointer flex-1 sm:flex-none"
+            className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] hover:bg-[#F8FAFC] dark:hover:bg-[#111111] text-[14px] font-medium text-[#6B7280] dark:text-[#A1A1AA] flex items-center justify-center gap-2 whitespace-nowrap shrink-0 transition cursor-pointer flex-1 sm:flex-none"
           >
             <Download size={16} /> Export CSV
           </button>
@@ -199,7 +199,7 @@ export const FacultyAttendanceManager: React.FC<Props> = ({ selectedSubject, sel
             type="button"
             onClick={handleSaveAttendance}
             disabled={saving}
-            className="h-[40px] px-4 rounded-[10px] bg-[#111111] hover:bg-[#262626] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-white dark:text-[#111111] text-[14px] sm:text-[15px] font-semibold flex items-center justify-center gap-2 whitespace-nowrap shrink-0 transition shadow-xs disabled:opacity-50 cursor-pointer w-full sm:w-auto"
+            className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium flex items-center justify-center gap-2 whitespace-nowrap shrink-0 transition shadow-xs disabled:opacity-50 cursor-pointer w-full sm:w-auto"
           >
             <Save size={16} /> {saving ? 'Saving...' : 'Save Attendance'}
           </button>
@@ -209,58 +209,57 @@ export const FacultyAttendanceManager: React.FC<Props> = ({ selectedSubject, sel
 
       {/* ── Summary Counters ── */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <div className="p-3 rounded-[12px] bg-[#FFFFFF] dark:bg-[#111111] border border-[#E5E5E5] dark:border-[#2A2A2A] text-center">
-          <p className="text-[12px] font-medium uppercase text-[#525252] dark:text-[#A3A3A3]">Total</p>
-          <p className="text-[34px] font-bold text-[#111111] dark:text-[#FAFAFA]">{totalCount}</p>
+        <div className="p-4 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#E5E7EB] dark:border-[#2A2A2A] text-center shadow-xs">
+          <p className="text-[12px] font-normal uppercase text-[#6B7280] dark:text-[#A1A1AA]">Total</p>
+          <p className="text-[28px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight mt-1">{totalCount}</p>
         </div>
-        <div className="p-3 rounded-[12px] bg-[#F8F8F8] dark:bg-[#18181B] border border-[#E5E5E5] dark:border-[#2A2A2A] text-center">
-          <p className="text-[12px] font-medium uppercase text-[#111111] dark:text-[#FAFAFA]">Present</p>
-          <p className="text-[34px] font-bold text-[#111111] dark:text-[#FAFAFA]">{presentCount}</p>
+        <div className="p-4 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#E5E7EB] dark:border-[#2A2A2A] text-center shadow-xs">
+          <p className="text-[12px] font-normal uppercase text-[#6B7280] dark:text-[#A1A1AA]">Present</p>
+          <p className="text-[28px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight mt-1">{presentCount}</p>
         </div>
-        <div className="p-3 rounded-[12px] bg-[#F8F8F8] dark:bg-[#18181B] border border-[#E5E5E5] dark:border-[#2A2A2A] text-center">
-          <p className="text-[12px] font-medium uppercase text-[#525252] dark:text-[#A3A3A3]">Absent</p>
-          <p className="text-[34px] font-bold text-[#525252] dark:text-[#A3A3A3]">{absentCount}</p>
+        <div className="p-4 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#E5E7EB] dark:border-[#2A2A2A] text-center shadow-xs">
+          <p className="text-[12px] font-normal uppercase text-[#6B7280] dark:text-[#A1A1AA]">Absent</p>
+          <p className="text-[28px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight mt-1">{absentCount}</p>
         </div>
-        <div className="p-3 rounded-[12px] bg-[#F8F8F8] dark:bg-[#18181B] border border-[#E5E5E5] dark:border-[#2A2A2A] text-center">
-          <p className="text-[12px] font-medium uppercase text-[#525252] dark:text-[#A3A3A3]">Late</p>
-          <p className="text-[34px] font-bold text-[#525252] dark:text-[#A3A3A3]">{lateCount}</p>
+        <div className="p-4 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#E5E7EB] dark:border-[#2A2A2A] text-center shadow-xs">
+          <p className="text-[12px] font-normal uppercase text-[#6B7280] dark:text-[#A1A1AA]">Late</p>
+          <p className="text-[28px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight mt-1">{lateCount}</p>
         </div>
-        <div className="p-3 rounded-[12px] bg-[#F8F8F8] dark:bg-[#18181B] border border-[#E5E5E5] dark:border-[#2A2A2A] text-center">
-          <p className="text-[12px] font-medium uppercase text-[#525252] dark:text-[#A3A3A3]">Percentage</p>
-          <p className="text-[34px] font-bold text-[#111111] dark:text-[#FAFAFA]">{percentage}%</p>
+        <div className="p-4 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#E5E7EB] dark:border-[#2A2A2A] text-center shadow-xs">
+          <p className="text-[12px] font-normal uppercase text-[#6B7280] dark:text-[#A1A1AA]">Percentage</p>
+          <p className="text-[28px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight mt-1">{percentage}%</p>
         </div>
       </div>
 
       {/* ── Student Attendance Roster Table ── */}
-      <div className="bg-[#FFFFFF] dark:bg-[#111111] rounded-[16px] border border-[#E5E5E5] dark:border-[#2A2A2A] shadow-xs overflow-hidden">
+      <div className="bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse font-sans text-[14px]">
             <thead>
-              <tr className="border-b border-[#E5E5E5] dark:border-[#2A2A2A] bg-[#F8F8F8] dark:bg-[#18181B] text-[14px] font-semibold uppercase tracking-[0.05em] text-[#525252] dark:text-[#A3A3A3]">
-                <th className="py-3 px-4">#</th>
-                <th className="py-3 px-4">Register No</th>
-                <th className="py-3 px-4">Student Name</th>
-                <th className="py-3 px-4 text-center">Attendance Status</th>
-                <th className="py-3 px-4">Remarks</th>
+              <tr className="border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[12px] font-semibold uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA]">
+                <th className="py-3.5 px-6">#</th>
+                <th className="py-3.5 px-6">Register No</th>
+                <th className="py-3.5 px-6">Student Name</th>
+                <th className="py-3.5 px-6 text-center">Attendance Status</th>
+                <th className="py-3.5 px-6">Remarks</th>
               </tr>
             </thead>
 
-
-            <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#334155]">
+            <tbody className="divide-y divide-[#E5E7EB] dark:divide-[#2A2A2A]">
               {students.map((st, idx) => (
-                <tr key={st.id} className="hover:bg-[#F5F7FB]/50 dark:hover:bg-[#0F172A]/50 transition">
-                  <td className="py-3 px-4 text-caption font-medium text-[#64748B]">{idx + 1}</td>
-                  <td className="py-3 px-4 font-mono text-caption font-semibold text-[#0E2A6D] dark:text-[#60A5FA]">{st.regNo}</td>
-                  <td className="py-3 px-4 font-heading font-bold text-[#1F2937] dark:text-[#F8FAFC]">{st.name}</td>
-                  <td className="py-3 px-4">
+                <tr key={st.id} className="hover:bg-[#F8FAFC] dark:hover:bg-[#141414] transition">
+                  <td className="py-4 px-6 text-[14px] text-[#6B7280] dark:text-[#A1A1AA]">{idx + 1}</td>
+                  <td className="py-4 px-6 font-mono text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">{st.regNo}</td>
+                  <td className="py-4 px-6 font-medium text-[#111827] dark:text-[#FAFAFA]">{st.name}</td>
+                  <td className="py-4 px-6">
                     <div className="flex items-center justify-center gap-1.5">
                       <button
                         type="button"
                         onClick={() => handleStatusChange(idx, 'Present')}
-                        className={`h-8 px-3 rounded-lg font-caption font-bold text-caption transition ${
+                        className={`h-8 px-3 rounded-[8px] text-[13px] font-medium transition cursor-pointer ${
                           st.status === 'Present'
-                            ? 'bg-emerald-600 text-white shadow-xs'
-                            : 'bg-slate-100 dark:bg-slate-800 text-[#64748B] hover:bg-emerald-100'
+                            ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                            : 'bg-[#F8FAFC] dark:bg-[#111111] text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-[#FAFAFA]'
                         }`}
                       >
                         Present
@@ -268,10 +267,10 @@ export const FacultyAttendanceManager: React.FC<Props> = ({ selectedSubject, sel
                       <button
                         type="button"
                         onClick={() => handleStatusChange(idx, 'Absent')}
-                        className={`h-8 px-3 rounded-lg font-caption font-bold text-caption transition ${
+                        className={`h-8 px-3 rounded-[8px] text-[13px] font-medium transition cursor-pointer ${
                           st.status === 'Absent'
                             ? 'bg-rose-600 text-white shadow-xs'
-                            : 'bg-slate-100 dark:bg-slate-800 text-[#64748B] hover:bg-rose-100'
+                            : 'bg-[#F8FAFC] dark:bg-[#111111] text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-[#FAFAFA]'
                         }`}
                       >
                         Absent
@@ -279,10 +278,10 @@ export const FacultyAttendanceManager: React.FC<Props> = ({ selectedSubject, sel
                       <button
                         type="button"
                         onClick={() => handleStatusChange(idx, 'Late')}
-                        className={`h-8 px-3 rounded-lg font-caption font-bold text-caption transition ${
+                        className={`h-8 px-3 rounded-[8px] text-[13px] font-medium transition cursor-pointer ${
                           st.status === 'Late'
                             ? 'bg-amber-500 text-white shadow-xs'
-                            : 'bg-slate-100 dark:bg-slate-800 text-[#64748B] hover:bg-amber-100'
+                            : 'bg-[#F8FAFC] dark:bg-[#111111] text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-[#FAFAFA]'
                         }`}
                       >
                         Late
@@ -290,23 +289,23 @@ export const FacultyAttendanceManager: React.FC<Props> = ({ selectedSubject, sel
                       <button
                         type="button"
                         onClick={() => handleStatusChange(idx, 'Leave')}
-                        className={`h-8 px-3 rounded-lg font-caption font-bold text-caption transition ${
+                        className={`h-8 px-3 rounded-[8px] text-[13px] font-medium transition cursor-pointer ${
                           st.status === 'Leave'
                             ? 'bg-purple-600 text-white shadow-xs'
-                            : 'bg-slate-100 dark:bg-slate-800 text-[#64748B] hover:bg-purple-100'
+                            : 'bg-[#F8FAFC] dark:bg-[#111111] text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-[#FAFAFA]'
                         }`}
                       >
                         Leave
                       </button>
                     </div>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <input
                       type="text"
                       value={st.remarks}
                       onChange={(e) => handleRemarksChange(idx, e.target.value)}
                       placeholder="Add optional remark..."
-                      className="w-full h-8 px-2.5 rounded-lg border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-caption text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                      className="w-full h-[36px] px-3 rounded-[8px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
                     />
                   </td>
                 </tr>
