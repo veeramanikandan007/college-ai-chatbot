@@ -67,25 +67,22 @@ export const QuestionPaperPdfViewer: React.FC<QuestionPaperPdfViewerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-xs">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 bg-black/60 backdrop-blur-xs md:p-2 md:sm:p-4">
       <div
         ref={containerRef}
-        className={`relative w-full max-w-5xl bg-[#FFFFFF] dark:bg-[#181818] rounded-[16px] shadow-lg border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col overflow-hidden ${
-          isFullscreen ? 'h-screen w-screen max-w-none rounded-none' : 'h-[90vh]'
+        className={`relative w-full bg-[#FFFFFF] dark:bg-[#181818] shadow-lg border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col overflow-hidden md:max-w-5xl md:rounded-[16px] ${
+          isFullscreen ? 'h-screen w-screen max-w-none rounded-none' : 'h-[100dvh] md:h-[90vh] md:rounded-[16px]'
         }`}
       >
-        {/* Toolbar Header */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
-          {/* Document Title */}
+        <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] md:px-4 md:py-3">
           <div className="flex items-center gap-2 min-w-0">
-            <FileText className="shrink-0" size={20} />
-            <h3 className="text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA] truncate max-w-md">
+            <FileText className="shrink-0" size={18} />
+            <h3 className="text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA] truncate max-w-[220px] md:max-w-md">
               {title}
             </h3>
           </div>
 
-          {/* Navigation Controls */}
-          <div className="flex items-center gap-2 bg-[#FFFFFF] dark:bg-[#181818] rounded-[8px] px-3 py-1 border border-[#D1D5DB] dark:border-[#3F3F46]">
+          <div className="flex items-center gap-2 bg-[#FFFFFF] dark:bg-[#181818] rounded-[8px] px-2 py-1 border border-[#D1D5DB] dark:border-[#3F3F46]">
             <button
               onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
               disabled={currentPage <= 1}
@@ -105,10 +102,8 @@ export const QuestionPaperPdfViewer: React.FC<QuestionPaperPdfViewerProps> = ({
             </button>
           </div>
 
-          {/* Zoom, Rotate, Print, Fullscreen, Download, Close */}
           <div className="flex items-center gap-1.5 shrink-0">
-            {/* Zoom Controls */}
-            <div className="flex items-center gap-1 bg-[#FFFFFF] dark:bg-[#181818] rounded-[8px] p-1 border border-[#D1D5DB] dark:border-[#3F3F46]">
+            <div className="items-center gap-1 bg-[#FFFFFF] dark:bg-[#181818] rounded-[8px] p-1 border border-[#D1D5DB] dark:border-[#3F3F46] hidden md:flex">
               <button
                 onClick={handleZoomOut}
                 title="Zoom Out"
@@ -128,7 +123,6 @@ export const QuestionPaperPdfViewer: React.FC<QuestionPaperPdfViewerProps> = ({
               </button>
             </div>
 
-            {/* Rotate */}
             <button
               onClick={handleRotate}
               title="Rotate 90°"
@@ -137,7 +131,6 @@ export const QuestionPaperPdfViewer: React.FC<QuestionPaperPdfViewerProps> = ({
               <RotateCw size={15} />
             </button>
 
-            {/* Print */}
             <button
               onClick={handlePrint}
               title="Print Question Paper"
@@ -146,27 +139,24 @@ export const QuestionPaperPdfViewer: React.FC<QuestionPaperPdfViewerProps> = ({
               <Printer size={15} />
             </button>
 
-            {/* Fullscreen */}
             <button
               onClick={toggleFullscreen}
               title="Toggle Fullscreen"
-              className="h-9 w-9 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer"
+              className="h-9 w-9 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] flex items-center justify-center cursor-pointer hidden md:flex"
             >
               <Expand size={15} />
             </button>
 
-            {/* Download */}
             <a
               href={pdfUrl}
               download={fileName}
               title="Download PDF"
-              className="h-9 px-4 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+              className="hidden h-9 px-4 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium shadow-xs transition md:flex items-center gap-1.5 cursor-pointer"
             >
               <Download size={14} />
               <span>Download</span>
             </a>
 
-            {/* Close */}
             <button
               onClick={onClose}
               className="p-1 rounded text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA] cursor-pointer"
@@ -176,8 +166,7 @@ export const QuestionPaperPdfViewer: React.FC<QuestionPaperPdfViewerProps> = ({
           </div>
         </div>
 
-        {/* PDF Frame Container */}
-        <div className="flex-1 bg-[#F8FAFC] dark:bg-[#111111] overflow-auto flex items-center justify-center p-4">
+        <div className="flex-1 bg-[#F8FAFC] dark:bg-[#111111] overflow-auto flex items-center justify-center p-2 md:p-4">
           <div
             className="w-full h-full max-w-4xl bg-[#FFFFFF] dark:bg-[#181818] shadow-lg rounded-[12px] overflow-hidden transition-transform duration-200"
             style={{
@@ -192,6 +181,28 @@ export const QuestionPaperPdfViewer: React.FC<QuestionPaperPdfViewerProps> = ({
               className="w-full h-full border-none"
             />
           </div>
+        </div>
+
+        <div className="sticky bottom-0 left-0 right-0 flex items-center justify-between gap-2 border-t border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] p-2 md:hidden">
+          <button
+            onClick={handleZoomOut}
+            className="flex-1 h-[40px] rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[13px] font-[500]"
+          >
+            Zoom Out
+          </button>
+          <button
+            onClick={handleZoomIn}
+            className="flex-1 h-[40px] rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] text-[13px] font-[500]"
+          >
+            Zoom In
+          </button>
+          <a
+            href={pdfUrl}
+            download={fileName}
+            className="flex-1 h-[40px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] text-[13px] font-[500] flex items-center justify-center"
+          >
+            Save
+          </a>
         </div>
       </div>
     </div>

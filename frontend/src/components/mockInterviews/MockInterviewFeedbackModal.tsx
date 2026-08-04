@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import {
   X,
   Award,
@@ -134,7 +134,7 @@ export const MockInterviewFeedbackModal: React.FC<MockInterviewFeedbackModalProp
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Strengths */}
             <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-2">
-              <h5 className="text-[12px] font-bold uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1.5">
+              <h5 className="text-[12px] font-medium uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1.5">
                 <CheckCircle2 size={16} />
                 Key Strengths
               </h5>
@@ -150,7 +150,7 @@ export const MockInterviewFeedbackModal: React.FC<MockInterviewFeedbackModalProp
 
             {/* Weaknesses & Improvements */}
             <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-2">
-              <h5 className="text-[12px] font-bold uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1.5">
+              <h5 className="text-[12px] font-medium uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA] flex items-center gap-1.5">
                 <AlertTriangle size={16} />
                 Areas for Improvement
               </h5>
@@ -179,7 +179,7 @@ export const MockInterviewFeedbackModal: React.FC<MockInterviewFeedbackModalProp
                   className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-2.5 text-[14px]"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-bold uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA]">
+                    <span className="text-[12px] font-medium uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA]">
                       Question #{qa.question_number}
                     </span>
                     <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA]">

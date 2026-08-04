@@ -55,54 +55,9 @@ database/
 # ── AI / Vector DB ────────────────────────────────────────────
 vector_db/
 **/vector_db/
-chroma_db/
-**/chroma_db/
-.chroma/
-documents/
-uploads/
-
-# ── Node / React / Vite ───────────────────────────────────────
-node_modules/
-**/node_modules/
-dist/
-**/dist/
-.vite/
-**/.vite/
-frontend/dist/
-frontend/build/
-*.local
-.eslintcache
-
-# ── Build Artifacts ───────────────────────────────────────────
-*.min.js
-*.min.css
-*.map
-*.tsbuildinfo
-
-# ── Logs ──────────────────────────────────────────────────────
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# ── OS & Editor ───────────────────────────────────────────────
-.DS_Store
-Thumbs.db
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# ── Alembic ───────────────────────────────────────────────────
-alembic/__pycache__/
-alembic/versions/__pycache__/
-
-# ── Misc ──────────────────────────────────────────────────────
-*.bak
-*.tmp
-ttsService_backup2.ts
-
-tore .git restore .
+*.db
+**/*.db
+.venv/
+**/ttsService_backup2.ts
+backend/.env
+.env

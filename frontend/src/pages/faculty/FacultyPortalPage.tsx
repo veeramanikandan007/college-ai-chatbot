@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   GraduationCap,
@@ -83,13 +83,13 @@ export default function FacultyPortalPage() {
               <GraduationCap size={26} strokeWidth={1.75} />
             </div>
             <div>
-              <h1 className="font-heading font-bold text-2xl md:text-3xl text-[#0E2A6D] dark:text-white tracking-wide flex items-center gap-2">
+              <h1 className="text-[20px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-[1.2] flex items-center gap-2">
                 Faculty Portal
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#D9A441]/20 text-[#0E2A6D] dark:text-[#D9A441] font-semibold border border-[#D9A441]/30">
+                <span className="text-[11px] sm:text-[13px] px-2.5 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] font-[500] border border-[#D1D5DB] dark:border-[#3F3F46]">
                   Academic Management
                 </span>
               </h1>
-              <p className="text-small text-[#64748B] dark:text-[#94A3B8] mt-0.5">
+              <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] mt-0.5">
                 Academic management system for class schedules, attendance, assignments, and student evaluation.
               </p>
             </div>
@@ -115,7 +115,7 @@ export default function FacultyPortalPage() {
               <button
                 key={tab.id}
                 onClick={() => handleTabChange(tab.id)}
-                className={`h-11 px-4 rounded-xl font-heading font-bold text-caption flex items-center gap-2 shrink-0 transition ${
+                className={`h-[40px] px-4 rounded-[10px] text-[14px] font-[500] flex items-center gap-2 shrink-0 transition cursor-pointer ${
                   isActive
                     ? 'bg-[#0E2A6D] text-white shadow-xs'
                     : 'bg-white dark:bg-[#1E293B] text-[#64748B] dark:text-[#94A3B8] border border-[#E2E8F0] dark:border-[#334155] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A]'

@@ -40,6 +40,7 @@ import {
   Calendar,
   User,
   Share2,
+  Bookmark,
 } from 'lucide-react';
 
 interface CompanyDrive {
@@ -121,6 +122,7 @@ export default function PlacementHubPage() {
 
   // Job Detail Modal State
   const [selectedDriveDetail, setSelectedDriveDetail] = useState<CompanyDrive | null>(null);
+  const [savedDrives, setSavedDrives] = useState<number[]>([]);
 
   // ATS Checker & Builder State
   const [resumeText, setResumeText] = useState(
@@ -378,43 +380,37 @@ export default function PlacementHubPage() {
   }
 
   return (
-    <div className="w-full h-full overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 md:p-8 transition-colors">
-      <div className="w-full max-w-[1600px] mx-auto space-y-8">
+    <div className="w-full h-full overflow-x-hidden overflow-y-auto bg-[#F8FAFC] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 lg:p-8 transition-colors select-none font-sans">
+      {/* 1440px Centered Max Content Width Container */}
+      <div className="w-full max-w-[1440px] mx-auto space-y-8">
 
-        {/* ========================================================================= */}
-        {/* 1. PLACEMENT HEADER CARD                                                  */}
-        {/* ========================================================================= */}
-        <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 md:p-8 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+        {/* Page Hero Header (With Dedicated Covered Image Background) */}
+        <div className="relative overflow-hidden bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6 min-h-[120px]">
+
+          <div className="relative z-10 flex items-center gap-4 min-w-0">
+            <div className="w-12 h-12 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0 shadow-sm">
               <Briefcase size={24} />
             </div>
-            <div>
-              <h1 className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight flex items-center gap-3">
+            <div className="min-w-0 space-y-1">
+              <h1 className="text-[30px] font-semibold text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-tight truncate">
                 AI Placement Hub
-                <span className="text-[12px] font-medium px-2.5 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
-                  Career Portal
-                </span>
               </h1>
-              <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-1">
-                Centralized platform for campus drives, ATS resume checks, coding practice, AI mock interviews, and career guidance.
+              <p className="text-[15px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">
+                Prepare for campus drives, track eligible companies, and practice coding challenges.
               </p>
             </div>
           </div>
-
           <button
             onClick={() => setActiveTab('drives')}
-            className="h-10 px-6 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition cursor-pointer shrink-0"
+            className="relative z-10 h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] transition flex items-center justify-center gap-2 cursor-pointer shrink-0 w-full sm:w-auto"
           >
             Explore Drives
           </button>
         </div>
 
-        {/* ========================================================================= */}
-        {/* RESPONSIVE NAVIGATION TAB BAR                                            */}
-        {/* ========================================================================= */}
-        <div className="w-full bg-[#F8FAFC] dark:bg-[#111111] p-1.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46]">
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar flex-nowrap">
+        {/* Single-Row Navigation Tab Bar */}
+        <div className="w-full bg-[#FFFFFF] dark:bg-[#18181B] p-2 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar flex-nowrap min-h-[40px]">
             {[
               { id: 'drives', label: 'Drives & Companies', icon: Building2 },
               { id: 'tracker', label: 'Tracker', icon: Layers },
@@ -431,10 +427,10 @@ export default function PlacementHubPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`h-10 px-4 text-[14px] font-medium rounded-[8px] transition-all duration-150 whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+                  className={`h-[36px] px-4 text-[14px] font-medium rounded-[8px] transition cursor-pointer whitespace-nowrap flex items-center justify-center gap-2 shrink-0 ${
                     isActive
-                      ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                      : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                      ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                      : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323]'
                   }`}
                 >
                   <Icon size={16} />
@@ -445,76 +441,49 @@ export default function PlacementHubPage() {
           </div>
         </div>
 
-        {/* ========================================================================= */}
-        {/* 2. PLACEMENT DASHBOARD OVERVIEW CARDS                                     */}
-        {/* ========================================================================= */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Eligible Companies</p>
-              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{stats.eligible_companies}</p>
-            </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
-              <Building2 size={20} />
-            </div>
-          </div>
-
-          <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Applied Jobs</p>
-              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{applications.length}</p>
-            </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
-              <Layers size={20} />
-            </div>
-          </div>
-
-          <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">ATS Resume Score</p>
-              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{stats.ats_resume_score}/100</p>
-            </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
-              <FileCheck2 size={20} />
-            </div>
-          </div>
-
-          <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Coding Solved</p>
-              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">{stats.coding_solved}</p>
-            </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
-              <Code2 size={20} />
-            </div>
-          </div>
-
-          <div className="p-6 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] border border-[#111827] dark:border-[#FAFAFA] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium opacity-80">Readiness Score</p>
-              <p className="text-[32px] font-bold mt-1">{stats.interview_readiness_pct}%</p>
-            </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#FFFFFF] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center">
-              <Award size={20} />
-            </div>
-          </div>
+        {/* 5 Statistics Cards Grid (2x2 Mobile, 5-Col Desktop, 24px Gap) */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 select-none">
+          {[
+            { label: 'Eligible Companies', value: stats.eligible_companies, icon: Building2 },
+            { label: 'Applied Jobs', value: applications.length, icon: Layers },
+            { label: 'ATS Resume Score', value: `${stats.ats_resume_score}/100`, icon: FileCheck2 },
+            { label: 'Coding Solved', value: stats.coding_solved, icon: Code2 },
+            { label: 'Readiness Score', value: `${stats.interview_readiness_pct}%`, icon: Award },
+          ].map((stat, idx) => {
+            const Icon = stat.icon;
+            return (
+              <div
+                key={idx}
+                className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between"
+              >
+                <div className="min-w-0 flex-1 space-y-1">
+                  <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">{stat.label}</p>
+                  <p className="text-[28px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight truncate">{stat.value}</p>
+                  <p className="text-[12px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">Placement status</p>
+                </div>
+                <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-3">
+                  <Icon size={20} />
+                </div>
+              </div>
+            );
+          })}
         </div>
+
 
         {/* ========================================================================= */}
         {/* TAB 1: PLACEMENT DRIVES & COMPANY CARDS                                   */}
         {/* ========================================================================= */}
         {activeTab === 'drives' && (
-          <div className="space-y-6">
-            {/* Search & Filter Bar */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#181818] p-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs">
+          <div className="space-y-3">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#FFFFFF] dark:bg-[#181818] p-3 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46]">
               <div className="relative flex-1 w-full">
-                <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A3A3A3]" />
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A1A1AA]" />
                 <input
                   type="text"
                   value={searchDriveQuery}
                   onChange={(e) => setSearchDriveQuery(e.target.value)}
-                  placeholder="Search company name, role, or required skills (e.g. Java, SDE)..."
-                  className="w-full h-10 pl-10 pr-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
+                  placeholder="Search company, role, or skills"
+                  className="w-full h-[38px] pl-9 pr-3 rounded-[9px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[13px] font-[400] text-[#111827] dark:text-[#FAFAFA] outline-none"
                 />
               </div>
               <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
@@ -522,7 +491,7 @@ export default function PlacementHubPage() {
                   <button
                     key={cat}
                     onClick={() => setSelectedRoleFilter(cat)}
-                    className={`h-9 px-4 rounded-[8px] text-[14px] font-medium transition cursor-pointer whitespace-nowrap ${
+                    className={`h-[34px] px-3 rounded-[8px] text-[12px] font-[400] transition cursor-pointer whitespace-nowrap ${
                       selectedRoleFilter === cat
                         ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
                         : 'bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
@@ -534,90 +503,118 @@ export default function PlacementHubPage() {
               </div>
             </div>
 
-            {/* Company Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 auto-rows-fr">
               {filteredDrives.map((drive) => {
                 const isApplied = applications.some((a) => a.drive_id === drive.id);
+                const isSaved = savedDrives.includes(drive.id);
+                const skillList = drive.skills_required
+                  .split(',')
+                  .map((skill) => skill.trim())
+                  .filter(Boolean);
+                const visibleSkills = skillList.slice(0, 6);
+                const extraSkillCount = Math.max(skillList.length - visibleSkills.length, 0);
+
                 return (
                   <motion.div
                     key={drive.id}
                     whileHover={{ y: -2 }}
-                    className="p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] shadow-xs flex flex-col justify-between space-y-4"
+                    className="h-[510px] sm:h-[530px] lg:h-[540px] xl:h-[560px] rounded-[14px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] p-3 flex flex-col"
                   >
-                    <div className="space-y-4">
+                    <div className="flex flex-col h-full">
                       <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0 font-bold text-[18px]">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-[42px] h-[42px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0 font-[500] text-[16px]">
                             {drive.company_name.charAt(0)}
                           </div>
-                          <div>
-                            <h3 className="font-bold text-[18px] text-[#111827] dark:text-[#FAFAFA] leading-tight">
+                          <div className="min-w-0">
+                            <h3 className="text-[18px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-tight truncate">
                               {drive.company_name}
                             </h3>
-                            <span className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] block">{drive.role}</span>
+                            <span className="text-[15px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] block truncate">{drive.role}</span>
                           </div>
                         </div>
-                        <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] shrink-0">
+                        <span className="px-2 py-0.5 rounded-[6px] text-[11px] font-[400] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] shrink-0">
                           {drive.category}
                         </span>
                       </div>
 
-                      <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-2 text-[14px]">
-                        <div className="flex justify-between">
-                          <span className="text-[#6B7280] dark:text-[#A3A3A3]">CTC Package:</span>
-                          <span className="font-bold text-[#111827] dark:text-[#FAFAFA]">{drive.package_ctc}</span>
+                      <div className="mt-3 p-2.5 rounded-[9px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-1.5 text-[14px]">
+                        <div className="flex justify-between gap-2 items-center">
+                          <span className="text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA]">Package</span>
+                          <span className="text-[16px] font-[700] text-[#111827] dark:text-[#FAFAFA]">{drive.package_ctc}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-[#6B7280] dark:text-[#A3A3A3]">Eligibility:</span>
-                          <span className="font-semibold text-[#111827] dark:text-[#FAFAFA]">CGPA ≥ {drive.eligibility_cgpa}</span>
+                        <div className="flex justify-between gap-2 items-center">
+                          <span className="text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA]">Eligibility</span>
+                          <span className="text-[14px] font-[400] text-[#111827] dark:text-[#FAFAFA]">CGPA ≥ {drive.eligibility_cgpa}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-[#6B7280] dark:text-[#A3A3A3]">Deadline:</span>
-                          <span className="font-medium text-[#111827] dark:text-[#FAFAFA]">{drive.last_date}</span>
+                        <div className="flex justify-between gap-2 items-center">
+                          <span className="text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA]">Deadline</span>
+                          <span className="text-[14px] font-[400] text-[#111827] dark:text-[#FAFAFA]">{drive.last_date}</span>
                         </div>
                       </div>
 
-                      <div className="space-y-1">
-                        <span className="text-[12px] font-semibold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                      <div className="mt-3 space-y-1.5 min-h-[86px]">
+                        <span className="text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] block">
+                          Description
+                        </span>
+                        <p className="text-[14px] font-[400] text-[#4B5563] dark:text-[#D4D4D4] leading-[1.5] line-clamp-2">
+                          {drive.job_description || `${drive.company_name} is hiring for ${drive.role}.`}
+                        </p>
+                      </div>
+
+                      <div className="mt-3 space-y-1.5 min-h-[92px]">
+                        <span className="text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] block">
                           Selection Process
                         </span>
-                        <p className="text-[14px] text-[#4B5563] dark:text-[#D4D4D4] leading-relaxed">
+                        <p className="text-[14px] font-[400] text-[#4B5563] dark:text-[#D4D4D4] leading-[1.5] line-clamp-4">
                           {drive.selection_process}
                         </p>
                       </div>
 
-                      <div className="flex flex-wrap gap-1.5 pt-1">
-                        {drive.skills_required.split(',').map((skill, idx) => (
-                          <span
-                            key={idx}
-                            className="px-2.5 py-1 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium"
-                          >
-                            {skill.trim()}
-                          </span>
-                        ))}
+                      <div className="mt-3 space-y-1.5">
+                        <span className="text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] block">
+                          Skills
+                        </span>
+                        <div className="flex flex-wrap gap-1.5 min-h-[30px]">
+                          {visibleSkills.map((skill, idx) => (
+                            <span
+                              key={`${drive.id}-${skill}-${idx}`}
+                              className="h-[24px] px-3 rounded-[999px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-[500] flex items-center"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                          {extraSkillCount > 0 && (
+                            <span className="h-[24px] px-3 rounded-[999px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-[500] flex items-center">
+                              +{extraSkillCount}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="flex items-center gap-2 pt-2">
-                      <button
-                        onClick={() => setSelectedDriveDetail(drive)}
-                        className="h-10 px-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer flex-1"
-                      >
-                        View Details
-                      </button>
-                      <button
-                        onClick={() => handleApplyDrive(drive)}
-                        disabled={isApplied}
-                        className="h-10 px-4 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 flex-1"
-                      >
-                        {isApplied ? (
-                          <>
-                            <Check size={16} /> Applied
-                          </>
-                        ) : (
-                          'Apply Now'
-                        )}
-                      </button>
+                      <div className="mt-auto pt-3">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setSelectedDriveDetail(drive)}
+                            className="h-[38px] px-3 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] text-[14px] font-[400] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer flex-1"
+                          >
+                            View Details
+                          </button>
+                          <button
+                            onClick={() => handleApplyDrive(drive)}
+                            disabled={isApplied}
+                            className="h-[38px] px-3 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-[500] transition flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 flex-1"
+                          >
+                            {isApplied ? (
+                              <>
+                                <Check size={16} /> Applied
+                              </>
+                            ) : (
+                              'Apply Now'
+                            )}
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </motion.div>
                 );
@@ -631,8 +628,8 @@ export default function PlacementHubPage() {
         {/* ========================================================================= */}
         {activeTab === 'tracker' && (
           <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-6">
-            <h2 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
-              <Layers size={22} />
+            <h2 className="text-[20px] font-[600] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+              <Layers size={20} />
               <span>Application Pipeline Tracker</span>
             </h2>
 
@@ -645,10 +642,10 @@ export default function PlacementHubPage() {
                     className="p-4 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-3 min-w-[200px]"
                   >
                     <div className="flex items-center justify-between pb-2 border-b border-[#F3F4F6] dark:border-[#2A2A2A]">
-                      <span className="font-bold text-[12px] text-[#111827] dark:text-[#FAFAFA] uppercase tracking-wider">
+                      <span className="text-[12px] font-[500] text-[#111827] dark:text-[#FAFAFA] uppercase tracking-wider">
                         {stage}
                       </span>
-                      <span className="w-5 h-5 rounded-full bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] text-[10px] font-bold flex items-center justify-center">
+                      <span className="w-5 h-5 rounded-full bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] text-[10px] font-[500] flex items-center justify-center">
                         {stageApps.length}
                       </span>
                     </div>
@@ -662,7 +659,7 @@ export default function PlacementHubPage() {
                             key={app.id}
                             className="p-3 rounded-[10px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs space-y-1.5"
                           >
-                            <span className="font-bold text-[14px] text-[#111827] dark:text-[#FAFAFA] block">
+                            <span className="text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] block">
                               {app.company_name}
                             </span>
                             <span className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] block">{app.role}</span>
@@ -687,19 +684,19 @@ export default function PlacementHubPage() {
         {/* ========================================================================= */}
         {activeTab === 'ats' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs">
-              <div>
-                <h2 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
-                  <FileCheck2 size={22} />
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[#FFFFFF] dark:bg-[#18181B] p-4 sm:p-6 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs">
+              <div className="min-w-0 flex-1">
+                <h2 className="text-[16px] sm:text-[17px] font-[600] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+                  <FileCheck2 size={20} className="shrink-0" />
                   <span>ATS Resume Checker & Builder</span>
                 </h2>
-                <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-0.5">
+                <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] mt-0.5">
                   Audit your resume against ATS algorithms or build a compliant resume template instantly.
                 </p>
               </div>
               <button
                 onClick={() => setShowResumeBuilder(!showResumeBuilder)}
-                className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs cursor-pointer"
+                className="h-[38px] sm:h-[40px] px-4 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-[500] shadow-xs cursor-pointer active:scale-[0.98] w-full sm:w-auto shrink-0"
               >
                 {showResumeBuilder ? 'View ATS Audit' : 'Open Resume Builder'}
               </button>
@@ -709,7 +706,7 @@ export default function PlacementHubPage() {
               /* ATS Audit View */
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div className="lg:col-span-6 bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-4">
-                  <label className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                  <label className="text-[13px] font-[500] uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                     Paste Resume Content for AI ATS Audit
                   </label>
                   <textarea
@@ -735,7 +732,7 @@ export default function PlacementHubPage() {
 
                 {/* Audit Outcome Results */}
                 <div className="lg:col-span-6 bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-5">
-                  <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+                  <h3 className="text-[18px] font-[600] text-[#111827] dark:text-[#FAFAFA]">
                     ATS Audit Score Breakdown
                   </h3>
 
@@ -743,21 +740,21 @@ export default function PlacementHubPage() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-3 gap-3 text-center">
                         <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A]">
-                          <span className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3] block">ATS Score</span>
-                          <span className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA]">{atsResult.ats_score}%</span>
+                          <span className="text-[13px] font-[500] text-[#6B7280] dark:text-[#A3A3A3] block">ATS Score</span>
+                          <span className="text-[28px] font-[700] text-[#111827] dark:text-[#FAFAFA]">{atsResult.ats_score}%</span>
                         </div>
                         <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A]">
-                          <span className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3] block">Grammar</span>
-                          <span className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA]">{atsResult.grammar_score}%</span>
+                          <span className="text-[13px] font-[500] text-[#6B7280] dark:text-[#A3A3A3] block">Grammar</span>
+                          <span className="text-[28px] font-[700] text-[#111827] dark:text-[#FAFAFA]">{atsResult.grammar_score}%</span>
                         </div>
                         <div className="p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A]">
-                          <span className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3] block">Formatting</span>
-                          <span className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA]">{atsResult.formatting_score}%</span>
+                          <span className="text-[13px] font-[500] text-[#6B7280] dark:text-[#A3A3A3] block">Formatting</span>
+                          <span className="text-[28px] font-[700] text-[#111827] dark:text-[#FAFAFA]">{atsResult.formatting_score}%</span>
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <span className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3] block">Missing High-Impact Skills:</span>
+                        <span className="text-[13px] font-[500] text-[#6B7280] dark:text-[#A3A3A3] block">Missing High-Impact Skills:</span>
                         <div className="flex flex-wrap gap-1.5">
                           {atsResult.missing_skills?.map((sk: string, idx: number) => (
                             <span key={idx} className="px-2.5 py-1 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium">
@@ -768,7 +765,7 @@ export default function PlacementHubPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <span className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3] block">AI Optimization Suggestions:</span>
+                        <span className="text-[13px] font-[500] text-[#6B7280] dark:text-[#A3A3A3] block">AI Optimization Suggestions:</span>
                         <ul className="space-y-1.5 text-[14px] text-[#4B5563] dark:text-[#D4D4D4]">
                           {atsResult.suggestions?.map((sug: string, idx: number) => (
                             <li key={idx} className="flex items-start gap-2">
@@ -790,7 +787,7 @@ export default function PlacementHubPage() {
               /* Interactive Resume Builder View */
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div className="lg:col-span-6 bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-4">
-                  <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+                  <h3 className="text-[18px] font-[600] text-[#111827] dark:text-[#FAFAFA]">
                     ATS Resume Form
                   </h3>
                   <div className="space-y-3 text-[14px]">
@@ -866,7 +863,7 @@ export default function PlacementHubPage() {
                 <div className="lg:col-span-6 space-y-4">
                   <div className="bg-[#FFFFFF] dark:bg-[#181818] p-8 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-4 font-body print:border-none">
                     <div className="border-b border-[#F3F4F6] dark:border-[#2A2A2A] pb-3 text-center">
-                      <h2 className="font-bold text-[22px] text-[#111827] dark:text-[#FAFAFA] uppercase">
+                      <h2 className="font-[600] text-[22px] text-[#111827] dark:text-[#FAFAFA] uppercase">
                         {builderForm.name}
                       </h2>
                       <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
@@ -875,28 +872,28 @@ export default function PlacementHubPage() {
                     </div>
 
                     <div className="space-y-1">
-                      <h4 className="font-bold text-[12px] uppercase text-[#111827] dark:text-[#FAFAFA] border-b border-[#F3F4F6] dark:border-[#2A2A2A] pb-0.5">
+                      <h4 className="font-[500] text-[12px] uppercase text-[#111827] dark:text-[#FAFAFA] border-b border-[#F3F4F6] dark:border-[#2A2A2A] pb-0.5">
                         Professional Summary
                       </h4>
                       <p className="text-[14px] text-[#4B5563] dark:text-[#D4D4D4]">{builderForm.summary}</p>
                     </div>
 
                     <div className="space-y-1">
-                      <h4 className="font-bold text-[12px] uppercase text-[#111827] dark:text-[#FAFAFA] border-b border-[#F3F4F6] dark:border-[#2A2A2A] pb-0.5">
+                      <h4 className="font-[500] text-[12px] uppercase text-[#111827] dark:text-[#FAFAFA] border-b border-[#F3F4F6] dark:border-[#2A2A2A] pb-0.5">
                         Education
                       </h4>
                       <p className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">{builderForm.education}</p>
                     </div>
 
                     <div className="space-y-1">
-                      <h4 className="font-bold text-[12px] uppercase text-[#111827] dark:text-[#FAFAFA] border-b border-[#F3F4F6] dark:border-[#2A2A2A] pb-0.5">
+                      <h4 className="font-[500] text-[12px] uppercase text-[#111827] dark:text-[#FAFAFA] border-b border-[#F3F4F6] dark:border-[#2A2A2A] pb-0.5">
                         Technical Skills
                       </h4>
                       <p className="text-[14px] text-[#4B5563] dark:text-[#D4D4D4]">{builderForm.skills}</p>
                     </div>
 
                     <div className="space-y-1">
-                      <h4 className="font-bold text-[12px] uppercase text-[#111827] dark:text-[#FAFAFA] border-b border-[#F3F4F6] dark:border-[#2A2A2A] pb-0.5">
+                      <h4 className="font-[500] text-[12px] uppercase text-[#111827] dark:text-[#FAFAFA] border-b border-[#F3F4F6] dark:border-[#2A2A2A] pb-0.5">
                         Key Projects
                       </h4>
                       <p className="text-[14px] text-[#4B5563] dark:text-[#D4D4D4]">{builderForm.projects}</p>
@@ -921,16 +918,16 @@ export default function PlacementHubPage() {
         {activeTab === 'coding' && (
           <div className="space-y-6">
             {/* Category & Difficulty Filters */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#181818] p-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs">
-              <div className="flex items-center gap-1.5 overflow-x-auto">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#FFFFFF] dark:bg-[#18181B] p-3.5 sm:p-4 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs select-none">
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar w-full sm:w-auto pb-1 sm:pb-0">
                 {['All', 'Arrays', 'Strings', 'Linked List', 'Trees', 'Graphs', 'Dynamic Programming'].map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`h-9 px-4 rounded-[8px] text-[14px] font-medium transition whitespace-nowrap cursor-pointer ${
+                    className={`h-[36px] px-3.5 rounded-[8px] text-[14px] font-[500] transition whitespace-nowrap cursor-pointer shrink-0 active:scale-[0.98] ${
                       selectedCategory === cat
-                        ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                        : 'bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                        ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                        : 'bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323]'
                     }`}
                   >
                     {cat}
@@ -938,15 +935,15 @@ export default function PlacementHubPage() {
                 ))}
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-1.5 shrink-0 w-full sm:w-auto overflow-x-auto no-scrollbar">
                 {['All', 'Easy', 'Medium', 'Hard'].map((diff) => (
                   <button
                     key={diff}
                     onClick={() => setSelectedDifficulty(diff)}
-                    className={`h-9 px-3 rounded-[8px] text-[12px] font-medium transition cursor-pointer ${
+                    className={`h-[36px] flex-1 sm:flex-none px-3.5 rounded-[8px] text-[12px] font-[400] transition cursor-pointer shrink-0 active:scale-[0.98] ${
                       selectedDifficulty === diff
-                        ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                        : 'bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                        ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                        : 'bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323]'
                     }`}
                   >
                     {diff}
@@ -964,7 +961,7 @@ export default function PlacementHubPage() {
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA]">
+                      <span className="text-[16px] font-[500] text-[#111827] dark:text-[#FAFAFA]">
                         {prob.title}
                       </span>
                       <span className="px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
@@ -998,7 +995,7 @@ export default function PlacementHubPage() {
               <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
                 <div className="bg-[#FFFFFF] dark:bg-[#181818] max-w-2xl w-full p-6 rounded-[16px] shadow-lg space-y-4 border border-[#D1D5DB] dark:border-[#3F3F46]">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-[18px] text-[#111827] dark:text-[#FAFAFA]">
+                    <h3 className="text-[18px] font-[600] text-[#111827] dark:text-[#FAFAFA]">
                       {activeProblem.title} ({activeProblem.difficulty})
                     </h3>
                     <button onClick={() => setActiveProblem(null)} className="text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] cursor-pointer">
@@ -1050,8 +1047,8 @@ export default function PlacementHubPage() {
           <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
-                  <Sparkles size={22} />
+                <h2 className="text-[20px] font-[600] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+                  <Sparkles size={20} />
                   <span>AI Mock Interview Simulator</span>
                 </h2>
                 <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-0.5">
@@ -1086,7 +1083,7 @@ export default function PlacementHubPage() {
 
             {currentMockQ && (
               <div className="space-y-4 p-6 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A]">
-                <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+                <h3 className="text-[18px] font-[600] text-[#111827] dark:text-[#FAFAFA]">
                   Q: {currentMockQ.question}
                 </h3>
                 <textarea
@@ -1109,10 +1106,10 @@ export default function PlacementHubPage() {
             {mockResult && (
               <div className="p-6 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] space-y-3 shadow-xs">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA]">
+                  <span className="text-[16px] font-[500] text-[#111827] dark:text-[#FAFAFA]">
                     Evaluation Result: {mockResult.status}
                   </span>
-                  <span className="text-[28px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+                  <span className="text-[28px] font-[700] text-[#111827] dark:text-[#FAFAFA]">
                     {mockResult.score_out_of_10} / 10
                   </span>
                 </div>
@@ -1130,81 +1127,25 @@ export default function PlacementHubPage() {
         {/* TAB 6: APTITUDE QUIZZES                                                   */}
         {/* ========================================================================= */}
         {activeTab === 'aptitude' && (
-          <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-6">
-            <h2 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
-              <Target size={22} />
-              <span>Daily Placement Aptitude & Logical Practice</span>
+          <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-4 sm:p-6 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-5 select-none">
+            <h2 className="text-[16px] sm:text-[17px] font-[600] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+              <Target size={20} className="shrink-0" />
+              <span>Campus Placement Aptitude Practice</span>
             </h2>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {['Quantitative Aptitude', 'Logical Reasoning', 'Verbal Ability', 'Data Interpretation'].map((c, i) => (
-                <div key={i} className="p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] space-y-3 flex flex-col justify-between">
-                  <div>
-                    <h3 className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA]">{c}</h3>
-                    <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] mt-1">15 Daily Practice Questions</p>
-                  </div>
-                  <button className="h-9 px-4 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium shadow-xs cursor-pointer">
-                    Start Test
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* TAB 7: AI CAREER ADVISOR                                                  */}
-        {/* ========================================================================= */}
-        {activeTab === 'advisor' && (
-          <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-6">
-            <h2 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
-              <Brain size={22} />
-              <span>AI Placement Career Advisor</span>
-            </h2>
-
-            {/* Quick Prompts */}
-            <div className="flex flex-wrap gap-2">
-              {[
-                'How do I prepare for TCS Digital & Prime?',
-                'Generate top 10 Java & DBMS Interview Questions.',
-                'What high-impact projects should I build for SDE roles?',
-                'Explain DBMS Normalization & Indexing interview questions.',
-              ].map((qp, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => {
-                    setAdvisorQuery(qp);
-                    handleAskAdvisor(qp);
-                  }}
-                  className="h-8 px-3 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
-                >
-                  {qp}
-                </button>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={advisorQuery}
-                onChange={(e) => setAdvisorQuery(e.target.value)}
-                placeholder="Ask any placement question..."
-                className="flex-1 h-10 px-4 rounded-[10px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
-              />
+            <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA]">
+              Practice quantitative aptitude, logical reasoning, and verbal ability tests designed for campus placement screening tests.
+            </p>
+            <div className="p-6 sm:p-8 text-center border-2 border-dashed border-[#D1D5DB] dark:border-[#3F3F46] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] space-y-3">
+              <Sparkles size={28} className="mx-auto text-[#111827] dark:text-[#FAFAFA]" />
+              <h3 className="text-[16px] sm:text-[17px] font-[600] text-[#111827] dark:text-[#FAFAFA]">Launch Placement Aptitude Test</h3>
+              <p className="text-[12px] sm:text-[13px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">Generate a 15-question speed test covering Quantitative & Logical Reasoning.</p>
               <button
-                onClick={() => handleAskAdvisor()}
-                disabled={askingAdvisor}
-                className="h-10 px-6 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] cursor-pointer"
+                onClick={() => alert('Aptitude Test session initialized!')}
+                className="h-[38px] sm:h-[40px] px-5 rounded-[12px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-[500] shadow-xs cursor-pointer active:scale-[0.98] w-full sm:w-auto"
               >
-                {askingAdvisor ? 'Thinking...' : 'Ask AI'}
+                Start Aptitude Test
               </button>
             </div>
-
-            {advisorAdvice && (
-              <div className="p-6 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[14px] leading-relaxed text-[#4B5563] dark:text-[#D4D4D4] space-y-2 whitespace-pre-wrap">
-                {advisorAdvice}
-              </div>
-            )}
           </div>
         )}
 
@@ -1212,15 +1153,15 @@ export default function PlacementHubPage() {
         {/* TAB 8: CERTIFICATES VAULT                                                */}
         {/* ========================================================================= */}
         {activeTab === 'certificates' && (
-          <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
-                <Award size={22} />
+          <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-4 sm:p-6 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs space-y-5 select-none">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <h2 className="text-[16px] sm:text-[17px] font-[600] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+                <Award size={20} className="shrink-0" />
                 <span>Student Certificates Vault</span>
               </h2>
               <button
                 onClick={() => setIsAddCertOpen(true)}
-                className="h-10 px-4 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium flex items-center gap-1.5 cursor-pointer"
+                className="h-[38px] sm:h-[40px] px-4 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] text-[13px] sm:text-[14px] font-[500] flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] w-full sm:w-auto shrink-0"
               >
                 <Plus size={16} /> Add Certificate
               </button>
@@ -1229,8 +1170,8 @@ export default function PlacementHubPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {certificates.map((cert) => (
                 <div key={cert.id} className="p-5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] space-y-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">{cert.category}</span>
-                  <h3 className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA]">{cert.title}</h3>
+                  <span className="text-[10px] font-[500] uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">{cert.category}</span>
+                  <h3 className="text-[16px] font-[500] text-[#111827] dark:text-[#FAFAFA]">{cert.title}</h3>
                   <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">{cert.issuer} • Issued {cert.issue_date}</p>
                 </div>
               ))}
@@ -1240,7 +1181,7 @@ export default function PlacementHubPage() {
             {isAddCertOpen && (
               <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
                 <form onSubmit={handleAddCert} className="bg-[#FFFFFF] dark:bg-[#181818] max-w-md w-full p-6 rounded-[16px] space-y-4 border border-[#D1D5DB] dark:border-[#3F3F46] shadow-lg">
-                  <h3 className="font-bold text-[18px] text-[#111827] dark:text-[#FAFAFA]">Add New Certificate</h3>
+                  <h3 className="text-[18px] font-[600] text-[#111827] dark:text-[#FAFAFA]">Add New Certificate</h3>
                   <input
                     type="text"
                     placeholder="Certificate Title"
@@ -1278,56 +1219,81 @@ export default function PlacementHubPage() {
         {/* JOB DETAILS MODAL */}
         {selectedDriveDetail && (
           <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-[#FFFFFF] dark:bg-[#181818] max-w-2xl w-full p-6 rounded-[16px] shadow-lg space-y-5 border border-[#D1D5DB] dark:border-[#3F3F46]">
-              <div className="flex items-center justify-between border-b border-[#F3F4F6] dark:border-[#2A2A2A] pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center font-bold text-[18px]">
+            <div className="bg-[#FFFFFF] dark:bg-[#181818] w-full max-w-[700px] p-5 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] space-y-4">
+              <div className="flex items-start justify-between gap-4 border-b border-[#E5E7EB] dark:border-[#2A2A2A] pb-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-[48px] h-[48px] rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center font-[600] text-[18px] shrink-0">
                     {selectedDriveDetail.company_name.charAt(0)}
                   </div>
-                  <div>
-                    <h3 className="font-bold text-[18px] text-[#111827] dark:text-[#FAFAFA]">{selectedDriveDetail.company_name}</h3>
-                    <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3]">{selectedDriveDetail.role}</p>
+                  <div className="min-w-0">
+                    <h3 className="text-[20px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-tight">
+                      {selectedDriveDetail.company_name}
+                    </h3>
+                    <p className="text-[15px] text-[#6B7280] dark:text-[#A1A1AA]">{selectedDriveDetail.role}</p>
                   </div>
                 </div>
-                <button onClick={() => setSelectedDriveDetail(null)} className="p-1 rounded text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] cursor-pointer">
+                <button onClick={() => setSelectedDriveDetail(null)} className="p-1 rounded text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] cursor-pointer">
                   ✕
                 </button>
               </div>
 
-              <div className="space-y-4 text-[14px] text-[#4B5563] dark:text-[#D4D4D4] max-h-96 overflow-y-auto pr-1">
+              <div className="space-y-4 text-[15px] text-[#4B5563] dark:text-[#D4D4D4] max-h-[70vh] overflow-y-auto pr-1">
                 <div>
-                  <h4 className="font-bold text-[12px] uppercase text-[#111827] dark:text-[#FAFAFA] mb-1">Role Description</h4>
-                  <p className="leading-relaxed">{selectedDriveDetail.job_description || `${selectedDriveDetail.company_name} is hiring for ${selectedDriveDetail.role}. Candidates should demonstrate strong problem-solving skills, algorithmic understanding, and software design principles.`}</p>
+                  <h4 className="text-[14px] font-[500] uppercase tracking-wide text-[#111827] dark:text-[#FAFAFA] mb-1">Role Description</h4>
+                  <p className="leading-[1.6]">{selectedDriveDetail.job_description || `${selectedDriveDetail.company_name} is hiring for ${selectedDriveDetail.role}. Candidates should demonstrate strong problem-solving skills, algorithmic understanding, and software design principles.`}</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 p-4 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A]">
+                <div className="grid grid-cols-2 gap-3 p-4 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A]">
                   <div>
-                    <span className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] block">CTC Package</span>
-                    <span className="font-bold text-[#111827] dark:text-[#FAFAFA]">{selectedDriveDetail.package_ctc}</span>
+                    <span className="text-[13px] text-[#6B7280] dark:text-[#A1A1AA] block">CTC Package</span>
+                    <span className="font-[600] text-[#111827] dark:text-[#FAFAFA]">{selectedDriveDetail.package_ctc}</span>
                   </div>
                   <div>
-                    <span className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3] block">Drive Date</span>
-                    <span className="font-bold text-[#111827] dark:text-[#FAFAFA]">{selectedDriveDetail.drive_date || 'TBA'}</span>
+                    <span className="text-[13px] text-[#6B7280] dark:text-[#A1A1AA] block">Drive Date</span>
+                    <span className="font-[600] text-[#111827] dark:text-[#FAFAFA]">{selectedDriveDetail.drive_date || 'TBA'}</span>
+                  </div>
+                  <div>
+                    <span className="text-[13px] text-[#6B7280] dark:text-[#A1A1AA] block">Eligibility</span>
+                    <span className="font-[600] text-[#111827] dark:text-[#FAFAFA]">CGPA ≥ {selectedDriveDetail.eligibility_cgpa}</span>
+                  </div>
+                  <div>
+                    <span className="text-[13px] text-[#6B7280] dark:text-[#A1A1AA] block">Deadline</span>
+                    <span className="font-[600] text-[#111827] dark:text-[#FAFAFA]">{selectedDriveDetail.last_date}</span>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="font-bold text-[12px] uppercase text-[#111827] dark:text-[#FAFAFA] mb-1">Required Skills</h4>
+                  <h4 className="text-[14px] font-[500] uppercase tracking-wide text-[#111827] dark:text-[#FAFAFA] mb-1">Skills</h4>
                   <div className="flex flex-wrap gap-1.5">
                     {selectedDriveDetail.skills_required.split(',').map((skill, idx) => (
-                      <span key={idx} className="px-2.5 py-1 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium">
+                      <span key={idx} className="h-[24px] px-3 rounded-[999px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-[500] flex items-center">
                         {skill.trim()}
                       </span>
                     ))}
                   </div>
                 </div>
+
+                <div>
+                  <h4 className="text-[14px] font-[500] uppercase tracking-wide text-[#111827] dark:text-[#FAFAFA] mb-1">Selection Rounds</h4>
+                  <p className="leading-[1.6]">{selectedDriveDetail.selection_process}</p>
+                </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#F3F4F6] dark:border-[#2A2A2A]">
-                <button onClick={() => setSelectedDriveDetail(null)} className="h-10 px-5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] text-[14px] text-[#111827] dark:text-[#FAFAFA] cursor-pointer">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E5E7EB] dark:border-[#2A2A2A]">
+                <button
+                  onClick={() => {
+                    const isSaved = savedDrives.includes(selectedDriveDetail.id);
+                    setSavedDrives((prev) => isSaved ? prev.filter((id) => id !== selectedDriveDetail.id) : [...prev, selectedDriveDetail.id]);
+                  }}
+                  className="h-[38px] px-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] cursor-pointer flex items-center gap-2"
+                >
+                  <Bookmark size={16} />
+                  {savedDrives.includes(selectedDriveDetail.id) ? 'Saved' : 'Bookmark'}
+                </button>
+                <button onClick={() => setSelectedDriveDetail(null)} className="h-[38px] px-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] text-[14px] text-[#111827] dark:text-[#FAFAFA] cursor-pointer">
                   Close
                 </button>
-                <button onClick={() => { handleApplyDrive(selectedDriveDetail); setSelectedDriveDetail(null); }} className="h-10 px-6 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] cursor-pointer">
+                <button onClick={() => { handleApplyDrive(selectedDriveDetail); setSelectedDriveDetail(null); }} className="h-[38px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] cursor-pointer">
                   Apply Now
                 </button>
               </div>

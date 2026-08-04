@@ -1,21 +1,15 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ClipboardList,
   CalendarDays,
   Clock3,
-  BookOpen,
-  Upload,
-  Download,
   Search,
-  Filter,
   CircleCheck,
   CircleAlert,
-  Trash2,
-  SquarePen,
   Plus,
-  Sparkles,
   ArrowUpDown,
   ListFilter,
+  LayoutGrid,
   AlertCircle
 } from 'lucide-react';
 import {
@@ -56,12 +50,12 @@ export default function AssignmentsPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Filters, Search, Sort & View Mode
+  // Filters, Search, Sort & View Mode (Default Grid view)
   const [filterBy, setFilterBy] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortBy, setSortBy] = useState<string>('due_date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'calendar'>('grid');
 
   // Modals state
   const [isFormModalOpen, setIsFormModalOpen] = useState<boolean>(false);
@@ -119,7 +113,7 @@ export default function AssignmentsPage() {
     }
   };
 
-  const handleToggleStatus = async (id: number, currentStatus: string) => {
+  const handleToggleStatus = async (id: number) => {
     try {
       const updated = await toggleAssignmentStatus(id);
       showToast(
@@ -183,67 +177,80 @@ export default function AssignmentsPage() {
   ];
 
   return (
-    <div className="w-full h-full overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 md:p-8 transition-colors">
-      <div className="w-full max-w-[1600px] mx-auto space-y-8">
+    <div className="w-full h-full overflow-x-hidden overflow-y-auto bg-[#F8FAFC] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 lg:p-8 transition-colors select-none font-sans">
+      {/* 1440px Centered Max Content Width Container */}
+      <div className="w-full max-w-[1440px] mx-auto space-y-8">
 
-        {/* ========================================================================= */}
-        {/* 1. PAGE HEADER CARD                                                       */}
-        {/* ========================================================================= */}
-        <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 md:p-8 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+        {/* Page Hero Header */}
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="w-12 h-12 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
               <ClipboardList size={24} />
             </div>
-            <div>
-              <h1 className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight">
+            <div className="min-w-0 space-y-1">
+              <h1 className="text-[30px] font-semibold text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-tight truncate">
                 Smart Assignments
               </h1>
-              <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-1">
+              <p className="text-[15px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">
                 Organize, track, and complete college assignments with AI assistance.
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            {/* View Switcher: List vs Calendar */}
-            <div className="flex bg-[#F8FAFC] dark:bg-[#111111] p-1.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46]">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+            {/* View Switcher: Grid, List, Calendar */}
+            <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1.5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] overflow-x-auto no-scrollbar">
               <button
-                onClick={() => setViewMode('list')}
-                className={`h-9 px-3.5 text-[14px] font-medium rounded-[8px] transition-all cursor-pointer flex items-center gap-2 ${
-                  viewMode === 'list'
-                    ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                    : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                onClick={() => setViewMode('grid')}
+                title="Grid View"
+                className={`h-[36px] px-3.5 text-[14px] font-medium rounded-[8px] transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                  viewMode === 'grid'
+                    ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                    : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
                 }`}
               >
-                <ListFilter size={16} />
-                <span>List View</span>
+                <LayoutGrid size={14} />
+                <span>Grid</span>
+              </button>
+
+              <button
+                onClick={() => setViewMode('list')}
+                title="List View"
+                className={`h-[36px] px-3.5 text-[14px] font-medium rounded-[8px] transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                  viewMode === 'list'
+                    ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                    : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
+                }`}
+              >
+                <ListFilter size={14} />
+                <span>List</span>
               </button>
 
               <button
                 onClick={() => setViewMode('calendar')}
-                className={`h-9 px-3.5 text-[14px] font-medium rounded-[8px] transition-all cursor-pointer flex items-center gap-2 ${
+                title="Calendar View"
+                className={`h-[36px] px-3.5 text-[14px] font-medium rounded-[8px] transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   viewMode === 'calendar'
-                    ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                    : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                    ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                    : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
                 }`}
               >
-                <CalendarDays size={16} />
-                <span>Calendar View</span>
+                <CalendarDays size={14} />
+                <span>Calendar</span>
               </button>
             </div>
 
-            {/* Create Assignment Button */}
             <button
               onClick={openCreateModal}
-              className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition flex items-center gap-2 cursor-pointer"
+              className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] transition flex items-center justify-center gap-2 cursor-pointer shrink-0"
             >
-              <Plus size={16} />
-              <span>Create Assignment</span>
+              <Plus size={18} />
+              <span>New Assignment</span>
             </button>
           </div>
         </div>
 
-        {/* Dashboard Stats Overview */}
+        {/* Dashboard Stats Overview - Responsive Grid Format */}
         <AssignmentStats
           stats={stats}
           activeFilter={filterBy}
@@ -252,17 +259,17 @@ export default function AssignmentsPage() {
 
         {/* Automated Reminders Alert Banner */}
         {reminders.length > 0 && (
-          <div className="p-4 rounded-[12px] bg-[#F8FAFC] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+          <div className="p-3.5 sm:p-4 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
-                <Clock3 size={20} />
+              <div className="w-[36px] h-[36px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+                <Clock3 size={18} />
               </div>
               <div>
-                <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA]">
+                <h4 className="text-[11px] font-[400] uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA]">
                   Due Date Reminders ({reminders.length})
                 </h4>
-                <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-0.5">
-                  You have upcoming assignments due soon! Review them to submit on time.
+                <p className="text-[12px] sm:text-[13px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] mt-0.5">
+                  You have upcoming assignments due soon. Review them to submit on time.
                 </p>
               </div>
             </div>
@@ -271,9 +278,9 @@ export default function AssignmentsPage() {
               {reminders.slice(0, 3).map((r) => (
                 <span
                   key={r.id}
-                  className="inline-flex items-center gap-1.5 text-[12px] font-medium px-3 py-1 rounded-[6px] bg-[#FFFFFF] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA]"
+                  className="inline-flex items-center gap-1.5 text-[11px] sm:text-[12px] font-[400] px-3 py-1 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA]"
                 >
-                  <CircleAlert size={14} />
+                  <CircleAlert size={13} />
                   {r.title} ({r.reminder_type})
                 </span>
               ))}
@@ -282,29 +289,27 @@ export default function AssignmentsPage() {
         )}
 
         {/* Search, Filter & Sort Bar */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#181818] p-4 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs">
-          {/* Search Input */}
-          <div className="relative flex-1 min-w-[240px]">
-            <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A3A3A3]" />
+        <div className="flex flex-col md:flex-row items-center justify-between gap-3 bg-[#FFFFFF] dark:bg-[#18181B] p-3.5 sm:p-4 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs select-none">
+          <div className="relative w-full md:w-64">
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A1A1AA]" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by Title, Subject, Faculty, or Status..."
-              className="w-full h-10 pl-10 pr-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
+              placeholder="Search by title, subject..."
+              className="w-full h-[38px] sm:h-[40px] pl-10 pr-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[13px] sm:text-[14px] font-sans text-[#111827] dark:text-[#FAFAFA] outline-none"
             />
           </div>
 
-          {/* Filter Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar w-full md:w-auto pb-1 md:pb-0">
             {filterTabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setFilterBy(tab.id)}
-                className={`h-9 px-4 rounded-[8px] text-[14px] font-medium transition cursor-pointer whitespace-nowrap ${
+                className={`h-[36px] px-3.5 rounded-[8px] text-[14px] font-[500] transition cursor-pointer whitespace-nowrap shrink-0 active:scale-[0.98] ${
                   filterBy === tab.id
-                    ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                    : 'bg-[#FFFFFF] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                    ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                    : 'bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323]'
                 }`}
               >
                 {tab.label}
@@ -312,13 +317,12 @@ export default function AssignmentsPage() {
             ))}
           </div>
 
-          {/* Sort Selector */}
-          <div className="flex items-center gap-2 border-t md:border-t-0 md:border-l border-[#E5E7EB] dark:border-[#2A2A2A] pt-2 md:pt-0 md:pl-3">
-            <ArrowUpDown size={16} className="text-[#6B7280] dark:text-[#A3A3A3] shrink-0" />
+          <div className="flex items-center gap-2 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-[#D1D5DB] dark:border-[#3F3F46]">
+            <ArrowUpDown size={15} className="text-[#6B7280] dark:text-[#A1A1AA] shrink-0" />
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="h-9 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer"
+              className="h-[36px] flex-1 md:flex-none px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[12px] sm:text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer"
             >
               <option value="due_date">Due Date</option>
               <option value="priority">Priority</option>
@@ -328,7 +332,7 @@ export default function AssignmentsPage() {
 
             <button
               onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-              className="h-9 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] cursor-pointer"
+              className="h-[36px] px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[12px] font-[400] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] cursor-pointer active:scale-[0.98]"
               title={`Sort Order: ${sortOrder.toUpperCase()}`}
             >
               {sortOrder.toUpperCase()}
@@ -338,20 +342,20 @@ export default function AssignmentsPage() {
 
         {/* View Mode Content */}
         {loading ? (
-          <div className="py-20 flex flex-col items-center justify-center text-center">
+          <div className="py-16 flex flex-col items-center justify-center text-center">
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#111827] dark:border-[#FAFAFA] border-t-transparent" />
-            <p className="mt-3 text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
+            <p className="mt-3 text-[14px] font-[500] text-[#6B7280] dark:text-[#A3A3A3]">
               Loading assignments database...
             </p>
           </div>
         ) : error ? (
-          <div className="py-16 flex flex-col items-center justify-center text-center bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] p-6 shadow-xs">
-            <AlertCircle size={40} className="text-[#6B7280] dark:text-[#A3A3A3] mb-2" />
-            <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">Failed to load assignments</h3>
+          <div className="py-12 flex flex-col items-center justify-center text-center bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] p-6">
+            <AlertCircle size={36} className="text-[#6B7280] dark:text-[#A3A3A3] mb-2" />
+            <h3 className="text-[18px] font-[600] text-[#111827] dark:text-[#FAFAFA]">Failed to load assignments</h3>
             <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-1 max-w-sm">{error}</p>
             <button
               onClick={fetchData}
-              className="mt-4 h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium cursor-pointer"
+              className="mt-4 h-[38px] px-4 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-[500] cursor-pointer"
             >
               Retry
             </button>
@@ -361,8 +365,9 @@ export default function AssignmentsPage() {
             assignments={assignments}
             onSelectAssignment={(assignment) => openEditModal(assignment)}
           />
-        ) : (
-          <div className="space-y-4">
+        ) : viewMode === 'grid' ? (
+          /* GRID VIEW (Default) */
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {assignments.map((assignment) => (
               <AssignmentCard
                 key={assignment.id}
@@ -375,9 +380,9 @@ export default function AssignmentsPage() {
             ))}
 
             {assignments.length === 0 && (
-              <div className="py-20 flex flex-col items-center justify-center text-center bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] p-8 shadow-xs">
-                <CircleCheck size={48} className="text-[#6B7280] dark:text-[#A3A3A3] mb-3 opacity-40" />
-                <h3 className="font-bold text-[18px] text-[#111827] dark:text-[#FAFAFA]">
+              <div className="col-span-full py-16 flex flex-col items-center justify-center text-center bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] p-8">
+                <CircleCheck size={40} className="text-[#6B7280] dark:text-[#A3A3A3] mb-3 opacity-40" />
+                <h3 className="font-[600] text-[18px] text-[#111827] dark:text-[#FAFAFA]">
                   No Assignments Available
                 </h3>
                 <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] max-w-sm mt-1">
@@ -385,7 +390,40 @@ export default function AssignmentsPage() {
                 </p>
                 <button
                   onClick={openCreateModal}
-                  className="mt-4 h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs cursor-pointer flex items-center gap-2"
+                  className="mt-4 h-[38px] px-4 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-[500] text-[14px] cursor-pointer flex items-center gap-2"
+                >
+                  <Plus size={16} />
+                  <span>Create Assignment</span>
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          /* LIST VIEW */
+          <div className="space-y-3">
+            {assignments.map((assignment) => (
+              <AssignmentCard
+                key={assignment.id}
+                assignment={assignment}
+                onToggleStatus={handleToggleStatus}
+                onEdit={openEditModal}
+                onDelete={handleDelete}
+                onAiAction={handleAiAction}
+              />
+            ))}
+
+            {assignments.length === 0 && (
+              <div className="py-16 flex flex-col items-center justify-center text-center bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] p-8">
+                <CircleCheck size={40} className="text-[#6B7280] dark:text-[#A3A3A3] mb-3 opacity-40" />
+                <h3 className="font-[600] text-[18px] text-[#111827] dark:text-[#FAFAFA]">
+                  No Assignments Available
+                </h3>
+                <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] max-w-sm mt-1">
+                  Create or import your first assignment to get started.
+                </p>
+                <button
+                  onClick={openCreateModal}
+                  className="mt-4 h-[38px] px-4 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-[500] text-[14px] cursor-pointer flex items-center gap-2"
                 >
                   <Plus size={16} />
                   <span>Create Assignment</span>

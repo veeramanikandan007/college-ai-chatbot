@@ -198,21 +198,21 @@ export default function AttendancePage() {
         {/* HEADER BAR                                                                 */}
         {/* ========================================================================= */}
         {/* HEADER BAR */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-zinc-900 p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-xs print:border-none print:shadow-none">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#18181B] p-5 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs print:border-none print:shadow-none">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-[12px] bg-[#F3F4F6] text-[#111827] dark:bg-zinc-800 dark:text-zinc-100 flex items-center justify-center border border-[#E5E7EB] dark:border-zinc-700 shrink-0">
+            <div className="w-[44px] h-[44px] rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
               <Award size={22} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="font-heading font-bold text-2xl md:text-3xl text-zinc-900 dark:text-zinc-100 tracking-tight">
+                <h1 className="text-[20px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-[1.2]">
                   Smart Attendance Dashboard
                 </h1>
-                <span className="text-xs px-2.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-medium border border-zinc-200 dark:border-zinc-700">
+                <span className="text-[11px] sm:text-[13px] px-2.5 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] font-[500] border border-[#D1D5DB] dark:border-[#3F3F46]">
                   AI Analytics
                 </span>
               </div>
-              <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+              <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] mt-0.5">
                 {data.department} • Semester {data.semester} ({data.academic_year})
               </p>
             </div>
@@ -222,14 +222,14 @@ export default function AttendancePage() {
           <div className="flex items-center gap-3 shrink-0 print:hidden">
             <button
               onClick={fetchDashboardData}
-              className="p-2.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition border border-zinc-200 dark:border-zinc-700"
+              className="p-2.5 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-[#FAFAFA] transition border border-[#D1D5DB] dark:border-[#3F3F46] cursor-pointer"
               title="Refresh Analytics"
             >
               <RefreshCw size={18} />
             </button>
             <button
               onClick={handleExportPDF}
-              className="px-4 py-2.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-medium text-xs shadow-xs transition flex items-center gap-2 cursor-pointer"
+              className="h-[40px] px-4 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-[500] shadow-xs transition flex items-center gap-2 cursor-pointer"
             >
               <Download size={16} />
               Export PDF Report
@@ -278,8 +278,8 @@ export default function AttendancePage() {
                   className="transition-all duration-1000 ease-out"
                 />
               </svg>
-              <div className="absolute inset-0 flex items-center justify-center font-heading font-bold text-sm text-[#D9A441]">
-                {data.overall_risk_level === 'Safe' ? '🟢 Safe' : data.overall_risk_level === 'Warning' ? '🟡 Warning' : '🔴 Critical'}
+              <div className="absolute inset-0 flex items-center justify-center font-heading font-semibold text-xs text-[#FFFFFF]">
+                {data.overall_risk_level}
               </div>
             </div>
           </div>

@@ -74,6 +74,15 @@ def init_db(db: Optional[Session] = None):
                 conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN difficulty VARCHAR DEFAULT 'Intermediate'"))
             if "extracted_text" not in columns:
                 conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN extracted_text TEXT"))
+    if "notifications" in inspector.get_table_names():
+        columns = [c["name"] for c in inspector.get_columns("notifications")]
+        with engine.connect() as conn:
+            if "is_pinned" not in columns:
+                conn.execute(text("ALTER TABLE notifications ADD COLUMN is_pinned BOOLEAN DEFAULT 0"))
+            if "category" not in columns:
+                conn.execute(text("ALTER TABLE notifications ADD COLUMN category VARCHAR DEFAULT 'general'"))
+            if "action_link" not in columns:
+                conn.execute(text("ALTER TABLE notifications ADD COLUMN action_link VARCHAR"))
             conn.commit()
 
     Base.metadata.create_all(bind=engine)

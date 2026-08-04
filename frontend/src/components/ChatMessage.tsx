@@ -233,9 +233,9 @@ export default function ChatMessage({
         )}
 
         {/* Footer Actions & Timestamp */}
-        <div className="mt-2 flex items-center justify-between text-[10px] font-medium text-[#64748B] dark:text-slate-400">
+        <div className="mt-2 flex items-center justify-between text-[10px] font-medium text-[#9CA3AF] dark:text-[#737373]">
           <div className="flex items-center gap-2">
-            <span className={isUser ? 'text-slate-300' : 'text-[#64748B] dark:text-slate-400'}>
+            <span className={isUser ? 'text-[#9CA3AF] dark:text-[#737373]' : 'text-[#9CA3AF] dark:text-[#737373]'}>
               {message.timestamp}
             </span>
             {isSpeakingThisMsg && (

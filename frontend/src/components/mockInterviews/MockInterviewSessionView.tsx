@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import {
   Mic,
   MicOff,
@@ -284,7 +284,7 @@ export const MockInterviewSessionView: React.FC<MockInterviewSessionViewProps> =
       {/* Question Card Box */}
       <div className="p-6 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-[12px] font-bold uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA]">
+          <span className="text-[12px] font-medium uppercase tracking-wider text-[#111827] dark:text-[#FAFAFA]">
             Question #{currentQa.question_number}
           </span>
 
@@ -311,7 +311,7 @@ export const MockInterviewSessionView: React.FC<MockInterviewSessionViewProps> =
               Answer Mode: <strong className="font-bold">Voice or Keyboard</strong>
             </span>
             {isRecording && (
-              <span className="inline-flex items-center gap-1.5 text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA] animate-pulse">
+              <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] animate-pulse">
                 <span className="h-2 w-2 rounded-full bg-[#111827] dark:bg-[#FAFAFA]" />
                 Live Recording STT...
               </span>

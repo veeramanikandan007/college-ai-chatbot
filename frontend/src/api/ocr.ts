@@ -18,6 +18,7 @@ export interface OCRScanListItem {
   id: number;
   user_id: number;
   image_name: string;
+  extracted_text?: string;
   language_detected: string;
   created_at: string;
 }

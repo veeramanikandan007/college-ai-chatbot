@@ -75,7 +75,7 @@ function HighlightedText({ text, query }: { text: string; query: string }) {
         part.toLowerCase() === query.toLowerCase() ? (
           <mark
             key={i}
-            className="bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 rounded px-0.5 font-medium"
+            className="bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-[#FAFAFA] rounded px-0.5 font-medium"
           >
             {part}
           </mark>
@@ -140,15 +140,15 @@ const ChatItem = React.memo(function ChatItem({
       <div
         onClick={() => onSelect(chat.id)}
         className={`flex h-[44px] items-center justify-between rounded-lg px-3 transition-all duration-150 cursor-pointer select-none border font-body ${isActive
-            ? 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 border-zinc-200 dark:border-zinc-700 font-semibold'
-            : 'text-zinc-600 dark:text-zinc-400 border-transparent hover:bg-zinc-100/70 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-100'
+            ? 'bg-zinc-100 dark:bg-[#1A1A1A]/80 text-zinc-900 dark:text-[#FAFAFA] border-zinc-200 dark:border-[#2A2A2A] font-semibold'
+            : 'text-zinc-600 dark:text-[#A3A3A3] border-transparent hover:bg-zinc-100/70 dark:hover:bg-[#1A1A1A]/50 hover:text-zinc-900 dark:hover:text-zinc-100'
           }`}
       >
         <div className="flex items-center gap-[12px] min-w-0 flex-1 pr-1">
           <MessageSquare
             size={16}
             strokeWidth={1.75}
-            className={`shrink-0 ${isActive ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-400 dark:text-zinc-500'
+            className={`shrink-0 ${isActive ? 'text-zinc-900 dark:text-[#FAFAFA]' : 'text-zinc-400 dark:text-[#737373]'
               }`}
           />
 
@@ -164,14 +164,14 @@ const ChatItem = React.memo(function ChatItem({
               }}
               onBlur={() => onRenameSave(chat.id)}
               onClick={(e) => e.stopPropagation()}
-              className="w-full bg-white dark:bg-[#0F172A] border border-[#1E4DB7] text-[15px] font-medium text-[#1F2937] dark:text-[#F8FAFC] rounded-lg px-2 py-1 outline-none"
+              className="w-full bg-white dark:bg-[#0A0A0A] border border-[#1E4DB7] text-[15px] font-medium text-[#1F2937] dark:text-[#F8FAFC] rounded-lg px-2 py-1 outline-none"
             />
           ) : (
             <div className="flex flex-col min-w-0">
               <span className="truncate text-[15px] font-medium leading-snug">
                 <HighlightedText text={chat.title} query={searchTerm} />
               </span>
-              <span className="text-[13px] text-[#64748B] dark:text-[#94A3B8] truncate leading-tight">
+              <span className="text-[12px] text-[#9CA3AF] dark:text-[#737373] truncate leading-tight">
                 {chat.lastUpdated}
               </span>
             </div>
@@ -182,7 +182,7 @@ const ChatItem = React.memo(function ChatItem({
         {!isEditing && (
           <button
             onClick={(e) => onToggleMenu(chat.id, e)}
-            className={`p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-[#E2E8F0] dark:hover:bg-[#334155] text-[#64748B] dark:text-[#94A3B8] transition-opacity shrink-0 ${isMenuOpen ? 'opacity-100 bg-[#E2E8F0] dark:bg-[#334155]' : ''
+            className={`p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-[#E2E8F0] dark:hover:bg-[#252525] text-[#64748B] dark:text-[#A3A3A3] transition-opacity shrink-0 ${isMenuOpen ? 'opacity-100 bg-[#E2E8F0] dark:bg-[#252525]' : ''
               }`}
             title="Options"
           >
@@ -199,25 +199,25 @@ const ChatItem = React.memo(function ChatItem({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -4 }}
             transition={{ duration: 0.12 }}
-            className="absolute right-2 top-[52px] z-50 w-44 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] p-1.5 shadow-lg select-none font-body text-[13px]"
+            className="absolute right-2 top-[52px] z-50 w-44 rounded-xl border border-[#E2E8F0] dark:border-[#2A2A2A] bg-white dark:bg-[#111111] p-1.5 shadow-lg select-none font-body text-[13px]"
           >
             <button
               onClick={() => onPin(chat.id)}
-              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] transition"
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[#475569] dark:text-[#D4D4D4] hover:bg-[#F5F7FB] dark:hover:bg-[#111111] transition"
             >
               <Pin size={16} strokeWidth={1.75} />
               <span>{chat.pinned ? 'Unpin Chat' : 'Pin Chat'}</span>
             </button>
             <button
               onClick={() => onRenameStart(chat)}
-              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] transition"
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[#475569] dark:text-[#D4D4D4] hover:bg-[#F5F7FB] dark:hover:bg-[#111111] transition"
             >
               <Edit2 size={16} strokeWidth={1.75} />
               <span>Rename</span>
             </button>
             <button
               onClick={() => onDuplicate(chat.id)}
-              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[#475569] dark:text-[#CBD5E1] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A] transition"
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[#475569] dark:text-[#D4D4D4] hover:bg-[#F5F7FB] dark:hover:bg-[#111111] transition"
             >
               <Copy size={16} strokeWidth={1.75} />
               <span>Duplicate</span>
@@ -480,7 +480,7 @@ export default function Sidebar({
     if (chats.length === 0) return null;
     return (
       <div className="mb-3">
-        <div className="sticky top-0 bg-white dark:bg-[#111827] z-10 flex items-center gap-2 px-[14px] py-1 font-body text-[12px] font-semibold uppercase tracking-[0.08em] text-[#64748B] dark:text-[#94A3B8]">
+        <div className="sticky top-0 bg-white dark:bg-[#0A0A0A] z-10 flex items-center gap-2 px-[14px] py-1 font-body text-[12px] font-medium uppercase tracking-[0.08em] text-[#64748B] dark:text-[#A3A3A3]">
           {isPinnedSection ? (
             <>
               <Pin size={16} strokeWidth={1.75} className="text-[#EF4444] shrink-0" />
@@ -533,7 +533,7 @@ export default function Sidebar({
         initial={false}
         animate={{ width: isCollapsed ? 72 : 320 }}
         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-        className="hidden lg:flex flex-col h-[100dvh] shrink-0 border-r border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#111827] relative z-40 overflow-hidden select-none py-[16px] px-[12px] box-border"
+        className="hidden lg:flex flex-col h-[100dvh] shrink-0 border-r border-[#E2E8F0] dark:border-[#2A2A2A] bg-white dark:bg-[#0A0A0A] relative z-40 overflow-hidden select-none py-[16px] px-[12px] box-border"
       >
         {/* Logo Section — Height 72px */}
         <div className="flex items-center shrink-0 mb-3 h-[60px] px-1 select-none">
@@ -547,7 +547,7 @@ export default function Sidebar({
                 >
                   <GraduationCap size={18} strokeWidth={1.75} />
                 </motion.div>
-                <span className="font-heading font-bold text-[16px] tracking-tight text-zinc-900 dark:text-zinc-100 truncate">
+                <span className="font-heading font-bold text-[16px] tracking-tight text-zinc-900 dark:text-[#FAFAFA] truncate">
                   CollegeMate AI
                 </span>
               </Link>
@@ -560,7 +560,7 @@ export default function Sidebar({
                   e.stopPropagation();
                   toggleCollapse();
                 }}
-                className="w-[40px] h-[40px] rounded-xl flex items-center justify-center shrink-0 text-[#64748B] dark:text-[#94A3B8] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-250 cursor-pointer pointer-events-auto z-50"
+                className="w-[40px] h-[40px] rounded-xl flex items-center justify-center shrink-0 text-[#64748B] dark:text-[#A3A3A3] hover:bg-[#F5F7FB] dark:hover:bg-[#181818] transition-all duration-250 cursor-pointer pointer-events-auto z-50"
                 title="Collapse sidebar (Ctrl + \)"
               >
                 <PanelLeftClose size={18} strokeWidth={1.75} />
@@ -577,7 +577,7 @@ export default function Sidebar({
                     e.stopPropagation();
                     toggleCollapse();
                   }}
-                  className="w-[40px] h-[40px] rounded-xl flex items-center justify-center shrink-0 bg-[#F5F7FB] dark:bg-[#1E293B] text-[#0E2A6D] dark:text-[#60A5FA] hover:bg-[#E2E8F0] dark:hover:bg-[#334155] transition-all duration-250 cursor-pointer pointer-events-auto z-50 border border-[#E2E8F0] dark:border-[#334155]"
+                  className="w-[40px] h-[40px] rounded-xl flex items-center justify-center shrink-0 bg-[#F5F7FB] dark:bg-[#181818] text-[#111827] dark:text-[#A3A3A3] hover:bg-[#E2E8F0] dark:hover:bg-[#252525] transition-all duration-250 cursor-pointer pointer-events-auto z-50 border border-[#E2E8F0] dark:border-[#2A2A2A]"
                 >
                   <PanelLeftOpen size={18} strokeWidth={1.75} />
                 </motion.button>
@@ -629,8 +629,8 @@ export default function Sidebar({
                       to={item.path}
                       className={`rounded-lg transition-all duration-150 flex items-center shrink-0 ${
                         isActive
-                          ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-semibold'
-                          : 'text-zinc-600 dark:text-zinc-400 font-medium bg-transparent hover:bg-zinc-100/70 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-100'
+                          ? 'bg-zinc-100 dark:bg-[#1A1A1A] text-zinc-900 dark:text-[#FAFAFA] font-semibold'
+                          : 'text-zinc-600 dark:text-[#A3A3A3] font-medium bg-transparent hover:bg-zinc-100/70 dark:hover:bg-[#1A1A1A]/50 hover:text-zinc-900 dark:hover:text-zinc-100'
                       } ${
                         isCollapsed
                           ? 'w-[40px] h-[40px] justify-center mx-auto'
@@ -640,7 +640,7 @@ export default function Sidebar({
                       <Icon
                         size={18}
                         strokeWidth={1.75}
-                        className={`${isActive ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-400'} shrink-0`}
+                        className={`${isActive ? 'text-zinc-900 dark:text-[#FAFAFA]' : 'text-zinc-500 dark:text-[#A3A3A3]'} shrink-0`}
                       />
                       {!isCollapsed && <span>{item.label}</span>}
                     </Link>
@@ -659,7 +659,7 @@ export default function Sidebar({
                     setIsCollapsed(false);
                     setTimeout(() => searchInputRef.current?.focus(), 150);
                   }}
-                  className="w-[42px] h-[42px] rounded-[12px] flex items-center justify-center shrink-0 mx-auto text-[#64748B] dark:text-[#94A3B8] hover:bg-[#F5F7FB] dark:hover:bg-[#1E293B] transition-all duration-200 mt-1"
+                  className="w-[42px] h-[42px] rounded-[12px] flex items-center justify-center shrink-0 mx-auto text-[#64748B] dark:text-[#A3A3A3] hover:bg-[#F5F7FB] dark:hover:bg-[#181818] transition-all duration-200 mt-1"
                 >
                   <Search size={20} strokeWidth={1.75} />
                 </motion.button>
@@ -671,14 +671,14 @@ export default function Sidebar({
           {!isCollapsed && user?.role === 'student' && (
             <div className="flex-1 flex flex-col min-h-0 gap-[8px] mt-1">
               <div className="relative flex items-center shrink-0">
-                <Search size={16} strokeWidth={1.75} className="absolute left-3 text-[#64748B] pointer-events-none" />
+                <Search size={16} strokeWidth={1.75} className="absolute left-3 text-[#9CA3AF] dark:text-[#737373] pointer-events-none" />
                 <input
                   ref={searchInputRef}
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search chats... (Ctrl + K)"
-                  className="w-full h-[38px] rounded-[12px] bg-[#F5F7FB] dark:bg-[#1E293B] border border-transparent py-2 pl-9 pr-8 text-[14px] font-body text-[#1F2937] dark:text-[#F8FAFC] outline-none focus:border-[#1E4DB7] placeholder:text-[#64748B] transition"
+                  className="w-full h-[38px] rounded-[12px] bg-[#F5F7FB] dark:bg-[#181818] border border-transparent py-2 pl-9 pr-8 text-[14px] font-body text-[#1F2937] dark:text-[#F8FAFC] outline-none focus:border-[#9CA3AF] dark:focus:border-[#52525B] placeholder:text-[#64748B] dark:placeholder:text-[#737373] transition"
                 />
                 {searchTerm && (
                   <button
@@ -695,7 +695,7 @@ export default function Sidebar({
                 {filteredChats.length === 0 ? (
                   <div className="py-10 text-center text-caption text-[#64748B] flex flex-col items-center gap-2">
                     <Search size={18} strokeWidth={1.75} className="opacity-40" />
-                    <p className="font-semibold text-[#475569] dark:text-[#CBD5E1]">No chats found</p>
+                    <p className="font-semibold text-[#475569] dark:text-[#D4D4D4]">No chats found</p>
                   </div>
                 ) : (
                   <>
@@ -713,7 +713,7 @@ export default function Sidebar({
         </div>
 
         {/* Profile Footer Section — Avatar 36px, Name 15px, Role 13px, Logout Icon 18px */}
-        <div className="flex shrink-0 flex-col gap-4 pt-3 border-t border-[#E2E8F0] dark:border-[#334155]">
+        <div className="flex shrink-0 flex-col gap-4 pt-3 border-t border-[#E2E8F0] dark:border-[#2A2A2A]">
           <div
             className={`flex items-center rounded-[14px] p-1.5 bg-transparent ${isCollapsed ? 'justify-center flex-col gap-3' : 'justify-between gap-2'
               }`}
@@ -724,10 +724,10 @@ export default function Sidebar({
               </SidebarTooltip>
               {!isCollapsed && (
                 <div className="flex flex-col min-w-0">
-                  <span className="truncate text-[15px] font-semibold text-[#1F2937] dark:text-[#F8FAFC]">
+                  <span className="truncate text-[15px] font-normal text-[#1F2937] dark:text-[#F8FAFC]">
                     {user?.name || 'Student Account'}
                   </span>
-                  <span className="truncate text-[13px] text-[#64748B] dark:text-[#94A3B8]">
+                  <span className="truncate text-[13px] text-[#64748B] dark:text-[#A3A3A3]">
                     {user?.role === 'admin' ? 'Administrator' : user?.role === 'faculty' ? 'Faculty' : 'Student'}
                   </span>
                 </div>
@@ -739,7 +739,7 @@ export default function Sidebar({
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.25 }}
                 onClick={handleLogout}
-                className="w-[36px] h-[36px] rounded-xl flex items-center justify-center shrink-0 text-[#64748B] dark:text-[#94A3B8] hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-[#EF4444] transition-all duration-250"
+                className="w-[36px] h-[36px] rounded-xl flex items-center justify-center shrink-0 text-[#64748B] dark:text-[#A3A3A3] hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-[#EF4444] transition-all duration-250"
               >
                 <LogOut size={18} strokeWidth={1.75} />
               </motion.button>
@@ -786,10 +786,10 @@ export default function Sidebar({
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="w-[40px] h-[40px] rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
-                  title="Close Menu"
+                  className="w-[40px] h-[40px] rounded-xl flex items-center justify-center shrink-0 text-[#64748B] dark:text-[#A3A3A3] hover:bg-[#F5F7FB] dark:hover:bg-[#181818] transition-all duration-200 cursor-pointer"
+                  title="Close sidebar"
                 >
-                  <X size={20} />
+                  <PanelLeftClose size={20} strokeWidth={1.75} />
                 </button>
               </div>
 
@@ -809,7 +809,7 @@ export default function Sidebar({
                           }
                           setIsOpen(false);
                         }}
-                        className="h-[44px] w-full rounded-[10px] font-bold text-[15px] transition-all bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] shadow-xs flex items-center justify-between px-3.5 cursor-pointer shrink-0"
+                        className="h-[40px] w-full rounded-[10px] font-bold text-[13px] transition-all bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] shadow-xs flex items-center justify-between px-3.5 cursor-pointer shrink-0"
                       >
                         <div className="flex items-center gap-3">
                           <Icon size={20} />
@@ -826,7 +826,7 @@ export default function Sidebar({
                       key={item.id}
                       to={item.path}
                       onClick={() => setIsOpen(false)}
-                      className={`h-[44px] rounded-[10px] text-[15px] font-medium transition-all flex items-center gap-3 px-3.5 shrink-0 ${
+                      className={`h-[40px] rounded-[10px] text-[13px] font-medium transition-all flex items-center gap-3 px-3.5 shrink-0 ${
                         isActive
                           ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] font-bold'
                           : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] hover:text-[#111827] dark:hover:text-[#FAFAFA]'
@@ -843,13 +843,13 @@ export default function Sidebar({
               {user?.role === 'student' && (
                 <>
                   <div className="relative flex items-center shrink-0 mb-2">
-                    <Search size={16} className="absolute left-3 text-[#6B7280] dark:text-[#A3A3A3] pointer-events-none" />
+                    <Search size={16} className="absolute left-3 text-[#9CA3AF] dark:text-[#737373] pointer-events-none" />
                     <input
                       type="text"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="Search conversations..."
-                      className="w-full h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#3F3F46] py-2 pl-9 pr-7 text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none placeholder-[#9CA3AF] dark:placeholder-[#6B7280]"
+                      className="w-full h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] py-2 pl-9 pr-7 text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none placeholder-[#9CA3AF] dark:placeholder-[#737373]"
                     />
                     {searchTerm && (
                       <button

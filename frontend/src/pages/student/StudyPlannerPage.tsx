@@ -1,23 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
+  Brain,
+  Sparkles,
+  CheckSquare,
   CalendarDays,
   Clock3,
-  BookOpen,
-  Brain,
-  Target,
-  CheckCircle2,
-  CalendarRange,
-  Search,
-  Filter,
-  Bell,
-  BarChart3,
-  TrendingUp,
-  Sparkles,
-  Plus,
-  Layers,
-  CircleAlert,
-  CheckSquare,
-  Award
+  TrendingUp
 } from 'lucide-react';
 import {
   StudyPlan,
@@ -103,87 +91,99 @@ export const StudyPlannerPage: React.FC = () => {
   }, [fetchTasksList]);
 
   return (
-    <div className="w-full h-full overflow-y-auto bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 md:p-8 transition-colors">
-      <div className="w-full max-w-[1600px] mx-auto space-y-8">
+    <div className="w-full h-full overflow-x-hidden overflow-y-auto bg-[#F8FAFC] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 lg:p-8 transition-colors select-none font-sans">
+      {/* 1440px Centered Max Content Width Container */}
+      <div className="w-full max-w-[1440px] mx-auto space-y-8">
 
-        {/* ========================================================================= */}
-        {/* 1. PAGE HEADER CARD                                                       */}
-        {/* ========================================================================= */}
-        <div className="bg-[#FFFFFF] dark:bg-[#181818] p-6 md:p-8 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+        {/* Page Hero Header */}
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="w-12 h-12 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
               <Brain size={24} />
             </div>
-            <div>
-              <h1 className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight flex items-center gap-3">
+            <div className="min-w-0 space-y-1">
+              <h1 className="text-[30px] font-semibold text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-tight truncate">
                 AI Study Planner
-                <span className="text-[12px] font-medium px-2.5 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA]">
-                  Adaptive Roadmap
-                </span>
               </h1>
-              <p className="text-[14px] text-[#6B7280] dark:text-[#A3A3A3] mt-1">
-                Automated study schedule synthesis, exam countdown, task roadmaps, and cross-module AI recommendations.
+              <p className="text-[15px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">
+                Adaptive study roadmap synthesis, exam countdown, task scheduling & AI recommendations.
               </p>
             </div>
           </div>
 
-          <button
-            onClick={() => setIsGeneratorOpen(true)}
-            className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition flex items-center gap-2 cursor-pointer shrink-0"
-          >
-            <Sparkles size={16} />
-            <span>Generate AI Study Plan</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            {analytics && (
+              <div className="hidden xl:flex items-center gap-2">
+                <span className="h-[36px] inline-flex items-center gap-1.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] px-3 text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">
+                  <Clock3 size={15} />
+                  {analytics.days_to_exam}d Left
+                </span>
+                <span className="h-[36px] inline-flex items-center gap-1.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] px-3 text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">
+                  <TrendingUp size={15} />
+                  Streak: {analytics.daily_progress_percentage}%
+                </span>
+              </div>
+            )}
+
+            <button
+              onClick={() => setIsGeneratorOpen(true)}
+              className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium transition flex items-center justify-center gap-2 cursor-pointer shrink-0"
+            >
+              <Sparkles size={16} />
+              <span>Generate AI Study Plan</span>
+            </button>
+          </div>
         </div>
 
-        {/* Analytics Banner Component */}
+        {/* Quick Stats Banner */}
         <StudyAnalyticsBanner analytics={analytics} loading={loadingAnalytics} />
 
-        {/* AI Cross-module Suggestions Widget */}
+        {/* AI Recommendations Widget */}
         <AiSuggestionsWidget suggestions={suggestions} loading={loadingSuggestions} />
 
-        {/* View Switcher Controls */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F3F4F6] dark:border-[#2A2A2A] pb-4">
-          <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1.5 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46]">
+        {/* View Switcher Controls Bar */}
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1.5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] overflow-x-auto no-scrollbar">
             <button
               onClick={() => setViewMode('tasks')}
-              className={`h-9 px-4 text-[14px] font-medium rounded-[8px] transition-all cursor-pointer flex items-center gap-2 ${
+              className={`h-[36px] px-4 rounded-[8px] text-[14px] font-medium transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
                 viewMode === 'tasks'
                   ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                  : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                  : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
               }`}
             >
-              <CheckSquare size={16} />
-              <span>Tasks Roadmap View</span>
+              <CheckSquare size={15} className="shrink-0" />
+              <span>Roadmap View</span>
             </button>
 
             <button
               onClick={() => setViewMode('calendar')}
-              className={`h-9 px-4 text-[14px] font-medium rounded-[8px] transition-all cursor-pointer flex items-center gap-2 ${
+              className={`h-[36px] px-4 rounded-[8px] text-[14px] font-medium transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
                 viewMode === 'calendar'
                   ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                  : 'text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                  : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
               }`}
             >
-              <CalendarDays size={16} />
-              <span>Study Calendar View</span>
+              <CalendarDays size={15} className="shrink-0" />
+              <span>Calendar View</span>
             </button>
           </div>
 
           {activePlan && (
-            <span className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
-              Active Plan: <strong className="text-[#111827] dark:text-[#FAFAFA]">{activePlan.title}</strong>
+            <span className="text-[14px] font-medium text-[#6B7280] dark:text-[#A1A1AA] truncate">
+              Active Plan: <strong className="font-semibold text-[#111827] dark:text-[#FAFAFA]">{activePlan.title}</strong>
             </span>
           )}
         </div>
 
-        {/* Main View: Tasks List or Calendar */}
+        {/* Main Tasks List or Calendar View */}
         {viewMode === 'tasks' ? (
           <StudyTasksList
             tasks={tasks}
             loading={loadingTasks}
             onRefresh={fetchTasksList}
             onFilterChange={(newFilters) => setFilters(newFilters)}
+            onOpenGenerator={() => setIsGeneratorOpen(true)}
           />
         ) : (
           <StudyCalendarView tasks={tasks} examDate={activePlan?.exam_date} />

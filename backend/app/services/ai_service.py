@@ -72,11 +72,30 @@ SYSTEM_PROMPT_LOW_CONFIDENCE = SYSTEM_PROMPT_NO_RAG
 
 class AIService:
     def __init__(self) -> None:
-        # Initialize Google Gemini as primary LLM if configured
+        # 1. Primary fast LLM: Groq (Ultra-fast LPU inference)
+        api_key = settings.GROQ_API_KEY or os.getenv('GROQ_API_KEY')
+        self.model_name = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
+        if api_key and api_key.startswith('gsk_'):
+            try:
+                self.llm = ChatGroq(
+                    temperature=0.2,
+                    groq_api_key=get_api_key(),
+                    model_name=get_model_name(),
+                    max_tokens=1000
+                )
+                logger.info("Initialized Groq LLM with model: %s", self.model_name)
+            except Exception as e:
+                logger.warning("Groq initialization failed: %s", e)
+                self.llm = None
+        else:
+            logger.warning("AIService: Groq API key not configured or invalid.")
+            self.llm = None
+
+        # 2. Google Gemini LLM (only if configured with a valid key starting with AIza)
         gemini_key = settings.GEMINI_API_KEY or os.getenv('GEMINI_API_KEY')
         raw_model = os.getenv('GEMINI_MODEL', 'gemini-2.0-flash').replace('models/', '')
         self.gemini_model_name = raw_model if 'gemini' in raw_model else 'gemini-2.0-flash'
-        if gemini_key:
+        if gemini_key and gemini_key.startswith('AIza'):
             try:
                 from langchain_google_genai import ChatGoogleGenerativeAI
                 self.gemini_llm = ChatGoogleGenerativeAI(
@@ -92,23 +111,15 @@ class AIService:
         else:
             self.gemini_llm = None
 
-        api_key = settings.GROQ_API_KEY or os.getenv('GROQ_API_KEY')
-        self.model_name = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
-        if api_key:
-            self.llm = ChatGroq(
-                temperature=0.2,
-                groq_api_key=get_api_key(),
-                model_name=get_model_name(),
-                max_tokens=1000
-            )
-        else:
-            logger.warning("AIService: Groq API key not configured. LLM features disabled.")
-            self.llm = None
-
-        # Try initializing Ollama Qwen2.5 if available locally
+        # 3. Check if local Ollama server is actively running before setting ollama_llm
+        self.ollama_llm = None
         try:
-            from langchain_community.chat_models import ChatOllama
-            self.ollama_llm = ChatOllama(model="qwen2.5", temperature=0.2)
+            import urllib.request
+            req = urllib.request.Request("http://127.0.0.1:11434/api/version")
+            with urllib.request.urlopen(req, timeout=0.2) as response:
+                if response.status == 200:
+                    from langchain_community.chat_models import ChatOllama
+                    self.ollama_llm = ChatOllama(model="qwen2.5", temperature=0.2)
         except Exception:
             self.ollama_llm = None
             
@@ -384,94 +395,35 @@ class AIService:
             HumanMessage(content=user_prompt)
         ]
         
-        # 1. Attempt Google Gemini LLM if configured
+        # 1. Primary fast LLM: Groq (Ultra-fast LPU inference)
+        if self.llm:
+            try:
+                response = await asyncio.wait_for(self.llm.ainvoke(messages), timeout=8.0)
+                if response and response.content:
+                    return str(response.content)
+            except Exception as exc:
+                logger.warning('Groq request failed: %s', exc)
+
+        # 2. Backup LLM: Google Gemini
         if self.gemini_llm:
             try:
                 logger.info('Calling Google Gemini LLM (%s)', self.gemini_model_name)
-                res = await self.gemini_llm.ainvoke(messages)
+                res = await asyncio.wait_for(self.gemini_llm.ainvoke(messages), timeout=8.0)
                 if res and res.content:
                     return str(res.content)
             except Exception as e:
-                logger.warning('Google Gemini LLM failed/unavailable, falling back to backup LLM: %s', e)
+                logger.warning('Google Gemini LLM failed/unavailable: %s', e)
 
-        # 2. Attempt Ollama Qwen2.5 if available locally
+        # 3. Backup LLM: Local Ollama (if active)
         if self.ollama_llm:
             try:
-                logger.info('Calling local Ollama Qwen2.5')
-                res = await self.ollama_llm.ainvoke(messages)
+                res = await asyncio.wait_for(self.ollama_llm.ainvoke(messages), timeout=4.0)
                 if res and res.content:
                     return str(res.content)
             except Exception as e:
-                logger.warning('Ollama Qwen2.5 failed/unavailable, falling back to Groq: %s', e)
+                logger.warning('Ollama failed/unavailable: %s', e)
 
-        # 3. Groq Fallback
-        if not self.llm:
-            return RAG_FALLBACK_RESPONSE
-
-        retries = 3
-        backoff = 1.0
-        response = None
-
-        for attempt in range(retries):
-            try:
-                response = await self.llm.ainvoke(messages)
-                break
-            except Exception as exc:
-                logger.warning('Groq request failed on attempt %s: %s', attempt + 1, exc)
-                if attempt < retries - 1:
-                    await asyncio.sleep(backoff)
-                    backoff *= 2.0
-
-        return str(response.content) if response and response.content else "I'm having trouble processing that right now."
-
-    async def _get_llm_response_with_history(
-        self,
-        user_prompt: str,
-        system_prompt: str,
-        history: List,
-    ) -> str:
-        """
-        Phase 5: Invoke LLM with conversation history injected between system
-        and the current user message for multi-turn context awareness.
-        """
-        messages = [SystemMessage(content=system_prompt)]
-        # Inject previous turns (HumanMessage / AIMessage objects)
-        messages.extend(history)
-        messages.append(HumanMessage(content=user_prompt))
-
-        # Priority: Gemini → Ollama → Groq
-        if self.gemini_llm:
-            try:
-                logger.info("Calling Gemini LLM with %d history messages", len(history))
-                res = await self.gemini_llm.ainvoke(messages)
-                if res and res.content:
-                    return str(res.content)
-            except Exception as e:
-                logger.warning("Gemini failed in _get_llm_response_with_history: %s", e)
-
-        if self.ollama_llm:
-            try:
-                res = await self.ollama_llm.ainvoke(messages)
-                if res and res.content:
-                    return str(res.content)
-            except Exception as e:
-                logger.warning("Ollama failed in _get_llm_response_with_history: %s", e)
-
-        if not self.llm:
-            return "I'm having trouble processing that right now."
-
-        retries, backoff, response = 3, 1.0, None
-        for attempt in range(retries):
-            try:
-                response = await self.llm.ainvoke(messages)
-                break
-            except Exception as exc:
-                logger.warning("Groq attempt %d failed: %s", attempt + 1, exc)
-                if attempt < retries - 1:
-                    await asyncio.sleep(backoff)
-                    backoff *= 2.0
-
-        return str(response.content) if response and response.content else "I'm having trouble processing that right now."
+        return RAG_FALLBACK_RESPONSE
 
     def _build_context(self, context_chunks: list) -> str:
         if not context_chunks:
@@ -551,51 +503,16 @@ class AIService:
             if plan.intent in ["PERSONAL", "HYBRID"]:
                 student_context = self._get_student_context(current_user, db)
 
-            # 5. TOOLS
-            weather_info = ""
-            if plan.intent == "WEATHER" or "weather" in plan.tools_required:
-                weather_info = await self.weather_service.get_weather()
-                if not weather_info:
-                    weather_info = "I don't have live access to current information at the moment. If web search is enabled by the administrator, I can provide the latest updates."
-
-            web_search_info = ""
-            if plan.intent in ["NEWS", "SPORTS", "WEATHER", "WEB_SEARCH"] or "search" in plan.tools_required:
-                web_search_info = self.web_search_service.search(message)
-                if not web_search_info:
-                    web_search_info = "I don't have live access to current information at the moment. If web search is enabled by the administrator, I can provide the latest updates."
-
-            # 6. SMART FALLBACK PROMPT SELECTION (Phase 4)
-            needs_rag = plan.requires_rag or plan.intent in ["CAMPUS", "HYBRID"]
-            if not needs_rag:
-                base_system = SYSTEM_PROMPT_NO_RAG
-            elif rag_confidence == "HIGH":
-                base_system = SYSTEM_PROMPT_HIGH_CONFIDENCE
-            elif rag_confidence == "MEDIUM":
-                base_system = SYSTEM_PROMPT_MEDIUM_CONFIDENCE
-            else:
-                base_system = SYSTEM_PROMPT_LOW_CONFIDENCE
-
-            system_instruction = f"{base_system}\n\n{language_instruction}"
-            if plan.intent == "PROGRAMMING":
-                system_instruction += "\nProvide clean, well-commented code with explanations."
-
-            # 7. PROMPT ASSEMBLY
-            prompt_parts = []
-            if student_context:
-                prompt_parts.append(f"Student Record:\n{student_context}")
-            if weather_info:
-                prompt_parts.append(f"Weather Data:\n{weather_info}")
-            if web_search_info:
-                prompt_parts.append(f"Web Search Results:\n{web_search_info}")
-            if rag_context:
-                prompt_parts.append(f"Campus Knowledge Base (confidence={rag_confidence}):\n{rag_context}")
-            prompt_parts.append(f"User Question: {message}")
-            final_prompt = "\n\n".join(prompt_parts)
-
-            # 8. GENERATE STREAM WITH MEMORY
-            async for chunk in self._stream_llm_response_with_history(
-                final_prompt, system_instruction, history_messages
-            ):
+            if not valid_chunks:
+                system_instruction = f"You are CampusMate AI. Answer the user's question clearly and naturally. {language_instruction}"
+                async for chunk in self._stream_llm_response(normalized_message, system_instruction):
+                    yield chunk
+                return
+            
+            context_text = self._build_context(valid_chunks)
+            prompt = self._build_prompt(message, context_text)
+            
+            async for chunk in self._stream_llm_response(prompt, SYSTEM_RAG_PROMPT):
                 yield chunk
 
         except HTTPException as e:
@@ -611,25 +528,7 @@ class AIService:
             HumanMessage(content=user_prompt)
         ]
 
-        if self.gemini_llm:
-            try:
-                logger.info('Streaming with Google Gemini LLM (%s)', self.gemini_model_name)
-                async for chunk in self.gemini_llm.astream(messages):
-                    if chunk.content:
-                        yield str(chunk.content)
-                return
-            except Exception as e:
-                logger.warning('Google Gemini LLM stream failed/unavailable, falling back: %s', e)
-
-        if self.ollama_llm:
-            try:
-                async for chunk in self.ollama_llm.astream(messages):
-                    if chunk.content:
-                        yield str(chunk.content)
-                return
-            except Exception as e:
-                logger.warning('Ollama stream failed, falling back to Groq: %s', e)
-
+        # 1. Primary fast LLM: Groq (Ultra-fast LPU streaming)
         if self.llm:
             try:
                 async for chunk in self.llm.astream(messages):
@@ -639,32 +538,18 @@ class AIService:
             except Exception as exc:
                 logger.warning('Groq stream request failed: %s', exc)
 
-        yield "I'm having trouble processing that right now."
-
-    async def _stream_llm_response_with_history(
-        self,
-        user_prompt: str,
-        system_prompt: str,
-        history: List,
-    ) -> AsyncGenerator[str, None]:
-        """
-        Phase 5: Stream LLM response with conversation history injected.
-        Priority: Gemini → Ollama → Groq.
-        """
-        messages = [SystemMessage(content=system_prompt)]
-        messages.extend(history)  # Inject previous turns
-        messages.append(HumanMessage(content=user_prompt))
-
+        # 2. Backup LLM: Google Gemini
         if self.gemini_llm:
             try:
-                logger.info("Streaming Gemini with %d history messages", len(history))
+                logger.info('Streaming with Google Gemini LLM (%s)', self.gemini_model_name)
                 async for chunk in self.gemini_llm.astream(messages):
                     if chunk.content:
                         yield str(chunk.content)
                 return
             except Exception as e:
-                logger.warning("Gemini stream failed, falling back: %s", e)
+                logger.warning('Google Gemini LLM stream failed/unavailable: %s', e)
 
+        # 3. Backup LLM: Local Ollama
         if self.ollama_llm:
             try:
                 async for chunk in self.ollama_llm.astream(messages):
@@ -672,17 +557,8 @@ class AIService:
                         yield str(chunk.content)
                 return
             except Exception as e:
-                logger.warning("Ollama stream failed, falling back to Groq: %s", e)
+                logger.warning('Ollama stream failed: %s', e)
 
-        if self.llm:
-            try:
-                async for chunk in self.llm.astream(messages):
-                    if chunk.content:
-                        yield str(chunk.content)
-                return
-            except Exception as exc:
-                logger.warning("Groq stream failed: %s", exc)
-
-        yield "I'm having trouble processing that right now."
+        yield RAG_FALLBACK_RESPONSE
 
 

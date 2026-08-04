@@ -188,32 +188,31 @@ export default function DocumentHubPage() {
   };
 
   return (
-    <div className="w-full h-full overflow-y-auto p-4 md:p-8 bg-[#FFFFFF] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] transition-colors duration-300 font-sans">
-      <div className="mx-auto max-w-6xl space-y-6">
+    <div className="w-full h-full overflow-x-hidden overflow-y-auto bg-[#F8FAFC] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 lg:p-8 transition-colors select-none font-sans">
+      {/* 1440px Centered Max Content Width Container */}
+      <div className="w-full max-w-[1440px] mx-auto space-y-8">
         
-        {/* ==================================================
-            PAGE HEADER (White Header Card)
-            ================================================== */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0 shadow-xs">
-              <Folder size={24} className="stroke-[2.2]" />
+        {/* Page Hero Header */}
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="w-12 h-12 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <Folder size={24} />
             </div>
-            <div>
-              <h1 className="text-[32px] font-bold tracking-tight text-[#111827] dark:text-[#FAFAFA] leading-tight">
+            <div className="min-w-0 space-y-1">
+              <h1 className="text-[30px] font-semibold text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-tight truncate">
                 AI Document Hub
               </h1>
-              <p className="text-[14px] text-[#4B5563] dark:text-[#A3A3A3] mt-1">
-                Upload, organize, search, and chat with your study materials using CollegeMate AI
+              <p className="text-[15px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">
+                Upload, organize, search, and chat with your study materials using CollegeMate AI.
               </p>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center justify-between sm:justify-end gap-3 shrink-0 w-full lg:w-auto">
             <button
               onClick={() => setIsFolderOpen(true)}
-              className="h-10 px-4 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-all duration-150 text-[14px] font-medium flex items-center gap-2 cursor-pointer"
+              className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
             >
               <FolderPlus size={16} />
               <span>New Folder</span>
@@ -221,74 +220,19 @@ export default function DocumentHubPage() {
 
             <button
               onClick={() => setIsUploadOpen(true)}
-              className="h-10 px-5 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] shadow-xs transition-all duration-150 flex items-center gap-2 cursor-pointer"
+              className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium transition flex items-center justify-center gap-2 cursor-pointer shrink-0"
             >
-              <UploadCloud size={18} />
+              <UploadCloud size={16} />
               <span>Upload Document</span>
             </button>
           </div>
         </div>
 
-        {/* ==================================================
-            DOCUMENT DASHBOARD OVERVIEW CARDS
-            ================================================== */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="p-5 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Total Documents</p>
-              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">
-                {documents.length}
-              </p>
-            </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center shrink-0">
-              <FileText size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
-            </div>
-          </div>
-
-          <div className="p-5 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Pinned Files</p>
-              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">
-                {pinnedDocs.length}
-              </p>
-            </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center shrink-0">
-              <Pin size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
-            </div>
-          </div>
-
-          <div className="p-5 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">AI Indexed Files</p>
-              <p className="text-[32px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-1">
-                {documents.reduce((acc, d) => acc + (d.chunk_count ? 1 : 0), 0)}
-              </p>
-            </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center shrink-0">
-              <Layers size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
-            </div>
-          </div>
-
-          <div className="p-5 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Storage Used</p>
-              <p className="text-[20px] font-bold text-[#111827] dark:text-[#FAFAFA] mt-2">
-                {(documents.reduce((acc, d) => acc + (d.file_size || 0), 0) / (1024 * 1024)).toFixed(1)} MB / 50MB
-              </p>
-            </div>
-            <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center shrink-0">
-              <Sparkles size={20} className="text-[#111827] dark:text-[#FAFAFA]" />
-            </div>
-          </div>
-        </div>
-
-        {/* ==================================================
-            PINNED DOCUMENTS SECTION
-            ================================================== */}
+        {/* Pinned Documents Section */}
         {pinnedDocs.length > 0 && activeCategory === 'all' && (
-          <div className="space-y-3">
-            <h3 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
-              <Pin size={18} className="text-[#111827] dark:text-[#FAFAFA]" />
+          <div className="space-y-3 select-none">
+            <h3 className="text-[18px] font-[700] text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+              <Pin size={18} />
               <span>Pinned Documents</span>
             </h3>
 
@@ -296,18 +240,18 @@ export default function DocumentHubPage() {
               {pinnedDocs.map((doc) => (
                 <div
                   key={doc.id}
-                  className="p-5 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs hover:border-[#111827] dark:hover:border-[#FAFAFA] transition-all duration-150 flex flex-col justify-between space-y-3"
+                  className="p-5 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs hover:border-[#111827] dark:hover:border-[#FAFAFA] transition-all duration-150 flex flex-col justify-between space-y-3"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center shrink-0">
+                      <div className="w-[38px] h-[38px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] flex items-center justify-center shrink-0">
                         {getFileIcon(doc.file_type)}
                       </div>
                       <div className="min-w-0">
-                        <h4 className="font-bold text-[14px] text-[#111827] dark:text-[#FAFAFA] truncate">
+                        <h4 className="font-[700] text-[14px] text-[#111827] dark:text-[#FAFAFA] truncate">
                           {doc.original_name}
                         </h4>
-                        <p className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
+                        <p className="text-[12px] font-[500] text-[#6B7280] dark:text-[#A1A1AA]">
                           {doc.folder_name} • {(doc.file_size / (1024 * 1024)).toFixed(2)} MB
                         </p>
                       </div>
@@ -315,27 +259,27 @@ export default function DocumentHubPage() {
 
                     <button
                       onClick={() => handleTogglePin(doc.id)}
-                      className="p-1.5 rounded-[8px] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
+                      className="p-1.5 rounded-[8px] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition cursor-pointer shrink-0"
                       title="Unpin document"
                     >
                       <Pin size={16} />
                     </button>
                   </div>
 
-                  <p className="text-[14px] text-[#4B5563] dark:text-[#A3A3A3] line-clamp-2 leading-relaxed">
+                  <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] line-clamp-2 leading-relaxed">
                     {doc.summary || 'AI Auto-generated document overview'}
                   </p>
 
-                  <div className="flex items-center justify-between pt-3 border-t border-[#F3F4F6] dark:border-[#2A2A2A]">
+                  <div className="flex items-center justify-between pt-3 border-t border-[#D1D5DB] dark:border-[#3F3F46]">
                     <button
                       onClick={() => setChattingDoc(doc)}
-                      className="h-8 px-3 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium flex items-center gap-1.5 shadow-xs transition cursor-pointer"
+                      className="h-[34px] px-3 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-[400] flex items-center gap-1.5 transition cursor-pointer active:scale-[0.98]"
                     >
                       <MessageSquare size={14} /> Ask AI
                     </button>
                     <button
                       onClick={() => setViewingDoc(doc)}
-                      className="h-8 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#2A2A2A] text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
+                      className="h-[34px] px-3 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] text-[12px] font-[400] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition cursor-pointer"
                     >
                       View
                     </button>
@@ -346,12 +290,10 @@ export default function DocumentHubPage() {
           </div>
         )}
 
-        {/* ==================================================
-            FILTER NAVIGATION BAR & SEARCH TOOLBAR
-            ================================================== */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 rounded-[12px] bg-[#FFFFFF] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs">
-          {/* Category Chips */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0">
+        {/* Search & Filter Controls Toolbar */}
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-3 sm:p-4 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 select-none">
+          {/* Segmented Category Filter Pills Toolbar */}
+          <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1 rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] min-h-[44px] max-w-full overflow-x-auto no-scrollbar">
             {[
               { id: 'all', label: 'All Files', icon: BookOpen },
               { id: 'recent', label: 'Recent', icon: Clock },
@@ -365,24 +307,24 @@ export default function DocumentHubPage() {
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`h-9 px-3.5 rounded-[10px] text-[14px] font-medium flex items-center gap-2 transition-all duration-150 whitespace-nowrap cursor-pointer ${
+                  className={`h-[36px] px-3.5 sm:px-4 rounded-[8px] text-[14px] font-[500] transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 active:scale-[0.98] ${
                     isActive
-                      ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                      : 'bg-[#FFFFFF] dark:bg-[#181818] text-[#4B5563] dark:text-[#A3A3A3] hover:bg-[#F9FAFB] dark:hover:bg-[#232323]'
+                      ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                      : 'text-[#6B7280] dark:text-[#A1A1AA] hover:bg-[#FFFFFF] dark:hover:bg-[#18181B]'
                   }`}
                 >
-                  <Icon size={15} className={isActive ? 'text-[#FFFFFF] dark:text-[#111111]' : 'text-[#111827] dark:text-[#FAFAFA]'} />
+                  <Icon size={15} />
                   <span>{cat.label}</span>
                 </button>
               );
             })}
 
             {/* Folder Dropdown Filter */}
-            <div className="h-6 w-[1px] bg-[#E5E7EB] dark:bg-[#2A2A2A] mx-1" />
+            <div className="h-5 w-[1px] bg-[#D1D5DB] dark:bg-[#3F3F46] mx-1 shrink-0" />
             <select
               value={['all', 'recent', 'pinned', 'favorites', 'shared'].includes(activeCategory) ? '' : activeCategory}
               onChange={(e) => setActiveCategory(e.target.value || 'all')}
-              className="h-9 px-3 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] outline-none"
+              className="h-[36px] px-3 rounded-[8px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] outline-none shrink-0"
             >
               <option value="">Folders ({folders.length})</option>
               {folders.map((f) => (
@@ -394,24 +336,24 @@ export default function DocumentHubPage() {
           </div>
 
           {/* Search, Sort & View Controls */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             {/* Search Bar */}
-            <div className="relative flex-1 sm:w-64">
+            <div className="relative flex-1 lg:w-64">
+              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A1A1AA]" />
               <input
                 type="text"
                 placeholder="Search title, content..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-10 px-3 pl-9 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA]"
+                className="w-full h-[38px] sm:h-[40px] pl-9 pr-3 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[13px] sm:text-[14px] font-[600] text-[#111827] dark:text-[#FAFAFA] outline-none"
               />
-              <Search size={16} className="absolute left-3 top-3 text-[#6B7280] pointer-events-none" />
             </div>
 
             {/* Sort Dropdown */}
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="h-10 px-3 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] outline-none"
+              className="h-[38px] sm:h-[40px] px-3 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[13px] sm:text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] outline-none shrink-0"
             >
               <option value="date">Sort: Date</option>
               <option value="name">Sort: Name</option>
@@ -420,13 +362,13 @@ export default function DocumentHubPage() {
             </select>
 
             {/* View Toggle */}
-            <div className="flex items-center p-1 rounded-[10px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
+            <div className="flex items-center p-1 rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#111111] shrink-0">
               <button
                 onClick={() => setViewMode('grid')}
                 className={`p-1.5 rounded-[8px] transition cursor-pointer ${
                   viewMode === 'grid'
-                    ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                    : 'text-[#6B7280] hover:text-[#111827]'
+                    ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                    : 'text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-[#FAFAFA]'
                 }`}
               >
                 <Grid size={16} />
@@ -435,8 +377,8 @@ export default function DocumentHubPage() {
                 onClick={() => setViewMode('list')}
                 className={`p-1.5 rounded-[8px] transition cursor-pointer ${
                   viewMode === 'list'
-                    ? 'bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111]'
-                    : 'text-[#6B7280] hover:text-[#111827]'
+                    ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                    : 'text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-[#FAFAFA]'
                 }`}
               >
                 <List size={16} />
@@ -445,50 +387,48 @@ export default function DocumentHubPage() {
           </div>
         </div>
 
-        {/* ==================================================
-            DOCUMENT CARDS GRID / LIST VIEW & EMPTY STATE
-            ================================================== */}
+        {/* DOCUMENT CARDS GRID / LIST VIEW & EMPTY STATE */}
         {filteredDocuments.length === 0 ? (
           /* EMPTY STATE */
-          <div className="py-20 flex flex-col items-center justify-center text-center bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-dashed border-[#E5E7EB] dark:border-[#2A2A2A] p-8 shadow-xs">
-            <div className="w-16 h-16 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center mb-4 text-[#6B7280]">
-              <BookOpen size={32} />
+          <div className="py-20 flex flex-col items-center justify-center text-center bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] border border-dashed border-[#D1D5DB] dark:border-[#3F3F46] p-8 shadow-xs select-none">
+            <div className="w-[52px] h-[52px] rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] flex items-center justify-center mb-4 text-[#6B7280] dark:text-[#A1A1AA]">
+              <BookOpen size={28} />
             </div>
-            <h3 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+            <h3 className="text-[22px] font-[700] text-[#111827] dark:text-[#FAFAFA]">
               No Documents Available
             </h3>
-            <p className="text-[14px] text-[#4B5563] dark:text-[#A3A3A3] mt-1 max-w-sm">
+            <p className="text-[14px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] mt-1 max-w-sm">
               Upload your first document to organize and interact with it using AI.
             </p>
             <button
               onClick={() => setIsUploadOpen(true)}
-              className="mt-5 h-10 px-6 rounded-[10px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium flex items-center gap-2 shadow-xs transition cursor-pointer"
+              className="mt-5 h-[40px] px-6 rounded-[12px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-[500] flex items-center gap-2 shadow-xs transition cursor-pointer active:scale-[0.98]"
             >
               <UploadCloud size={16} /> Upload First Document
             </button>
           </div>
         ) : viewMode === 'grid' ? (
           /* GRID VIEW */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 select-none">
             {filteredDocuments.map((doc) => (
               <motion.div
                 key={doc.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-[#FFFFFF] dark:bg-[#181818] p-6 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs hover:border-[#111827] dark:hover:border-[#FAFAFA] transition-all duration-150 flex flex-col justify-between space-y-4"
+                className="bg-[#FFFFFF] dark:bg-[#18181B] p-5 rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs hover:border-[#111827] dark:hover:border-[#FAFAFA] hover:-translate-y-[2px] hover:shadow-md transition-all duration-150 flex flex-col justify-between space-y-4"
               >
                 {/* Header */}
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center shrink-0">
+                      <div className="w-[40px] h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] flex items-center justify-center shrink-0">
                         {getFileIcon(doc.file_type)}
                       </div>
                       <div className="min-w-0">
-                        <span className="text-[12px] font-semibold px-2 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] uppercase">
+                        <span className="text-[11px] font-[400] px-2 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] uppercase">
                           {doc.folder_name || 'General'}
                         </span>
-                        <h3 className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA] mt-1 truncate">
+                        <h3 className="font-[700] text-[15px] text-[#111827] dark:text-[#FAFAFA] mt-1 truncate">
                           {doc.original_name}
                         </h3>
                       </div>
@@ -497,32 +437,32 @@ export default function DocumentHubPage() {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => handleTogglePin(doc.id)}
-                        className="p-1.5 rounded-[8px] text-[#6B7280] hover:text-[#111827] dark:hover:text-[#FAFAFA] transition cursor-pointer"
+                        className="p-1.5 rounded-[8px] text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-[#FAFAFA] transition cursor-pointer"
                       >
                         <Pin size={16} className={doc.is_pinned ? 'fill-current text-[#111827] dark:text-[#FAFAFA]' : ''} />
                       </button>
                       <button
                         onClick={() => handleToggleFavorite(doc.id)}
-                        className="p-1.5 rounded-[8px] text-[#6B7280] hover:text-[#111827] dark:hover:text-[#FAFAFA] transition cursor-pointer"
+                        className="p-1.5 rounded-[8px] text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-[#FAFAFA] transition cursor-pointer"
                       >
                         <Star size={16} className={doc.is_favorite ? 'fill-current text-[#111827] dark:text-[#FAFAFA]' : ''} />
                       </button>
                     </div>
                   </div>
 
-                  <p className="text-[14px] text-[#4B5563] dark:text-[#A3A3A3] line-clamp-3 leading-relaxed">
+                  <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#A1A1AA] line-clamp-3 leading-relaxed">
                     {doc.summary || 'AI overview available for this document.'}
                   </p>
                 </div>
 
                 {/* AI Quick Actions Pill Bar */}
-                <div className="py-3 border-t border-b border-[#F3F4F6] dark:border-[#2A2A2A]">
-                  <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                <div className="py-2.5 border-t border-b border-[#D1D5DB] dark:border-[#3F3F46]">
+                  <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5">
                     <button
                       onClick={() => {
                         navigate(`/quiz?docId=${doc.id}&docName=${encodeURIComponent(doc.original_name)}`);
                       }}
-                      className="h-7 px-3 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] font-medium text-[12px] flex items-center gap-1 transition cursor-pointer shrink-0"
+                      className="h-[30px] px-3 rounded-[8px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] font-[700] text-[12px] flex items-center gap-1 transition cursor-pointer shrink-0 active:scale-[0.98]"
                     >
                       <Sparkles size={12} /> Quiz
                     </button>
@@ -531,7 +471,7 @@ export default function DocumentHubPage() {
                         setAiActionDoc(doc);
                         setInitialAIAction('summarize');
                       }}
-                      className="h-7 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer shrink-0"
+                      className="h-[30px] px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[12px] font-[400] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition cursor-pointer shrink-0 active:scale-[0.98]"
                     >
                       Summarize
                     </button>
@@ -540,7 +480,7 @@ export default function DocumentHubPage() {
                         setAiActionDoc(doc);
                         setInitialAIAction('explain');
                       }}
-                      className="h-7 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer shrink-0"
+                      className="h-[30px] px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[12px] font-[400] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition cursor-pointer shrink-0 active:scale-[0.98]"
                     >
                       Explain
                     </button>
@@ -549,7 +489,7 @@ export default function DocumentHubPage() {
                         setAiActionDoc(doc);
                         setInitialAIAction('flashcards');
                       }}
-                      className="h-7 px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#181818] text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer shrink-0"
+                      className="h-[30px] px-3 rounded-[8px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#18181B] text-[12px] font-[400] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition cursor-pointer shrink-0 active:scale-[0.98]"
                     >
                       Flashcards
                     </button>
@@ -558,34 +498,34 @@ export default function DocumentHubPage() {
 
                 {/* Footer Controls */}
                 <div className="flex items-center justify-between">
-                  <div className="text-[12px] text-[#6B7280] dark:text-[#A3A3A3]">
+                  <div className="text-[12px] font-[600] text-[#6B7280] dark:text-[#A1A1AA]">
                     {(doc.file_size / (1024 * 1024)).toFixed(2)} MB
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <button
                       onClick={() => handleReadAloud(doc.summary || doc.original_name)}
-                      className="p-2 rounded-[8px] text-[#111827] dark:text-[#FAFAFA] border border-[#D1D5DB] dark:border-[#2A2A2A] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
+                      className="p-2 rounded-[8px] text-[#111827] dark:text-[#FAFAFA] border border-[#D1D5DB] dark:border-[#3F3F46] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition cursor-pointer"
                       title="Read Aloud"
                     >
                       <Volume2 size={14} />
                     </button>
                     <button
                       onClick={() => setViewingDoc(doc)}
-                      className="p-2 rounded-[8px] text-[#111827] dark:text-[#FAFAFA] border border-[#D1D5DB] dark:border-[#2A2A2A] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
+                      className="p-2 rounded-[8px] text-[#111827] dark:text-[#FAFAFA] border border-[#D1D5DB] dark:border-[#3F3F46] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition cursor-pointer"
                       title="View Document"
                     >
                       <Eye size={14} />
                     </button>
                     <button
                       onClick={() => setChattingDoc(doc)}
-                      className="h-8 px-3 rounded-[8px] bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E7EB] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-medium flex items-center gap-1.5 shadow-xs transition cursor-pointer"
+                      className="h-[34px] px-3 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] active:bg-[#0F172A] dark:bg-[#FAFAFA] dark:hover:bg-[#F3F4F6] text-[#FFFFFF] dark:text-[#111111] text-[12px] font-[400] flex items-center gap-1.5 transition cursor-pointer active:scale-[0.98]"
                     >
                       <MessageSquare size={14} /> Ask AI
                     </button>
                     <button
                       onClick={() => handleDeleteDoc(doc.id)}
-                      className="p-2 rounded-[8px] text-[#DC2626] border border-[#D1D5DB] dark:border-[#2A2A2A] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition cursor-pointer"
+                      className="p-2 rounded-[8px] text-[#DC2626] border border-[#D1D5DB] dark:border-[#3F3F46] hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition cursor-pointer"
                       title="Delete"
                     >
                       <Trash2 size={14} />
@@ -597,12 +537,12 @@ export default function DocumentHubPage() {
           </div>
         ) : (
           /* LIST VIEW */
-          <div className="bg-[#FFFFFF] dark:bg-[#181818] rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs overflow-hidden">
-            <div className="divide-y divide-[#F3F4F6] dark:divide-[#2A2A2A]">
+          <div className="bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs overflow-hidden select-none">
+            <div className="divide-y divide-[#D1D5DB] dark:divide-[#3F3F46]">
               {filteredDocuments.map((doc) => (
                 <div
                   key={doc.id}
-                  className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-all duration-150"
+                  className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-[#F8FAFC] dark:hover:bg-[#232323] transition-all duration-150"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-center shrink-0">

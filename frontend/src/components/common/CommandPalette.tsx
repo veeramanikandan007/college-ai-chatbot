@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+﻿import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -70,7 +70,7 @@ function CategoryLabel({ label, icon: Icon }: { label: string; icon?: React.Elem
   return (
     <div className="flex items-center gap-1.5 px-4 pt-4 pb-1.5 select-none">
       {Icon && <Icon size={12} className="text-[#9CA3AF] dark:text-[#52525B] shrink-0" />}
-      <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#9CA3AF] dark:text-[#52525B]">
+      <span className="text-[11px] font-normal uppercase tracking-[0.08em] text-[#9CA3AF] dark:text-[#52525B]">
         {label}
       </span>
     </div>
@@ -408,7 +408,7 @@ export const CommandPalette: React.FC = () => {
                 SEARCH BAR  — 56px, monochrome
             ══════════════════════════════════════ */}
             <div className="relative flex items-center gap-3 px-4 border-b border-[#E5E7EB] dark:border-[#2A2A2A] shrink-0 h-[56px]">
-              <Search size={18} className="text-[#6B7280] dark:text-[#A3A3A3] shrink-0" />
+              <motion.div animate={{ scale: query ? 1.12 : 1 }} transition={{ type: "spring", stiffness: 400, damping: 20 }}><Search size={18} className="text-[#9CA3AF] dark:text-[#737373] shrink-0" /></motion.div>
               <input
                 ref={inputRef}
                 type="text"
@@ -454,7 +454,7 @@ export const CommandPalette: React.FC = () => {
                 <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
                   <Search size={28} className="text-[#D1D5DB] dark:text-[#3F3F46]" />
                   <div>
-                    <p className="text-[15px] font-semibold text-[#111827] dark:text-[#FAFAFA]">No results found</p>
+                    <p className="text-[15px] font-normal text-[#111827] dark:text-[#FAFAFA]">No results found</p>
                     <p className="text-[13px] text-[#9CA3AF] dark:text-[#52525B] mt-0.5">
                       Try searching for &ldquo;<span className="font-medium">{query}</span>&rdquo; differently
                     </p>
@@ -469,28 +469,42 @@ export const CommandPalette: React.FC = () => {
                       <CategoryLabel label={group.category} icon={CatIcon} />
 
                       {/* Items */}
-                      {group.items.map((item) => {
+                      {group.items.map((item, itemIdx) => {
                         const flatIdx = flatItems.indexOf(item);
                         const isSelected = flatIdx === selectedIndex;
                         const IconComp = item.icon as React.ElementType;
 
                         return (
-                          <button
+                          <motion.button
                             key={item.id}
                             ref={(el) => { itemRefs.current[flatIdx] = el; }}
                             type="button"
                             onClick={() => executeCommand(item)}
                             onMouseEnter={() => setSelectedIndex(flatIdx)}
-                            className={`w-full flex items-center justify-between gap-3 px-4 py-0 h-[52px] mx-0 transition-colors duration-100 cursor-pointer select-none ${
-                              isSelected
-                                ? 'bg-[#111827] dark:bg-[#FFFFFF]'
-                                : 'hover:bg-[#F9FAFB] dark:hover:bg-[#1A1A1A]'
-                            }`}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.15, delay: itemIdx * 0.022, ease: 'easeOut' }}
+                            whileTap={{ scale: 0.98 }}
+                            className="relative w-full flex items-center justify-between gap-3 px-4 py-0 h-[52px] mx-0 cursor-pointer select-none overflow-hidden"
                           >
-                            <div className="flex items-center gap-3 min-w-0">
+                            {/* Animated selection highlight */}
+                            <AnimatePresence>
+                              {isSelected && (
+                                <motion.span
+                                  layoutId="cmd-highlight"
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                                  className="absolute inset-0 bg-[#111827] dark:bg-[#FFFFFF] z-0"
+                                />
+                              )}
+                            </AnimatePresence>
+
+                            <div className="relative z-10 flex items-center gap-3 min-w-0">
                               <CmdIcon icon={IconComp} selected={isSelected} />
                               <div className="flex flex-col items-start min-w-0">
-                                <span className={`text-[15px] font-semibold leading-tight truncate max-w-[360px] ${
+                                <span className={`text-[15px] font-normal leading-tight truncate max-w-[360px] transition-colors duration-100 ${
                                   isSelected
                                     ? 'text-[#FFFFFF] dark:text-[#111111]'
                                     : 'text-[#111827] dark:text-[#FAFAFA]'
@@ -498,7 +512,7 @@ export const CommandPalette: React.FC = () => {
                                   {item.title}
                                 </span>
                                 {item.description && (
-                                  <span className={`text-[12px] leading-tight truncate max-w-[360px] ${
+                                  <span className={`text-[12px] leading-tight truncate max-w-[360px] transition-colors duration-100 ${
                                     isSelected
                                       ? 'text-[#D4D4D4] dark:text-[#555555]'
                                       : 'text-[#9CA3AF] dark:text-[#52525B]'
@@ -509,28 +523,24 @@ export const CommandPalette: React.FC = () => {
                               </div>
                             </div>
 
-                            {/* Enter hint on hover */}
-                            {isSelected && (
-                              <motion.span
-                                initial={{ opacity: 0, x: 4 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                className={`flex items-center gap-1 text-[12px] font-medium shrink-0 ${
-                                  isSelected
-                                    ? 'text-[#D4D4D4] dark:text-[#555555]'
-                                    : 'text-[#9CA3AF] dark:text-[#52525B]'
-                                }`}
-                              >
-                                Open
-                                <kbd className={`inline-flex items-center justify-center w-5 h-5 rounded-[4px] border text-[10px] ${
-                                  isSelected
-                                    ? 'bg-white/10 border-white/20 dark:bg-black/10 dark:border-black/20 text-[#FFFFFF] dark:text-[#111111]'
-                                    : 'bg-[#F8FAFC] dark:bg-[#181818] border-[#E5E7EB] dark:border-[#2A2A2A] text-[#6B7280] dark:text-[#A3A3A3]'
-                                }`}>
-                                  <CornerDownLeft size={10} />
-                                </kbd>
-                              </motion.span>
-                            )}
-                          </button>
+                            {/* Enter hint on selection */}
+                            <AnimatePresence>
+                              {isSelected && (
+                                <motion.span
+                                  initial={{ opacity: 0, x: 10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  exit={{ opacity: 0, x: 10 }}
+                                  transition={{ duration: 0.13 }}
+                                  className="relative z-10 flex items-center gap-1 text-[12px] font-medium shrink-0 text-[#D4D4D4] dark:text-[#555555]"
+                                >
+                                  Open
+                                  <kbd className="inline-flex items-center justify-center w-5 h-5 rounded-[4px] border bg-white/10 border-white/20 dark:bg-black/10 dark:border-black/20 text-[10px] text-[#FFFFFF] dark:text-[#111111]">
+                                    <CornerDownLeft size={10} />
+                                  </kbd>
+                                </motion.span>
+                              )}
+                            </AnimatePresence>
+                          </motion.button>
                         );
                       })}
                     </div>
@@ -582,7 +592,7 @@ export const CommandPalette: React.FC = () => {
                 </span>
               </div>
 
-              <span className="text-[12px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight">
+              <span className="text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] tracking-tight">
                 CollegeMate AI
               </span>
             </div>

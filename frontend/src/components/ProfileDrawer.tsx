@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+﻿import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
@@ -47,7 +47,7 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-[#0E2A6D]/40 backdrop-blur-xs"
+            className="absolute inset-0 bg-black/50 backdrop-blur-xs"
           />
 
             {/* Right Sliding Drawer (Max Width 320px, Safe Area Insets) */}
@@ -65,7 +65,7 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                     <UserCheck className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-[12px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                    <p className="text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                       Student Account
                     </p>
                     <h2 className="font-bold text-[18px] text-[#111827] dark:text-[#FAFAFA]">Profile Details</h2>
@@ -85,7 +85,7 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                 <div className="min-w-0 flex-1">
                   <h3 className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA] truncate">{user.name}</h3>
                   <p className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">ID: {user.student_id || 'STU23911'}</p>
-                  <span className="mt-1 inline-flex items-center gap-1 rounded-[6px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider">
+                  <span className="mt-1 inline-flex items-center gap-1 rounded-[6px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] px-2 py-0.5 text-[11px] font-normal uppercase tracking-wider">
                     <BadgeCheck size={12} className="shrink-0" />
                     <span>{user.role === 'admin' ? 'Administrator' : 'Verified Student'}</span>
                   </span>
@@ -95,7 +95,7 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
               {/* Metrics Cards */}
               <div className="mb-5 grid grid-cols-2 gap-3">
                 <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] p-3 text-center">
-                  <div className="flex items-center justify-center gap-1 text-[11px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                  <div className="flex items-center justify-center gap-1 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                     <PieChart className="h-3.5 w-3.5" />
                     <span>Attendance</span>
                   </div>
@@ -103,7 +103,7 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                   <span className="text-[11px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Excellent</span>
                 </div>
                 <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] p-3 text-center">
-                  <div className="flex items-center justify-center gap-1 text-[11px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                  <div className="flex items-center justify-center gap-1 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                     <Award className="h-3.5 w-3.5" />
                     <span>CGPA</span>
                   </div>
@@ -115,7 +115,7 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
               {/* Profile Info Details List */}
               <div className="flex-1 space-y-3 text-[14px]">
                 <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] p-3.5">
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                  <div className="flex items-center gap-1.5 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                     <Building2 className="h-3.5 w-3.5" />
                     <span>Department</span>
                   </div>
@@ -123,7 +123,7 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                 </div>
 
                 <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] p-3.5">
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                  <div className="flex items-center gap-1.5 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                     <Calendar className="h-3.5 w-3.5" />
                     <span>Year & Semester</span>
                   </div>
@@ -134,7 +134,7 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                 </div>
 
                 <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] p-3.5">
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                  <div className="flex items-center gap-1.5 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                     <Mail className="h-3.5 w-3.5" />
                     <span>Email Address</span>
                   </div>
@@ -142,7 +142,7 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                 </div>
 
                 <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] p-3.5">
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                  <div className="flex items-center gap-1.5 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
                     <Phone className="h-3.5 w-3.5" />
                     <span>Phone Number</span>
                   </div>

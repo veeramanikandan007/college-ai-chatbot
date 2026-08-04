@@ -9,18 +9,6 @@ from langchain_core.prompts import ChatPromptTemplate
 logger = get_logger(__name__)
 
 # ─────────────────────────────────────────────────────────────────────────────
-# ─────────────────────────────────────────────────────────────────────────────
-# AI Planner Models
-# ─────────────────────────────────────────────────────────────────────────────
-class AIPlan(BaseModel):
-    intent: str
-    requires_memory: bool
-    requires_rag: bool
-    tools_required: str
-    confidence: str
-    reasoning: str
-
-# ─────────────────────────────────────────────────────────────────────────────
 # Action-intent regex table for Copilot fast-path routing
 # Order matters: more specific patterns go first
 # ─────────────────────────────────────────────────────────────────────────────
@@ -75,16 +63,6 @@ class QueryRouter:
             )
         else:
             self.llm = None
-            
-        if self.llm:
-            try:
-                self.planner_llm = self.llm.with_structured_output(AIPlan)
-            except NotImplementedError:
-                # Some versions/models of ChatGroq might not fully support with_structured_output directly
-                # but llama-3.3-70b-versatile usually does via function calling.
-                self.planner_llm = None
-        else:
-            self.planner_llm = None
 
         # Fast regex fallback for greetings/small talk to save API calls
         self.greeting_patterns = [
@@ -103,6 +81,11 @@ class QueryRouter:
             r"\b(how\s+many|what\s+is\s+my|when\s+is\s+my|do\s+i\s+have|check\s+my)\b"
         ]
 
+        # Fast regex for general non-campus queries to save LLM routing overhead
+        self.general_patterns = [
+            r"^\s*(explain|what is|whats|how to|how do|write|create|code|define|difference between|summarize|tell me|who is|where is|why does|list|can you|give me)\b"
+        ]
+
     def resolve_action_intent(self, message: str) -> str | None:
         """
         Fast regex-based action intent resolver for the Copilot.
@@ -113,77 +96,6 @@ class QueryRouter:
             if re.search(pattern, msg_lower):
                 return intent
         return None
-
-    def generate_plan(self, message: str) -> "AIPlan":
-        """
-        Phase 1: Intelligent AI Planner
-        Analyzes the user intent and returns a structured AIPlan detailing the execution strategy.
-        """
-        if not self.planner_llm:
-            # Fallback mock plan if LLM is unavailable
-            return AIPlan(
-                intent="CAMPUS",
-                requires_memory=False,
-                requires_rag=True,
-                tools_required="",
-                confidence="MEDIUM",
-                reasoning="Fallback planner used due to LLM unavailability."
-            )
-            
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", 
-             "You are the CampusMate AI Planner. Analyze the user query and generate a structured JSON execution plan.\n"
-             "Determine the intent (CAMPUS, PROGRAMMING, GENERAL, MATH, TRANSLATION, FILE_QA, WEATHER, GREETING, PERSONAL, CAREER_GUIDANCE, EXAM_PREP, ASSIGNMENT_HELP, ENTERTAINMENT, MOVIES, SPORTS, NEWS, TECHNOLOGY, SCIENCE, JOKES, CREATIVE_WRITING, SUMMARIZATION).\n"
-             "Decide if conversation memory, RAG, or tools are required.\n"
-             "If the intent is entirely GENERAL (like Programming, Movies, Science, Translation, General Knowledge, Jokes), set requires_rag to False.\n"
-             "If the query involves College details (Timetable, Staff, Exams, Rules), set requires_rag to True.\n"
-             "IMPORTANT CONFIDENCE RULES:\n"
-             "- Assign HIGH confidence even for very short, vague phrases (e.g., 'python game', 'sudoku', 'movie', 'resume'). Assume standard user intent.\n"
-             "- Only assign LOW confidence if the text is pure gibberish (e.g., 'asdfghjkl') with literally no meaningful interpretation.\n"
-             "Tools available: weather, calculator, search, attendance, timetable, notification, student_profile.\n"
-             "Never expose your internal reasoning to the user.\n\n"
-             "You MUST respond with a raw JSON object exactly matching this format:\n"
-             "{{\n"
-             '  "intent": "string",\n'
-             '  "requires_memory": boolean,\n'
-             '  "requires_rag": boolean,\n'
-             '  "tools_required": "string (comma separated list or none)",\n'
-             '  "confidence": "string (HIGH, MEDIUM, LOW)",\n'
-             '  "reasoning": "string"\n'
-             "}}"
-             ),
-            ("human", "{query}")
-        ])
-        
-        try:
-            response = self.llm.invoke(prompt.format_messages(query=message))
-            import json
-            # Strip markdown code blocks if present
-            content = response.content.strip()
-            if content.startswith("```json"):
-                content = content.split("```json")[1].split("```")[0].strip()
-            elif content.startswith("```"):
-                content = content.split("```")[1].split("```")[0].strip()
-                
-            data = json.loads(content)
-            return AIPlan(
-                intent=data.get("intent", "CAMPUS"),
-                requires_memory=bool(data.get("requires_memory", False)),
-                requires_rag=bool(data.get("requires_rag", True)),
-                tools_required=str(data.get("tools_required", "none")),
-                confidence=str(data.get("confidence", "HIGH")),
-                reasoning=str(data.get("reasoning", "Parsed JSON"))
-            )
-        except Exception as e:
-            logger.warning("AI Planner failed: %s. Using fallback plan.", e)
-            return AIPlan(
-                intent="CAMPUS",
-                requires_memory=False,
-                requires_rag=True,
-                tools_required="",
-                confidence="LOW",
-                reasoning=f"Error generating plan: {e}"
-            )
 
     def route_query(self, message: str) -> str:
         """
@@ -220,6 +132,11 @@ class QueryRouter:
             return "HYBRID"
         elif has_personal:
             return "PERSONAL"
+
+        # 5. Fast regex detection for general questions
+        for pattern in self.general_patterns:
+            if re.search(pattern, msg_lower) and not has_campus_rule:
+                return "GENERAL"
 
         # 5. LLM-based intelligent classification
         if self.llm:

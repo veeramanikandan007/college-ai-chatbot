@@ -128,10 +128,9 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-[#FFFFFF] dark:bg-[#181818] rounded-[16px] shadow-lg border border-[#D1D5DB] dark:border-[#3F3F46] my-8 overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
-          <h2 className="text-[18px] font-bold text-[#111827] dark:text-[#FAFAFA]">
+      <div className="relative w-full max-w-2xl bg-[#FFFFFF] dark:bg-[#181818] rounded-[16px] border border-[#D1D5DB] dark:border-[#3F3F46] my-8 overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111]">
+          <h2 className="text-[18px] font-[600] text-[#111827] dark:text-[#FAFAFA]">
             {initialData ? 'Edit Assignment' : 'Create New Assignment'}
           </h2>
           <button
@@ -142,8 +141,7 @@ export const AssignmentModal: React.FC<AssignmentModalProps> = ({
           </button>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
           {formError && (
             <div className="p-3 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] text-[12px] font-medium flex items-center gap-2">
               <CircleAlert size={16} />

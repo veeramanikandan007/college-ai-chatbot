@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Volume2, Gauge, RefreshCw, Mic, Wifi, WifiOff, Sliders, X, Play, RotateCcw } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Volume2, Gauge, RefreshCw, Mic, Wifi, WifiOff, Sliders, X, Play, RotateCcw, Globe, Languages } from 'lucide-react';
 import { voiceManager, type TTSStatus } from '../services/ttsService';
 
 export interface VoiceSettings {
@@ -96,11 +97,11 @@ export default function VoiceSettingsPanel({ settings, onChange, onClose }: Voic
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 z-[99999] w-[380px] max-w-full bg-white dark:bg-[#111827] border-l border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col justify-between select-none">
+    <div className="fixed inset-y-0 right-0 z-[99999] w-[380px] max-w-full bg-white dark:bg-[#0A0A0A] border-l border-slate-200 dark:border-[#2A2A2A] shadow-2xl flex flex-col justify-between select-none">
       {/* Drawer Header */}
-      <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+      <div className="p-5 border-b border-slate-200 dark:border-[#2A2A2A] flex items-center justify-between">
         <div>
-          <h3 className="text-base font-bold text-heading flex items-center gap-2">
+          <h3 className="text-[14px] font-normal text-heading flex items-center gap-2">
             <span>Voice AI Control Drawer</span>
             <button
               onClick={() => {
@@ -110,17 +111,17 @@ export default function VoiceSettingsPanel({ settings, onChange, onClose }: Voic
                 voiceManager.getStatus().then(setTtsStatus);
               }}
               title="Reload System Voices"
-              className="p-1 rounded-lg text-muted hover:text-heading hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              className="p-1 rounded-lg text-muted hover:text-heading hover:bg-[#F8FAFC] dark:hover:bg-[#111111] transition"
             >
               <RefreshCw size={12} />
             </button>
           </h3>
-          <p className="text-[10px] text-muted">Speech synthesis options & preferences</p>
+          <p className="text-[11px] font-normal text-muted mt-0.5">Speech synthesis options & preferences</p>
         </div>
 
         <button
           onClick={onClose}
-          className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-muted hover:text-danger hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+          className="p-1.5 rounded-xl border border-slate-200 dark:border-[#2A2A2A] text-muted hover:text-danger hover:bg-slate-50 dark:hover:bg-[#111111] transition"
           title="Close Settings Drawer"
         >
           <X size={16} />
@@ -131,18 +132,18 @@ export default function VoiceSettingsPanel({ settings, onChange, onClose }: Voic
       <div className="flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar">
         {/* Status Indicators */}
         {ttsStatus && (
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 p-4 space-y-2.5 bg-slate-50 dark:bg-slate-900/40">
-            <p className="text-[10px] font-bold text-muted uppercase tracking-wider">TTS Engine Status</p>
+          <div className="rounded-2xl border border-slate-200 dark:border-[#2A2A2A] p-4 space-y-2.5 bg-[#FAFAFA] dark:bg-[#0A0A0A]/40">
+            <p className="text-[10px] font-medium text-muted uppercase tracking-wider">TTS Engine Status</p>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-body font-semibold">🇬🇧 English Engine</span>
-              <span className={`text-[10px] font-bold flex items-center gap-1 ${ttsStatus.english.ready ? 'text-success' : 'text-warning'}`}>
+              <span className="text-[12px] font-normal text-body flex items-center gap-1.5"><Globe size={13} /> English Engine</span>
+              <span className={`text-[11px] font-medium flex items-center gap-1 ${ttsStatus.english.ready ? 'text-success' : 'text-warning'}`}>
                 {ttsStatus.english.ready ? <Wifi size={11} /> : <WifiOff size={11} />}
                 {ttsStatus.english.provider}
               </span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-body font-semibold">🇮🇳 Tamil Engine</span>
-              <span className={`text-[10px] font-bold flex items-center gap-1 ${ttsStatus.tamil.ready ? 'text-success' : 'text-warning'}`}>
+              <span className="text-[12px] font-normal text-body flex items-center gap-1.5"><Languages size={13} /> Tamil Engine</span>
+              <span className={`text-[11px] font-medium flex items-center gap-1 ${ttsStatus.tamil.ready ? 'text-success' : 'text-warning'}`}>
                 {ttsStatus.tamil.ready ? <Wifi size={11} /> : <WifiOff size={11} />}
                 {ttsStatus.tamil.provider}
               </span>
@@ -152,32 +153,53 @@ export default function VoiceSettingsPanel({ settings, onChange, onClose }: Voic
 
         {/* Interface Language */}
         <div className="space-y-2">
-          <label className="block text-xs font-bold text-heading">Language Mode</label>
-          <div className="grid grid-cols-2 gap-2">
-            {(['en-US', 'ta-IN'] as const).map((lang) => (
-              <button
-                key={lang}
-                type="button"
-                onClick={() => handleLangChange(lang)}
-                className={`py-2 rounded-xl text-xs font-bold transition-all border ${
-                  settings.language === lang
-                    ? 'bg-primary border-primary text-white shadow-sm'
-                    : 'border-slate-200 dark:border-slate-800 text-muted hover:bg-slate-50 dark:hover:bg-slate-900'
-                }`}
-              >
-                {lang === 'en-US' ? 'English (en-US)' : 'தமிழ் (ta-IN)'}
-              </button>
-            ))}
+          <label className="block text-[12px] font-medium text-heading">Language Mode</label>
+          {/* Pill toggle container */}
+          <div className="relative flex gap-1 p-1 rounded-[14px] bg-[#F3F4F6] dark:bg-[#1A1A1A] border border-[#E5E7EB] dark:border-[#2A2A2A]">
+            {(['en-US', 'ta-IN'] as const).map((lang) => {
+              const isActive = settings.language === lang;
+              return (
+                <motion.button
+                  key={lang}
+                  type="button"
+                  onClick={() => handleLangChange(lang)}
+                  whileTap={{ scale: 0.97 }}
+                  className="relative flex-1 py-2.5 rounded-[10px] text-[11px] font-medium transition-colors duration-150 z-10 flex items-center justify-center gap-1.5"
+                >
+                  {/* Sliding active pill */}
+                  {isActive && (
+                    <motion.span
+                      layoutId="lang-pill"
+                      className="absolute inset-0 rounded-[10px] bg-[#111827] dark:bg-[#FAFAFA] shadow-md"
+                      transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                    />
+                  )}
+                  <span className={`relative z-10 transition-colors duration-150 ${isActive ? 'text-[#FFFFFF] dark:text-[#111111]' : 'text-[#6B7280] dark:text-[#A3A3A3] hover:text-[#111827] dark:hover:text-[#FAFAFA]'}`}>
+                    {lang === 'en-US' ? (
+                      <span className="flex items-center gap-1.5">
+                        <Globe size={13} />
+                        English (en-US)
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1.5">
+                        <Languages size={13} />
+                        தமிழ் (ta-IN)
+                      </span>
+                    )}
+                  </span>
+                </motion.button>
+              );
+            })}
           </div>
         </div>
 
         {/* Voice Selection */}
         <div className="space-y-2">
-          <label className="block text-xs font-bold text-heading">Synthesis Voice</label>
+          <label className="block text-[12px] font-medium text-heading">Synthesis Voice</label>
           <select
             value={settings.voiceURI}
             onChange={handleVoiceChange}
-            className="w-full text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-heading p-2.5 outline-none focus:ring-1 focus:ring-primary"
+            className="w-full text-[12px] font-normal rounded-xl border border-slate-200 dark:border-[#2A2A2A] bg-white dark:bg-[#0A0A0A] text-heading p-2.5 outline-none focus:ring-1 focus:ring-primary"
           >
             <option value="">-- Default System Voice --</option>
             {filteredVoices.map((voice) => (
@@ -190,9 +212,9 @@ export default function VoiceSettingsPanel({ settings, onChange, onClose }: Voic
 
         {/* Speaking Speed */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs font-bold text-heading">
-            <span className="flex items-center gap-1.5"><Gauge size={14} />Speaking Speed</span>
-            <span className="font-mono text-primary">{settings.speed}x</span>
+          <div className="flex items-center justify-between text-[12px] font-medium text-heading">
+            <span className="flex items-center gap-1.5"><Gauge size={13} />Speaking Speed</span>
+            <span className="font-normal text-[11px] text-muted">{settings.speed}x</span>
           </div>
           <input
             type="range"
@@ -201,15 +223,15 @@ export default function VoiceSettingsPanel({ settings, onChange, onClose }: Voic
             step="0.1"
             value={settings.speed}
             onChange={(e) => handleRangeChange('speed', parseFloat(e.target.value))}
-            className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary"
+            className="w-full h-1 bg-slate-200 dark:bg-[#2A2A2A] rounded-lg appearance-none cursor-pointer accent-[#111827] dark:accent-[#FAFAFA]"
           />
         </div>
 
         {/* Pitch */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs font-bold text-heading">
-            <span className="flex items-center gap-1.5"><Sliders size={14} />Voice Pitch</span>
-            <span className="font-mono text-primary">{settings.pitch}x</span>
+          <div className="flex items-center justify-between text-[12px] font-medium text-heading">
+            <span className="flex items-center gap-1.5"><Sliders size={13} />Voice Pitch</span>
+            <span className="font-normal text-[11px] text-muted">{settings.pitch}x</span>
           </div>
           <input
             type="range"
@@ -218,15 +240,15 @@ export default function VoiceSettingsPanel({ settings, onChange, onClose }: Voic
             step="0.1"
             value={settings.pitch}
             onChange={(e) => handleRangeChange('pitch', parseFloat(e.target.value))}
-            className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary"
+            className="w-full h-1 bg-slate-200 dark:bg-[#2A2A2A] rounded-lg appearance-none cursor-pointer accent-[#111827] dark:accent-[#FAFAFA]"
           />
         </div>
 
         {/* Volume */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs font-bold text-heading">
-            <span className="flex items-center gap-1.5"><Volume2 size={14} />Speaking Volume</span>
-            <span className="font-mono text-primary">{Math.round(settings.volume * 100)}%</span>
+          <div className="flex items-center justify-between text-[12px] font-medium text-heading">
+            <span className="flex items-center gap-1.5"><Volume2 size={13} />Speaking Volume</span>
+            <span className="font-normal text-[11px] text-muted">{Math.round(settings.volume * 100)}%</span>
           </div>
           <input
             type="range"
@@ -235,21 +257,21 @@ export default function VoiceSettingsPanel({ settings, onChange, onClose }: Voic
             step="0.05"
             value={settings.volume}
             onChange={(e) => handleRangeChange('volume', parseFloat(e.target.value))}
-            className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary"
+            className="w-full h-1 bg-slate-200 dark:bg-[#2A2A2A] rounded-lg appearance-none cursor-pointer accent-[#111827] dark:accent-[#FAFAFA]"
           />
         </div>
 
         {/* Auto Read Toggle */}
-        <div className="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 pt-4">
+        <div className="flex items-center justify-between border-t border-slate-200 dark:border-[#2A2A2A] pt-4">
           <div>
-            <span className="text-xs font-bold text-heading">Auto Read Responses</span>
-            <span className="text-[10px] text-muted block mt-0.5">Speak automatically after text stream ends.</span>
+            <span className="text-[12px] font-medium text-heading">Auto Read Responses</span>
+            <span className="text-[11px] font-normal text-muted block mt-0.5">Speak automatically after text stream ends.</span>
           </div>
           <button
             type="button"
             onClick={handleToggleAutoSpeak}
             className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-              settings.autoSpeak ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-800'
+              settings.autoSpeak ? 'bg-primary' : 'bg-slate-200 dark:bg-[#111111]'
             }`}
           >
             <span
@@ -261,18 +283,18 @@ export default function VoiceSettingsPanel({ settings, onChange, onClose }: Voic
         </div>
 
         {/* Hands-Free Toggle */}
-        <div className="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 pt-4">
+        <div className="flex items-center justify-between border-t border-slate-200 dark:border-[#2A2A2A] pt-4">
           <div>
-            <span className="text-xs font-bold text-heading flex items-center gap-1.5">
-              <Mic size={14} className="text-primary" /> Hands-Free Mode
+            <span className="text-[12px] font-medium text-heading flex items-center gap-1.5">
+              <Mic size={13} className="text-primary" /> Hands-Free Mode
             </span>
-            <span className="text-[10px] text-muted block mt-0.5">Continuous wake word detection ("Hey CollegeMate").</span>
+            <span className="text-[11px] font-normal text-muted block mt-0.5">Continuous wake word detection ("Hey CollegeMate").</span>
           </div>
           <button
             type="button"
             onClick={handleToggleHandsFree}
             className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-              settings.handsFree ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-800'
+              settings.handsFree ? 'bg-primary' : 'bg-slate-200 dark:bg-[#111111]'
             }`}
           >
             <span
@@ -285,29 +307,71 @@ export default function VoiceSettingsPanel({ settings, onChange, onClose }: Voic
       </div>
 
       {/* Drawer Actions */}
-      <div className="p-5 border-t border-slate-200 dark:border-slate-800 flex gap-2.5 bg-slate-50 dark:bg-slate-900/20">
-        <button
+      <div className="p-5 border-t border-slate-200 dark:border-[#2A2A2A] flex gap-2.5 bg-[#FAFAFA] dark:bg-[#0A0A0A]">
+        {/* Preview button */}
+        <motion.button
           onClick={handlePreview}
-          className="flex-1 h-12 flex items-center justify-center gap-1.5 rounded-[14px] bg-slate-100 dark:bg-slate-800 text-xs font-bold text-heading hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+          whileHover={{ scale: 1.03, y: -1 }}
+          whileTap={{ scale: 0.96 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+          className="flex-1 h-12 flex items-center justify-center gap-2 rounded-[14px]
+                     bg-[#F3F4F6] dark:bg-[#1A1A1A]
+                     border border-[#E5E7EB] dark:border-[#2A2A2A]
+                     text-[13px] font-semibold text-[#111827] dark:text-[#FAFAFA]
+                     hover:bg-[#E5E7EB] dark:hover:bg-[#252525]
+                     shadow-sm transition-colors duration-150 group"
         >
-          <Play size={13} />
+          <motion.span
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
+          >
+            <Play size={14} className="fill-current" />
+          </motion.span>
           Preview
-        </button>
-        
-        <button
+        </motion.button>
+
+        {/* Reset button */}
+        <motion.button
           onClick={handleReset}
-          className="w-12 h-12 flex items-center justify-center rounded-[14px] border border-slate-200 dark:border-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-muted hover:text-danger transition"
+          whileHover={{ scale: 1.08, rotate: -20 }}
+          whileTap={{ scale: 0.92, rotate: -40 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 18 }}
+          className="w-12 h-12 flex items-center justify-center rounded-[14px]
+                     border border-[#E5E7EB] dark:border-[#2A2A2A]
+                     bg-[#F3F4F6] dark:bg-[#1A1A1A]
+                     text-[#6B7280] dark:text-[#A3A3A3]
+                     hover:bg-rose-50 dark:hover:bg-rose-950/20
+                     hover:text-rose-500 dark:hover:text-rose-400
+                     hover:border-rose-200 dark:hover:border-rose-900
+                     shadow-sm transition-colors duration-150"
           title="Reset settings to default"
         >
           <RotateCcw size={14} />
-        </button>
+        </motion.button>
 
-        <button
+        {/* Apply Settings button */}
+        <motion.button
           onClick={onClose}
-          className="flex-1 h-12 rounded-[14px] bg-primary hover:bg-primary-hover text-white text-xs font-bold shadow-sm transition"
+          whileHover={{ scale: 1.03, y: -1 }}
+          whileTap={{ scale: 0.96 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+          className="relative flex-1 h-12 overflow-hidden rounded-[14px]
+                     bg-[#111827] dark:bg-[#FAFAFA]
+                     text-[13px] font-semibold
+                     text-[#FFFFFF] dark:text-[#111111]
+                     shadow-lg shadow-black/20 dark:shadow-black/40
+                     transition-colors duration-150 group"
         >
-          Apply Settings
-        </button>
+          {/* Shimmer sweep */}
+          <motion.span
+            className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/10 dark:bg-white/5"
+            animate={{ translateX: ['−100%', '200%'] }}
+            transition={{ repeat: Infinity, duration: 2.5, ease: 'linear', repeatDelay: 1 }}
+          />
+          <span className="relative z-10 flex items-center justify-center gap-2">
+            Apply Settings
+          </span>
+        </motion.button>
       </div>
     </div>
   );
