@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   GraduationCap,
@@ -74,40 +74,40 @@ export default function FacultyPortalPage() {
   const department = user?.department || 'Computer Science & Engineering';
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#F5F7FB] dark:bg-[#0F172A] p-4 sm:p-6 lg:p-8 font-body text-[#1F2937] dark:text-[#F8FAFC] transition-colors duration-200">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* ── Page Header & Profile Badge ── */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0E2A6D] to-[#1E4DB7] text-white flex items-center justify-center shadow-md border border-[#D9A441]/30 shrink-0">
-              <GraduationCap size={26} strokeWidth={1.75} />
+    <div className="faculty-ui w-full h-full overflow-x-hidden overflow-y-auto bg-[#F8FAFC] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 lg:p-8 transition-colors select-none font-sans">
+      {/* 1440px Centered Container with 32px (space-y-8) Section Gap */}
+      <div className="w-full max-w-[1440px] mx-auto space-y-8">
+        {/* Page Hero Header */}
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="w-12 h-12 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+              <GraduationCap size={24} />
             </div>
-            <div>
-              <h1 className="text-[20px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-[1.2] flex items-center gap-2">
+            <div className="min-w-0 space-y-1">
+              <h1 className="text-[30px] font-semibold text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-tight truncate">
                 Faculty Portal
-                <span className="text-[11px] sm:text-[13px] px-2.5 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] font-[500] border border-[#D1D5DB] dark:border-[#3F3F46]">
-                  Academic Management
-                </span>
               </h1>
-              <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] mt-0.5">
+              <p className="text-[15px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">
                 Academic management system for class schedules, attendance, assignments, and student evaluation.
               </p>
             </div>
           </div>
 
           {/* Profile Badge */}
-          <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#F5F7FB] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] shrink-0">
-            <div>
-              <p className="font-heading font-bold text-caption text-[#0E2A6D] dark:text-[#60A5FA]">
-                Dr. {facultyName}
-              </p>
-              <p className="text-small text-[#64748B] dark:text-[#94A3B8]">{department}</p>
+          <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 w-full sm:w-auto">
+            <div className="flex items-center gap-3 px-4 py-2 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] shrink-0">
+              <div>
+                <p className="text-[14px] font-semibold text-[#111827] dark:text-[#FAFAFA]">
+                  Dr. {facultyName}
+                </p>
+                <p className="text-[12px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">{department}</p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* ── Navigation Tab Bar ── */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+        {/* ── Navigation Tab Bar (Identical to AIWorkspace Filter Bar) ── */}
+        <div className="flex items-center bg-[#F8FAFC] dark:bg-[#111111] p-1.5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] overflow-x-auto no-scrollbar w-full">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -115,10 +115,10 @@ export default function FacultyPortalPage() {
               <button
                 key={tab.id}
                 onClick={() => handleTabChange(tab.id)}
-                className={`h-[40px] px-4 rounded-[10px] text-[14px] font-[500] flex items-center gap-2 shrink-0 transition cursor-pointer ${
+                className={`h-[36px] px-4 rounded-[8px] text-[14px] font-medium transition whitespace-nowrap flex-1 lg:flex-initial cursor-pointer flex items-center justify-center gap-2 ${
                   isActive
-                    ? 'bg-[#0E2A6D] text-white shadow-xs'
-                    : 'bg-white dark:bg-[#1E293B] text-[#64748B] dark:text-[#94A3B8] border border-[#E2E8F0] dark:border-[#334155] hover:bg-[#F5F7FB] dark:hover:bg-[#0F172A]'
+                    ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
+                    : 'text-[#6B7280] hover:text-[#111827] dark:text-[#A1A1AA] dark:hover:text-[#FAFAFA]'
                 }`}
               >
                 <Icon size={16} /> {tab.label}
@@ -126,6 +126,8 @@ export default function FacultyPortalPage() {
             );
           })}
         </div>
+
+
 
         {/* ── Tab Content Views ── */}
         {activeTab === 'dashboard' && (

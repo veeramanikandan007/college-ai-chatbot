@@ -50,7 +50,7 @@ export const mainNavItems: NavItem[] = [
     icon: FolderKanban,
     colorClass: 'text-zinc-700 dark:text-zinc-300',
     matchPaths: ['/workspaces'],
-    allowedRoles: ['student', 'faculty', 'admin'],
+    allowedRoles: ['student', 'admin'],
   },
   {
     id: 'ai-ocr',
@@ -59,7 +59,7 @@ export const mainNavItems: NavItem[] = [
     icon: Scan,
     colorClass: 'text-zinc-700 dark:text-zinc-300',
     matchPaths: ['/ai-ocr', '/ocr-scanner'],
-    allowedRoles: ['student', 'faculty', 'admin'],
+    allowedRoles: ['student', 'admin'],
   },
   {
     id: 'ai-notes',
@@ -68,7 +68,7 @@ export const mainNavItems: NavItem[] = [
     icon: Sparkles,
     colorClass: 'text-zinc-700 dark:text-zinc-300',
     matchPaths: ['/ai-notes', '/notes-generator'],
-    allowedRoles: ['student', 'faculty', 'admin'],
+    allowedRoles: ['student', 'admin'],
   },
   {
     id: 'ai-resume',
@@ -77,7 +77,7 @@ export const mainNavItems: NavItem[] = [
     icon: Briefcase,
     colorClass: 'text-zinc-700 dark:text-zinc-300',
     matchPaths: ['/resume-builder', '/placement/resume'],
-    allowedRoles: ['student', 'faculty', 'admin'],
+    allowedRoles: ['student', 'admin'],
   },
   {
     id: 'documents',
@@ -196,7 +196,7 @@ export const mainNavItems: NavItem[] = [
   },
   {
     id: 'faculty-quizzes',
-    label: 'Quiz Management',
+    label: 'Quizzes',
     path: '/faculty?tab=quizzes',
     icon: Brain,
     colorClass: 'text-zinc-700 dark:text-zinc-300',
@@ -204,7 +204,7 @@ export const mainNavItems: NavItem[] = [
   },
   {
     id: 'faculty-timetable',
-    label: 'Timetable',
+    label: 'Time Tables',
     path: '/faculty?tab=timetable',
     icon: CalendarDays,
     colorClass: 'text-zinc-700 dark:text-zinc-300',
@@ -237,7 +237,7 @@ export const mainNavItems: NavItem[] = [
     path: '/notes',
     icon: BookOpen,
     colorClass: 'text-zinc-700 dark:text-zinc-300',
-    allowedRoles: ['student', 'faculty'],
+    allowedRoles: ['student'],
   },
   {
     id: 'settings',
@@ -245,8 +245,9 @@ export const mainNavItems: NavItem[] = [
     path: '/settings',
     icon: Settings,
     colorClass: 'text-zinc-700 dark:text-zinc-300',
-    allowedRoles: ['student', 'faculty', 'admin'],
+    allowedRoles: ['student', 'admin'],
   },
+
 ];
 
 export function getNavItemsForRole(role?: string): NavItem[] {

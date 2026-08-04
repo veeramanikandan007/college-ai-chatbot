@@ -21,13 +21,15 @@ class EmbeddingService:
     def embeddings(self):
         """Lazy load HuggingFaceEmbeddings model for memory performance."""
         if self._embeddings is None:
-            if self.model_name in _GLOBAL_EMBEDDINGS_CACHE:
-                self._embeddings = _GLOBAL_EMBEDDINGS_CACHE[self.model_name]
+            cached = _GLOBAL_EMBEDDINGS_CACHE.get(self.model_name)
+            if cached is not None:
+                self._embeddings = cached
             else:
                 logger.info("Initializing HuggingFaceEmbeddings with model: %s", self.model_name)
+                embeddings_instance = None
                 try:
                     from langchain_huggingface import HuggingFaceEmbeddings
-                    self._embeddings = HuggingFaceEmbeddings(
+                    embeddings_instance = HuggingFaceEmbeddings(
                         model_name=self.model_name,
                         model_kwargs={'device': 'cpu'},
                         encode_kwargs={'normalize_embeddings': True}
@@ -36,7 +38,7 @@ class EmbeddingService:
                     logger.warning("langchain_huggingface failed (%s), attempting langchain_community fallback.", exc)
                     try:
                         from langchain_community.embeddings import HuggingFaceEmbeddings as CommunityHuggingFaceEmbeddings
-                        self._embeddings = CommunityHuggingFaceEmbeddings(
+                        embeddings_instance = CommunityHuggingFaceEmbeddings(
                             model_name=self.model_name,
                             model_kwargs={'device': 'cpu'},
                             encode_kwargs={'normalize_embeddings': True}
@@ -44,6 +46,11 @@ class EmbeddingService:
                     except Exception as exc2:
                         logger.exception("Failed to initialize embedding model: %s", exc2)
                         raise RuntimeError(f"Embedding model initialization failed: {exc2}") from exc2
+                
+                if embeddings_instance is None:
+                    raise RuntimeError(f"Embedding model initialization failed for {self.model_name}")
+
+                self._embeddings = embeddings_instance
                 _GLOBAL_EMBEDDINGS_CACHE[self.model_name] = self._embeddings
         return self._embeddings
 
@@ -52,12 +59,17 @@ class EmbeddingService:
         if not texts:
             return []
 
+        embeddings_model = self.embeddings
+        if embeddings_model is None:
+            raise ValueError("Embedding model is not initialized.")
+
         try:
-            vectors = self.embeddings.embed_documents(list(texts))
+            vectors = embeddings_model.embed_documents(list(texts))
             logger.info('Generated %s embedding(s) using model %s', len(vectors), self.model_name)
             return vectors
         except Exception as exc:
             logger.exception('Embedding generation failed')
             raise ValueError(f'Failed to generate embeddings: {exc}') from exc
+
 
 

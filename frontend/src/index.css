@@ -1,4 +1,4 @@
-﻿/*
+/*
  * ═══════════════════════════════════════════════════════════════════════════
  *  CollegeMate AI — ChatGPT-Inspired Monochrome Design System
  * ═══════════════════════════════════════════════════════════════════════════
@@ -298,3 +298,17 @@ input[type="range"]::-moz-range-thumb {
   background: #FAFAFA;
   border: 2px solid #111111;
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   FACULTY ONLY TYPOGRAPHY SYSTEM
+   ══════════════════════════════════════════════════════════════════════════ */
+.faculty-ui {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+.faculty-ui code,
+.faculty-ui pre,
+.faculty-ui .font-mono {
+  font-family: font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+

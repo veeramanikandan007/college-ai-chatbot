@@ -52,38 +52,38 @@ export const FacultyTimetableManager: React.FC = () => {
   const periods = [1, 2, 3, 4, 5, 6];
 
   return (
-    <div className="space-y-6 font-body">
+    <div className="space-y-6 font-sans">
       {/* ── Top Controls ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#111111] p-6 rounded-[16px] border border-[#E5E5E5] dark:border-[#2A2A2A] shadow-xs">
         <div>
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Faculty Teaching Timetable</h3>
-          <p className="text-small text-[#64748B] dark:text-[#94A3B8]">Inspect period slots, free hours, and submit period substitution requests.</p>
+          <h3 className="text-[18px] font-semibold text-[#111111] dark:text-[#FAFAFA]">Faculty Teaching Timetable</h3>
+          <p className="text-[15px] font-medium text-[#525252] dark:text-[#A3A3A3] mt-0.5">Inspect period slots, free hours, and submit period substitution requests.</p>
         </div>
 
         <button
           onClick={() => setShowRequestModal(true)}
-          className="h-10 px-4 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-caption font-bold flex items-center gap-2 transition shrink-0"
+          className="h-[40px] px-4 rounded-[12px] bg-[#111111] hover:bg-[#262626] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-white dark:text-[#111111] text-[15px] font-semibold flex items-center gap-2 transition cursor-pointer shrink-0"
         >
           <RefreshCw size={16} /> Request Timetable Change
         </button>
       </div>
 
       {/* ── Weekly Timetable Grid ── */}
-      <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs overflow-hidden">
+      <div className="bg-[#FFFFFF] dark:bg-[#111111] rounded-[16px] border border-[#E5E5E5] dark:border-[#2A2A2A] shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-center border-collapse font-body text-caption">
+          <table className="w-full text-center border-collapse font-sans text-[14px]">
             <thead>
-              <tr className="border-b border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] font-heading font-bold uppercase text-[#64748B] dark:text-[#94A3B8]">
+              <tr className="border-b border-[#E5E5E5] dark:border-[#2A2A2A] bg-[#F8F8F8] dark:bg-[#18181B] font-semibold uppercase text-[#525252] dark:text-[#A3A3A3]">
                 <th className="py-3 px-4 text-left">Day / Period</th>
                 {periods.map((p) => (
                   <th key={p} className="py-3 px-4">Period {p}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#334155]">
+            <tbody className="divide-y divide-[#E5E5E5] dark:divide-[#2A2A2A]">
               {days.map((day) => (
-                <tr key={day} className="hover:bg-[#F5F7FB]/50 dark:hover:bg-[#0F172A]/50">
-                  <td className="py-4 px-4 font-heading font-bold text-left text-[#0E2A6D] dark:text-[#60A5FA] bg-[#F5F7FB]/30 dark:bg-[#0F172A]/30">
+                <tr key={day} className="hover:bg-[#F3F3F3]/50 dark:hover:bg-[#18181B]/50 transition">
+                  <td className="py-4 px-4 font-bold text-left text-[#111111] dark:text-[#FAFAFA] bg-[#F8F8F8]/50 dark:bg-[#18181B]/50">
                     {day}
                   </td>
                   {periods.map((p) => {
@@ -91,18 +91,19 @@ export const FacultyTimetableManager: React.FC = () => {
                     return (
                       <td key={p} className="py-3 px-2">
                         {match ? (
-                          <div className="p-2.5 rounded-xl bg-[#0E2A6D]/10 dark:bg-[#60A5FA]/20 border border-[#0E2A6D]/20 text-center space-y-0.5">
-                            <span className="font-heading font-bold text-body text-[#0E2A6D] dark:text-[#60A5FA] block">{match.subject_code}</span>
-                            <span className="text-caption font-semibold text-[#475569] dark:text-[#CBD5E1] block">Sec {match.section} · {match.classroom}</span>
+                          <div className="p-2.5 rounded-[10px] bg-[#111111] dark:bg-[#FAFAFA] text-white dark:text-[#111111] text-center space-y-0.5 shadow-xs">
+                            <span className="font-bold text-[14px] block">{match.subject_code}</span>
+                            <span className="text-[12px] opacity-80 block">Sec {match.section} · {match.classroom}</span>
                           </div>
                         ) : (
-                          <span className="inline-block px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-small">
+                          <span className="inline-block px-2.5 py-1 rounded-[6px] bg-[#F3F3F3] dark:bg-[#232323] text-[#525252] dark:text-[#A3A3A3] font-medium text-[12px] border border-[#E5E5E5] dark:border-[#2A2A2A]">
                             Free Hour
                           </span>
                         )}
                       </td>
                     );
                   })}
+
                 </tr>
               ))}
             </tbody>

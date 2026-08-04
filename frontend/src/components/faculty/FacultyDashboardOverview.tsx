@@ -108,47 +108,44 @@ export const FacultyDashboardOverview: React.FC<Props> = ({
   ];
 
   return (
-    <div className="space-y-6 font-body">
+    <div className="space-y-8 font-sans">
       {/* ── Welcome Hero Banner ── */}
-      <div className="bg-[#111827] dark:bg-[#000000] p-6 sm:p-8 rounded-2xl text-white shadow-md space-y-2 border border-[#334155] relative overflow-hidden">
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
-          <Sparkles size={180} />
-        </div>
-
-        <div className="relative z-10 space-y-1">
+      <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative overflow-hidden">
+        <div className="min-w-0 space-y-1">
           <div className="flex items-center gap-2">
-            <span className="text-caption font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs text-[#D9A441]">
+            <span className="text-[12px] font-medium px-2.5 py-0.5 rounded-[6px] bg-[#F8FAFC] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] border border-[#E5E7EB] dark:border-[#2A2A2A]">
               Faculty Cockpit
             </span>
-            <span className="text-caption text-white/80 font-medium">{currentDateStr}</span>
+            <span className="text-[12px] text-[#6B7280] dark:text-[#A1A1AA] font-normal">{currentDateStr}</span>
           </div>
 
-          <h2 className="font-heading font-extrabold text-2xl sm:text-3xl tracking-wide pt-1">
+          <h2 className="text-[26px] sm:text-[30px] font-semibold text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-tight pt-1">
             {greeting}, Dr. {facultyName}
           </h2>
-          <p className="text-body text-white/90 max-w-2xl">
+          <p className="text-[15px] font-normal text-[#6B7280] dark:text-[#A1A1AA] max-w-2xl">
             Department of {department}. Here is your academic schedule, teaching tasks, and pending reviews for today.
           </p>
         </div>
       </div>
 
-      {/* ── Quick Statistics (5 Cards) ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      {/* ── Quick Statistics (5 Cards) — Identical to AIWorkspace Stat Cards ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
         {quickStats.map((item, idx) => {
           const Icon = item.icon;
           return (
             <div
               key={idx}
               onClick={item.action}
-              className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs flex items-center justify-between gap-3 hover:border-[#1E4DB7]/40 transition cursor-pointer group"
+              className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between hover:border-[#111827]/30 dark:hover:border-[#FAFAFA]/30 transition cursor-pointer group"
             >
-              <div>
-                <p className="text-caption font-medium text-[#64748B] dark:text-[#94A3B8]">{item.title}</p>
-                <p className="font-heading font-bold text-2xl text-[#1F2937] dark:text-[#F8FAFC] mt-0.5">{item.value}</p>
+              <div className="min-w-0 flex-1 space-y-1">
+                <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">{item.title}</p>
+                <p className="text-[28px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight truncate">{item.value}</p>
+                <p className="text-[12px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">Click to inspect</p>
               </div>
 
-              <div className={`w-11 h-11 rounded-xl ${item.bg} ${item.color} flex items-center justify-center shrink-0 group-hover:scale-105 transition`}>
-                <Icon size={22} strokeWidth={1.75} />
+              <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-3 group-hover:scale-105 transition">
+                <Icon size={20} />
               </div>
             </div>
           );
@@ -158,53 +155,54 @@ export const FacultyDashboardOverview: React.FC<Props> = ({
       {/* ── Today's Schedule Grid & Pending Tasks ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Today's Schedule (2 cols) */}
-        <div className="lg:col-span-2 bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#334155] pb-4">
-            <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] flex items-center gap-2">
-              <Clock className="text-[#0E2A6D] dark:text-[#60A5FA]" size={20} />
+        <div className="lg:col-span-2 bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs space-y-4">
+          <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#2A2A2A] pb-4">
+            <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+              <Clock className="text-[#111827] dark:text-[#FAFAFA]" size={20} />
               Today's Teaching Schedule
             </h3>
             <button
               onClick={() => onNavigateTab('timetable')}
-              className="text-caption text-[#1E4DB7] dark:text-[#60A5FA] font-bold hover:underline flex items-center gap-1"
+              className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA] hover:underline flex items-center gap-1 cursor-pointer"
             >
+
               Full Timetable <ArrowRight size={14} />
             </button>
           </div>
 
           <div className="space-y-3">
             {today_schedule.length === 0 ? (
-              <div className="py-8 text-center text-caption text-[#64748B] space-y-2">
-                <CheckCircle2 size={24} className="mx-auto text-emerald-500 opacity-60" />
+              <div className="py-8 text-center text-[14px] font-normal text-[#525252] space-y-2">
+                <CheckCircle2 size={24} className="mx-auto text-[#525252] opacity-60" />
                 <p>No more classes scheduled for today.</p>
               </div>
             ) : (
               today_schedule.map((item, idx) => (
                 <div
                   key={item.id || idx}
-                  className="p-4 rounded-xl bg-[#F5F7FB] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  className="p-4 rounded-[12px] bg-[#F8F8F8] dark:bg-[#18181B] border border-[#E5E5E5] dark:border-[#2A2A2A] flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="w-10 h-10 rounded-xl bg-[#0E2A6D] text-white font-heading font-bold text-caption flex items-center justify-center shrink-0">
+                    <span className="w-10 h-10 rounded-[10px] bg-[#111111] dark:bg-[#FAFAFA] text-white dark:text-[#111111] font-bold text-[14px] flex items-center justify-center shrink-0">
                       P{item.period_number}
                     </span>
                     <div>
-                      <h4 className="font-heading font-bold text-body text-[#1F2937] dark:text-[#F8FAFC]">
+                      <h4 className="text-[16px] font-bold text-[#111111] dark:text-[#FAFAFA]">
                         {item.subject_name} ({item.subject_code})
                       </h4>
-                      <p className="text-caption text-[#64748B] dark:text-[#94A3B8] mt-0.5">
+                      <p className="text-[14px] font-normal text-[#525252] dark:text-[#A3A3A3] mt-0.5">
                         Section: <strong>{item.section}</strong> · Room: <strong>{item.classroom}</strong>
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 sm:text-right">
-                    <span className="font-mono text-caption font-bold text-[#0E2A6D] dark:text-[#60A5FA] bg-[#0E2A6D]/10 px-2.5 py-1 rounded-lg">
+                    <span className="font-mono text-[13px] font-semibold text-[#111111] dark:text-[#FAFAFA] bg-[#F3F3F3] dark:bg-[#232323] px-2.5 py-1 rounded-[8px] border border-[#E5E5E5] dark:border-[#2A2A2A]">
                       {item.start_time} - {item.end_time}
                     </span>
                     <button
                       onClick={() => onNavigateTab('attendance')}
-                      className="h-8 px-3 rounded-lg bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-caption font-bold shrink-0 transition"
+                      className="h-8 px-3.5 rounded-[8px] bg-[#111111] hover:bg-[#262626] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-white dark:text-[#111111] text-[15px] font-semibold shrink-0 transition cursor-pointer"
                     >
                       Attendance
                     </button>
@@ -216,9 +214,9 @@ export const FacultyDashboardOverview: React.FC<Props> = ({
         </div>
 
         {/* ── Pending Tasks Action Cards (1 col) ── */}
-        <div className="bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs space-y-4">
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] flex items-center gap-2 border-b border-[#E2E8F0] dark:border-[#334155] pb-4">
-            <ClipboardCheck className="text-amber-500" size={20} />
+        <div className="bg-[#FFFFFF] dark:bg-[#111111] p-6 rounded-[16px] border border-[#E5E5E5] dark:border-[#2A2A2A] shadow-xs space-y-4">
+          <h3 className="text-[18px] font-semibold text-[#111111] dark:text-[#FAFAFA] flex items-center gap-2 border-b border-[#E5E5E5] dark:border-[#2A2A2A] pb-4">
+            <ClipboardCheck className="text-[#444444] dark:text-[#D4D4D4]" size={20} />
             Quick Academic Actions
           </h3>
 
@@ -229,20 +227,20 @@ export const FacultyDashboardOverview: React.FC<Props> = ({
                 <div
                   key={idx}
                   onClick={() => onNavigateTab(act.tab)}
-                  className="p-3.5 rounded-xl bg-[#F5F7FB] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] hover:border-[#1E4DB7]/40 flex items-center justify-between gap-3 transition cursor-pointer group"
+                  className="p-3.5 rounded-[12px] bg-[#F8F8F8] dark:bg-[#18181B] border border-[#E5E5E5] dark:border-[#2A2A2A] hover:border-[#111111]/40 flex items-center justify-between gap-3 transition cursor-pointer group"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg bg-white dark:bg-[#1E293B] ${act.color} shadow-xs shrink-0`}>
+                    <div className="p-2 rounded-[8px] bg-[#FFFFFF] dark:bg-[#111111] text-[#111111] dark:text-[#FAFAFA] border border-[#E5E5E5] dark:border-[#2A2A2A] shadow-xs shrink-0">
                       <Icon size={18} />
                     </div>
                     <div>
-                      <h4 className="font-heading font-bold text-caption text-[#1F2937] dark:text-[#F8FAFC] group-hover:text-[#1E4DB7] transition">
+                      <h4 className="text-[15px] font-semibold text-[#111111] dark:text-[#FAFAFA] transition">
                         {act.title}
                       </h4>
-                      <p className="text-small text-[#64748B] dark:text-[#94A3B8]">{act.desc}</p>
+                      <p className="text-[13px] font-normal text-[#525252] dark:text-[#A3A3A3]">{act.desc}</p>
                     </div>
                   </div>
-                  <ArrowRight size={16} className="text-[#64748B] group-hover:translate-x-1 transition shrink-0" />
+                  <ArrowRight size={16} className="text-[#525252] group-hover:translate-x-1 transition shrink-0" />
                 </div>
               );
             })}
@@ -251,11 +249,13 @@ export const FacultyDashboardOverview: React.FC<Props> = ({
       </div>
 
       {/* ── Department & Campus Announcements ── */}
-      <div className="bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs space-y-4">
-        <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] flex items-center gap-2 border-b border-[#E2E8F0] dark:border-[#334155] pb-4">
-          <Bell className="text-[#D9A441]" size={20} />
+      <div className="bg-[#FFFFFF] dark:bg-[#111111] p-6 rounded-[16px] border border-[#E5E5E5] dark:border-[#2A2A2A] shadow-xs space-y-4">
+        <h3 className="text-[18px] font-semibold text-[#111111] dark:text-[#FAFAFA] flex items-center gap-2 border-b border-[#E5E5E5] dark:border-[#2A2A2A] pb-4">
+          <Bell className="text-[#444444] dark:text-[#D4D4D4]" size={20} />
           Department Notices & Campus Notifications
         </h3>
+
+
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {notifications.map((n) => (

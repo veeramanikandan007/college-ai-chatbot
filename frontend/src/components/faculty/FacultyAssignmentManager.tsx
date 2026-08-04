@@ -124,12 +124,12 @@ export const FacultyAssignmentManager: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 font-body">
+    <div className="space-y-6 font-sans">
       {/* ── Top Bar ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#27272A] shadow-xs">
         <div>
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Course Assignments</h3>
-          <p className="text-small text-[#64748B] dark:text-[#94A3B8]">Create tasks, review student submissions, and award grades.</p>
+          <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Course Assignments</h3>
+          <p className="text-[15px] font-medium text-[#64748B] dark:text-[#A1A1AA] mt-0.5">Create tasks, review student submissions, and award grades.</p>
         </div>
 
         <button
@@ -137,22 +137,22 @@ export const FacultyAssignmentManager: React.FC = () => {
             resetForm();
             setShowCreateModal(true);
           }}
-          className="h-10 px-4 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-caption font-bold flex items-center gap-2 transition shrink-0"
+          className="h-[40px] px-4 rounded-[12px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-white dark:text-[#111111] text-[15px] font-semibold flex items-center gap-2 transition cursor-pointer shrink-0"
         >
           <Plus size={18} /> Create Assignment
         </button>
       </div>
 
       {/* ── Assignment Cards Grid ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {assignments.map((a) => (
           <div
             key={a.id}
-            className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#1E4DB7]/40 transition"
+            className="bg-white dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#27272A] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#111827]/40 dark:hover:border-[#FAFAFA]/40 transition group"
           >
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-caption font-bold uppercase px-2.5 py-0.5 rounded bg-[#0E2A6D]/10 text-[#0E2A6D] dark:bg-[#60A5FA]/20 dark:text-[#60A5FA]">
+                <span className="text-[12px] font-normal uppercase px-2.5 py-0.5 rounded-[6px] bg-[#F3F4F6] dark:bg-[#27272A] text-[#111827] dark:text-[#FAFAFA] border border-[#E5E7EB] dark:border-[#3F3F46]">
                   {a.subject_code} · Sec {a.section}
                 </span>
                 <div className="flex items-center gap-1">
@@ -167,29 +167,29 @@ export const FacultyAssignmentManager: React.FC = () => {
                       setMaxMarks(a.max_marks);
                       setShowCreateModal(true);
                     }}
-                    className="p-1 text-[#64748B] hover:text-[#0E2A6D] rounded"
+                    className="p-1.5 text-[#6B7280] hover:text-[#111827] dark:hover:text-[#FAFAFA] rounded-[6px] transition cursor-pointer"
                   >
                     <Edit2 size={16} />
                   </button>
-                  <button onClick={() => handleDeleteAssignment(a.id)} className="p-1 text-[#64748B] hover:text-rose-600 rounded">
+                  <button onClick={() => handleDeleteAssignment(a.id)} className="p-1.5 text-[#6B7280] hover:text-rose-600 rounded-[6px] transition cursor-pointer">
                     <Trash2 size={16} />
                   </button>
                 </div>
               </div>
 
-              <h4 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">{a.title}</h4>
-              <p className="text-caption text-[#64748B] dark:text-[#94A3B8] line-clamp-2">{a.description || 'No description specified.'}</p>
+              <h4 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight">{a.title}</h4>
+              <p className="text-[15px] font-medium text-[#6B7280] dark:text-[#A1A1AA] line-clamp-2">{a.description || 'No description specified.'}</p>
             </div>
 
-            <div className="pt-3 border-t border-[#E2E8F0] dark:border-[#334155] space-y-3">
-              <div className="flex items-center justify-between text-caption text-[#64748B]">
-                <span>Due: <strong className="text-[#1F2937] dark:text-[#F8FAFC]">{a.due_date}</strong></span>
-                <span>Max Marks: <strong className="text-[#1F2937] dark:text-[#F8FAFC]">{a.max_marks}</strong></span>
+            <div className="pt-4 border-t border-[#E5E7EB] dark:border-[#27272A] space-y-3">
+              <div className="flex items-center justify-between text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">
+                <span>Due: <strong className="font-semibold text-[#111827] dark:text-[#FAFAFA]">{a.due_date}</strong></span>
+                <span>Max Marks: <strong className="font-semibold text-[#111827] dark:text-[#FAFAFA]">{a.max_marks}</strong></span>
               </div>
 
               <button
                 onClick={() => handleOpenSubmissions(a)}
-                className="w-full h-9 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] hover:bg-[#1E4DB7]/10 text-caption font-bold text-[#0E2A6D] dark:text-[#60A5FA] flex items-center justify-center gap-2 transition"
+                className="w-full h-[38px] rounded-[10px] border border-[#E5E7EB] dark:border-[#27272A] bg-[#F8FAFC] dark:bg-[#111111] hover:bg-[#EEF2FF] dark:hover:bg-[#1E293B] text-[15px] font-semibold text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center gap-2 transition cursor-pointer"
               >
                 <Eye size={16} /> Review Submissions ({a.submissions_count})
               </button>
@@ -197,6 +197,7 @@ export const FacultyAssignmentManager: React.FC = () => {
           </div>
         ))}
       </div>
+
 
       {/* ── Create / Edit Modal ── */}
       {showCreateModal && (

@@ -92,37 +92,38 @@ export const FacultyQuizManager: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 font-body">
+    <div className="space-y-6 font-sans">
       {/* ── Top Bar ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#111111] p-6 rounded-[16px] border border-[#E5E5E5] dark:border-[#2A2A2A] shadow-xs">
         <div>
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Course Quizzes</h3>
-          <p className="text-small text-[#64748B] dark:text-[#94A3B8]">Create online quizzes, control publishing, and inspect student performance scores.</p>
+          <h3 className="text-[18px] font-semibold text-[#111111] dark:text-[#FAFAFA]">Course Quizzes</h3>
+          <p className="text-[15px] font-medium text-[#525252] dark:text-[#A3A3A3] mt-0.5">Create online quizzes, control publishing, and inspect student performance scores.</p>
         </div>
 
         <button
           onClick={() => setShowCreateModal(true)}
-          className="h-10 px-4 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-caption font-bold flex items-center gap-2 transition shrink-0"
+          className="h-[40px] px-4 rounded-[12px] bg-[#111111] hover:bg-[#262626] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-white dark:text-[#111111] text-[15px] font-semibold flex items-center gap-2 transition cursor-pointer shrink-0"
         >
           <Plus size={18} /> Create Quiz
         </button>
       </div>
 
       {/* ── Quizzes Grid ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {quizzes.map((q) => (
           <div
             key={q.id}
-            className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#1E4DB7]/40 transition"
+            className="bg-[#FFFFFF] dark:bg-[#111111] p-6 rounded-[16px] border border-[#E5E5E5] dark:border-[#2A2A2A] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#111111]/40 dark:hover:border-[#FAFAFA]/40 transition group"
           >
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className={`text-caption font-bold uppercase px-2.5 py-0.5 rounded ${
-                  q.is_published ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-slate-100 text-[#64748B]'
+                <span className={`text-[12px] font-normal uppercase px-2.5 py-0.5 rounded-[6px] border border-[#E5E5E5] dark:border-[#2A2A2A] ${
+                  q.is_published ? 'bg-[#111111] dark:bg-[#FAFAFA] text-white dark:text-[#111111]' : 'bg-[#F3F3F3] dark:bg-[#232323] text-[#525252] dark:text-[#A3A3A3]'
                 }`}>
                   {q.is_published ? 'Published' : 'Draft'}
                 </span>
-                <button onClick={() => handleDeleteQuiz(q.id)} className="p-1 text-[#64748B] hover:text-rose-600 rounded">
+                <button onClick={() => handleDeleteQuiz(q.id)} className="p-1.5 text-[#525252] hover:text-rose-600 rounded-[6px] transition cursor-pointer">
+
                   <Trash2 size={16} />
                 </button>
               </div>
