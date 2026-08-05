@@ -1,89 +1,74 @@
-from datetime import datetime, timezone
+from datetime import datetime
+from zoneinfo import ZoneInfo  # Built-in since Python 3.9 — no pytz needed
 from typing import List, Dict, Any, Optional
+from sqlalchemy.orm import Session
+from app.models.timetable import TimetableSchedule
 from app.services.ai_service import AIService
 from app.core.logging import get_logger
 
 logger = get_logger(__name__)
-
-# Subject Colors Mapping
-SUBJECT_COLORS = {
-    "DBMS": "#1E4DB7",       # Blue
-    "Java": "#10B981",       # Green
-    "AI": "#8B5CF6",         # Purple
-    "Networks": "#F97316",   # Orange
-    "OS": "#EF4444",         # Red
-    "ML Lab": "#8B5CF6",     # Lab Purple
-    "Web Lab": "#10B981",    # Lab Green
-    "Seminar": "#D9A441",    # Gold
-}
-
-DEFAULT_TIMETABLE = [
-    # Monday
-    {"id": 1, "day_of_week": "Monday", "period_number": 1, "start_time": "09:00 AM", "end_time": "10:00 AM", "subject_name": "Database Management Systems", "subject_code": "CS601", "subject_type": "Theory", "faculty_name": "Dr. R. Sundaram", "classroom": "Lab-3 / Hall A", "color_code": "#1E4DB7"},
-    {"id": 2, "day_of_week": "Monday", "period_number": 2, "start_time": "10:00 AM", "end_time": "11:00 AM", "subject_name": "Operating Systems & Kernels", "subject_code": "CS602", "subject_type": "Theory", "faculty_name": "Prof. M. Anitha", "classroom": "Hall B-102", "color_code": "#EF4444"},
-    {"id": 3, "day_of_week": "Monday", "period_number": 3, "start_time": "11:15 AM", "end_time": "12:15 PM", "subject_name": "Java Concurrency & Enterprise", "subject_code": "CS603", "subject_type": "Theory", "faculty_name": "Dr. K. Pandian", "classroom": "Hall B-102", "color_code": "#10B981"},
-    {"id": 4, "day_of_week": "Monday", "period_number": 4, "start_time": "01:15 PM", "end_time": "04:15 PM", "subject_name": "Full Stack Web Engineering Lab", "subject_code": "CS607L", "subject_type": "Lab", "faculty_name": "Prof. S. Karthik", "classroom": "Advanced Software Lab 2", "color_code": "#10B981"},
-
-    # Tuesday
-    {"id": 5, "day_of_week": "Tuesday", "period_number": 1, "start_time": "09:00 AM", "end_time": "10:00 AM", "subject_name": "Artificial Intelligence & Neural Nets", "subject_code": "CS604", "subject_type": "Theory", "faculty_name": "Dr. A. Meenakshi", "classroom": "AI & Robotics Lab", "color_code": "#8B5CF6"},
-    {"id": 6, "day_of_week": "Tuesday", "period_number": 2, "start_time": "10:00 AM", "end_time": "11:00 AM", "subject_name": "Computer Networks & Cloud", "subject_code": "CS605", "subject_type": "Theory", "faculty_name": "Prof. V. Rajesh", "classroom": "Hall B-102", "color_code": "#F97316"},
-    {"id": 7, "day_of_week": "Tuesday", "period_number": 3, "start_time": "11:15 AM", "end_time": "12:15 PM", "subject_name": "Database Management Systems", "subject_code": "CS601", "subject_type": "Theory", "faculty_name": "Dr. R. Sundaram", "classroom": "Hall B-102", "color_code": "#1E4DB7"},
-    {"id": 8, "day_of_week": "Tuesday", "period_number": 4, "start_time": "01:15 PM", "end_time": "02:15 PM", "subject_name": "Operating Systems & Kernels", "subject_code": "CS602", "subject_type": "Theory", "faculty_name": "Prof. M. Anitha", "classroom": "Hall B-102", "color_code": "#EF4444"},
-    {"id": 9, "day_of_week": "Tuesday", "period_number": 5, "start_time": "02:15 PM", "end_time": "04:15 PM", "subject_name": "Placement Aptitude & Verbal", "subject_code": "PL601", "subject_type": "Seminar", "faculty_name": "Placement Cell", "classroom": "Auditorium Hall 1", "color_code": "#D9A441"},
-
-    # Wednesday
-    {"id": 10, "day_of_week": "Wednesday", "period_number": 1, "start_time": "09:00 AM", "end_time": "12:00 PM", "subject_name": "Machine Learning & AI Lab", "subject_code": "CS608L", "subject_type": "Lab", "faculty_name": "Dr. A. Meenakshi", "classroom": "AI Computing Lab 1", "color_code": "#8B5CF6"},
-    {"id": 11, "day_of_week": "Wednesday", "period_number": 2, "start_time": "01:15 PM", "end_time": "02:15 PM", "subject_name": "Computer Networks & Cloud", "subject_code": "CS605", "subject_type": "Theory", "faculty_name": "Prof. V. Rajesh", "classroom": "Hall B-102", "color_code": "#F97316"},
-    {"id": 12, "day_of_week": "Wednesday", "period_number": 3, "start_time": "02:15 PM", "end_time": "03:15 PM", "subject_name": "Java Concurrency & Enterprise", "subject_code": "CS603", "subject_type": "Theory", "faculty_name": "Dr. K. Pandian", "classroom": "Hall B-102", "color_code": "#10B981"},
-
-    # Thursday
-    {"id": 13, "day_of_week": "Thursday", "period_number": 1, "start_time": "09:00 AM", "end_time": "10:00 AM", "subject_name": "Operating Systems & Kernels", "subject_code": "CS602", "subject_type": "Theory", "faculty_name": "Prof. M. Anitha", "classroom": "Hall B-102", "color_code": "#EF4444"},
-    {"id": 14, "day_of_week": "Thursday", "period_number": 2, "start_time": "10:00 AM", "end_time": "11:00 AM", "subject_name": "Database Management Systems", "subject_code": "CS601", "subject_type": "Theory", "faculty_name": "Dr. R. Sundaram", "classroom": "Hall B-102", "color_code": "#1E4DB7"},
-    {"id": 15, "day_of_week": "Thursday", "period_number": 3, "start_time": "11:15 AM", "end_time": "12:15 PM", "subject_name": "Artificial Intelligence & Neural Nets", "subject_code": "CS604", "subject_type": "Theory", "faculty_name": "Dr. A. Meenakshi", "classroom": "Hall B-102", "color_code": "#8B5CF6"},
-    {"id": 16, "day_of_week": "Thursday", "period_number": 4, "start_time": "01:15 PM", "end_time": "04:15 PM", "subject_name": "Database & SQL Lab", "subject_code": "CS609L", "subject_type": "Lab", "faculty_name": "Dr. R. Sundaram", "classroom": "Database Lab 3", "color_code": "#1E4DB7"},
-
-    # Friday
-    {"id": 17, "day_of_week": "Friday", "period_number": 1, "start_time": "09:00 AM", "end_time": "10:00 AM", "subject_name": "Java Concurrency & Enterprise", "subject_code": "CS603", "subject_type": "Theory", "faculty_name": "Dr. K. Pandian", "classroom": "Hall B-102", "color_code": "#10B981"},
-    {"id": 18, "day_of_week": "Friday", "period_number": 2, "start_time": "10:00 AM", "end_time": "11:00 AM", "subject_name": "Artificial Intelligence & Neural Nets", "subject_code": "CS604", "subject_type": "Theory", "faculty_name": "Dr. A. Meenakshi", "classroom": "Hall B-102", "color_code": "#8B5CF6"},
-    {"id": 19, "day_of_week": "Friday", "period_number": 3, "start_time": "11:15 AM", "end_time": "12:15 PM", "subject_name": "Computer Networks & Cloud", "subject_code": "CS605", "subject_type": "Theory", "faculty_name": "Prof. V. Rajesh", "classroom": "Hall B-102", "color_code": "#F97316"},
-    {"id": 20, "day_of_week": "Friday", "period_number": 4, "start_time": "01:15 PM", "end_time": "03:15 PM", "subject_name": "Capstone Mini-Project Guidance", "subject_code": "CS610P", "subject_type": "Lab", "faculty_name": "Department HOD", "classroom": "Project Innovation Lab", "color_code": "#D9A441"},
-
-    # Saturday
-    {"id": 21, "day_of_week": "Saturday", "period_number": 1, "start_time": "09:00 AM", "end_time": "10:30 AM", "subject_name": "Technical Seminar & Guest Lecture", "subject_code": "CS611S", "subject_type": "Seminar", "faculty_name": "Industry Experts", "classroom": "Main Auditorium", "color_code": "#D9A441"},
-    {"id": 22, "day_of_week": "Saturday", "period_number": 2, "start_time": "10:45 AM", "end_time": "12:30 PM", "subject_name": "Weekly Assessment & Coding Test", "subject_code": "CS612T", "subject_type": "Lab", "faculty_name": "Exam Cell", "classroom": "Online Test Lab 1", "color_code": "#EF4444"},
-]
 
 class TimetableService:
     def __init__(self):
         self.ai_service = AIService()
 
     @staticmethod
-    def get_today_timetable(day_name: Optional[str] = None) -> Dict[str, Any]:
+    def get_today_timetable(db: Session, day_name: Optional[str] = None) -> Dict[str, Any]:
         """
-        Returns today's timetable entries, ongoing class status, next class countdown, and stats breakdown without emojis.
+        Returns today's timetable entries, ongoing class status, next class countdown, and stats breakdown from DB.
         """
-        now = datetime.now()
+        tz = ZoneInfo('Asia/Kolkata')
+        now = datetime.now(tz)
         current_day = day_name or now.strftime("%A")
         if current_day == "Sunday":
             current_day = "Monday"
 
-        today_entries = [e for e in DEFAULT_TIMETABLE if e["day_of_week"] == current_day]
+        # Fetch from DB
+        entries = db.query(TimetableSchedule).filter(
+            TimetableSchedule.class_id == "V Semester - CSE - A",
+            TimetableSchedule.day == current_day
+        ).order_by(TimetableSchedule.period_number).all()
+
+        today_entries = []
+        for e in entries:
+            # Format time for frontend (e.g. "09:00" -> "09:00 AM")
+            st_dt = datetime.strptime(e.start_time, "%H:%M")
+            et_dt = datetime.strptime(e.end_time, "%H:%M")
+            st_str = st_dt.strftime("%I:%M %p")
+            et_str = et_dt.strftime("%I:%M %p")
+            
+            today_entries.append({
+                "id": e.id,
+                "day_of_week": e.day,
+                "period_number": e.period_number,
+                "start_time": st_str,
+                "end_time": et_str,
+                "subject_name": e.subject_name,
+                "subject_code": e.subject_code,
+                "subject_type": "Lab" if e.is_lab else "Theory",
+                "faculty_name": e.faculty_name,
+                "classroom": e.room_number,
+                "color_code": "#1E4DB7", # Default
+                "raw_start_time": e.start_time,
+                "raw_end_time": e.end_time
+            })
 
         current_time_str = now.strftime("%I:%M %p")
+        current_hm = now.strftime("%H:%M")
         
         ongoing_class = None
         next_class = None
         
         theory_count = sum(1 for e in today_entries if e["subject_type"] == "Theory")
         lab_count = sum(1 for e in today_entries if e["subject_type"] == "Lab")
-        seminar_count = sum(1 for e in today_entries if e["subject_type"] == "Seminar")
+        seminar_count = 0
 
         processed_entries = []
-        for idx, entry in enumerate(today_entries):
+        for entry in today_entries:
             status = "Upcoming"
-            if idx == 0:
+            if entry["raw_end_time"] <= current_hm:
                 status = "Completed"
-            elif idx == 1:
+            elif entry["raw_start_time"] <= current_hm < entry["raw_end_time"]:
                 status = "Ongoing"
                 ongoing_class = entry
             else:
@@ -95,11 +80,6 @@ class TimetableService:
                 **entry,
                 "status": status
             })
-
-        if not ongoing_class and processed_entries:
-            ongoing_class = processed_entries[0]
-        if not next_class and len(processed_entries) > 1:
-            next_class = processed_entries[1]
 
         return {
             "department": "Computer Science & Engineering",
@@ -116,17 +96,83 @@ class TimetableService:
                 "theory_count": theory_count,
                 "lab_count": lab_count,
                 "seminar_count": seminar_count,
-                "total_hours": 5.5,
-                "free_periods": 1
+                "total_hours": len(today_entries),
+                "free_periods": 0
             }
         }
 
     @staticmethod
-    def get_weekly_timetable() -> Dict[str, List[Dict[str, Any]]]:
+    def get_current_period(db: Session, class_id: str = "V Semester - CSE - A") -> Dict[str, Any]:
+        """
+        API endpoint logic to get the real-time status.
+        """
+        tz = ZoneInfo('Asia/Kolkata')
+        now = datetime.now(tz)
+        current_day = now.strftime("%A")
+        current_hm = now.strftime("%H:%M")
+
+        entries = db.query(TimetableSchedule).filter(
+            TimetableSchedule.class_id == class_id,
+            TimetableSchedule.day == current_day
+        ).order_by(TimetableSchedule.period_number).all()
+
+        current_class = None
+        next_class = None
+
+        for e in entries:
+            if e.start_time <= current_hm < e.end_time:
+                # Calculate remaining minutes
+                et = datetime.strptime(e.end_time, "%H:%M")
+                ct = datetime.strptime(current_hm, "%H:%M")
+                rem_mins = int((et - ct).total_seconds() / 60)
+                
+                current_class = {
+                    "subject": e.subject_code,
+                    "faculty": e.faculty_name,
+                    "room": e.room_number,
+                    "remaining_minutes": rem_mins
+                }
+            elif e.start_time > current_hm and not next_class:
+                st = datetime.strptime(e.start_time, "%H:%M").strftime("%I:%M %p")
+                next_class = {
+                    "subject": e.subject_code,
+                    "time": st
+                }
+
+        return {
+            "current_time": now.strftime("%I:%M %p"),
+            "day": current_day,
+            "current_class": current_class,
+            "next_class": next_class
+        }
+
+    @staticmethod
+    def get_weekly_timetable(db: Session) -> Dict[str, List[Dict[str, Any]]]:
         days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         result = {}
         for d in days:
-            result[d] = [e for e in DEFAULT_TIMETABLE if e["day_of_week"] == d]
+            entries = db.query(TimetableSchedule).filter(
+                TimetableSchedule.class_id == "V Semester - CSE - A",
+                TimetableSchedule.day == d
+            ).order_by(TimetableSchedule.period_number).all()
+            
+            day_entries = []
+            for e in entries:
+                st_str = datetime.strptime(e.start_time, "%H:%M").strftime("%I:%M %p")
+                et_str = datetime.strptime(e.end_time, "%H:%M").strftime("%I:%M %p")
+                day_entries.append({
+                    "id": e.id,
+                    "day_of_week": e.day,
+                    "period_number": e.period_number,
+                    "start_time": st_str,
+                    "end_time": et_str,
+                    "subject_name": e.subject_name,
+                    "subject_code": e.subject_code,
+                    "subject_type": "Lab" if e.is_lab else "Theory",
+                    "faculty_name": e.faculty_name,
+                    "classroom": e.room_number,
+                })
+            result[d] = day_entries
         return result
 
     @staticmethod
@@ -134,29 +180,32 @@ class TimetableService:
         return [
             {"date": "2026-08-03", "title": "Semester 6 Classes Commence", "type": "Class Day"},
             {"date": "2026-08-15", "title": "Independence Day Celebration", "type": "Holiday"},
-            {"date": "2026-08-20", "title": "Internal Assessment Test 1 - DBMS & OS", "type": "Exam Day"},
-            {"date": "2026-08-21", "title": "Internal Assessment Test 1 - Java & AI", "type": "Exam Day"},
+            {"date": "2026-08-20", "title": "Internal Assessment Test 1", "type": "Exam Day"},
             {"date": "2026-08-28", "title": "Mount Zion Tech Hackathon 2026", "type": "Event"},
         ]
 
-    async def answer_timetable_ai_query(self, query: str) -> str:
+    async def answer_timetable_ai_query(self, query: str, db: Session) -> str:
         """
-        Answers student timetable questions using real timetable schedule data with NO emojis.
+        Answers student timetable questions using real DB timetable schedule data with NO emojis.
         """
         q = query.lower()
-        if "next class" in q:
-            return "Your next class is **Database Management Systems** (CS601) conducted by **Dr. R. Sundaram** in **Lab-3 / Hall A** from 10:00 AM to 11:00 AM."
-        elif "tomorrow" in q:
-            return "Tomorrow's Schedule (Tuesday):\n1. 09:00 AM - 10:00 AM: Artificial Intelligence & Neural Nets (Dr. A. Meenakshi)\n2. 10:00 AM - 11:00 AM: Computer Networks & Cloud (Prof. V. Rajesh)\n3. 11:15 AM - 12:15 PM: Database Management Systems (Dr. R. Sundaram)\n4. 01:15 PM - 02:15 PM: Operating Systems & Kernels (Prof. M. Anitha)\n5. 02:15 PM - 04:15 PM: Placement Aptitude & Verbal (Placement Cell)"
-        elif "lab" in q:
-            return "You have 4 Lab sessions this week:\n- Monday (01:15 PM - 04:15 PM): Full Stack Web Engineering Lab\n- Wednesday (09:00 AM - 12:00 PM): Machine Learning & AI Lab\n- Thursday (01:15 PM - 04:15 PM): Database & SQL Lab\n- Friday (01:15 PM - 03:15 PM): Capstone Mini-Project Guidance"
-        elif "monday" in q:
-            return "Your first class on Monday is Database Management Systems (CS601) with Dr. R. Sundaram in Hall A at 09:00 AM."
+        
+        # We can pull today's and tomorrow's schedule directly from DB to pass to AI
+        tz = ZoneInfo('Asia/Kolkata')
+        now = datetime.now(tz)
+        current_day = now.strftime("%A")
+        
+        entries = db.query(TimetableSchedule).filter(
+            TimetableSchedule.class_id == "V Semester - CSE - A",
+            TimetableSchedule.day == current_day
+        ).order_by(TimetableSchedule.period_number).all()
+        
+        context_str = "\\n".join([f"{e.start_time}-{e.end_time}: {e.subject_name} ({e.subject_code}) by {e.faculty_name} in {e.room_number}" for e in entries])
         
         prompt = f"""
         You are CollegeMate AI Timetable Assistant.
-        Answer the following student question accurately using this timetable data:
-        {DEFAULT_TIMETABLE}
+        Answer the following student question accurately using this timetable data for today ({current_day}):
+        {context_str}
 
         IMPORTANT: Do not use any emojis in your response.
         Question: {query}
@@ -166,4 +215,4 @@ class TimetableService:
             return res
         except Exception as err:
             logger.warning(f"AI Timetable Query fallback triggered: {err}")
-            return f"Your schedule for query '{query}': Classes are on schedule from 09:00 AM to 04:15 PM. Check the timetable dashboard for details."
+            return f"Your schedule for query '{query}': Classes are on schedule. Check the timetable dashboard for details."

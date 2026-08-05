@@ -98,7 +98,7 @@ def get_mock_interviews(
 
 
 @router.post("/start", response_model=MockInterviewResponse, status_code=status.HTTP_201_CREATED)
-def start_mock_interview(
+async def start_mock_interview(
     payload: MockInterviewStartRequest,
     db: Session = Depends(deps.get_db),
     current_user: Optional[User] = Depends(deps.get_current_user_optional)
@@ -121,17 +121,18 @@ def start_mock_interview(
 
     interview_id = int(getattr(interview, "id"))
 
-    # Generate Question #1 with Gemini / LLM engine
+    # Generate Question #1 with AI Service
     q1_text = ""
     try:
-        from llm_engine import get_llm_response
+        from app.services.ai_service import AIService
+        ai_service = AIService()
         prompt = (
             f"You are a Senior Technical & HR Interviewer for the role of {payload.target_role}.\n"
             f"Interview Type: {payload.interview_type}\n"
             f"Difficulty: {payload.difficulty}\n"
             f"Ask Question 1 to start the interview. Keep the question crisp, clear, realistic, and professional. No markdown fluff."
         )
-        q1_text = get_llm_response(prompt)
+        q1_text = await ai_service.get_chat_answer(message=prompt, db=db, current_user=current_user)
     except Exception:
         if payload.interview_type == "HR":
             q1_text = f"Tell me about yourself and why you are interested in the {payload.target_role} role at our company."
@@ -233,7 +234,7 @@ def get_mock_interview_details(
 
 
 @router.post("/{id}/submit-answer", response_model=AnswerSubmitResponse)
-def submit_interview_answer(
+async def submit_interview_answer(
     id: int,
     payload: AnswerSubmitRequest,
     db: Session = Depends(deps.get_db),
@@ -262,14 +263,15 @@ def submit_interview_answer(
     model_ans = f"A model answer for '{q_text}' involves highlighting key design tradeoffs and step-by-step resolution."
 
     try:
-        from llm_engine import get_llm_response
+        from app.services.ai_service import AIService
+        ai_service = AIService()
         eval_prompt = (
             f"Question: {q_text}\n"
             f"Student Answer: {student_ans}\n"
             f"Role: {getattr(interview, 'target_role')}\n"
             f"Evaluate the student's answer. Return a JSON response with keys: score (number 0-100), feedback (string 2-3 sentences), model_answer (string concise standard answer)."
         )
-        llm_res = get_llm_response(eval_prompt)
+        llm_res = await ai_service.get_chat_answer(message=eval_prompt, db=db, current_user=current_user)
         # Attempt JSON parse
         import re
         json_match = re.search(r"\{.*\}", llm_res, re.DOTALL)
@@ -296,7 +298,6 @@ def submit_interview_answer(
     if not is_finished:
         next_q_num = q_num + 1
         try:
-            from llm_engine import get_llm_response
             next_prompt = (
                 f"You are a Senior Technical & HR Interviewer for {getattr(interview, 'target_role')}.\n"
                 f"Interview Type: {getattr(interview, 'interview_type')}\n"
@@ -305,7 +306,7 @@ def submit_interview_answer(
                 f"Previous Student Answer: {student_ans}\n"
                 f"Generate Question #{next_q_num}. Make it follow naturally from the previous topic or explore a new domain area."
             )
-            next_q = get_llm_response(next_prompt)
+            next_q = await ai_service.get_chat_answer(message=next_prompt, db=db, current_user=current_user)
         except Exception:
             next_q = f"Question #{next_q_num}: How do you approach debugging and performance optimization in high-concurrency environments for {getattr(interview, 'target_role')}?"
 

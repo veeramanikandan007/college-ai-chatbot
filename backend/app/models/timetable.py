@@ -45,3 +45,20 @@ class TimetableEntry(Base):
     classroom = Column(String)
     color_code = Column(String, default="#1E4DB7")
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+class TimetableSchedule(Base):
+    __tablename__ = "timetable_schedule"
+
+    id = Column(Integer, primary_key=True, index=True)
+    class_id = Column(String, index=True) # e.g. "V Semester - CSE - A"
+    day = Column(String, index=True) # "Monday"
+    period_number = Column(Integer, index=True)
+    start_time = Column(String) # "09:00"
+    end_time = Column(String) # "09:50"
+    subject_code = Column(String)
+    subject_name = Column(String)
+    faculty_name = Column(String)
+    room_number = Column(String)
+    is_lab = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))

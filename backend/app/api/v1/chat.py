@@ -7,6 +7,7 @@ from app.services import chat_service
 from app.models.user import User
 from app.services.ai_service import AIService
 from app.core.limiter import limiter
+from app.core.rate_limit import check_rate_limit
 
 router = APIRouter()
 ai_service = AIService()
@@ -15,6 +16,8 @@ ai_service = AIService()
 @limiter.limit("20/minute")
 async def send_message(request: Request, payload: ChatRequest, current_user: User = Depends(deps.get_current_user), db: Session = Depends(deps.get_db)):
     """Send a message to the AI and get a response."""
+    await check_rate_limit(current_user)
+    
     # Create session if not provided
     session_id = payload.session_id
     if not session_id:

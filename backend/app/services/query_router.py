@@ -3,22 +3,23 @@ from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage
 from app.core.logging import get_logger
 from app.services.groq_client import is_configured, get_api_key, get_router_model
+from pydantic import BaseModel, Field
+from langchain_core.prompts import ChatPromptTemplate
 
 logger = get_logger(__name__)
+
+class AIPlan(BaseModel):
+    intent: str
+    requires_rag: bool
+    requires_memory: bool
+    tools_required: list[str]
+    confidence: str
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Action-intent regex table for Copilot fast-path routing
 # Order matters: more specific patterns go first
 # ─────────────────────────────────────────────────────────────────────────────
 COPILOT_ACTION_PATTERNS = [
-    # Composite intents (multi-module flows)
-    (r"\b(exam|test|semester|finals|mid.?term|revision)\b.*\b(week|tomorrow|today|soon|near|coming)\b",
-     "COMPOSITE_EXAM_PREP"),
-    (r"\b(prepare|prep|ready|crack)\b.*\b(tcs|infosys|wipro|accenture|placement|interview|company|drive)\b",
-     "COMPOSITE_PLACEMENT_PREP"),
-    (r"\b(placement|job|campus|drive|recruitment|career)\b.*\b(prepare|ready|plan|help)\b",
-     "COMPOSITE_PLACEMENT_PREP"),
-    # Navigation — Attendance
     (r"\b(attendance|attend|absent|present|bunk|bunked)\b", "NAVIGATE_ATTENDANCE"),
     # Navigation — Assignments
     (r"\b(assignment|submit|submission|homework|task|due)\b", "NAVIGATE_ASSIGNMENTS"),
@@ -31,8 +32,7 @@ COPILOT_ACTION_PATTERNS = [
     # Navigation — Mock Interview
     (r"\b(mock interview|interview practice|interview prep|interview simulation)\b", "OPEN_MOCK_INTERVIEW"),
     # Generate — Notes
-    (r"\b(generate|create|make|write|summarize)\b.*\b(notes|note|summary|revision)\b",
-     "GENERATE_NOTES"),
+    (r"\b(generate|create|make|write|summarize)\b.*\b(notes|note|summary|revision)\b", "GENERATE_NOTES"),
     (r"\b(notes?|revision)\b.*\b(for|on|about)\b", "GENERATE_NOTES"),
     # Generate — Quiz
     (r"\b(quiz|test|mcq|practice test|generate quiz)\b", "GENERATE_QUIZ"),
@@ -49,7 +49,6 @@ COPILOT_ACTION_PATTERNS = [
     # Knowledge Base / Faculty
     (r"\b(hod|principal|faculty|professor|teacher|staff|contact)\b", "CAMPUS_QUERY"),
 ]
-
 
 class QueryRouter:
     def __init__(self):
@@ -81,7 +80,19 @@ class QueryRouter:
 
         # Fast regex for general non-campus queries to save LLM routing overhead
         self.general_patterns = [
-            r"^\s*(explain|what is|whats|how to|how do|write|create|code|define|difference between|summarize|tell me|who is|where is|why does|list|can you|give me)\b"
+            r"^\s*(explain|what is|whats|how to|how do|write|create|define|difference between|summarize|tell me|who is|where is|why does|list|can you|give me)\b"
+        ]
+        
+        self.coding_patterns = [
+            r"\b(code|python|java|c\+\+|javascript|html|css|react|api|debug|error|function|script|program)\b"
+        ]
+        
+        self.travel_patterns = [
+            r"\b(travel|trip|flight|hotel|itinerary|visit|tour|vacation|dubai|paris|london|holiday)\b"
+        ]
+        
+        self.shopping_patterns = [
+            r"\b(buy|price|cost|laptop under|phone under|best phone|best laptop|amazon|flipkart|purchase)\b"
         ]
 
     def resolve_action_intent(self, message: str) -> str | None:
@@ -98,8 +109,6 @@ class QueryRouter:
     def route_query(self, message: str) -> str:
         """
         Classifies the user query into one of the routing intents.
-        Returns one of: GREETING, SMALL_TALK, PERSONAL, CAMPUS_QUERY, HYBRID,
-                        WEB_SEARCH, WEATHER, GENERAL, CALCULATOR
         """
         msg_lower = message.lower().strip()
         clean_msg = re.sub(r'[^a-z\s]', '', msg_lower).strip()
@@ -113,7 +122,22 @@ class QueryRouter:
         # 2. Fast regex detection for basic math calculations
         for pattern in self.math_patterns:
             if re.search(pattern, msg_lower):
-                return "CALCULATOR"
+                return "MATH"
+                
+        # Fast regex for Coding
+        for pattern in self.coding_patterns:
+            if re.search(pattern, msg_lower):
+                return "CODING"
+                
+        # Fast regex for Travel
+        for pattern in self.travel_patterns:
+            if re.search(pattern, msg_lower):
+                return "TRAVEL"
+                
+        # Fast regex for Shopping
+        for pattern in self.shopping_patterns:
+            if re.search(pattern, msg_lower):
+                return "SHOPPING"
 
         # 3. Heuristic for weather
         if "weather" in msg_lower or "mazhai" in msg_lower or "rain" in msg_lower:
@@ -144,12 +168,16 @@ class QueryRouter:
                     "Analyze the user's message and categorize it exactly into ONE of the following categories:\n\n"
                     "1. GREETING: Simple greetings like hi, hello.\n"
                     "2. SMALL_TALK: Personal questions about the bot, thanks, how are you.\n"
-                    "3. PERSONAL: Specific questions about the logged-in student's personal records (e.g., 'my attendance', 'my timetable', 'my fee status', 'my library books', 'my profile').\n"
-                    "4. CAMPUS_QUERY: Questions about general college info, HOD, campus rules, library timing, hostel rules, courses.\n"
-                    "5. HYBRID: Questions combining both personal student status and general college rules/policies (e.g., 'Am I eligible for exams based on my attendance?').\n"
+                    "3. PERSONAL: Specific questions about the logged-in student's personal records.\n"
+                    "4. CAMPUS_QUERY: Questions about general college info, HOD, campus rules.\n"
+                    "5. HYBRID: Questions combining both personal student status and general college rules.\n"
                     "6. WEATHER: Questions about the weather, temperature, rain.\n"
-                    "7. WEB_SEARCH: Questions requiring live, external, or current internet information.\n"
-                    "8. GENERAL: General knowledge, explanations, reasoning, coding, math, general science.\n\n"
+                    "7. SEARCH: Questions requiring live, external, or current internet information.\n"
+                    "8. CODING: Questions about programming, writing code, or debugging.\n"
+                    "9. MATH: Questions about mathematics or calculations.\n"
+                    "10. TRAVEL: Questions about planning trips, flights, or itineraries.\n"
+                    "11. SHOPPING: Questions about products, prices, and recommendations.\n"
+                    "12. GENERAL: General knowledge, explanations, reasoning, general science.\n\n"
                     "Reply with ONLY the exact category name."
                 )
 
@@ -167,7 +195,7 @@ class QueryRouter:
                 intent_str = str(raw_content).strip().upper()
 
                 valid_intents = ["GREETING", "SMALL_TALK", "PERSONAL", "CAMPUS_QUERY",
-                                 "HYBRID", "WEB_SEARCH", "WEATHER", "GENERAL"]
+                                 "HYBRID", "SEARCH", "WEATHER", "CODING", "MATH", "TRAVEL", "SHOPPING", "GENERAL"]
                 for valid in valid_intents:
                     if valid in intent_str:
                         return valid
@@ -179,3 +207,29 @@ class QueryRouter:
 
         # Default fallback
         return "CAMPUS_QUERY"
+
+    def generate_plan(self, message: str) -> 'AIPlan':
+        intent = self.route_query(message)
+        
+        requires_rag = intent in ["CAMPUS_QUERY", "HYBRID", "PERSONAL"]
+        requires_memory = intent not in ["WEATHER", "MATH"]
+        
+        tools_required = []
+        if intent == "WEATHER":
+            tools_required.append("weather")
+        elif intent == "SEARCH":
+            tools_required.append("search")
+            
+        confidence = "HIGH" if intent != "CAMPUS_QUERY" else "MEDIUM"
+        
+        # Override intent to match ai_service expectations
+        if intent == "CAMPUS_QUERY":
+            intent = "CAMPUS"
+            
+        return AIPlan(
+            intent=intent,
+            requires_rag=requires_rag,
+            requires_memory=requires_memory,
+            tools_required=tools_required,
+            confidence=confidence
+        )

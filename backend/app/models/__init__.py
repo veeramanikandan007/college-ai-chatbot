@@ -42,6 +42,8 @@ from app.models.admin import (
     AdminAnnouncementModel,
     AdminSettingsModel,
 )
+from app.models.user_memory import UserMemory
+from app.models.ai_log import AIRequestLog
 
 __all__ = [
     "NoteModel",
@@ -101,4 +103,6 @@ __all__ = [
     "AdminCourseModel",
     "AdminAnnouncementModel",
     "AdminSettingsModel",
+    "UserMemory",
+    "AIRequestLog",
 ]

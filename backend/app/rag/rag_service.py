@@ -8,7 +8,7 @@ from datetime import datetime
 
 from app.rag.document_loader import DocumentLoader
 from app.rag.embedding_service import EmbeddingService
-from app.rag.retriever import Retriever
+from app.rag.hybrid_retriever import HybridRetriever
 from app.rag.text_splitter import TextSplitter
 from app.rag.vector_store import VectorStore
 from app.core.logging import get_logger
@@ -31,7 +31,7 @@ class RAGService:
         self.text_splitter = TextSplitter(chunk_size=1000, chunk_overlap=200)
         self.embedding_service = EmbeddingService()
         self.vector_store = VectorStore()
-        self.retriever = Retriever(self.embedding_service, self.vector_store)
+        self.retriever = HybridRetriever(self.embedding_service, self.vector_store)
 
     def process_and_index_file(self, file_path: Path | str) -> Dict[str, Any]:
         """Read single file, clean text, chunk (1000/200), generate embeddings, update ChromaDB."""
@@ -120,6 +120,9 @@ class RAGService:
                 indexed = self.vector_store.add_chunks(chunks)
                 total_chunks += indexed
 
+        if total_chunks > 0:
+            self.retriever._init_bm25()
+
         logger.info('RAG index build completed. Total chunks indexed: %s', total_chunks)
         return total_chunks
 
@@ -137,6 +140,17 @@ class RAGService:
             logger.exception('Unable to auto-build RAG index on startup: %s', exc)
 
     def retrieve_context(self, question: str, top_k: int = 5) -> List[Dict[str, Any]]:
-        """Retrieve top 5 relevant context chunks for a user question."""
+        """Retrieve top-k relevant context chunks for a user question."""
         return self.retriever.retrieve(question, top_k=top_k)
+
+    def retrieve_context_with_confidence(self, question: str, top_k: int = 5):
+        """
+        Phase 3 & 4: Retrieve chunks AND overall confidence label.
+
+        Returns:
+            (chunks: List[Dict], overall_confidence: str)
+            overall_confidence is one of: HIGH, MEDIUM, LOW, NONE
+        """
+        return self.retriever.retrieve_with_summary(question, top_k=top_k)
+
 
