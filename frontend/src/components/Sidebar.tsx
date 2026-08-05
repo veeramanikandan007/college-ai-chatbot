@@ -302,9 +302,9 @@ export default function Sidebar({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const isFacultyContext = user?.role === 'faculty' || location.pathname.startsWith('/faculty');
-  const isAdminContext = user?.role === 'admin' || location.pathname.startsWith('/admin');
-  const effectiveRole = isAdminContext ? 'admin' : (isFacultyContext ? 'faculty' : (user?.role || 'student'));
+  const isFacultyContext = location.pathname.startsWith('/faculty');
+  const isAdminContext = location.pathname.startsWith('/admin');
+  const effectiveRole = isAdminContext ? 'admin' : (isFacultyContext ? 'faculty' : 'student');
 
   const checkIsActive = useCallback(
     (item: { path: string; matchPaths?: string[] }) => {
@@ -593,7 +593,7 @@ export default function Sidebar({
         {/* Navigation Buttons & Chat History */}
         <div className="flex-1 flex flex-col min-h-0 gap-1.5">
           {/* Main Action Links — Rendered dynamically from central navigation config */}
-          <div className="flex flex-col gap-1 shrink-0 max-h-[70vh] overflow-y-auto no-scrollbar">
+          <div className="flex flex-col gap-1 shrink min-h-0 max-h-[45vh] overflow-y-auto no-scrollbar pb-1">
             {getNavItemsForRole(effectiveRole).map((item) => {
               const Icon = item.icon;
               if (item.isAction) {
@@ -654,7 +654,7 @@ export default function Sidebar({
             })}
 
             {/* Search Button (Collapsed mode) — Student Only */}
-            {isCollapsed && !isFacultyContext && user?.role === 'student' && (
+            {isCollapsed && effectiveRole === 'student' && (
               <SidebarTooltip label="Search Conversations (Ctrl + K)" isCollapsed={isCollapsed}>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -672,7 +672,7 @@ export default function Sidebar({
           </div>
 
           {/* Search Input & Scrollable History — Student Only */}
-          {!isCollapsed && !isFacultyContext && user?.role === 'student' && (
+          {!isCollapsed && effectiveRole === 'student' && (
             <div className="flex-1 flex flex-col min-h-0 gap-[8px] mt-1">
               <div className="relative flex items-center shrink-0">
                 <Search size={16} strokeWidth={1.75} className="absolute left-3 text-[#9CA3AF] dark:text-[#737373] pointer-events-none" />
