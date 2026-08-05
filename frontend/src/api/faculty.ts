@@ -2,10 +2,13 @@ import axios from 'axios';
 
 const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8000') + '/api/v1/faculty';
 
-const getAuthHeader = () => {
+axios.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export interface FacultyProfile {
   id: number;
@@ -202,17 +205,17 @@ export const facultyApi = {
   },
 
   getQuestionPapers: async (): Promise<FacultyQuestionPaper[]> => {
-    const res = await axios.get(`${API_BASE}/question-papers`, { headers: getAuthHeader() });
+    const res = await axios.get(`${API_BASE}/question-papers`);
     return res.data;
   },
 
   uploadQuestionPaper: async (data: Partial<FacultyQuestionPaper>): Promise<FacultyQuestionPaper> => {
-    const res = await axios.post(`${API_BASE}/question-papers`, data, { headers: getAuthHeader() });
+    const res = await axios.post(`${API_BASE}/question-papers`, data);
     return res.data;
   },
 
   deleteQuestionPaper: async (id: number): Promise<void> => {
-    await axios.delete(`${API_BASE}/question-papers/${id}`, { headers: getAuthHeader() });
+    await axios.delete(`${API_BASE}/question-papers/${id}`);
   },
 
   getQuizzes: async (): Promise<FacultyQuiz[]> => {
@@ -240,12 +243,12 @@ export const facultyApi = {
   },
 
   getTimetable: async (): Promise<FacultyScheduleItem[]> => {
-    const res = await axios.get(`${API_BASE}/timetable`, { headers: getAuthHeader() });
+    const res = await axios.get(`${API_BASE}/timetable`);
     return res.data;
   },
 
   requestTimetableChange: async (data: { request_date: string; current_period: number; requested_period: number; reason: string }) => {
-    const res = await axios.post(`${API_BASE}/timetable/change-request`, data, { headers: getAuthHeader() });
+    const res = await axios.post(`${API_BASE}/timetable/change-request`, data);
     return res.data;
   },
 

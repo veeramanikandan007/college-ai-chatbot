@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import {
   Clock3,
   CheckCircle2,
@@ -67,11 +67,11 @@ export const StudyAnalyticsBanner: React.FC<StudyAnalyticsBannerProps> = ({
         return (
           <div
             key={card.id}
-            className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md"
+            className="min-h-[88px] h-auto p-3.5 sm:p-4 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between min-w-0 transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md"
           >
             <div className="min-w-0 flex-1 space-y-0.5">
-              <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">{card.title}</p>
-              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">
+              <p className="text-[12px] sm:text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">{card.title}</p>
+              <p className="text-[15px] sm:text-[22px] lg:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-tight truncate">
                 {card.value}
               </p>
               {card.progress !== undefined ? (
@@ -82,11 +82,11 @@ export const StudyAnalyticsBanner: React.FC<StudyAnalyticsBannerProps> = ({
                   />
                 </div>
               ) : (
-                <p className="text-[12px] sm:text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">{card.sub}</p>
+                <p className="text-[11px] sm:text-[12px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">{card.sub}</p>
               )}
             </div>
 
-            <div className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2 sm:ml-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-[8px] sm:rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-1.5 sm:ml-3">
               <Icon size={16} className="sm:hidden" />
               <Icon size={18} className="hidden sm:block" />
             </div>
