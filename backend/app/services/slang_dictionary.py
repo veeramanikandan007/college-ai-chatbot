@@ -1,4 +1,4 @@
-# A simple slang and Tanglish dictionary for CampusMate AI
+# A simple slang and Tanglish dictionary for CollegeMate AI
 
 SLANG_DICTIONARY = {
     "epo": "when",

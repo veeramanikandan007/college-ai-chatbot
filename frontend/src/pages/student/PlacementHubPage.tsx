@@ -135,7 +135,7 @@ export default function PlacementHubPage() {
   // Resume Builder Form State
   const [builderForm, setBuilderForm] = useState({
     name: 'Alex Johnson',
-    email: 'alex.johnson@campusmate.edu',
+    email: 'alex.johnson@collegemate.edu',
     phone: '+91 9876543210',
     summary: 'Enthusiastic Computer Science undergrad specializing in Full Stack Engineering and scalable backend APIs.',
     education: 'B.Tech CSE - Mount Zion College of Engineering (CGPA: 8.9)',

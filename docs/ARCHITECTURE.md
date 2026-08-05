@@ -1,7 +1,7 @@
-# CampusMate — Architecture Overview
+# CollegeMate — Architecture Overview
 
 ```
-CampusMate/
+CollegeMate/
 ├── backend/                  ← FastAPI Application
 │   ├── app/
 │   │   ├── api/v1/           ← Route handlers
@@ -65,7 +65,7 @@ JWT-based auth with two roles: `student` and `admin`.
 Browser-native APIs (no external service required):
 - **STT**: `window.SpeechRecognition` / `webkitSpeechRecognition`
 - **TTS**: `window.speechSynthesis`
-- **Wake Word**: Continuous SpeechRecognition for "Hey CampusMate"
+- **Wake Word**: Continuous SpeechRecognition for "Hey CollegeMate"
 - All logic encapsulated in the `useVoiceSystem` custom hook
 
 ### 5. Database

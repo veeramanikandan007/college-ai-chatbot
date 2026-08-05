@@ -9,7 +9,7 @@ def run_tests():
     
     # 1. Register
     print("\\n[1] Testing POST /auth/register...")
-    test_user = f"test_{int(time.time())}@campusmate.edu"
+    test_user = f"test_{int(time.time())}@collegemate.edu"
     test_pass = "password123"
     try:
         r = requests.post(f"{BASE_URL}/auth/register", json={
@@ -87,7 +87,7 @@ def run_tests():
         print("\\n[6] Testing POST /chat...")
         try:
             r = requests.post(f"{BASE_URL}/chat", json={
-                "message": "Hello, CampusMate AI!",
+                "message": "Hello, CollegeMate AI!",
                 "session_id": session_id
             }, headers=headers)
             print(f"Status: {r.status_code}")

@@ -1,8 +1,8 @@
-# 🎓 CampusMate AI
+# 🎓 CollegeMate AI
 
 > **One production-ready college management platform** — powered by Gemini AI, RAG, and a beautiful modern UI.
 
-CampusMate combines an intelligent AI chatbot (backed by a college knowledge base) with a full student portal: attendance tracking, timetables, assignments, library management, fees, and more — all in one seamless experience.
+CollegeMate combines an intelligent AI chatbot (backed by a college knowledge base) with a full student portal: attendance tracking, timetables, assignments, library management, fees, and more — all in one seamless experience.
 
 ---
 
@@ -11,7 +11,7 @@ CampusMate combines an intelligent AI chatbot (backed by a college knowledge bas
 | Feature | Description |
 |---------|-------------|
 | 🤖 **Gemini AI Chatbot** | Ask anything about college rules, exams, fees, and library — backed by RAG |
-| 🎤 **Advanced Voice System** | Dictate queries, TTS responses, and hands-free "Hey CampusMate" wake word |
+| 🎤 **Advanced Voice System** | Dictate queries, TTS responses, and hands-free "Hey CollegeMate" wake word |
 | 📊 **Attendance Tracker** | Subject-wise attendance with visual progress indicators |
 | 📅 **Interactive Timetable** | Day-by-day class schedule with room and faculty info |
 | 📝 **Assignments Board** | Track pending, submitted, and graded assignments |
@@ -26,7 +26,7 @@ CampusMate combines an intelligent AI chatbot (backed by a college knowledge bas
 
 ```bash
 # 1. Setup & seed the backend
-cd CampusMate/backend
+cd CollegeMate/backend
 pip install -r requirements.txt
 cp .env.example .env      # Fill in GOOGLE_API_KEY
 python scripts/seed_data.py
@@ -42,8 +42,8 @@ npm run dev
 Open `http://localhost:5173` in your browser.
 
 **Default Login:**
-- Admin: `admin@campusmate.edu` / `Admin@1234`
-- Student: `rahul@campusmate.edu` / `password123`
+- Admin: `admin@collegemate.edu` / `Admin@1234`
+- Student: `rahul@collegemate.edu` / `password123`
 
 ---
 
@@ -90,7 +90,7 @@ This will launch the backend API and the compiled React application simultaneous
 ## 📁 Project Structure
 
 ```
-CampusMate/
+CollegeMate/
 ├── backend/          ← FastAPI + RAG
 └── frontend/         ← React + Vite
 ```

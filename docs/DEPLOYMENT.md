@@ -1,4 +1,4 @@
-# CampusMate Deployment Guide
+# CollegeMate Deployment Guide
 
 ## Prerequisites
 - Docker & Docker Compose

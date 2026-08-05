@@ -18,7 +18,7 @@ import sys, os, argparse
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def main():
-    parser = argparse.ArgumentParser(description="Build CampusMate RAG Vector Index")
+    parser = argparse.ArgumentParser(description="Build CollegeMate RAG Vector Index")
     parser.add_argument(
         "--dir",
         default="documents",

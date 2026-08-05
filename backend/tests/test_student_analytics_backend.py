@@ -24,7 +24,7 @@ class TestStudentAnalyticsBackend(unittest.TestCase):
         init_db(cls.db)
 
         from app.models.user import User
-        cls.user = cls.db.query(User).filter(User.email == "student@campusmate.edu").first()
+        cls.user = cls.db.query(User).filter(User.email == "student@collegemate.edu").first()
         user_id_val: int = int(getattr(cls.user, 'id', 1) or 1)
         cls.user_id: int = user_id_val
 

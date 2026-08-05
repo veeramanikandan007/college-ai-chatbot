@@ -1,4 +1,4 @@
-# CampusMate — API Reference
+# CollegeMate — API Reference
 
 Base URL: `http://localhost:8000/api/v1`
 

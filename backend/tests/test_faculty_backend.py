@@ -21,7 +21,7 @@ class TestFacultyBackend(unittest.TestCase):
         from app.models.user import User
         user = cls.db.query(User).first()
         if not user:
-            user = User(name="Faculty Test", email="faculty_test@campusmate.edu", role="faculty")
+            user = User(name="Faculty Test", email="faculty_test@collegemate.edu", role="faculty")
             cls.db.add(user)
             cls.db.commit()
             cls.db.refresh(user)

@@ -46,7 +46,7 @@ SUPPORTED_EXTS = (".pdf", ".docx", ".txt")
 def _log_admin_action(db: Session, user: Optional[User], action: str, target_type: str, target_id: Optional[str] = None, details: Optional[str] = None):
     log = AdminAuditLogModel(
         user_id=user.id if user else None,
-        user_email=user.email if user else "admin@campusmate.edu",
+        user_email=user.email if user else "admin@collegemate.edu",
         action=action,
         target_type=target_type,
         target_id=str(target_id) if target_id else None,
@@ -64,7 +64,7 @@ def _get_or_create_settings(db: Session) -> AdminSettingsModel:
             college_code="MZCET-9132",
             logo_url="https://example.com/logo.png",
             theme_color="#0E2A6D",
-            smtp_host="smtp.campusmate.edu",
+            smtp_host="smtp.collegemate.edu",
             smtp_port=587,
             ai_provider="Google Gemini 2.0 Flash",
             api_key_masked="AIzaSy...****",
@@ -545,8 +545,8 @@ def get_audit_logs(db: Session = Depends(deps.get_db)):
     logs = db.query(AdminAuditLogModel).order_by(AdminAuditLogModel.created_at.desc()).limit(50).all()
     if not logs:
         default_logs = [
-            AdminAuditLogModel(user_email="admin@campusmate.edu", action="Updated System Settings", target_type="Settings", details="Configured SMTP & Gemini LLM"),
-            AdminAuditLogModel(user_email="admin@campusmate.edu", action="Created Announcement", target_type="Announcement", details="Semester Exam Schedule"),
+            AdminAuditLogModel(user_email="admin@collegemate.edu", action="Updated System Settings", target_type="Settings", details="Configured SMTP & Gemini LLM"),
+            AdminAuditLogModel(user_email="admin@collegemate.edu", action="Created Announcement", target_type="Announcement", details="Semester Exam Schedule"),
         ]
         db.add_all(default_logs)
         db.commit()

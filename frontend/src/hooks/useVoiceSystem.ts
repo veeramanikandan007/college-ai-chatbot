@@ -71,11 +71,11 @@ export function useVoiceSystem() {
           const transcript = event.results[i][0].transcript.toLowerCase();
           currentText += transcript;
           if (
-            transcript.includes('hey campusmate') || 
-            transcript.includes('hello campusmate') ||
+            transcript.includes('hey collegemate') || 
+            transcript.includes('hello collegemate') ||
             transcript.includes('hey campus mate') ||
             transcript.includes('hello campus mate') ||
-            transcript.includes('campusmate') ||
+            transcript.includes('collegemate') ||
             transcript.includes('campus mate') ||
             transcript.includes('collegemate') ||
             transcript.includes('college mate')

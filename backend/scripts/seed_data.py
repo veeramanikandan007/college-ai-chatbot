@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-seed_data.py — Populates the CampusMate database with realistic sample data
+seed_data.py — Populates the CollegeMate database with realistic sample data
 for development and testing.
 
 Usage:
@@ -32,25 +32,25 @@ def seed():
     db = SessionLocal()
     try:
         # ── Admin ──────────────────────────────────────────────────────────
-        if not db.query(User).filter_by(email="admin@campusmate.edu").first():
+        if not db.query(User).filter_by(email="admin@collegemate.edu").first():
             admin = User(
                 name="Admin User",
-                email="admin@campusmate.edu",
+                email="admin@collegemate.edu",
                 hashed_password=get_password_hash("Admin@1234"),
                 role="admin",
                 is_active=True,
             )
             db.add(admin)
-            print("  Admin user created  (admin@campusmate.edu / Admin@1234)")
+            print("  Admin user created  (admin@collegemate.edu / Admin@1234)")
         else:
             print("   Admin already exists, skipping.")
 
         # ── Students ───────────────────────────────────────────────────────
         students_data = [
-            ("Rahul Verma", "rahul@campusmate.edu", "CSE", "password123"),
-            ("Priya Sharma", "priya@campusmate.edu", "ECE", "password123"),
-            ("Ankit Patel", "ankit@campusmate.edu", "MECH", "password123"),
-            ("Divya Nair", "divya@campusmate.edu", "CSE", "password123"),
+            ("Rahul Verma", "rahul@collegemate.edu", "CSE", "password123"),
+            ("Priya Sharma", "priya@collegemate.edu", "ECE", "password123"),
+            ("Ankit Patel", "ankit@collegemate.edu", "MECH", "password123"),
+            ("Divya Nair", "divya@collegemate.edu", "CSE", "password123"),
         ]
         student_objects = []
         for name, email, dept, pwd in students_data:
@@ -92,7 +92,7 @@ def seed():
 
         # ── Events ─────────────────────────────────────────────────────────
         db.flush()
-        admin_user = db.query(User).filter_by(email="admin@campusmate.edu").first()
+        admin_user = db.query(User).filter_by(email="admin@collegemate.edu").first()
         events = [
             ("Tech Symposium 2026", "Annual technical fest", datetime.now() + timedelta(days=7), "Technical"),
             ("Campus Recruitment Drive", "Off-campus placement drive", datetime.now() + timedelta(days=15), "Career"),

@@ -1,7 +1,7 @@
-# CampusMate Project Structure
+# CollegeMate Project Structure
 
 ```
-CampusMate/
+CollegeMate/
 ├── .env.example              # Template for environment variables
 ├── development.env.example   # Dev specific env variables
 ├── production.env.example    # Prod specific env variables

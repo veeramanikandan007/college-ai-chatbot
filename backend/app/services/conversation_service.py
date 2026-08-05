@@ -21,7 +21,7 @@ class Intent(Enum):
 class ConversationService:
     def __init__(self):
         self.greeting_patterns = [
-            r"^\s*(hi|hello|hey|good morning|good afternoon|good evening|yo|hola|hii|hey there|hi campusmate|vanakkam|namaste)\b"
+            r"^\s*(hi|hello|hey|good morning|good afternoon|good evening|yo|hola|hii|hey there|hi collegemate|vanakkam|namaste)\b"
         ]
         
         self.small_talk_patterns = {
@@ -75,7 +75,7 @@ class ConversationService:
         if self.classifier_llm:
             try:
                 system_prompt = (
-                    "You are an intent classifier for CampusMate AI. "
+                    "You are an intent classifier for CollegeMate AI. "
                     "Classify the following user message into exactly one of these two categories: "
                     "GENERAL_KNOWLEDGE or CAMPUS_KNOWLEDGE. "
                     "Respond with ONLY the category name. "
