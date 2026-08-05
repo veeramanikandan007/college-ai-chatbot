@@ -546,7 +546,7 @@ export default function Sidebar({
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.2 }}
-                  className="w-[36px] h-[36px] rounded-lg flex items-center justify-center shrink-0 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 border border-zinc-200 dark:border-zinc-800"
+                  className="w-[36px] h-[36px] rounded-full flex items-center justify-center shrink-0 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 border border-zinc-200 dark:border-zinc-800"
                 >
                   <GraduationCap size={18} strokeWidth={1.75} />
                 </motion.div>
@@ -609,7 +609,7 @@ export default function Sidebar({
                           onNewChat();
                         }
                       }}
-                      className={`rounded-lg font-body font-medium transition-all duration-150 bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 flex items-center shrink-0 ${
+                      className={`rounded-full font-body font-medium transition-all duration-150 bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 flex items-center shrink-0 ${
                         isCollapsed ? 'w-[40px] h-[40px] justify-center mx-auto' : 'w-full h-[38px] justify-between px-3 text-[14px]'
                       }`}
                     >
@@ -630,7 +630,7 @@ export default function Sidebar({
                   <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
                     <Link
                       to={item.path}
-                      className={`rounded-lg transition-all duration-150 flex items-center shrink-0 ${
+                      className={`rounded-full transition-all duration-150 flex items-center shrink-0 ${
                         isActive
                           ? 'bg-zinc-100 dark:bg-[#1A1A1A] text-zinc-900 dark:text-[#FAFAFA] font-semibold'
                           : 'text-zinc-600 dark:text-[#A3A3A3] font-medium bg-transparent hover:bg-zinc-100/70 dark:hover:bg-[#1A1A1A]/50 hover:text-zinc-900 dark:hover:text-zinc-100'
@@ -662,7 +662,7 @@ export default function Sidebar({
                     setIsCollapsed(false);
                     setTimeout(() => searchInputRef.current?.focus(), 150);
                   }}
-                  className="w-[42px] h-[42px] rounded-[12px] flex items-center justify-center shrink-0 mx-auto text-[#64748B] dark:text-[#A3A3A3] hover:bg-[#F5F7FB] dark:hover:bg-[#181818] transition-all duration-200 mt-1"
+                  className="w-[42px] h-[42px] rounded-full flex items-center justify-center shrink-0 mx-auto text-[#64748B] dark:text-[#A3A3A3] hover:bg-[#F5F7FB] dark:hover:bg-[#181818] transition-all duration-200 mt-1"
                 >
                   <Search size={20} strokeWidth={1.75} />
                 </motion.button>
@@ -681,7 +681,7 @@ export default function Sidebar({
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search chats... (Ctrl + K)"
-                  className="w-full h-[38px] rounded-[12px] bg-[#F5F7FB] dark:bg-[#181818] border border-transparent py-2 pl-9 pr-8 text-[14px] font-body text-[#1F2937] dark:text-[#F8FAFC] outline-none focus:border-[#9CA3AF] dark:focus:border-[#52525B] placeholder:text-[#64748B] dark:placeholder:text-[#737373] transition"
+                  className="w-full h-[38px] rounded-full bg-[#F5F7FB] dark:bg-[#181818] border border-transparent py-2 pl-9 pr-8 text-[14px] font-body text-[#1F2937] dark:text-[#F8FAFC] outline-none focus:border-[#9CA3AF] dark:focus:border-[#52525B] placeholder:text-[#64748B] dark:placeholder:text-[#737373] transition"
                 />
                 {searchTerm && (
                   <button
@@ -782,7 +782,7 @@ export default function Sidebar({
               {/* Header — Height 64px fixed */}
               <div className="flex items-center justify-between shrink-0 mb-3 h-[64px] border-b border-[#E5E7EB] dark:border-[#2A2A2A] pb-2">
                 <div className="flex items-center gap-3">
-                  <div className="w-[36px] h-[36px] rounded-[10px] flex items-center justify-center shrink-0 bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111] border border-[#111827] dark:border-[#FAFAFA]">
+                  <div className="w-[36px] h-[36px] rounded-full flex items-center justify-center shrink-0 bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111] border border-[#111827] dark:border-[#FAFAFA]">
                     <GraduationCap size={20} />
                   </div>
                   <span className="font-bold text-[18px] text-[#111827] dark:text-[#FAFAFA] tracking-tight">
@@ -804,8 +804,11 @@ export default function Sidebar({
                   const Icon = item.icon;
                   if (item.isAction) {
                     return (
-                      <button
+                      <motion.button
                         key={item.id}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        transition={{ duration: 0.2 }}
                         onClick={() => {
                           if (location.pathname !== '/dashboard') {
                             navigate('/dashboard?newChat=true');
@@ -814,32 +817,33 @@ export default function Sidebar({
                           }
                           setIsOpen(false);
                         }}
-                        className="h-[40px] w-full rounded-[10px] font-bold text-[13px] transition-all bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] shadow-xs flex items-center justify-between px-3.5 cursor-pointer shrink-0"
+                        className="h-[40px] w-full rounded-full font-bold text-[13px] transition-all bg-[#111827] hover:bg-[#000000] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] shadow-xs flex items-center justify-between px-3.5 cursor-pointer shrink-0"
                       >
                         <div className="flex items-center gap-3">
                           <Icon size={20} />
                           <span>{item.label}</span>
                         </div>
-                      </button>
+                      </motion.button>
                     );
                   }
 
                   const isActive = checkIsActive(item);
 
                   return (
-                    <Link
-                      key={item.id}
-                      to={item.path}
-                      onClick={() => setIsOpen(false)}
-                      className={`h-[40px] rounded-lg text-[14px] transition-all flex items-center gap-3 px-3 shrink-0 ${
-                        isActive
-                          ? 'bg-zinc-100 dark:bg-[#1A1A1A] text-zinc-900 dark:text-[#FAFAFA] font-semibold border border-zinc-200/80 dark:border-[#2A2A2A]'
-                          : 'text-zinc-600 dark:text-[#A3A3A3] font-medium bg-transparent hover:bg-zinc-100/70 dark:hover:bg-[#1A1A1A]/50 hover:text-zinc-900 dark:hover:text-zinc-100'
-                      }`}
-                    >
-                      <Icon size={18} className={`${isActive ? 'text-zinc-900 dark:text-[#FAFAFA]' : 'text-zinc-500 dark:text-[#A3A3A3]'} shrink-0`} />
-                      <span>{item.label}</span>
-                    </Link>
+                    <motion.div key={item.id} whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+                      <Link
+                        to={item.path}
+                        onClick={() => setIsOpen(false)}
+                        className={`h-[40px] rounded-full text-[14px] transition-all flex items-center gap-3 px-3 shrink-0 ${
+                          isActive
+                            ? 'bg-zinc-100 dark:bg-[#1A1A1A] text-zinc-900 dark:text-[#FAFAFA] font-semibold border border-zinc-200/80 dark:border-[#2A2A2A]'
+                            : 'text-zinc-600 dark:text-[#A3A3A3] font-medium bg-transparent hover:bg-zinc-100/70 dark:hover:bg-[#1A1A1A]/50 hover:text-zinc-900 dark:hover:text-zinc-100'
+                        }`}
+                      >
+                        <Icon size={18} className={`${isActive ? 'text-zinc-900 dark:text-[#FAFAFA]' : 'text-zinc-500 dark:text-[#A3A3A3]'} shrink-0`} />
+                        <span>{item.label}</span>
+                      </Link>
+                    </motion.div>
                   );
                 })}
               </div>
@@ -854,7 +858,7 @@ export default function Sidebar({
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="Search conversations..."
-                      className="w-full h-[40px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] py-2 pl-9 pr-7 text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none placeholder-[#9CA3AF] dark:placeholder-[#737373]"
+                      className="w-full h-[40px] rounded-full bg-[#F8FAFC] dark:bg-[#181818] border border-[#D1D5DB] dark:border-[#2A2A2A] py-2 pl-9 pr-7 text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none placeholder-[#9CA3AF] dark:placeholder-[#737373]"
                     />
                     {searchTerm && (
                       <button

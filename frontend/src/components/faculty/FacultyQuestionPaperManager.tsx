@@ -83,41 +83,57 @@ export const FacultyQuestionPaperManager: React.FC = () => {
 
   return (
     <div className="space-y-6 font-sans">
-      {/* ── Top Bar Controls ── */}
-      <div className="bg-white dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#27272A] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="relative flex items-center">
-            <Search size={16} className="absolute left-3.5 text-[#6B7280] dark:text-[#A1A1AA]" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search paper or code..."
-              className="h-[40px] pl-10 pr-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#27272A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] font-normal text-[#111827] dark:text-[#FAFAFA] outline-none"
-            />
+      {/* ── Page Hero Header ── */}
+      <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="w-12 h-12 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+            <Files size={24} />
           </div>
-
-          <div className="flex items-center gap-2">
-            <Filter size={16} className="text-[#6B7280]" />
-            <select
-              value={filterExamType}
-              onChange={(e) => setFilterExamType(e.target.value)}
-              className="h-[40px] rounded-[10px] border border-[#E5E7EB] dark:border-[#27272A] bg-[#F8FAFC] dark:bg-[#111111] px-3.5 text-[14px] font-normal text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer"
-            >
-              <option value="All">All Exam Types</option>
-              <option value="Model Exam">Model Exam</option>
-              <option value="End Semester">End Semester</option>
-              <option value="Internal Assessment">Internal Assessment</option>
-            </select>
+          <div className="min-w-0 space-y-1">
+            <h1 className="text-[30px] font-semibold text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-tight truncate">
+              Question Paper Repository
+            </h1>
+            <p className="text-[15px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">
+              Manage and upload past question papers for student access.
+            </p>
           </div>
         </div>
 
         <button
           onClick={() => setShowUploadModal(true)}
-          className="h-[40px] px-4 rounded-[12px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-white dark:text-[#111111] text-[15px] font-semibold flex items-center gap-2 transition cursor-pointer shrink-0"
+          className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] transition flex items-center justify-center gap-2 cursor-pointer shrink-0"
         >
-          <Upload size={18} /> Upload Question Paper
+          <Upload size={18} />
+          <span>Upload Paper</span>
         </button>
+      </div>
+
+      {/* ── Search & Filter Bar ── */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-3 bg-[#FFFFFF] dark:bg-[#18181B] p-3.5 sm:p-4 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs select-none">
+        <div className="relative w-full md:w-64">
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A1A1AA]" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search paper or code..."
+            className="w-full h-[38px] sm:h-[40px] pl-10 pr-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[13px] sm:text-[14px] font-sans text-[#111827] dark:text-[#FAFAFA] outline-none"
+          />
+        </div>
+
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          <Filter size={16} className="text-[#6B7280] dark:text-[#A1A1AA]" />
+          <select
+            value={filterExamType}
+            onChange={(e) => setFilterExamType(e.target.value)}
+            className="h-[38px] sm:h-[40px] rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] px-3.5 text-[13px] sm:text-[14px] font-normal text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer w-full md:w-auto"
+          >
+            <option value="All">All Exam Types</option>
+            <option value="Model Exam">Model Exam</option>
+            <option value="End Semester">End Semester</option>
+            <option value="Internal Assessment">Internal Assessment</option>
+          </select>
+        </div>
       </div>
 
       {/* ── Question Paper Grid ── */}
@@ -125,7 +141,7 @@ export const FacultyQuestionPaperManager: React.FC = () => {
         {filteredPapers.map((p) => (
           <div
             key={p.id}
-            className="bg-white dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#27272A] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#111827]/40 dark:hover:border-[#FAFAFA]/40 transition group"
+            className="bg-white dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#111827]/40 dark:hover:border-[#FAFAFA]/40 transition group"
           >
             <div className="space-y-2.5">
               <div className="flex items-center justify-between">
@@ -137,9 +153,9 @@ export const FacultyQuestionPaperManager: React.FC = () => {
                 </button>
               </div>
 
-              <h4 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight">{p.title}</h4>
+              <h4 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-snug line-clamp-2">{p.title}</h4>
 
-              <p className="text-caption text-[#64748B] dark:text-[#94A3B8]">
+              <p className="text-[13px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">
                 {p.subject_name} ({p.subject_code}) · Sem {p.semester}
               </p>
             </div>

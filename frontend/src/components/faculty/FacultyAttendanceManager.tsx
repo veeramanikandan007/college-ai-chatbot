@@ -236,7 +236,7 @@ export const FacultyAttendanceManager: React.FC<Props> = ({ selectedSubject, sel
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse font-sans text-[14px]">
             <thead>
-              <tr className="border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[12px] font-semibold uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA]">
+              <tr className="border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[12px] sm:text-[14px] font-semibold uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA]">
                 <th className="py-3.5 px-6">#</th>
                 <th className="py-3.5 px-6">Register No</th>
                 <th className="py-3.5 px-6">Student Name</th>
@@ -248,8 +248,8 @@ export const FacultyAttendanceManager: React.FC<Props> = ({ selectedSubject, sel
             <tbody className="divide-y divide-[#E5E7EB] dark:divide-[#2A2A2A]">
               {students.map((st, idx) => (
                 <tr key={st.id} className="hover:bg-[#F8FAFC] dark:hover:bg-[#141414] transition">
-                  <td className="py-4 px-6 text-[14px] text-[#6B7280] dark:text-[#A1A1AA]">{idx + 1}</td>
-                  <td className="py-4 px-6 font-mono text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">{st.regNo}</td>
+                  <td className="py-4 px-6 text-[13px] sm:text-[14px] text-[#6B7280] dark:text-[#A1A1AA]">{idx + 1}</td>
+                  <td className="py-4 px-6 font-mono text-[13px] sm:text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">{st.regNo}</td>
                   <td className="py-4 px-6 font-medium text-[#111827] dark:text-[#FAFAFA]">{st.name}</td>
                   <td className="py-4 px-6">
                     <div className="flex items-center justify-center gap-1.5">
