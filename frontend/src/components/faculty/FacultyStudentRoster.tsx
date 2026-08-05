@@ -41,24 +41,24 @@ export const FacultyStudentRoster: React.FC<Props> = () => {
   return (
     <div className="space-y-6 font-sans">
       {/* ── Contextual Filter & Search Bar ── */}
-      <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div className="relative flex-1">
-          <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A1A1AA]" />
+      <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-3.5 sm:p-4 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col md:flex-row items-center justify-between gap-3 select-none">
+        <div className="relative w-full md:w-80 flex-1">
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] dark:text-[#A1A1AA]" />
           <input
             type="text"
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
-            placeholder="Search students by name, register number, or email..."
-            className="w-full h-[40px] pl-10 pr-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] font-normal text-[#111827] dark:text-[#FAFAFA] outline-none"
+            placeholder="Search students by name, reg no..."
+            className="w-full h-[38px] sm:h-[40px] pl-10 pr-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[13px] sm:text-[14px] font-normal text-[#111827] dark:text-[#FAFAFA] outline-none"
           />
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 w-full md:w-auto">
           <Filter size={16} className="text-[#6B7280] dark:text-[#A1A1AA]" />
           <select
             value={localDept}
             onChange={(e) => setLocalDept(e.target.value)}
-            className="h-[40px] rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] px-3.5 text-[14px] font-normal text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer"
+            className="h-[38px] sm:h-[40px] rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] px-3.5 text-[13px] sm:text-[14px] font-normal text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer w-full md:w-auto"
           >
             <option value="All">All Departments</option>
             <option value="Computer Science & Engineering">CS & Engineering</option>
@@ -69,7 +69,7 @@ export const FacultyStudentRoster: React.FC<Props> = () => {
           <select
             value={localSection}
             onChange={(e) => setLocalSection(e.target.value)}
-            className="h-[40px] rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] px-3.5 text-[14px] font-normal text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer"
+            className="h-[38px] sm:h-[40px] rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] px-3.5 text-[13px] sm:text-[14px] font-normal text-[#111827] dark:text-[#FAFAFA] outline-none cursor-pointer w-full md:w-auto"
           >
             <option value="All">All Sections</option>
             <option value="A">Section A</option>
@@ -94,7 +94,7 @@ export const FacultyStudentRoster: React.FC<Props> = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse font-sans text-[14px]">
             <thead>
-              <tr className="border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[12px] font-semibold uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA]">
+              <tr className="border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[12px] sm:text-[14px] font-semibold uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA]">
                 <th className="py-3.5 px-6">Register No</th>
                 <th className="py-3.5 px-6">Student Name</th>
                 <th className="py-3.5 px-6">Section</th>
@@ -114,11 +114,11 @@ export const FacultyStudentRoster: React.FC<Props> = () => {
               ) : (
                 students.map((st) => (
                   <tr key={st.id} className="hover:bg-[#F8FAFC] dark:hover:bg-[#141414] transition">
-                    <td className="py-4 px-6 font-mono font-medium text-[14px] text-[#111827] dark:text-[#FAFAFA]">{st.register_number}</td>
-                    <td className="py-4 px-6 font-medium text-[#111827] dark:text-[#FAFAFA]">{st.student_name}</td>
-                    <td className="py-4 px-6 text-[14px] text-[#6B7280] dark:text-[#A1A1AA]">{st.section}</td>
-                    <td className="py-4 px-6 text-center font-bold text-emerald-600 dark:text-emerald-400">{st.attendance_percentage}%</td>
-                    <td className="py-4 px-6 text-center font-medium text-[#111827] dark:text-[#FAFAFA]">{st.assignment_status}</td>
+                    <td className="py-4 px-6 font-mono font-medium text-[13px] sm:text-[14px] text-[#111827] dark:text-[#FAFAFA]">{st.register_number}</td>
+                    <td className="py-4 px-6 font-medium text-[13px] sm:text-[14px] text-[#111827] dark:text-[#FAFAFA]">{st.student_name}</td>
+                    <td className="py-4 px-6 text-[13px] sm:text-[14px] text-[#6B7280] dark:text-[#A1A1AA]">{st.section}</td>
+                    <td className="py-4 px-6 text-center text-[13px] sm:text-[14px] font-bold text-emerald-600 dark:text-emerald-400">{st.attendance_percentage}%</td>
+                    <td className="py-4 px-6 text-center text-[13px] sm:text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">{st.assignment_status}</td>
                   </tr>
                 ))
               )}

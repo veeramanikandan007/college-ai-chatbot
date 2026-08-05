@@ -136,16 +136,16 @@ export const FacultyDashboardOverview: React.FC<Props> = ({
             <div
               key={idx}
               onClick={item.action}
-              className="p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between hover:border-[#111827]/30 dark:hover:border-[#FAFAFA]/30 transition cursor-pointer group"
+              className="p-3.5 sm:p-5 lg:p-6 rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex items-center justify-between hover:border-[#111827]/30 dark:hover:border-[#FAFAFA]/30 transition cursor-pointer group min-w-0"
             >
               <div className="min-w-0 flex-1 space-y-1">
-                <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">{item.title}</p>
-                <p className="text-[28px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight truncate">{item.value}</p>
-                <p className="text-[12px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">Click to inspect</p>
+                <p className="text-[12px] sm:text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">{item.title}</p>
+                <p className="text-[15px] sm:text-[22px] lg:text-[28px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-tight truncate">{item.value}</p>
+                <p className="text-[11px] sm:text-[12px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">Click to inspect</p>
               </div>
 
-              <div className="w-10 h-10 rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-3 group-hover:scale-105 transition">
-                <Icon size={20} />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-[8px] sm:rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-1.5 sm:ml-3 group-hover:scale-105 transition">
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
             </div>
           );

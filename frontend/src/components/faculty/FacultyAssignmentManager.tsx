@@ -125,11 +125,20 @@ export const FacultyAssignmentManager: React.FC = () => {
 
   return (
     <div className="space-y-6 font-sans">
-      {/* ── Top Bar ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#27272A] shadow-xs">
-        <div>
-          <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Course Assignments</h3>
-          <p className="text-[15px] font-medium text-[#64748B] dark:text-[#A1A1AA] mt-0.5">Create tasks, review student submissions, and award grades.</p>
+      {/* ── Page Hero Header ── */}
+      <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="w-12 h-12 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+            <ClipboardList size={24} />
+          </div>
+          <div className="min-w-0 space-y-1">
+            <h1 className="text-[30px] font-semibold text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-tight truncate">
+              Course Assignments
+            </h1>
+            <p className="text-[15px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">
+              Create tasks, review student submissions, and award grades.
+            </p>
+          </div>
         </div>
 
         <button
@@ -137,9 +146,10 @@ export const FacultyAssignmentManager: React.FC = () => {
             resetForm();
             setShowCreateModal(true);
           }}
-          className="h-[40px] px-4 rounded-[12px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-white dark:text-[#111111] text-[15px] font-semibold flex items-center gap-2 transition cursor-pointer shrink-0"
+          className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] transition flex items-center justify-center gap-2 cursor-pointer shrink-0"
         >
-          <Plus size={18} /> Create Assignment
+          <Plus size={18} />
+          <span>New Assignment</span>
         </button>
       </div>
 
@@ -177,8 +187,8 @@ export const FacultyAssignmentManager: React.FC = () => {
                 </div>
               </div>
 
-              <h4 className="text-[22px] font-bold text-[#111827] dark:text-[#FAFAFA] tracking-tight">{a.title}</h4>
-              <p className="text-[15px] font-medium text-[#6B7280] dark:text-[#A1A1AA] line-clamp-2">{a.description || 'No description specified.'}</p>
+              <h4 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-snug line-clamp-2">{a.title}</h4>
+              <p className="text-[13px] font-normal text-[#6B7280] dark:text-[#A1A1AA] line-clamp-2">{a.description || 'No description specified.'}</p>
             </div>
 
             <div className="pt-4 border-t border-[#E5E7EB] dark:border-[#27272A] space-y-3">
@@ -221,7 +231,7 @@ export const FacultyAssignmentManager: React.FC = () => {
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. TCP/IP Protocol Analysis"
                   required
-                  className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
+                  className="w-full h-[40px] px-3.5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:ring-2 focus:ring-[#111827]/10 dark:focus:ring-[#FAFAFA]/10 focus:border-[#111827] dark:focus:border-[#FAFAFA] transition-all"
                 />
               </div>
 
@@ -232,7 +242,7 @@ export const FacultyAssignmentManager: React.FC = () => {
                     type="text"
                     value={subjectCode}
                     onChange={(e) => setSubjectCode(e.target.value)}
-                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:ring-2 focus:ring-[#111827]/10 dark:focus:ring-[#FAFAFA]/10 focus:border-[#111827] dark:focus:border-[#FAFAFA] transition-all"
                   />
                 </div>
                 <div>
@@ -273,7 +283,7 @@ export const FacultyAssignmentManager: React.FC = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
-                  className="w-full p-3 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none resize-none"
+                  className="w-full p-3 rounded-[12px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none resize-none focus:ring-2 focus:ring-[#111827]/10 dark:focus:ring-[#FAFAFA]/10 focus:border-[#111827] dark:focus:border-[#FAFAFA] transition-all"
                 />
               </div>
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import {
   GraduationCap,
   Users,
@@ -112,17 +113,20 @@ export default function FacultyPortalPage() {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
             return (
-              <button
+              <motion.button
                 key={tab.id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.2 }}
                 onClick={() => handleTabChange(tab.id)}
-                className={`h-[36px] px-4 rounded-[8px] text-[14px] font-medium transition whitespace-nowrap flex-1 lg:flex-initial cursor-pointer flex items-center justify-center gap-2 ${
+                className={`h-[36px] px-4 rounded-[8px] text-[13.5px] font-medium transition whitespace-nowrap flex-1 lg:flex-initial cursor-pointer flex items-center justify-center gap-2 ${
                   isActive
-                    ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111]'
-                    : 'text-[#6B7280] hover:text-[#111827] dark:text-[#A1A1AA] dark:hover:text-[#FAFAFA]'
+                    ? 'bg-[#111827] text-[#FFFFFF] dark:bg-[#FAFAFA] dark:text-[#111111] font-semibold'
+                    : 'text-[#6B7280] hover:text-[#111827] dark:text-[#A1A1AA] dark:hover:text-[#FAFAFA] hover:bg-[#F1F5F9] dark:hover:bg-[#1A1A1A]'
                 }`}
               >
                 <Icon size={16} /> {tab.label}
-              </button>
+              </motion.button>
             );
           })}
         </div>

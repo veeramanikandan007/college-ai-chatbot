@@ -53,18 +53,28 @@ export const FacultyTimetableManager: React.FC = () => {
 
   return (
     <div className="space-y-6 font-sans">
-      {/* ── Top Controls ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs">
-        <div>
-          <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Faculty Teaching Timetable</h3>
-          <p className="text-[15px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mt-0.5">Inspect period slots, free hours, and submit period substitution requests.</p>
+      {/* ── Page Hero Header ── */}
+      <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="w-12 h-12 rounded-[12px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] flex items-center justify-center shrink-0">
+            <CalendarDays size={24} />
+          </div>
+          <div className="min-w-0 space-y-1">
+            <h1 className="text-[30px] font-semibold text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-tight truncate">
+              Faculty Teaching Timetable
+            </h1>
+            <p className="text-[15px] font-normal text-[#6B7280] dark:text-[#A1A1AA] truncate">
+              Inspect period slots, free hours, and submit period substitution requests.
+            </p>
+          </div>
         </div>
 
         <button
           onClick={() => setShowRequestModal(true)}
-          className="h-[40px] px-4 rounded-[12px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-white dark:text-[#111111] text-[15px] font-semibold flex items-center gap-2 transition cursor-pointer shrink-0"
+          className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] font-medium text-[14px] transition flex items-center justify-center gap-2 cursor-pointer shrink-0"
         >
-          <RefreshCw size={16} /> Request Timetable Change
+          <RefreshCw size={18} />
+          <span>Request Change</span>
         </button>
       </div>
 
