@@ -108,28 +108,28 @@ export const AdminUserManagement: React.FC<Props> = ({
   };
 
   return (
-    <div className="space-y-6 font-body">
-      {/* ── Top Bar Controls ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
-        <div>
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">User & Role Management</h3>
-          <p className="text-small text-[#64748B] dark:text-[#94A3B8]">Manage student, faculty, and administrator accounts, roles, and status.</p>
+    <div className="space-y-6 font-sans">
+      {/* ── Top Bar Controls Card ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs">
+        <div className="space-y-1">
+          <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">User & Role Management</h3>
+          <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">Manage student, faculty, and administrator accounts, roles, and status.</p>
         </div>
 
         <button
           onClick={() => setShowCreateModal(true)}
-          className="h-10 px-4 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-caption font-bold flex items-center gap-2 transition shrink-0"
+          className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium flex items-center gap-2 transition shrink-0 cursor-pointer"
         >
-          <Plus size={18} /> Add User
+          <Plus size={16} /> Add User
         </button>
       </div>
 
-      {/* ── Users Table ── */}
-      <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs overflow-hidden">
+      {/* ── Users Table Container ── */}
+      <div className="bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse font-body text-body">
+          <table className="w-full text-left border-collapse text-[14px] font-sans">
             <thead>
-              <tr className="border-b border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-caption font-bold uppercase tracking-[0.05em] text-[#64748B] dark:text-[#94A3B8]">
+              <tr className="border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[12px] font-medium uppercase tracking-wider text-[#6B7280] dark:text-[#A1A1AA]">
                 <th className="py-3.5 px-4">User Name & Email</th>
                 <th className="py-3.5 px-4">Role</th>
                 <th className="py-3.5 px-4">Department</th>
@@ -137,35 +137,35 @@ export const AdminUserManagement: React.FC<Props> = ({
                 <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#334155]">
+            <tbody className="divide-y divide-[#E5E7EB] dark:divide-[#2A2A2A]">
               {users.map((u) => (
-                <tr key={u.id} className="hover:bg-[#F5F7FB]/50 dark:hover:bg-[#0F172A]/50 transition">
+                <tr key={u.id} className="hover:bg-[#F8FAFC]/50 dark:hover:bg-[#1A1A1A]/50 transition">
                   <td className="py-3.5 px-4">
-                    <h4 className="font-heading font-bold text-[#1F2937] dark:text-[#F8FAFC]">{u.name}</h4>
-                    <p className="text-caption text-[#64748B]">{u.email}</p>
+                    <h4 className="font-medium text-[#111827] dark:text-[#FAFAFA]">{u.name}</h4>
+                    <p className="text-[12px] text-[#6B7280] dark:text-[#A1A1AA]">{u.email}</p>
                   </td>
                   <td className="py-3.5 px-4">
                     <span
-                      className={`inline-block px-2.5 py-0.5 rounded-md text-caption font-bold capitalize ${
+                      className={`inline-block px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium capitalize ${
                         u.role === 'admin'
-                          ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                          ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
                           : u.role === 'faculty'
-                          ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                          : 'bg-[#0E2A6D]/10 text-[#0E2A6D] dark:text-[#60A5FA]'
+                          ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'
+                          : 'bg-[#111827]/10 dark:bg-[#FAFAFA]/10 text-[#111827] dark:text-[#FAFAFA] border border-[#E5E7EB] dark:border-[#2A2A2A]'
                       }`}
                     >
                       {u.role}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 text-caption text-[#475569] dark:text-[#CBD5E1]">
+                  <td className="py-3.5 px-4 text-[13px] text-[#6B7280] dark:text-[#A1A1AA]">
                     {u.department || 'General'}
                   </td>
                   <td className="py-3.5 px-4 text-center">
                     <span
-                      className={`inline-block px-2.5 py-0.5 rounded-md text-caption font-bold ${
+                      className={`inline-block px-2.5 py-0.5 rounded-[6px] text-[12px] font-medium ${
                         u.is_active
-                          ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                          : 'bg-slate-100 text-[#64748B]'
+                          ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                          : 'bg-zinc-100 dark:bg-zinc-800 text-[#6B7280] dark:text-[#A1A1AA]'
                       }`}
                     >
                       {u.is_active ? 'Active' : 'Suspended'}
@@ -217,47 +217,47 @@ export const AdminUserManagement: React.FC<Props> = ({
 
       {/* ── Create User Modal ── */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl border border-[#E2E8F0] dark:border-[#334155]">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#334155] pb-3">
-              <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Create User Account</h3>
-              <button onClick={() => setShowCreateModal(false)} className="text-[#64748B] hover:text-[#1F2937]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] max-w-lg w-full p-6 space-y-5 shadow-2xl border border-[#E5E7EB] dark:border-[#2A2A2A] font-sans">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#2A2A2A] pb-4">
+              <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Create User Account</h3>
+              <button onClick={() => setShowCreateModal(false)} className="p-1 rounded-[6px] text-[#6B7280] hover:text-[#111827] dark:text-[#A1A1AA] dark:hover:text-[#FAFAFA] transition cursor-pointer">
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateUser} className="space-y-3">
+            <form onSubmit={handleCreateUser} className="space-y-4">
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Full Name</label>
+                <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Full Name</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Dr. Rajesh Kannan"
                   required
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                  className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] placeholder:text-[#9CA3AF] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition"
                 />
               </div>
 
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Email Address</label>
+                <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Email Address</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="e.g. rajesh@campusmate.edu"
                   required
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                  className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] placeholder:text-[#9CA3AF] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">System Role</label>
+                  <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">System Role</label>
                   <select
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition cursor-pointer"
                   >
                     <option value="student">Student</option>
                     <option value="faculty">Faculty</option>
@@ -266,11 +266,11 @@ export const AdminUserManagement: React.FC<Props> = ({
                 </div>
 
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Department</label>
+                  <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Department</label>
                   <select
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition cursor-pointer"
                   >
                     <option value="Computer Science & Engineering">CS & Engineering</option>
                     <option value="Information Technology">Information Technology</option>
@@ -280,24 +280,27 @@ export const AdminUserManagement: React.FC<Props> = ({
               </div>
 
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Initial Password</label>
+                <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Initial Password</label>
                 <input
                   type="text"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                  className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition font-mono"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A]">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="h-10 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-caption font-bold text-[#64748B]"
+                  className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] hover:bg-[#F8FAFC] dark:hover:bg-[#27272A] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium transition cursor-pointer"
                 >
                   Cancel
                 </button>
-                <button type="submit" className="h-10 px-4 rounded-xl bg-[#0E2A6D] text-white text-caption font-bold">
+                <button
+                  type="submit"
+                  className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium transition cursor-pointer shadow-xs"
+                >
                   Create User
                 </button>
               </div>
@@ -308,27 +311,33 @@ export const AdminUserManagement: React.FC<Props> = ({
 
       {/* ── Password Reset Modal ── */}
       {resetModalUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl border border-[#E2E8F0] dark:border-[#334155]">
-            <h4 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 font-sans">
+          <div className="bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] max-w-md w-full p-6 space-y-4 shadow-2xl border border-[#E5E7EB] dark:border-[#2A2A2A]">
+            <h4 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">
               Reset Password for {resetModalUser.name}
             </h4>
 
             <div>
-              <label className="text-caption font-bold text-[#64748B]">New Password</label>
+              <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">New Password</label>
               <input
                 type="text"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition font-mono"
               />
             </div>
 
-            <div className="flex items-center justify-end gap-2">
-              <button onClick={() => setResetModalUser(null)} className="h-9 px-3 text-caption font-bold text-[#64748B]">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A]">
+              <button
+                onClick={() => setResetModalUser(null)}
+                className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] hover:bg-[#F8FAFC] dark:hover:bg-[#27272A] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium transition cursor-pointer"
+              >
                 Cancel
               </button>
-              <button onClick={handleResetPassword} className="h-9 px-4 rounded-xl bg-[#0E2A6D] text-white text-caption font-bold">
+              <button
+                onClick={handleResetPassword}
+                className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium transition cursor-pointer shadow-xs"
+              >
                 Reset Password
               </button>
             </div>

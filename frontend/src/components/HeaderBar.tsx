@@ -61,8 +61,8 @@ export default function HeaderBar({
           </Link>
         </div>
 
-        {/* 2. Center: Compact Search Bar (Hidden for Faculty) */}
-        {!isFacultyContext && (
+        {/* 2. Center: Compact Search Bar (Hidden for Faculty & Admin) */}
+        {!isFacultyContext && !location.pathname.startsWith('/admin') && (
           <div className="flex flex-1 items-center justify-center max-w-xs sm:max-w-md px-1">
             <button
               type="button"

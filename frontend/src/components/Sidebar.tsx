@@ -303,7 +303,8 @@ export default function Sidebar({
   const [searchParams] = useSearchParams();
 
   const isFacultyContext = user?.role === 'faculty' || location.pathname.startsWith('/faculty');
-  const effectiveRole = isFacultyContext ? 'faculty' : (user?.role || 'student');
+  const isAdminContext = user?.role === 'admin' || location.pathname.startsWith('/admin');
+  const effectiveRole = isAdminContext ? 'admin' : (isFacultyContext ? 'faculty' : (user?.role || 'student'));
 
   const checkIsActive = useCallback(
     (item: { path: string; matchPaths?: string[] }) => {
@@ -592,7 +593,7 @@ export default function Sidebar({
         {/* Navigation Buttons & Chat History */}
         <div className="flex-1 flex flex-col min-h-0 gap-1.5">
           {/* Main Action Links — Rendered dynamically from central navigation config */}
-          <div className="flex flex-col gap-1 shrink-0 max-h-[45vh] overflow-y-auto no-scrollbar">
+          <div className="flex flex-col gap-1 shrink-0 max-h-[70vh] overflow-y-auto no-scrollbar">
             {getNavItemsForRole(effectiveRole).map((item) => {
               const Icon = item.icon;
               if (item.isAction) {
@@ -718,22 +719,20 @@ export default function Sidebar({
         {/* Profile Footer Section — Avatar 36px, Name 15px, Role 13px, Logout Icon 18px */}
         <div className="flex shrink-0 flex-col gap-4 pt-3 border-t border-[#E2E8F0] dark:border-[#2A2A2A]">
           <div
-            className={`flex items-center rounded-[14px] p-1.5 bg-transparent ${isCollapsed ? 'justify-center flex-col gap-3' : 'justify-between gap-2'
+            className={`flex items-center rounded-[14px] p-1.5 bg-transparent ${isCollapsed ? 'justify-center flex-col gap-2' : 'justify-between gap-2'
               }`}
           >
             <div className="flex items-center gap-3 min-w-0">
-              <SidebarTooltip label={user?.name || (isFacultyContext ? 'Faculty Account' : 'Student Account')} isCollapsed={isCollapsed}>
+              <SidebarTooltip label={user?.name || (isAdminContext ? 'Admin Director' : isFacultyContext ? 'Faculty Account' : 'Student Account')} isCollapsed={isCollapsed}>
                 <UserAvatar user={user} size="sm" />
               </SidebarTooltip>
               {!isCollapsed && (
                 <div className="flex flex-col min-w-0">
-                  <span className="truncate text-[15px] font-semibold text-zinc-900 dark:text-[#FAFAFA]">
-                    {isFacultyContext && user?.name && !user.name.toLowerCase().startsWith('dr') && !user.name.toLowerCase().startsWith('prof')
-                      ? `Dr. ${user.name}`
-                      : user?.name || 'Dr. Aris Thorne'}
+                  <span className="truncate text-[14px] font-semibold text-zinc-900 dark:text-[#FAFAFA]">
+                    {user?.name || (isAdminContext ? 'Admin Director' : isFacultyContext ? 'Dr. Aris Thorne' : 'Student User')}
                   </span>
-                  <span className="truncate text-[13px] font-medium text-[#64748B] dark:text-[#A3A3A3]">
-                    {user?.role === 'admin' ? 'Administrator' : isFacultyContext ? 'Faculty' : 'Student'}
+                  <span className="truncate text-[12px] font-medium text-[#64748B] dark:text-[#A3A3A3]">
+                    {user?.email || (isAdminContext ? 'admin@campusmate.edu' : 'user@campusmate.edu')}
                   </span>
                 </div>
               )}
@@ -799,7 +798,7 @@ export default function Sidebar({
               </div>
 
               {/* Navigation Actions — Height 44px, Font 15px, Icon 20px */}
-              <div className="flex flex-col gap-1 shrink-0 mb-3 max-h-[50vh] overflow-y-auto no-scrollbar">
+              <div className="flex flex-col gap-1 shrink-0 mb-3 max-h-[75vh] overflow-y-auto no-scrollbar">
                 {getNavItemsForRole(effectiveRole).map((item) => {
                   const Icon = item.icon;
                   if (item.isAction) {
@@ -897,12 +896,10 @@ export default function Sidebar({
                     <UserAvatar user={user} size="sm" />
                     <div className="flex flex-col min-w-0">
                       <span className="truncate text-[14px] font-bold text-[#111827] dark:text-[#FAFAFA]">
-                        {isFacultyContext && user?.name && !user.name.toLowerCase().startsWith('dr') && !user.name.toLowerCase().startsWith('prof')
-                          ? `Dr. ${user.name}`
-                          : user?.name || 'Dr. Aris Thorne'}
+                        {user?.name || (isAdminContext ? 'Admin Director' : isFacultyContext ? 'Dr. Aris Thorne' : 'Student User')}
                       </span>
                       <span className="truncate text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
-                        {user?.role === 'admin' ? 'Administrator' : isFacultyContext ? 'Faculty' : 'Student'}
+                        {user?.email || (isAdminContext ? 'admin@campusmate.edu' : 'user@campusmate.edu')}
                       </span>
                     </div>
                   </div>

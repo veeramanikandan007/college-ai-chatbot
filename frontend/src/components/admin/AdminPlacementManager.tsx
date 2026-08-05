@@ -12,45 +12,46 @@ export const AdminPlacementManager: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 font-body">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
-        <div>
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Placement Hub & Recruitment Control</h3>
-          <p className="text-small text-[#64748B] dark:text-[#94A3B8]">Manage campus placement drives, company offers, eligibility criteria, and applicant logs.</p>
+    <div className="space-y-6 font-sans">
+      {/* ── Top Hero Header Card ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs">
+        <div className="space-y-1">
+          <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Placement Hub & Recruitment Control</h3>
+          <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">Manage campus placement drives, company offers, eligibility criteria, and applicant logs.</p>
         </div>
 
         <button
           onClick={() => navigate('/placement')}
-          className="h-10 px-4 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-caption font-bold flex items-center gap-2 transition shrink-0"
+          className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium flex items-center gap-2 transition cursor-pointer shrink-0"
         >
           <ExternalLink size={16} /> Launch Placement Hub
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {mockDrives.map((d) => (
           <div
             key={d.id}
-            className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs space-y-4 hover:border-[#D9A441]/40 transition flex flex-col justify-between"
+            className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs space-y-4 hover:border-[#111827]/30 dark:hover:border-[#FAFAFA]/30 transition flex flex-col justify-between group"
           >
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-caption font-bold uppercase px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <span className="text-[12px] font-medium px-2.5 py-0.5 rounded-[6px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                   {d.status}
                 </span>
-                <span className="font-heading font-bold text-caption text-[#D9A441]">{d.cpa}</span>
+                <span className="text-[14px] font-semibold text-[#111827] dark:text-[#FAFAFA]">{d.cpa}</span>
               </div>
 
-              <h4 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">{d.company}</h4>
-              <p className="text-caption font-semibold text-[#0E2A6D] dark:text-[#60A5FA]">{d.role}</p>
-              <p className="text-caption text-[#64748B] dark:text-[#94A3B8]">
-                Eligible: {d.eligibleDepts} · Drive Date: {d.date}
+              <h4 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-snug">{d.company}</h4>
+              <p className="text-[14px] font-medium text-[#6B7280] dark:text-[#A1A1AA]">{d.role}</p>
+              <p className="text-[13px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">
+                Eligible: {d.eligibleDepts} · Date: {d.date}
               </p>
             </div>
 
-            <div className="pt-3 border-t border-[#E2E8F0] dark:border-[#334155] flex items-center justify-between text-caption font-bold text-[#64748B]">
-              <span>Applicants: <strong className="text-[#1F2937] dark:text-[#F8FAFC]">{d.applicants}</strong></span>
-              <button onClick={() => navigate('/placement')} className="text-[#1E4DB7] dark:text-[#60A5FA]">
+            <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-between text-[13px] font-medium text-[#6B7280] dark:text-[#A1A1AA]">
+              <span>Applicants: <strong className="text-[#111827] dark:text-[#FAFAFA] font-semibold">{d.applicants}</strong></span>
+              <button onClick={() => navigate('/placement')} className="text-[#111827] hover:underline dark:text-[#FAFAFA] transition cursor-pointer">
                 View Details
               </button>
             </div>

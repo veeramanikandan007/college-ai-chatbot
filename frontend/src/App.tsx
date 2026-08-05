@@ -121,15 +121,16 @@ function App() {
                       <Route path="/faculty-portal" element={<FacultyPortalPage />} />
                     </Route>
 
-                    {/* ── Admin-only route ── */}
+                    {/* ── Admin Protected routes (AppLayout with Admin Sidebar) ── */}
                     <Route
-                      path="/admin"
                       element={
                         <ProtectedRoute allowedRoles={['admin']}>
-                          <AdminDashboardPage />
+                          <AppLayout />
                         </ProtectedRoute>
                       }
-                    />
+                    >
+                      <Route path="/admin" element={<AdminDashboardPage />} />
+                    </Route>
 
                     {/* Catch-all */}
                     <Route path="*" element={<Navigate to="/" replace />} />

@@ -73,61 +73,70 @@ export const AdminDocumentManager: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 font-body">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
-        <div>
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">AI Document Hub & RAG Index Manager</h3>
-          <p className="text-small text-[#64748B] dark:text-[#94A3B8]">Upload syllabus PDFs, college regulation manuals, and trigger ChromaDB vector index rebuilds.</p>
+    <div className="space-y-6 font-sans">
+      {/* ── Top Hero Header Card ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs">
+        <div className="space-y-1">
+          <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">AI Document Hub & RAG Index Manager</h3>
+          <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">Upload syllabus PDFs, college regulation manuals, and trigger ChromaDB vector index rebuilds.</p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={handleRebuildIndex}
             disabled={rebuilding}
-            className="h-10 px-3.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] hover:bg-[#F5F7FB] text-caption font-bold text-[#0E2A6D] dark:text-[#60A5FA] flex items-center gap-2 transition disabled:opacity-50"
+            className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] hover:bg-[#F8FAFC] dark:hover:bg-[#27272A] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium flex items-center gap-2 transition disabled:opacity-50 cursor-pointer"
           >
             <RefreshCw size={16} className={rebuilding ? 'animate-spin' : ''} /> {rebuilding ? 'Rebuilding...' : 'Rebuild RAG Index'}
           </button>
 
-          <label className="h-10 px-4 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-caption font-bold flex items-center gap-2 transition cursor-pointer shrink-0">
-            <Upload size={18} /> {uploading ? 'Uploading...' : 'Upload PDF / DOCX'}
+          <label className="h-[40px] px-4 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium flex items-center gap-2 transition cursor-pointer shrink-0">
+            <Upload size={16} /> {uploading ? 'Uploading...' : 'Upload PDF / DOCX'}
             <input type="file" accept=".pdf,.docx,.txt" onChange={handleFileUpload} className="hidden" />
           </label>
         </div>
       </div>
 
-      {/* Document Roster */}
-      <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs p-6 space-y-4">
-        <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] flex items-center gap-2">
-          <FileText className="text-[#0E2A6D] dark:text-[#60A5FA]" size={20} />
+      {/* ── Document Roster Container ── */}
+      <div className="bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs p-6 space-y-4">
+        <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+          <FileText className="text-[#111827] dark:text-[#FAFAFA]" size={20} />
           Indexed Knowledge Documents ({documents.length})
         </h3>
 
-        <div className="space-y-3">
-          {documents.map((doc, idx) => (
-            <div
-              key={idx}
-              className="p-4 rounded-xl bg-[#F5F7FB] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] flex items-center justify-between gap-3"
-            >
-              <div className="flex items-center gap-3">
-                <FileText size={20} className="text-[#1E4DB7] dark:text-[#60A5FA]" />
-                <span className="font-heading font-bold text-body text-[#1F2937] dark:text-[#F8FAFC]">{typeof doc === 'string' ? doc : (doc as any).filename || 'Indexed Document'}</span>
-              </div>
+        {documents.length === 0 ? (
+          <div className="p-8 text-center rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-dashed border-[#E5E7EB] dark:border-[#2A2A2A] space-y-2">
+            <FileText size={32} className="mx-auto text-[#6B7280] dark:text-[#A1A1AA]" />
+            <p className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">No RAG documents indexed yet</p>
+            <p className="text-[13px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">Upload PDFs, syllabus guides or regulation manuals above to train CollegeMate AI.</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {documents.map((doc, idx) => (
+              <div
+                key={idx}
+                className="p-4 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-between gap-3"
+              >
+                <div className="flex items-center gap-3">
+                  <FileText size={18} className="text-[#111827] dark:text-[#FAFAFA]" />
+                  <span className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">{typeof doc === 'string' ? doc : (doc as any).filename || 'Indexed Document'}</span>
+                </div>
 
-              <div className="flex items-center gap-2">
-                <span className="text-caption font-bold px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                  Indexed
-                </span>
-                <button
-                  onClick={() => handleDeleteDocument(typeof doc === 'string' ? doc : (doc as any).filename)}
-                  className="p-1.5 text-[#64748B] hover:text-rose-600 rounded"
-                >
-                  <Trash2 size={16} />
-                </button>
+                <div className="flex items-center gap-3">
+                  <span className="text-[12px] font-medium px-2.5 py-0.5 rounded-[6px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                    Indexed
+                  </span>
+                  <button
+                    onClick={() => handleDeleteDocument(typeof doc === 'string' ? doc : (doc as any).filename)}
+                    className="p-1.5 text-[#6B7280] hover:text-rose-600 dark:hover:text-rose-400 rounded-[6px] transition cursor-pointer"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

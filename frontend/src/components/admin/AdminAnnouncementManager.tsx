@@ -67,80 +67,92 @@ export const AdminAnnouncementManager: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 font-body">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
-        <div>
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Campus Announcement & Broadcast Center</h3>
-          <p className="text-small text-[#64748B] dark:text-[#94A3B8]">Broadcast targeted notifications to students, faculty, departments, or semesters.</p>
+    <div className="space-y-6 font-sans">
+      {/* ── Top Hero Header Card ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs">
+        <div className="space-y-1">
+          <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Announcements & Broadcast Control</h3>
+          <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">Broadcast institution-wide alerts, department circulars, and exam notifications.</p>
         </div>
 
         <button
           onClick={() => setShowModal(true)}
-          className="h-10 px-4 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-caption font-bold flex items-center gap-2 transition shrink-0"
+          className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium flex items-center gap-2 transition cursor-pointer shrink-0"
         >
-          <Plus size={18} /> New Broadcast
+          <Plus size={16} /> New Broadcast
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="space-y-4">
         {announcements.map((a) => (
           <div
             key={a.id}
-            className="bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs space-y-3 flex flex-col justify-between"
+            className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs space-y-3"
           >
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-caption font-bold uppercase px-2.5 py-0.5 rounded bg-[#0E2A6D]/10 text-[#0E2A6D] dark:text-[#60A5FA]">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <span
+                  className={`text-[12px] font-medium px-2.5 py-0.5 rounded-[6px] ${
+                    a.priority === 'High'
+                      ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
+                      : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                  }`}
+                >
+                  {a.priority} Priority
+                </span>
+                <span className="text-[12px] font-medium px-2.5 py-0.5 rounded-[6px] bg-[#111827]/10 dark:bg-[#FAFAFA]/10 text-[#111827] dark:text-[#FAFAFA] border border-[#E5E7EB] dark:border-[#2A2A2A]">
                   Target: {a.target_type} ({a.target_filter})
                 </span>
-                <button onClick={() => handleDeleteAnnouncement(a.id)} className="p-1 text-[#64748B] hover:text-rose-600 rounded">
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span className="text-[12px] text-[#6B7280] dark:text-[#A1A1AA]">{new Date(a.created_at).toLocaleDateString()}</span>
+                <button
+                  onClick={() => handleDeleteAnnouncement(a.id)}
+                  className="p-1.5 text-[#6B7280] hover:text-rose-600 dark:hover:text-rose-400 rounded-[6px] transition cursor-pointer"
+                >
                   <Trash2 size={16} />
                 </button>
               </div>
-
-              <h4 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">{a.title}</h4>
-              <p className="text-caption text-[#475569] dark:text-[#CBD5E1] line-clamp-3">{a.content}</p>
             </div>
 
-            <div className="pt-3 border-t border-[#E2E8F0] dark:border-[#334155] flex items-center justify-between text-caption text-[#64748B]">
-              <span>Priority: <strong className="text-[#1F2937] dark:text-[#F8FAFC]">{a.priority}</strong></span>
-              <span>{new Date(a.created_at).toLocaleDateString()}</span>
-            </div>
+            <h4 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA] leading-snug">{a.title}</h4>
+            <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA] leading-relaxed">{a.content}</p>
           </div>
         ))}
       </div>
 
       {/* ── Create Announcement Modal ── */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl border border-[#E2E8F0] dark:border-[#334155]">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#334155] pb-3">
-              <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">New Announcement Broadcast</h3>
-              <button onClick={() => setShowModal(false)} className="text-[#64748B]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 font-sans">
+          <div className="bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] max-w-lg w-full p-6 space-y-5 shadow-2xl border border-[#E5E7EB] dark:border-[#2A2A2A]">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#2A2A2A] pb-4">
+              <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">New Announcement Broadcast</h3>
+              <button onClick={() => setShowModal(false)} className="p-1 rounded-[6px] text-[#6B7280] hover:text-[#111827] dark:text-[#A1A1AA] dark:hover:text-[#FAFAFA] transition cursor-pointer">
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateAnnouncement} className="space-y-3">
+            <form onSubmit={handleCreateAnnouncement} className="space-y-4">
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Announcement Title</label>
+                <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Announcement Title</label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Model Exam Schedule & Guidelines"
                   required
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                  className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Target Group</label>
+                  <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Target Group</label>
                   <select
                     value={targetType}
                     onChange={(e) => setTargetType(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition cursor-pointer"
                   >
                     <option value="Entire College">Entire College</option>
                     <option value="Department">Department</option>
@@ -150,11 +162,11 @@ export const AdminAnnouncementManager: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Priority</label>
+                  <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Priority</label>
                   <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition cursor-pointer"
                   >
                     <option value="High">High</option>
                     <option value="Normal">Normal</option>
@@ -164,22 +176,22 @@ export const AdminAnnouncementManager: React.FC = () => {
               </div>
 
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Content</label>
+                <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Content</label>
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   rows={4}
                   placeholder="Enter full announcement details..."
                   required
-                  className="w-full p-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                  className="w-full p-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setShowModal(false)} className="h-10 px-4 rounded-xl border border-[#E2E8F0] text-caption font-bold text-[#64748B]">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A]">
+                <button type="button" onClick={() => setShowModal(false)} className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium transition cursor-pointer">
                   Cancel
                 </button>
-                <button type="submit" className="h-10 px-4 rounded-xl bg-[#0E2A6D] text-white text-caption font-bold">
+                <button type="submit" className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium transition cursor-pointer shadow-xs">
                   Broadcast Announcement
                 </button>
               </div>
