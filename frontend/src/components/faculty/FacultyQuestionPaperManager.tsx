@@ -228,7 +228,7 @@ export const FacultyQuestionPaperManager: React.FC = () => {
 
       {/* ── Upload Modal ── */}
       {showUploadModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4" onClick={() => setShowUploadModal(false)}>
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4" onClick={() => setShowUploadModal(false)}>
           <div className="w-full max-w-md bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-2xl space-y-5" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB] dark:border-[#2A2A2A]">
               <h3 className="text-[20px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Upload Question Paper</h3>

@@ -38,7 +38,7 @@ export default function HeaderBar({
   const isFacultyContext = user?.role === 'faculty' || location.pathname.startsWith('/faculty');
 
   return (
-    <header className="sticky top-0 z-10 h-[64px] w-full border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#111111] backdrop-blur-md select-none transition-colors duration-150">
+    <header className="sticky top-0 z-10 h-[64px] w-full border-b border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#111111] select-none transition-colors duration-150">
       <div className="flex h-full w-full items-center justify-between px-3 sm:px-6 gap-2">
 
         {/* 1. Left: Menu Button & Brand */}
