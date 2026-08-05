@@ -1,7 +1,7 @@
-# CampusMate Developer Guide
+# CollegeMate Developer Guide
 
 ## Local Development Workflow
-CampusMate uses a React frontend and a FastAPI backend. Both need to be running for full functionality.
+CollegeMate uses a React frontend and a FastAPI backend. Both need to be running for full functionality.
 
 ### 1. Setup Backend
 ```bash

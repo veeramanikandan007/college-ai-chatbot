@@ -118,7 +118,7 @@ class AdminSettingsInput(BaseModel):
     college_code: str
     logo_url: Optional[str] = None
     theme_color: Optional[str] = "#0E2A6D"
-    smtp_host: Optional[str] = "smtp.campusmate.edu"
+    smtp_host: Optional[str] = "smtp.collegemate.edu"
     smtp_port: Optional[int] = 587
     ai_provider: Optional[str] = "Google Gemini 2.0 Flash"
     storage_limit_gb: Optional[int] = 500

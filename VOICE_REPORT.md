@@ -32,7 +32,7 @@ This document outlines all the bug fixes, feature enhancements, and specific fil
   - **Cancel** properly wipes the transcript, aborts the mic, and doesn't pollute the prompt.
   - **Stop** ends the mic feed and preserves the intermediate transcript.
 - **Permissions & Error Handling:** Proper warnings rendered for `not-allowed` and network errors instead of failing silently.
-- **Wake Word Accuracy:** In `useVoiceSystem.ts`, expanded the transcript matching for combinations like 'campusmate', 'college mate', 'collegemate' to ensure robust wake word activation.
+- **Wake Word Accuracy:** In `useVoiceSystem.ts`, expanded the transcript matching for combinations like 'collegemate', 'college mate', 'collegemate' to ensure robust wake word activation.
 
 ### 3. VOICE SETTINGS
 **Problem:** Some setting changes didn't apply instantly.

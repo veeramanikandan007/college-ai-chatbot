@@ -1,6 +1,6 @@
-# CampusMate — Setup Guide
+# CollegeMate — Setup Guide
 
-This document walks you through setting up the **CampusMate** application for local development or production deployment.
+This document walks you through setting up the **CollegeMate** application for local development or production deployment.
 
 ---
 
@@ -18,8 +18,8 @@ This document walks you through setting up the **CampusMate** application for lo
 ## 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-org/campusmate.git
-cd campusmate/CampusMate
+git clone https://github.com/your-org/collegemate.git
+cd collegemate/CollegeMate
 ```
 
 ---
@@ -57,7 +57,7 @@ Edit `backend/.env`:
 
 ```dotenv
 # Application
-APP_NAME=CampusMate
+APP_NAME=CollegeMate
 SECRET_KEY=your-super-secret-jwt-key-change-this
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=1440
@@ -83,8 +83,8 @@ python scripts/seed_data.py
 ```
 
 **Default credentials:**
-- Admin: `admin@campusmate.edu` / `Admin@1234`
-- Student: `rahul@campusmate.edu` / `password123`
+- Admin: `admin@collegemate.edu` / `Admin@1234`
+- Student: `rahul@collegemate.edu` / `password123`
 
 ### 2e. Build the RAG Vector Index
 

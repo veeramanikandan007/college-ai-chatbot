@@ -245,7 +245,7 @@ export const AdminUserManagement: React.FC<Props> = ({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. rajesh@campusmate.edu"
+                  placeholder="e.g. rajesh@collegemate.edu"
                   required
                   className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
                 />

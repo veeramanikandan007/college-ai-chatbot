@@ -63,7 +63,7 @@ class AdminSettingsModel(Base):
     college_code = Column(String(50), default="MZCET-9132")
     logo_url = Column(Text, default="https://example.com/logo.png")
     theme_color = Column(String(30), default="#0E2A6D")
-    smtp_host = Column(String(100), default="smtp.campusmate.edu")
+    smtp_host = Column(String(100), default="smtp.collegemate.edu")
     smtp_port = Column(Integer, default=587)
     ai_provider = Column(String(50), default="Google Gemini 2.0 Flash")
     api_key_masked = Column(String(50), default="AIzaSy...****")

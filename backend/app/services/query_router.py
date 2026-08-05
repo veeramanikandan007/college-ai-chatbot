@@ -64,7 +64,7 @@ class QueryRouter:
 
         # Fast regex fallback for greetings/small talk to save API calls
         self.greeting_patterns = [
-            r"^\s*(hi|hello|hey|good morning|good afternoon|good evening|yo|hola|hii|hey there|hi campusmate|vanakkam|namaste)\b"
+            r"^\s*(hi|hello|hey|good morning|good afternoon|good evening|yo|hola|hii|hey there|hi collegemate|vanakkam|namaste)\b"
         ]
 
         # Regex for basic math calculation (e.g. 25*48, 12+5)

@@ -225,7 +225,7 @@ class AIService:
             logger.info('Language detected: %s. Normalized message: %s', detected_lang, normalized_message)
             
             language_instruction = (
-                "You are CampusMate AI Assistant.\n"
+                "You are CollegeMate AI Assistant.\n"
                 f"Detected language: {detected_lang}.\n"
                 "Reply in natural, clear English or Tamil matching the user's language."
             )
@@ -236,22 +236,22 @@ class AIService:
             valid_chunks: list = []
 
             if intent == "GREETING":
-                system_instruction = f"You are CampusMate AI, a helpful college assistant. Greet the student warmly. {language_instruction}"
+                system_instruction = f"You are CollegeMate AI, a helpful college assistant. Greet the student warmly. {language_instruction}"
                 return await self._get_llm_response(message, system_instruction)
                 
             elif intent == "SMALL_TALK":
-                system_instruction = f"You are CampusMate AI. Respond naturally to the user's conversation. {language_instruction}"
+                system_instruction = f"You are CollegeMate AI. Respond naturally to the user's conversation. {language_instruction}"
                 return await self._get_llm_response(message, system_instruction)
 
             elif intent == "WEATHER":
                 weather_info = await self.weather_service.get_weather()
-                system_instruction = f"You are CampusMate AI. Present weather info clearly. {language_instruction}"
+                system_instruction = f"You are CollegeMate AI. Present weather info clearly. {language_instruction}"
                 prompt = f"User asked: {message}\n\nWeather Info:\n{weather_info}"
                 return await self._get_llm_response(prompt, system_instruction)
                 
             elif intent == "WEB_SEARCH":
                 search_results = self.web_search_service.search(message)
-                system_instruction = f"You are CampusMate AI. Answer using search results. {language_instruction}"
+                system_instruction = f"You are CollegeMate AI. Answer using search results. {language_instruction}"
                 prompt = f"User Question: {message}\n\nWeb Search Results:\n{search_results}"
                 return await self._get_llm_response(prompt, system_instruction)
 
@@ -356,7 +356,7 @@ class AIService:
             normalized_message = LanguageService.normalize_message(message)
             
             language_instruction = (
-                "You are CampusMate AI Assistant.\n"
+                "You are CollegeMate AI Assistant.\n"
                 f"Detected language: {detected_lang}.\n"
                 "Reply in natural, clear English or Tamil matching the user's language."
             )
@@ -364,20 +364,20 @@ class AIService:
             intent = self.query_router.route_query(normalized_message)
             
             if intent == "GREETING":
-                system_instruction = f"You are CampusMate AI, a helpful college assistant. Greet the user warmly. {language_instruction}"
+                system_instruction = f"You are CollegeMate AI, a helpful college assistant. Greet the user warmly. {language_instruction}"
                 async for chunk in self._stream_llm_response(message, system_instruction):
                     yield chunk
                 return
                 
             elif intent == "SMALL_TALK":
-                system_instruction = f"You are CampusMate AI. Respond naturally to small talk. {language_instruction}"
+                system_instruction = f"You are CollegeMate AI. Respond naturally to small talk. {language_instruction}"
                 async for chunk in self._stream_llm_response(message, system_instruction):
                     yield chunk
                 return
 
             elif intent == "WEATHER":
                 weather_info = await self.weather_service.get_weather()
-                system_instruction = f"You are CampusMate AI. Present weather information clearly. {language_instruction}"
+                system_instruction = f"You are CollegeMate AI. Present weather information clearly. {language_instruction}"
                 prompt = f"User asked: {message}\n\nWeather Info:\n{weather_info}"
                 async for chunk in self._stream_llm_response(prompt, system_instruction):
                     yield chunk
@@ -385,14 +385,14 @@ class AIService:
                 
             elif intent == "WEB_SEARCH":
                 search_results = self.web_search_service.search(message)
-                system_instruction = f"You are CampusMate AI. Use search results to answer accurately. {language_instruction}"
+                system_instruction = f"You are CollegeMate AI. Use search results to answer accurately. {language_instruction}"
                 prompt = f"User Question: {message}\n\nWeb Search Results:\n{search_results}"
                 async for chunk in self._stream_llm_response(prompt, system_instruction):
                     yield chunk
                 return
 
             elif intent == "GENERAL":
-                system_instruction = f"You are CampusMate AI. Answer general knowledge questions accurately. {language_instruction}"
+                system_instruction = f"You are CollegeMate AI. Answer general knowledge questions accurately. {language_instruction}"
                 async for chunk in self._stream_llm_response(normalized_message, system_instruction):
                     yield chunk
                 return
@@ -405,7 +405,7 @@ class AIService:
 
             elif intent == "PERSONAL":
                 student_context = self._get_student_context(current_user, db)
-                system_instruction = f"You are CampusMate AI. Answer using the student's official PostgreSQL database record context. {language_instruction}"
+                system_instruction = f"You are CollegeMate AI. Answer using the student's official PostgreSQL database record context. {language_instruction}"
                 prompt = f"Student Personal Data Context:\n{student_context}\n\nStudent Question: {message}"
                 async for chunk in self._stream_llm_response(prompt, system_instruction):
                     yield chunk
@@ -418,7 +418,7 @@ class AIService:
                 valid_chunks = [c for c in context_chunks if c.get('distance', 0) < 1.5]
                 rag_context = self._build_context(valid_chunks) if valid_chunks else "No college knowledge document context found."
                 
-                system_instruction = f"You are CampusMate AI. Synthesize both the student's personal records and college policy guidelines into one response. {language_instruction}"
+                system_instruction = f"You are CollegeMate AI. Synthesize both the student's personal records and college policy guidelines into one response. {language_instruction}"
                 prompt = f"Student Personal Database Context:\n{student_context}\n\nCollege Knowledge Base RAG Context:\n{rag_context}\n\nStudent Question: {message}"
                 async for chunk in self._stream_llm_response(prompt, system_instruction):
                     yield chunk
@@ -429,7 +429,7 @@ class AIService:
             valid_chunks = [c for c in context_chunks if c.get('distance', 0) < 1.5]
 
             if not valid_chunks:
-                system_instruction = f"You are CampusMate AI. Answer the user's question clearly and naturally. {language_instruction}"
+                system_instruction = f"You are CollegeMate AI. Answer the user's question clearly and naturally. {language_instruction}"
                 async for chunk in self._stream_llm_response(normalized_message, system_instruction):
                     yield chunk
                 return

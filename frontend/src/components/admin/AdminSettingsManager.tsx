@@ -170,7 +170,7 @@ export const AdminSettingsManager: React.FC = () => {
                 <p className="text-caption text-[#475569] dark:text-[#CBD5E1]">
                   Target: {log.target_type} ({log.target_id || 'N/A'}) · {log.details || 'Action completed successfully.'}
                 </p>
-                <p className="text-small font-mono text-[#64748B]">User: {log.user_email || 'admin@campusmate.edu'} · IP: {log.ip_address}</p>
+                <p className="text-small font-mono text-[#64748B]">User: {log.user_email || 'admin@collegemate.edu'} · IP: {log.ip_address}</p>
               </div>
             ))}
           </div>
