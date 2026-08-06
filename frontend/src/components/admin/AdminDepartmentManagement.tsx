@@ -96,24 +96,24 @@ export const AdminDepartmentManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 font-body">
-      {/* ── Top Bar ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E293B] p-5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs">
-        <div>
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Department & Course Hierarchy</h3>
-          <p className="text-small text-[#64748B] dark:text-[#94A3B8]">Configure academic departments, degree programs, semesters, and course credits.</p>
+    <div className="space-y-6 font-sans">
+      {/* ── Top Bar Controls Card ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs">
+        <div className="space-y-1">
+          <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Departments & Course Catalog</h3>
+          <p className="text-[14px] font-normal text-[#6B7280] dark:text-[#A1A1AA]">Manage academic departments, syllabus courses, HOD assignments, and credits.</p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={() => setShowDeptModal(true)}
-            className="h-10 px-3.5 rounded-xl bg-[#0E2A6D] hover:bg-[#153B8A] text-white text-caption font-bold flex items-center gap-2 transition"
+            className="h-[40px] px-4 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium flex items-center gap-2 transition cursor-pointer"
           >
             <Plus size={16} /> Add Department
           </button>
           <button
             onClick={() => setShowCourseModal(true)}
-            className="h-10 px-3.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] hover:bg-[#F5F7FB] text-caption font-bold text-[#0E2A6D] dark:text-[#60A5FA] flex items-center gap-2 transition"
+            className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] hover:bg-[#F8FAFC] dark:hover:bg-[#27272A] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium flex items-center gap-2 transition cursor-pointer"
           >
             <Plus size={16} /> Add Course
           </button>
@@ -122,9 +122,9 @@ export const AdminDepartmentManagement: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* ── Departments Card ── */}
-        <div className="bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs space-y-4">
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] flex items-center gap-2">
-            <Building2 className="text-[#0E2A6D] dark:text-[#60A5FA]" size={20} />
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs space-y-4">
+          <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+            <Building2 className="text-[#111827] dark:text-[#FAFAFA]" size={20} />
             Academic Departments ({departments.length})
           </h3>
 
@@ -132,21 +132,21 @@ export const AdminDepartmentManagement: React.FC = () => {
             {departments.map((d) => (
               <div
                 key={d.id}
-                className="p-4 rounded-xl bg-[#F5F7FB] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] flex items-center justify-between gap-3"
+                className="p-4 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-between gap-3"
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-heading font-bold text-caption text-[#0E2A6D] dark:text-[#60A5FA] px-2 py-0.5 rounded bg-[#0E2A6D]/10">
+                    <span className="text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] px-2 py-0.5 rounded-[6px] bg-[#111827]/10 dark:bg-[#FAFAFA]/10 border border-[#E5E7EB] dark:border-[#2A2A2A]">
                       {d.code}
                     </span>
-                    <h4 className="font-heading font-bold text-body text-[#1F2937] dark:text-[#F8FAFC]">{d.name}</h4>
+                    <h4 className="text-[14px] font-semibold text-[#111827] dark:text-[#FAFAFA]">{d.name}</h4>
                   </div>
-                  <p className="text-caption text-[#64748B] dark:text-[#94A3B8] mt-1">
+                  <p className="text-[12px] text-[#6B7280] dark:text-[#A1A1AA] mt-1">
                     HOD: {d.head_of_department} · Sections: {d.total_sections}
                   </p>
                 </div>
 
-                <button onClick={() => handleDeleteDept(d.id, d.name)} className="p-1.5 text-[#64748B] hover:text-rose-600 rounded">
+                <button onClick={() => handleDeleteDept(d.id, d.name)} className="p-1.5 text-[#6B7280] hover:text-rose-600 dark:hover:text-rose-400 rounded-[6px] transition cursor-pointer">
                   <Trash2 size={16} />
                 </button>
               </div>
@@ -155,9 +155,9 @@ export const AdminDepartmentManagement: React.FC = () => {
         </div>
 
         {/* ── Courses Catalog Card ── */}
-        <div className="bg-white dark:bg-[#1E293B] p-6 rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-xs space-y-4">
-          <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC] flex items-center gap-2">
-            <BookOpen className="text-[#D9A441]" size={20} />
+        <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs space-y-4">
+          <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA] flex items-center gap-2">
+            <BookOpen className="text-[#111827] dark:text-[#FAFAFA]" size={20} />
             Course Catalog ({courses.length})
           </h3>
 
@@ -165,14 +165,14 @@ export const AdminDepartmentManagement: React.FC = () => {
             {courses.map((c) => (
               <div
                 key={c.id}
-                className="p-4 rounded-xl bg-[#F5F7FB] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] flex items-center justify-between gap-3"
+                className="p-4 rounded-[12px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#2A2A2A] flex items-center justify-between gap-3"
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono font-bold text-caption text-[#1E4DB7] dark:text-[#60A5FA]">{c.course_code}</span>
-                    <h4 className="font-heading font-bold text-body text-[#1F2937] dark:text-[#F8FAFC]">{c.course_name}</h4>
+                    <span className="text-[12px] font-medium text-[#111827] dark:text-[#FAFAFA] px-2 py-0.5 rounded-[6px] bg-[#111827]/10 dark:bg-[#FAFAFA]/10 border border-[#E5E7EB] dark:border-[#2A2A2A] font-mono">{c.course_code}</span>
+                    <h4 className="text-[14px] font-semibold text-[#111827] dark:text-[#FAFAFA]">{c.course_name}</h4>
                   </div>
-                  <p className="text-caption text-[#64748B] dark:text-[#94A3B8] mt-1">
+                  <p className="text-[12px] text-[#6B7280] dark:text-[#A1A1AA] mt-1">
                     Dept: {c.department_code} · Semester {c.semester} · Credits: {c.credits}
                   </p>
                 </div>
@@ -184,66 +184,66 @@ export const AdminDepartmentManagement: React.FC = () => {
 
       {/* ── Add Department Modal ── */}
       {showDeptModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl border border-[#E2E8F0] dark:border-[#334155]">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#334155] pb-3">
-              <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Add Department</h3>
-              <button onClick={() => setShowDeptModal(false)} className="text-[#64748B]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 font-sans">
+          <div className="bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] max-w-lg w-full p-6 space-y-5 shadow-2xl border border-[#E5E7EB] dark:border-[#2A2A2A]">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#2A2A2A] pb-4">
+              <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Add Department</h3>
+              <button onClick={() => setShowDeptModal(false)} className="p-1 rounded-[6px] text-[#6B7280] hover:text-[#111827] dark:text-[#A1A1AA] dark:hover:text-[#FAFAFA] transition cursor-pointer">
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateDept} className="space-y-3">
+            <form onSubmit={handleCreateDept} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Code</label>
+                  <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Code</label>
                   <input
                     type="text"
                     value={deptCode}
                     onChange={(e) => setDeptCode(e.target.value)}
                     placeholder="e.g. AI_DS"
                     required
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition"
                   />
                 </div>
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Total Sections</label>
+                  <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Total Sections</label>
                   <input
                     type="number"
                     value={sections}
                     onChange={(e) => setSections(Number(e.target.value))}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Department Full Name</label>
+                <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Department Full Name</label>
                 <input
                   type="text"
                   value={deptName}
                   onChange={(e) => setDeptName(e.target.value)}
                   placeholder="e.g. Artificial Intelligence & Data Science"
                   required
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                  className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition"
                 />
               </div>
 
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Head of Department (HOD)</label>
+                <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Head of Department (HOD)</label>
                 <input
                   type="text"
                   value={hod}
                   onChange={(e) => setHod(e.target.value)}
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                  className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setShowDeptModal(false)} className="h-10 px-4 rounded-xl border border-[#E2E8F0] text-caption font-bold text-[#64748B]">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A]">
+                <button type="button" onClick={() => setShowDeptModal(false)} className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium transition cursor-pointer">
                   Cancel
                 </button>
-                <button type="submit" className="h-10 px-4 rounded-xl bg-[#0E2A6D] text-white text-caption font-bold">
+                <button type="submit" className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium transition cursor-pointer shadow-xs">
                   Save Department
                 </button>
               </div>
@@ -254,77 +254,77 @@ export const AdminDepartmentManagement: React.FC = () => {
 
       {/* ── Add Course Modal ── */}
       {showCourseModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white dark:bg-[#1E293B] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-xl border border-[#E2E8F0] dark:border-[#334155]">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#334155] pb-3">
-              <h3 className="font-heading font-bold text-card text-[#1F2937] dark:text-[#F8FAFC]">Add New Course</h3>
-              <button onClick={() => setShowCourseModal(false)} className="text-[#64748B]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 font-sans">
+          <div className="bg-[#FFFFFF] dark:bg-[#18181B] rounded-[16px] max-w-lg w-full p-6 space-y-5 shadow-2xl border border-[#E5E7EB] dark:border-[#2A2A2A]">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#2A2A2A] pb-4">
+              <h3 className="text-[18px] font-semibold text-[#111827] dark:text-[#FAFAFA]">Add New Course</h3>
+              <button onClick={() => setShowCourseModal(false)} className="p-1 rounded-[6px] text-[#6B7280] hover:text-[#111827] dark:text-[#A1A1AA] dark:hover:text-[#FAFAFA] transition cursor-pointer">
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateCourse} className="space-y-3">
+            <form onSubmit={handleCreateCourse} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Dept Code</label>
+                  <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Dept Code</label>
                   <input
                     type="text"
                     value={selectedDeptCode}
                     onChange={(e) => setSelectedDeptCode(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition"
                   />
                 </div>
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Course Code</label>
+                  <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Course Code</label>
                   <input
                     type="text"
                     value={courseCode}
                     onChange={(e) => setCourseCode(e.target.value)}
                     placeholder="e.g. CS8601"
                     required
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition font-mono"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-caption font-bold text-[#64748B]">Course Name</label>
+                <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Course Name</label>
                 <input
                   type="text"
                   value={courseName}
                   onChange={(e) => setCourseName(e.target.value)}
                   placeholder="e.g. Deep Learning & Neural Networks"
                   required
-                  className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                  className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Credits</label>
+                  <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Credits</label>
                   <input
                     type="number"
                     value={credits}
                     onChange={(e) => setCredits(Number(e.target.value))}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition"
                   />
                 </div>
                 <div>
-                  <label className="text-caption font-bold text-[#64748B]">Semester</label>
+                  <label className="text-[12px] font-medium text-[#6B7280] dark:text-[#A1A1AA] mb-1 block">Semester</label>
                   <input
                     type="number"
                     value={semester}
                     onChange={(e) => setSemester(Number(e.target.value))}
-                    className="w-full h-10 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-[#F5F7FB] dark:bg-[#0F172A] text-body text-[#1F2937] dark:text-[#F8FAFC] outline-none"
+                    className="w-full h-[40px] px-3.5 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[14px] text-[#111827] dark:text-[#FAFAFA] outline-none focus:border-[#111827] dark:focus:border-[#FAFAFA] transition"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setShowCourseModal(false)} className="h-10 px-4 rounded-xl border border-[#E2E8F0] text-caption font-bold text-[#64748B]">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E5E7EB] dark:border-[#2A2A2A]">
+                <button type="button" onClick={() => setShowCourseModal(false)} className="h-[40px] px-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#FFFFFF] dark:bg-[#18181B] text-[#111827] dark:text-[#FAFAFA] text-[14px] font-medium transition cursor-pointer">
                   Cancel
                 </button>
-                <button type="submit" className="h-10 px-4 rounded-xl bg-[#0E2A6D] text-white text-caption font-bold">
+                <button type="submit" className="h-[40px] px-5 rounded-[10px] bg-[#111827] hover:bg-[#1F2937] dark:bg-[#FAFAFA] dark:hover:bg-[#E5E5E5] text-[#FFFFFF] dark:text-[#111111] text-[14px] font-medium transition cursor-pointer shadow-xs">
                   Save Course
                 </button>
               </div>

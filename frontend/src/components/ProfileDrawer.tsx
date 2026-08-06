@@ -92,12 +92,14 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                 <UserAvatar user={user} size="lg" />
                 <div className="min-w-0 flex-1">
                   <h3 className="font-bold text-[16px] text-[#111827] dark:text-[#FAFAFA] truncate">
-                    {isFaculty && !user.name.toLowerCase().startsWith('dr') && !user.name.toLowerCase().startsWith('prof')
+                    {isAdmin
+                      ? (user.name || 'Admin User')
+                      : isFaculty && !user.name.toLowerCase().startsWith('dr') && !user.name.toLowerCase().startsWith('prof')
                       ? `Dr. ${user.name}`
                       : user.name}
                   </h3>
                   <p className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
-                    ID: {user.employee_id || (isFaculty ? 'FAC10204' : user.student_id || 'STU23911')}
+                    ID: {user.employee_id || (isAdmin ? 'ADM20261' : isFaculty ? 'FAC10204' : user.student_id || 'STU23911')}
                   </p>
                   <span className="mt-1 inline-flex items-center gap-1 rounded-[6px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] px-2 py-0.5 text-[11px] font-normal uppercase tracking-wider">
                     <BadgeCheck size={12} className="shrink-0" />
@@ -107,7 +109,26 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
               </div>
 
               {/* Metrics Cards */}
-              {isFaculty ? (
+              {isAdmin ? (
+                <div className="mb-5 grid grid-cols-2 gap-3">
+                  <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] p-3 text-center">
+                    <div className="flex items-center justify-center gap-1 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                      <BadgeCheck className="h-3.5 w-3.5" />
+                      <span>System Uptime</span>
+                    </div>
+                    <p className="font-bold text-[20px] text-emerald-600 dark:text-emerald-400 mt-0.5">99.9%</p>
+                    <span className="text-[11px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Optimal</span>
+                  </div>
+                  <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] p-3 text-center">
+                    <div className="flex items-center justify-center gap-1 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                      <Users className="h-3.5 w-3.5" />
+                      <span>Total Users</span>
+                    </div>
+                    <p className="font-bold text-[20px] text-[#111827] dark:text-[#FAFAFA] mt-0.5">344</p>
+                    <span className="text-[11px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">Active</span>
+                  </div>
+                </div>
+              ) : isFaculty ? (
                 <div className="mb-5 grid grid-cols-2 gap-3">
                   <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#F8FAFC] dark:bg-[#181818] p-3 text-center">
                     <div className="flex items-center justify-center gap-1 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
@@ -155,11 +176,21 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                     <span>Department</span>
                   </div>
                   <p className="mt-1 font-bold text-[#111827] dark:text-[#FAFAFA]">
-                    {user.department || 'Computer Science & Engineering'}
+                    {user.department || (isAdmin ? 'System Administration & IT Governance' : 'Computer Science & Engineering')}
                   </p>
                 </div>
 
-                {isFaculty ? (
+                {isAdmin ? (
+                  <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] p-3.5">
+                    <div className="flex items-center gap-1.5 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">
+                      <Briefcase className="h-3.5 w-3.5" />
+                      <span>Administrative Scope</span>
+                    </div>
+                    <p className="mt-1 font-bold text-[#111827] dark:text-[#FAFAFA]">
+                      Super Admin • Full System Control
+                    </p>
+                  </div>
+                ) : isFaculty ? (
                   <>
                     <div className="rounded-[12px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] p-3.5">
                       <div className="flex items-center gap-1.5 text-[11px] font-normal uppercase tracking-wider text-[#6B7280] dark:text-[#A3A3A3]">

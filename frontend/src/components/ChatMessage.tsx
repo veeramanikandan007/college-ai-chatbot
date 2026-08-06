@@ -204,18 +204,19 @@ export default function ChatMessage({
                             <span>{copiedCodeIndex === 1 ? 'Copied' : 'Copy Code'}</span>
                           </button>
                         </div>
-                        <pre className="overflow-x-auto p-3 text-xs font-mono">
+                        <pre className="overflow-x-auto p-3 text-[13px] font-mono">
                           <code>{children}</code>
                         </pre>
                       </div>
                     ) : (
                       <code
-                        className="rounded bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 text-xs font-mono text-zinc-900 dark:text-zinc-100"
+                        className="rounded bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 text-[13px] font-mono text-zinc-900 dark:text-zinc-100"
                         {...props}
                       >
                         {children}
                       </code>
                     );
+
                   },
                 }}
               >

@@ -1,5 +1,5 @@
 /**
- * ttsService.ts — High-Performance VoiceManager Singleton for CollegeMate
+ * ttsService.ts — High-Performance VoiceManager Singleton for CampusMate
  */
 
 export type TTSProvider = 'google' | 'azure' | 'responsivevoice' | 'browser' | 'gemini';

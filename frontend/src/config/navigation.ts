@@ -19,6 +19,15 @@ import {
   Sparkles,
   Scan,
   FolderKanban,
+  Building2,
+  Database,
+  Bell,
+  UserCheck,
+  UserX,
+  FileSpreadsheet,
+  HardDrive,
+  ShieldAlert,
+  KeyRound,
 } from 'lucide-react';
 
 export interface NavItem {
@@ -50,7 +59,7 @@ export const mainNavItems: NavItem[] = [
     icon: FolderKanban,
     colorClass: 'text-zinc-700 dark:text-zinc-300',
     matchPaths: ['/workspaces'],
-    allowedRoles: ['student', 'admin'],
+    allowedRoles: ['student'],
   },
   {
     id: 'ai-ocr',
@@ -59,7 +68,7 @@ export const mainNavItems: NavItem[] = [
     icon: Scan,
     colorClass: 'text-zinc-700 dark:text-zinc-300',
     matchPaths: ['/ai-ocr', '/ocr-scanner'],
-    allowedRoles: ['student', 'admin'],
+    allowedRoles: ['student'],
   },
   {
     id: 'ai-notes',
@@ -68,7 +77,7 @@ export const mainNavItems: NavItem[] = [
     icon: Sparkles,
     colorClass: 'text-zinc-700 dark:text-zinc-300',
     matchPaths: ['/ai-notes', '/notes-generator'],
-    allowedRoles: ['student', 'admin'],
+    allowedRoles: ['student'],
   },
   {
     id: 'ai-resume',
@@ -77,7 +86,7 @@ export const mainNavItems: NavItem[] = [
     icon: Briefcase,
     colorClass: 'text-zinc-700 dark:text-zinc-300',
     matchPaths: ['/resume-builder', '/placement/resume'],
-    allowedRoles: ['student', 'admin'],
+    allowedRoles: ['student'],
   },
   {
     id: 'documents',
@@ -221,12 +230,76 @@ export const mainNavItems: NavItem[] = [
 
   // ── Admin Dedicated Items ──
   {
-    id: 'admin',
-    label: 'Admin Dashboard',
-    path: '/admin',
-    icon: ShieldCheck,
+    id: 'admin-overview',
+    label: 'Overview',
+    path: '/admin?tab=overview',
+    icon: BarChart3,
     colorClass: 'text-zinc-700 dark:text-zinc-300',
     matchPaths: ['/admin'],
+    allowedRoles: ['admin'],
+  },
+  {
+    id: 'admin-users',
+    label: 'User Management',
+    path: '/admin?tab=users',
+    icon: Users,
+    colorClass: 'text-zinc-700 dark:text-zinc-300',
+    allowedRoles: ['admin'],
+  },
+  {
+    id: 'admin-departments',
+    label: 'Departments & Courses',
+    path: '/admin?tab=departments',
+    icon: Building2,
+    colorClass: 'text-zinc-700 dark:text-zinc-300',
+    allowedRoles: ['admin'],
+  },
+  {
+    id: 'admin-academics',
+    label: 'Academic Control',
+    path: '/admin?tab=academics',
+    icon: GraduationCap,
+    colorClass: 'text-zinc-700 dark:text-zinc-300',
+    allowedRoles: ['admin'],
+  },
+  {
+    id: 'admin-placements',
+    label: 'Placements',
+    path: '/admin?tab=placements',
+    icon: Briefcase,
+    colorClass: 'text-zinc-700 dark:text-zinc-300',
+    allowedRoles: ['admin'],
+  },
+  {
+    id: 'admin-documents',
+    label: 'RAG Documents',
+    path: '/admin?tab=documents',
+    icon: Database,
+    colorClass: 'text-zinc-700 dark:text-zinc-300',
+    allowedRoles: ['admin'],
+  },
+  {
+    id: 'admin-announcements',
+    label: 'Announcements',
+    path: '/admin?tab=announcements',
+    icon: Bell,
+    colorClass: 'text-zinc-700 dark:text-zinc-300',
+    allowedRoles: ['admin'],
+  },
+  {
+    id: 'admin-analytics',
+    label: 'Analytics',
+    path: '/admin?tab=analytics',
+    icon: BarChart3,
+    colorClass: 'text-zinc-700 dark:text-zinc-300',
+    allowedRoles: ['admin'],
+  },
+  {
+    id: 'admin-settings',
+    label: 'System Settings',
+    path: '/admin?tab=settings',
+    icon: Settings,
+    colorClass: 'text-zinc-700 dark:text-zinc-300',
     allowedRoles: ['admin'],
   },
 
@@ -245,7 +318,7 @@ export const mainNavItems: NavItem[] = [
     path: '/settings',
     icon: Settings,
     colorClass: 'text-zinc-700 dark:text-zinc-300',
-    allowedRoles: ['student', 'admin'],
+    allowedRoles: ['student'],
   },
 
 ];

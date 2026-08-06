@@ -10,6 +10,12 @@ axios.interceptors.request.use((config) => {
   return config;
 });
 
+const getAuthHeader = () => {
+  const token = localStorage.getItem('token');
+  return token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+};
+
+
 export interface FacultyProfile {
   id: number;
   user_id: number;

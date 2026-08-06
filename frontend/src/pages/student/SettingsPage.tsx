@@ -235,10 +235,13 @@ export default function SettingsPage() {
     </button>
   );
 
+  const isFaculty = user?.role === 'faculty';
+
   return (
-    <div className="w-full h-full overflow-x-hidden overflow-y-auto bg-[#F8FAFC] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 lg:p-8 transition-colors select-none font-sans">
+    <div className={`w-full h-full overflow-x-hidden overflow-y-auto bg-[#F8FAFC] dark:bg-[#0A0A0A] text-[#111827] dark:text-[#FAFAFA] p-4 sm:p-6 lg:p-8 transition-colors select-none font-sans ${isFaculty ? 'faculty-ui' : ''}`}>
       {/* 1440px Centered Max Content Width Container */}
       <div className="w-full max-w-[1440px] mx-auto space-y-8">
+
 
         {/* Page Hero Header */}
         <div className="bg-[#FFFFFF] dark:bg-[#18181B] p-6 rounded-[16px] border border-[#E5E7EB] dark:border-[#2A2A2A] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6">

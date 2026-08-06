@@ -9,16 +9,16 @@ export function NotificationBell() {
   const { unreadCount } = useNotifications();
 
   return (
-    <div className="relative">
+    <div className="relative flex items-center justify-center">
       <button
         onClick={(e) => {
           e.stopPropagation();
           setIsOpen(!isOpen);
         }}
-        className="relative p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-[#0E2A6D]/50"
+        className="relative flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#D1D5DB] dark:border-[#3F3F46] bg-[#FFFFFF] dark:bg-[#181818] text-[#111827] dark:text-[#FAFAFA] hover:bg-[#F9FAFB] dark:hover:bg-[#232323] transition-colors cursor-pointer shrink-0"
         aria-label="Notifications"
       >
-        <Bell size={18} strokeWidth={1.75} className={unreadCount > 0 ? 'text-[#0E2A6D] dark:text-[#60A5FA]' : ''} />
+        <Bell size={18} strokeWidth={1.75} />
 
         <AnimatePresence>
           {unreadCount > 0 && (
@@ -26,7 +26,7 @@ export function NotificationBell() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white shadow-xs"
+              className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-rose-500 text-[9.5px] font-bold text-white shadow-xs border border-white dark:border-[#181818]"
             >
               {unreadCount > 9 ? '9+' : unreadCount}
             </motion.span>
