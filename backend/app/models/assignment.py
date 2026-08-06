@@ -5,7 +5,7 @@ from app.database.base import Base
 class AssignmentModel(Base):
     __tablename__ = "assignments"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     title = Column(String(255), nullable=False, index=True)
     subject = Column(String(150), nullable=False, index=True)
     faculty = Column(String(150), nullable=False, index=True)

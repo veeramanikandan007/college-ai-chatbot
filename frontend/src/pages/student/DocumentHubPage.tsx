@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { fetchApi } from '../../lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -61,11 +62,8 @@ export default function DocumentHubPage() {
   const fetchDocuments = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/v1/documents');
-      if (res.ok) {
-        const data = await res.json();
-        setDocuments(data.documents || []);
-      }
+      const data = await fetchApi('/documents');
+      setDocuments(data.documents || []);
     } catch (err) {
       console.error('Failed to load documents', err);
     } finally {
@@ -75,11 +73,8 @@ export default function DocumentHubPage() {
 
   const fetchFolders = async () => {
     try {
-      const res = await fetch('/api/v1/documents/folders');
-      if (res.ok) {
-        const data = await res.json();
-        setFolders(data.folders || []);
-      }
+      const data = await fetchApi('/documents/folders');
+      setFolders(data.folders || []);
     } catch (err) {
       console.error('Failed to load folders', err);
     }
@@ -91,14 +86,13 @@ export default function DocumentHubPage() {
   }, []);
 
   const handleCreateFolder = async (folderName: string) => {
-    const res = await fetch('/api/v1/documents/folders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: folderName }),
-    });
-    if (res.ok) {
+    try {
+      await fetchApi('/documents/folders', {
+        method: 'POST',
+        body: JSON.stringify({ name: folderName }),
+      });
       await fetchFolders();
-    } else {
+    } catch (err) {
       throw new Error('Failed to create folder');
     }
   };
@@ -107,19 +101,19 @@ export default function DocumentHubPage() {
     setDocuments((prev) =>
       prev.map((d) => (d.id === docId ? { ...d, is_pinned: !d.is_pinned } : d))
     );
-    await fetch(`/api/v1/documents/${docId}/pin`, { method: 'PUT' }).catch(() => {});
+    await fetchApi(`/documents/${docId}/pin`, { method: 'PUT' }).catch(() => {});
   };
 
   const handleToggleFavorite = async (docId: number) => {
     setDocuments((prev) =>
       prev.map((d) => (d.id === docId ? { ...d, is_favorite: !d.is_favorite } : d))
     );
-    await fetch(`/api/v1/documents/${docId}/favorite`, { method: 'PUT' }).catch(() => {});
+    await fetchApi(`/documents/${docId}/favorite`, { method: 'PUT' }).catch(() => {});
   };
 
   const handleDeleteDoc = async (docId: number) => {
     setDocuments((prev) => prev.filter((d) => d.id !== docId));
-    await fetch(`/api/v1/documents/${docId}`, { method: 'DELETE' }).catch(() => {});
+    await fetchApi(`/documents/${docId}`, { method: 'DELETE' }).catch(() => {});
   };
 
   const handleReadAloud = (text: string) => {

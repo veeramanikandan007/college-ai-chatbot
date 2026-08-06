@@ -6,31 +6,31 @@ class PaperDepartmentModel(Base):
     __tablename__ = "departments"
     __table_args__ = {'extend_existing': True}
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(150), unique=True, index=True, nullable=False)
-    code = Column(String(20), unique=True, index=True, nullable=False)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(150), unique=True, nullable=False)
+    code = Column(String(20), unique=True, nullable=False)
 
 class PaperRegulationModel(Base):
     __tablename__ = "regulations"
 
-    id = Column(Integer, primary_key=True, index=True)
-    year_name = Column(String(20), unique=True, index=True, nullable=False)
+    id = Column(Integer, primary_key=True)
+    year_name = Column(String(20), unique=True, nullable=False)
 
 class PaperSubjectModel(Base):
     __tablename__ = "subjects"
     __table_args__ = {'extend_existing': True}
 
-    id = Column(Integer, primary_key=True, index=True)
-    subject_code = Column(String(50), unique=True, index=True, nullable=False)
-    subject_name = Column(String(150), index=True, nullable=False)
-    department = Column(String(150), index=True, nullable=False)
-    semester = Column(Integer, index=True, nullable=False)
-    regulation = Column(String(20), index=True, nullable=False)
+    id = Column(Integer, primary_key=True)
+    subject_code = Column(String(50), unique=True, nullable=False)
+    subject_name = Column(String(150), nullable=False)
+    department = Column(String(150), nullable=False)
+    semester = Column(Integer, nullable=False)
+    regulation = Column(String(20), nullable=False)
 
 class QuestionPaperModel(Base):
     __tablename__ = "question_papers"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     title = Column(String(255), nullable=False, index=True)
     subject_code = Column(String(50), nullable=False, index=True)
     subject_name = Column(String(150), nullable=False, index=True)
@@ -53,7 +53,7 @@ class QuestionPaperModel(Base):
 class PaperBookmarkModel(Base):
     __tablename__ = "paper_bookmarks"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     paper_id = Column(Integer, ForeignKey("question_papers.id"), nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -61,7 +61,7 @@ class PaperBookmarkModel(Base):
 class PaperHistoryModel(Base):
     __tablename__ = "paper_history"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     paper_id = Column(Integer, ForeignKey("question_papers.id"), nullable=False, index=True)
     viewed_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -69,8 +69,8 @@ class PaperHistoryModel(Base):
 class PaperAnalysisModel(Base):
     __tablename__ = "paper_analysis"
 
-    id = Column(Integer, primary_key=True, index=True)
-    paper_id = Column(Integer, ForeignKey("question_papers.id"), unique=True, nullable=False, index=True)
+    id = Column(Integer, primary_key=True)
+    paper_id = Column(Integer, ForeignKey("question_papers.id"), unique=True, nullable=False)
     question_pattern = Column(Text, nullable=True)
     important_units = Column(Text, nullable=True)
     repeated_questions = Column(Text, nullable=True)

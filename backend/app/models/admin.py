@@ -1,12 +1,23 @@
 from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, ForeignKey
 from datetime import datetime
 from app.database.base import Base
+from sqlalchemy.orm import relationship
+
+class AdminProfileModel(Base):
+    __tablename__ = "admin_profiles"
+    
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    department = Column(String(100), nullable=True)
+    access_level = Column(String(50), default="Superadmin")
+    
+    user = relationship("app.models.user.User", back_populates="admin_profile")
 
 
 class AdminAuditLogModel(Base):
     __tablename__ = "admin_audit_logs"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     user_email = Column(String(150), nullable=True)
     action = Column(String(100), nullable=False)
@@ -20,7 +31,7 @@ class AdminAuditLogModel(Base):
 class AdminDepartmentModel(Base):
     __tablename__ = "admin_departments"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     code = Column(String(50), unique=True, nullable=False)
     name = Column(String(150), nullable=False)
     head_of_department = Column(String(150), default="Dr. S. Ramanathan")
@@ -33,7 +44,7 @@ class AdminDepartmentModel(Base):
 class AdminCourseModel(Base):
     __tablename__ = "admin_courses"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     department_code = Column(String(50), nullable=False)
     course_code = Column(String(50), unique=True, nullable=False)
     course_name = Column(String(150), nullable=False)
@@ -45,7 +56,7 @@ class AdminCourseModel(Base):
 class AdminAnnouncementModel(Base):
     __tablename__ = "admin_announcements"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     title = Column(String(200), nullable=False)
     content = Column(Text, nullable=False)
     target_type = Column(String(50), default="Entire College")
@@ -58,7 +69,7 @@ class AdminAnnouncementModel(Base):
 class AdminSettingsModel(Base):
     __tablename__ = "admin_settings"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     college_name = Column(String(200), default="Mount Zion College of Engineering and Technology")
     college_code = Column(String(50), default="MZCET-9132")
     logo_url = Column(Text, default="https://example.com/logo.png")

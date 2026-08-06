@@ -5,7 +5,7 @@ from app.database.base import Base
 class PlacementDrive(Base):
     __tablename__ = "placement_drives"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     company_name = Column(String, index=True)
     logo_url = Column(String, nullable=True)
     role = Column(String) # e.g. "Software Development Engineer"
@@ -24,7 +24,7 @@ class PlacementDrive(Base):
 class JobApplication(Base):
     __tablename__ = "job_applications"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), default=1)
     drive_id = Column(Integer, ForeignKey("placement_drives.id"))
     company_name = Column(String)
@@ -36,7 +36,7 @@ class JobApplication(Base):
 class CodingQuestion(Base):
     __tablename__ = "coding_questions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     title = Column(String)
     difficulty = Column(String) # Easy, Medium, Hard
     category = Column(String) # Arrays, Strings, Linked List, Trees, Graphs, Dynamic Programming
@@ -49,7 +49,7 @@ class CodingQuestion(Base):
 class UserCodingProgress(Base):
     __tablename__ = "user_coding_progress"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), default=1)
     question_id = Column(Integer, ForeignKey("coding_questions.id"))
     status = Column(String, default="Solved") # Solved, Attempted
@@ -59,7 +59,7 @@ class UserCodingProgress(Base):
 class ResumeProfile(Base):
     __tablename__ = "resume_profiles"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), default=1)
     title = Column(String, default="Primary SDE Resume")
     ats_score = Column(Integer, default=85)
@@ -75,7 +75,7 @@ class ResumeProfile(Base):
 class Certificate(Base):
     __tablename__ = "certificates"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), default=1)
     title = Column(String) # e.g. "Full Stack Developer Internship"
     issuer = Column(String) # e.g. "Amazon / NPTEL / Coursera"

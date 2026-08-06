@@ -45,5 +45,6 @@ os.makedirs(settings.VECTOR_DB_DIR, exist_ok=True)
 os.makedirs(settings.DOCUMENTS_DIR, exist_ok=True)
 os.makedirs(settings.EMBEDDINGS_DIR, exist_ok=True)
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
-os.makedirs(os.path.dirname(settings.DATABASE_URL.replace("sqlite:///", "")), exist_ok=True)
+if settings.DATABASE_URL.startswith("sqlite"):
+    os.makedirs(os.path.dirname(settings.DATABASE_URL.replace("sqlite:///", "")), exist_ok=True)
 

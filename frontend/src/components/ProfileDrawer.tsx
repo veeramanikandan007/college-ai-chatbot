@@ -99,7 +99,7 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                       : user.name}
                   </h3>
                   <p className="text-[12px] font-medium text-[#6B7280] dark:text-[#A3A3A3]">
-                    ID: {user.employee_id || (isAdmin ? 'ADM20261' : isFaculty ? 'FAC10204' : user.student_id || 'STU23911')}
+                    ID: {isAdmin ? user.employee_id : isFaculty ? user.employee_id : user.student_id}
                   </p>
                   <span className="mt-1 inline-flex items-center gap-1 rounded-[6px] bg-[#111827] dark:bg-[#FAFAFA] text-[#FFFFFF] dark:text-[#111111] px-2 py-0.5 text-[11px] font-normal uppercase tracking-wider">
                     <BadgeCheck size={12} className="shrink-0" />
@@ -176,7 +176,7 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                     <span>Department</span>
                   </div>
                   <p className="mt-1 font-bold text-[#111827] dark:text-[#FAFAFA]">
-                    {user.department || (isAdmin ? 'System Administration & IT Governance' : 'Computer Science & Engineering')}
+                    {user.department || 'Not specified'}
                   </p>
                 </div>
 
@@ -198,7 +198,7 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                         <span>Designation & Qualification</span>
                       </div>
                       <p className="mt-1 font-bold text-[#111827] dark:text-[#FAFAFA]">
-                        {user.designation || 'Associate Professor'} • {user.qualification || 'Ph.D. in CS'}
+                        {user.designation || 'Not specified'} • {user.qualification || 'Not specified'}
                       </p>
                     </div>
 
@@ -208,7 +208,7 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                         <span>Office Location</span>
                       </div>
                       <p className="mt-1 font-bold text-[#111827] dark:text-[#FAFAFA]">
-                        {user.office_location || 'Academic Block B • Room 304'}
+                        {user.office_location || 'Not specified'}
                       </p>
                     </div>
                   </>
@@ -219,8 +219,8 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                       <span>Year & Semester</span>
                     </div>
                     <p className="mt-1 font-bold text-[#111827] dark:text-[#FAFAFA]">
-                      {user.year ? `Year ${user.year}` : '3rd Year'}{' '}
-                      {user.semester ? `• Semester ${user.semester}` : '• Semester 6'}
+                      {user.year ? `Year ${user.year}` : 'Year not set'}{' '}
+                      {user.semester ? `• Semester ${user.semester}` : ''}
                     </p>
                   </div>
                 )}
@@ -238,7 +238,7 @@ export default function ProfileDrawer({ isOpen, onClose, onLogout }: ProfileDraw
                     <Phone className="h-3.5 w-3.5" />
                     <span>Phone Number</span>
                   </div>
-                  <p className="mt-1 font-bold text-[#111827] dark:text-[#FAFAFA]">{user.phone || '+91 98765 43210'}</p>
+                  <p className="mt-1 font-bold text-[#111827] dark:text-[#FAFAFA]">{user.phone || 'Not provided'}</p>
                 </div>
               </div>
             </motion.aside>

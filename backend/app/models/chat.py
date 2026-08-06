@@ -6,7 +6,7 @@ from app.database.base import Base
 class ChatSession(Base):
     __tablename__ = "chat_sessions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     title = Column(String)
     is_pinned = Column(Boolean, default=False)
@@ -20,7 +20,7 @@ class ChatSession(Base):
 class ChatMessage(Base):
     __tablename__ = "chat_messages"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     session_id = Column(Integer, ForeignKey("chat_sessions.id"))
     role = Column(String) # "user" or "assistant"
     content = Column(Text)

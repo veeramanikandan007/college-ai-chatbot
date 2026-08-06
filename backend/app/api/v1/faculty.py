@@ -16,6 +16,8 @@ from app.models.faculty import (
     FacultyTimetableRequestModel,
 )
 from app.models.user import User
+from app.models.notification import Notification
+from app.models.student import StudentProfileModel
 from app.schemas.faculty import (
     FacultyProfileResponse,
     FacultyScheduleItem,
@@ -75,34 +77,52 @@ def get_faculty_dashboard(current_user: User = Depends(require_faculty), db: Ses
     schedules = db.query(FacultyScheduleModel).filter(FacultyScheduleModel.faculty_id == profile.id).all()
     today_schedule = [
         FacultyScheduleItem(
-            id=s.id,
-            day_of_week=s.day_of_week,
-            period_number=s.period_number,
-            start_time=s.start_time,
-            end_time=s.end_time,
-            subject_name=s.subject_name,
-            subject_code=s.subject_code,
-            section=s.section,
-            classroom=s.classroom,
+            id=s.id, # type: ignore
+            day_of_week=s.day_of_week, # type: ignore
+            period_number=s.period_number, # type: ignore
+            start_time=s.start_time, # type: ignore
+            end_time=s.end_time, # type: ignore
+            subject_name=s.subject_name, # type: ignore
+            subject_code=s.subject_code, # type: ignore
+            section=s.section, # type: ignore
+            classroom=s.classroom, # type: ignore
         )
         for s in schedules
     ]
 
     # Stats
+    total_assigned_students = db.query(User).filter(User.role == "student").count()
+    
+    # Calculate average class attendance realistically
+    total_attendance_records = db.query(FacultyAttendanceRecordModel).filter(FacultyAttendanceRecordModel.faculty_id == profile.id).count()
+    present_records = db.query(FacultyAttendanceRecordModel).filter(FacultyAttendanceRecordModel.faculty_id == profile.id, FacultyAttendanceRecordModel.status == "Present").count()
+    average_attendance = (present_records / total_attendance_records * 100) if total_attendance_records > 0 else 0.0
+
     stats = FacultyDashboardStats(
         today_classes_count=len(today_schedule),
-        total_assigned_students=64,
+        total_assigned_students=total_assigned_students,
         pending_submissions_count=db.query(FacultySubmissionModel).filter(FacultySubmissionModel.status == "Submitted").count(),
-        average_class_attendance=88.5,
+        average_class_attendance=round(average_attendance, 1),
         total_quizzes_created=db.query(FacultyQuizModel).filter(FacultyQuizModel.faculty_id == profile.id).count(),
         question_papers_uploaded=db.query(FacultyQuestionPaperModel).filter(FacultyQuestionPaperModel.faculty_id == profile.id).count(),
     )
 
-    notifications = [
-        {"id": 1, "title": "Assignment Submissions Pending", "message": "12 students submitted CS8591 Network Design assignment.", "time": "10 mins ago", "type": "info"},
-        {"id": 2, "title": "Model Exam Schedule Published", "message": "Third year B.E. CS model exam commences next Monday.", "time": "1 hour ago", "type": "warning"},
-        {"id": 3, "title": "Attendance Alert", "message": "Section A attendance report for July auto-generated.", "time": "3 hours ago", "type": "success"},
-    ]
+    db_notifications = db.query(Notification).filter(Notification.user_id == current_user.id).order_by(Notification.created_at.desc()).limit(3).all()
+    notifications = []
+    for idx, n in enumerate(db_notifications):
+        notifications.append({
+            "id": n.id,
+            "title": n.title,
+            "message": n.message,
+            "time": n.created_at.strftime("%I:%M %p") if n.created_at else "Just now",
+            "type": n.type if n.type else "info"
+        })
+    
+    if not notifications:
+        notifications = [
+            {"id": 1, "title": "System Update", "message": "Welcome to the new Faculty Portal.", "time": "Just now", "type": "info"}
+        ]
+
 
     return FacultyDashboardResponse(
         profile=FacultyProfileResponse.model_validate(profile),
@@ -185,9 +205,9 @@ def edit_attendance_record(record_id: int, status_val: str = Query(...), remarks
     record = db.query(FacultyAttendanceRecordModel).filter(FacultyAttendanceRecordModel.id == record_id).first()
     if not record:
         raise HTTPException(status_code=404, detail="Attendance record not found")
-    record.status = status_val
+    record.status = status_val # type: ignore
     if remarks is not None:
-        record.remarks = remarks
+        record.remarks = remarks # type: ignore
     db.commit()
     db.refresh(record)
     return AttendanceRecordResponse.model_validate(record)
@@ -236,14 +256,14 @@ def edit_faculty_assignment(assignment_id: int, data: FacultyAssignmentInput, cu
     assignment = db.query(FacultyAssignmentModel).filter(FacultyAssignmentModel.id == assignment_id).first()
     if not assignment:
         raise HTTPException(status_code=404, detail="Assignment not found")
-    assignment.title = data.title
-    assignment.subject_code = data.subject_code
-    assignment.section = data.section
-    assignment.description = data.description
-    assignment.due_date = data.due_date
-    assignment.max_marks = data.max_marks
+    assignment.title = data.title # type: ignore
+    assignment.subject_code = data.subject_code # type: ignore
+    assignment.section = data.section # type: ignore
+    assignment.description = data.description # type: ignore
+    assignment.due_date = data.due_date # type: ignore
+    assignment.max_marks = data.max_marks # type: ignore
     if data.attachment_url:
-        assignment.attachment_url = data.attachment_url
+        assignment.attachment_url = data.attachment_url # type: ignore
     db.commit()
     db.refresh(assignment)
     res = FacultyAssignmentResponse.model_validate(assignment)
@@ -273,9 +293,9 @@ def grade_student_submission(submission_id: int, data: GradeSubmissionInput, cur
     sub = db.query(FacultySubmissionModel).filter(FacultySubmissionModel.id == submission_id).first()
     if not sub:
         raise HTTPException(status_code=404, detail="Submission not found")
-    sub.grade = data.grade
-    sub.remarks = data.remarks
-    sub.status = "Graded"
+    sub.grade = data.grade # type: ignore
+    sub.remarks = data.remarks # type: ignore
+    sub.status = "Graded" # type: ignore
     db.commit()
     db.refresh(sub)
     return FacultySubmissionResponse.model_validate(sub)
@@ -352,7 +372,7 @@ def toggle_publish_quiz(quiz_id: int, current_user: User = Depends(require_facul
     quiz = db.query(FacultyQuizModel).filter(FacultyQuizModel.id == quiz_id).first()
     if not quiz:
         raise HTTPException(status_code=404, detail="Quiz not found")
-    quiz.is_published = not quiz.is_published
+    quiz.is_published = not quiz.is_published # type: ignore
     db.commit()
     db.refresh(quiz)
     return FacultyQuizResponse.model_validate(quiz)
@@ -381,15 +401,15 @@ def get_faculty_timetable(current_user: User = Depends(require_faculty), db: Ses
     schedules = db.query(FacultyScheduleModel).filter(FacultyScheduleModel.faculty_id == profile.id).all()
     return [
         FacultyScheduleItem(
-            id=s.id,
-            day_of_week=s.day_of_week,
-            period_number=s.period_number,
-            start_time=s.start_time,
-            end_time=s.end_time,
-            subject_name=s.subject_name,
-            subject_code=s.subject_code,
-            section=s.section,
-            classroom=s.classroom,
+            id=s.id, # type: ignore
+            day_of_week=s.day_of_week, # type: ignore
+            period_number=s.period_number, # type: ignore
+            start_time=s.start_time, # type: ignore
+            end_time=s.end_time, # type: ignore
+            subject_name=s.subject_name, # type: ignore
+            subject_code=s.subject_code, # type: ignore
+            section=s.section, # type: ignore
+            classroom=s.classroom, # type: ignore
         )
         for s in schedules
     ]
@@ -422,30 +442,49 @@ def get_student_roster(
     current_user: User = Depends(require_faculty),
     db: Session = Depends(get_db),
 ):
-    # Retrieve student users
+    # Retrieve student users dynamically
     students = db.query(User).filter(User.role == "student").all()
     roster = []
 
-    mock_roster = [
-        {"id": 101, "student_name": "Arun Kumar", "register_number": "913221104001", "department": "Computer Science", "semester": 6, "section": "A", "attendance_percentage": 92.5, "assignment_status": "All Completed"},
-        {"id": 102, "student_name": "Bhavya Sri", "register_number": "913221104002", "department": "Computer Science", "semester": 6, "section": "A", "attendance_percentage": 84.0, "assignment_status": "Pending"},
-        {"id": 103, "student_name": "Deepak Raj", "register_number": "913221104003", "department": "Computer Science", "semester": 6, "section": "B", "attendance_percentage": 78.5, "assignment_status": "All Completed"},
-        {"id": 104, "student_name": "Divya Dharshini", "register_number": "913221104004", "department": "Information Technology", "semester": 6, "section": "A", "attendance_percentage": 95.0, "assignment_status": "All Completed"},
-        {"id": 105, "student_name": "Elango Pillai", "register_number": "913221104005", "department": "Computer Science", "semester": 6, "section": "B", "attendance_percentage": 68.0, "assignment_status": "Overdue"},
-        {"id": 106, "student_name": "Gokul Nath", "register_number": "913221104006", "department": "Computer Science", "semester": 4, "section": "A", "attendance_percentage": 89.0, "assignment_status": "Pending"},
-    ]
+    for student in students:
+        s_profile = db.query(StudentProfileModel).filter(StudentProfileModel.user_id == student.id).first()
+        dept = s_profile.department if s_profile and s_profile.department else "Computer Science"
+        sem = s_profile.semester if s_profile and s_profile.semester else 6
+        reg_no = s_profile.student_id if s_profile and s_profile.student_id else f"REG-{student.id:04d}"
+        
+        # Hardcoding section to "A" if missing for simplicity
+        sec = "A"
 
-    for item in mock_roster:
-        if department and item["department"] != department:
+        # Apply filters
+        if department and dept != department:
             continue
-        if semester and item["semester"] != semester:
+        if semester and sem != semester:
             continue
-        if section and item["section"] != section:
+        if section and sec != section:
             continue
         if search:
             q = search.lower()
-            if q not in item["student_name"].lower() and q not in item["register_number"].lower():
+            if q not in student.name.lower() and q not in reg_no.lower():
                 continue
-        roster.append(StudentRosterItem(**item))
+                
+        # Calculate attendance percentage for this student
+        total_att = db.query(FacultyAttendanceRecordModel).filter(FacultyAttendanceRecordModel.student_id == student.id).count()
+        present_att = db.query(FacultyAttendanceRecordModel).filter(FacultyAttendanceRecordModel.student_id == student.id, FacultyAttendanceRecordModel.status == "Present").count()
+        att_pct = (present_att / total_att * 100) if total_att > 0 else 100.0
+        
+        # Calculate assignment status
+        pending_assg = db.query(FacultySubmissionModel).filter(FacultySubmissionModel.student_id == student.id, FacultySubmissionModel.status != "Graded").count()
+        assg_status = "Pending" if pending_assg > 0 else "All Completed"
+
+        roster.append(StudentRosterItem(
+            id=student.id, # type: ignore
+            student_name=student.name, # type: ignore
+            register_number=reg_no, # type: ignore
+            department=dept, # type: ignore
+            semester=sem, # type: ignore
+            section=sec,
+            attendance_percentage=round(att_pct, 1),
+            assignment_status=assg_status
+        ))
 
     return roster

@@ -12,13 +12,39 @@ def register_user(db: Session, user_in: UserCreate):
             detail="The user with this email already exists in the system.",
         )
     
+    user_role = getattr(user_in, 'role', 'student')
+    if not user_role:
+        user_role = 'student'
+        
     db_user = User(
         name=user_in.name,
         email=user_in.email,
         hashed_password=get_password_hash(user_in.password),
-        role="student"
+        role=user_role
     )
     db.add(db_user)
+    db.flush() # Flush to get the ID without committing yet
+    
+    # Synchronize profiles locally
+    if user_role == 'student':
+        from app.models.student import StudentProfileModel
+        profile = StudentProfileModel(user_id=db_user.id)
+        db.add(profile)
+    elif user_role == 'faculty':
+        from app.models.faculty import FacultyProfileModel
+        # Basic parsing or defaults for required faculty fields
+        import uuid
+        profile = FacultyProfileModel(
+            user_id=db_user.id,
+            employee_id=f"FAC-{str(uuid.uuid4())[:8].upper()}",
+            department="Unassigned"
+        )
+        db.add(profile)
+    elif user_role == 'admin':
+        from app.models.admin import AdminProfileModel
+        profile = AdminProfileModel(user_id=db_user.id)
+        db.add(profile)
+
     db.commit()
     db.refresh(db_user)
     

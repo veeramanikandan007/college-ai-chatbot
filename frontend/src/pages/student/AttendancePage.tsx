@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { fetchApi } from '../../lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Award,
@@ -111,13 +112,10 @@ export default function AttendancePage() {
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/v1/attendance/dashboard');
-      if (res.ok) {
-        const json = await res.json();
-        setData(json);
-        if (json.subjects && json.subjects.length > 0 && !simSubjectId) {
-          setSimSubjectId(json.subjects[0].id);
-        }
+      const json = await fetchApi('/attendance/dashboard');
+      setData(json);
+      if (json.subjects && json.subjects.length > 0 && !simSubjectId) {
+        setSimSubjectId(json.subjects[0].id);
       }
     } catch (err) {
       console.error('Failed to load attendance dashboard data:', err);
@@ -293,7 +291,7 @@ export default function AttendancePage() {
               <CheckCircle2 size={22} />
               {data.todays_status}
             </div>
-            <div className="text-[11px] text-[#64748B]">Recorded for Aug 01</div>
+            <div className="text-[11px] text-[#64748B]">Recorded for {new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}</div>
           </div>
 
           {/* Card 3: Present Count */}
@@ -474,7 +472,7 @@ export default function AttendancePage() {
                 <TrendingUp size={18} className="text-[#1E4DB7]" />
                 Monthly Attendance Trend
               </h2>
-              <span className="text-xs text-[#64748B]">Jan - Aug 2026</span>
+              <span className="text-xs text-[#64748B]">{data.academic_year}</span>
             </div>
 
             {/* Custom SVG Bezier Area Chart */}

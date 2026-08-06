@@ -5,7 +5,7 @@ from app.database.base import Base
 class StudyPlanModel(Base):
     __tablename__ = "study_plans"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     title = Column(String(255), nullable=False)
     exam_name = Column(String(255), nullable=False)
@@ -21,7 +21,7 @@ class StudyPlanModel(Base):
 class StudyTaskModel(Base):
     __tablename__ = "study_tasks"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     plan_id = Column(Integer, ForeignKey("study_plans.id", ondelete="CASCADE"), nullable=False, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     subject_code = Column(String(50), nullable=False, index=True)
@@ -41,7 +41,7 @@ class StudyTaskModel(Base):
 class StudyReminderModel(Base):
     __tablename__ = "study_reminders"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     plan_id = Column(Integer, ForeignKey("study_plans.id", ondelete="CASCADE"), nullable=True)
     title = Column(String(255), nullable=False)

@@ -6,7 +6,7 @@ from app.database.base import Base
 class SubjectAttendance(Base):
     __tablename__ = "subject_attendance"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), default=1)
     subject_name = Column(String, index=True)
     subject_code = Column(String, nullable=True)
@@ -23,7 +23,7 @@ class SubjectAttendance(Base):
 class AttendanceLog(Base):
     __tablename__ = "attendance_logs"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), default=1)
     subject_name = Column(String)
     date = Column(Date)

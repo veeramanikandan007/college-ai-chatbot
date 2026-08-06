@@ -23,7 +23,9 @@ if os.getenv("SENTRY_DSN"):
     )
 app = FastAPI(title=settings.APP_NAME)
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+from typing import cast, Callable
+from starlette.responses import Response
+app.add_exception_handler(RateLimitExceeded, cast(Callable[[Request, Exception], Response], _rate_limit_exceeded_handler))
 
 # Middleware
 origins = [origin.strip() for origin in settings.ALLOWED_ORIGINS.split(",")]
@@ -89,4 +91,4 @@ if __name__ == "__main__":
     )
 
 
-
+# reload trigger

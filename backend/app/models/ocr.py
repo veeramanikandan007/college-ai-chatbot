@@ -8,7 +8,7 @@ from app.database.base import Base
 class OCRScanModel(Base):
     __tablename__ = "ocr_scans"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     image_name = Column(String(255), nullable=False)
     image_path = Column(String(500), nullable=True)

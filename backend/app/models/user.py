@@ -6,9 +6,9 @@ from app.database.base import Base
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     name = Column(String, index=True)
-    email = Column(String, unique=True, index=True)
+    email = Column(String, unique=True)
     hashed_password = Column(String)
     role = Column(String, default="student") # student, faculty, admin
     
@@ -16,7 +16,7 @@ class User(Base):
     department = Column(String, nullable=True)
     year = Column(Integer, nullable=True)
     semester = Column(Integer, nullable=True)
-    student_id = Column(String, unique=True, index=True, nullable=True)
+    student_id = Column(String, unique=True, nullable=True)
     phone = Column(String, nullable=True)
     avatar_url = Column(String, nullable=True)
     
@@ -27,3 +27,8 @@ class User(Base):
     chat_sessions = relationship("app.models.chat.ChatSession", back_populates="user")
     documents = relationship("app.models.document.UploadedDocument", back_populates="uploader")
     notifications = relationship("app.models.notification.Notification", back_populates="user", cascade="all, delete-orphan")
+    
+    # Profile relationships
+    student_profile = relationship("app.models.student.StudentProfileModel", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    faculty_profile = relationship("app.models.faculty.FacultyProfileModel", backref="user", uselist=False, cascade="all, delete-orphan")
+    admin_profile = relationship("app.models.admin.AdminProfileModel", back_populates="user", uselist=False, cascade="all, delete-orphan")

@@ -1,10 +1,23 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Float, Text, Date
 from sqlalchemy.sql import func
 from app.database.base import Base
+from sqlalchemy.orm import relationship
+
+class StudentProfileModel(Base):
+    __tablename__ = "student_profiles"
+    
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    department = Column(String, nullable=True)
+    year = Column(Integer, nullable=True)
+    semester = Column(Integer, nullable=True)
+    student_id = Column(String, unique=True, nullable=True)
+    
+    user = relationship("app.models.user.User", back_populates="student_profile")
 
 class Attendance(Base):
     __tablename__ = "attendance"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     subject = Column(String)
     date = Column(Date)
@@ -13,7 +26,7 @@ class Attendance(Base):
 
 class TimetableEntry(Base):
     __tablename__ = "timetable"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     department = Column(String)
     year = Column(Integer)
     semester = Column(Integer)
@@ -27,7 +40,7 @@ from app.models.assignment import AssignmentModel as Assignment
 
 class Fee(Base):
     __tablename__ = "fees"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     semester = Column(Integer)
     amount = Column(Float)
@@ -38,7 +51,7 @@ class Fee(Base):
 
 class Event(Base):
     __tablename__ = "events"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     title = Column(String)
     description = Column(Text)
     event_date = Column(DateTime)
@@ -49,7 +62,7 @@ class Event(Base):
 
 class Note(Base):
     __tablename__ = "notes"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     title = Column(String)
     content = Column(Text)
@@ -59,7 +72,7 @@ class Note(Base):
 
 class LibraryBook(Base):
     __tablename__ = "library_books"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     title = Column(String)
     author = Column(String)
     isbn = Column(String)
@@ -69,7 +82,7 @@ class LibraryBook(Base):
 
 class BookIssue(Base):
     __tablename__ = "book_issues"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     book_id = Column(Integer, ForeignKey("library_books.id"))
     issued_at = Column(DateTime(timezone=True), server_default=func.now())

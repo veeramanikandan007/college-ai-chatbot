@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Bot, User, Mail, Lock, Eye, EyeOff, Loader2, ArrowRight } from 'lucide-react';
+import { Bot, User, Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, Users } from 'lucide-react';
 import { fetchApi, ApiError } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
@@ -15,6 +15,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('student');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -36,11 +37,15 @@ export default function RegisterPage() {
     try {
       const data = await fetchApi('/auth/register', {
         method: 'POST',
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, role }),
       });
-      login(data.access_token);
+      const userData = await login(data.access_token);
       showToast('Account created! Welcome to CollegeMate AI.', 'success');
-      navigate('/dashboard');
+      
+      // Dynamically route to the correct dashboard based on role
+      const { getDefaultHomeForRole } = await import('../config/navigation');
+      const roleHome = getDefaultHomeForRole(userData?.role || role);
+      navigate(roleHome, { replace: true });
     } catch (err) {
       const msg = err instanceof ApiError ? err.message : 'Registration failed. Please try again.';
       showToast(msg, 'error');
@@ -109,6 +114,27 @@ export default function RegisterPage() {
                   className="w-full h-[40px] pl-10 pr-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none transition focus:border-[#111827] dark:focus:border-[#FAFAFA]"
                   required
                 />
+              </div>
+            </div>
+            
+            {/* Role */}
+            <div className="space-y-1.5">
+              <label htmlFor="reg-role" className="text-[14px] font-medium text-[#111827] dark:text-[#FAFAFA]">Account Type</label>
+              <div className="relative flex items-center">
+                <Users className="absolute left-3.5 w-4 h-4 text-[#6B7280] dark:text-[#A1A1AA] pointer-events-none" />
+                <select
+                  id="reg-role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="w-full h-[40px] pl-10 pr-4 rounded-[10px] border border-[#E5E7EB] dark:border-[#2A2A2A] bg-[#F8FAFC] dark:bg-[#111111] text-[#111827] dark:text-[#FAFAFA] text-[14px] outline-none transition focus:border-[#111827] dark:focus:border-[#FAFAFA] appearance-none"
+                >
+                  <option value="student">Student</option>
+                  <option value="faculty">Faculty</option>
+                  <option value="admin">Admin</option>
+                </select>
+                <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#6B7280] dark:text-[#A1A1AA]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
               </div>
             </div>
 

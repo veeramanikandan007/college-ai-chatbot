@@ -1,6 +1,7 @@
 import json
 from typing import Optional
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from app.database.engine import engine, SessionLocal
 from app.database.base import Base
 from app.core.security import get_password_hash
@@ -20,72 +21,81 @@ def init_db(db: Optional[Session] = None):
     from app.models.study_planner import StudyPlanModel, StudyTaskModel, StudyReminderModel
     from app.models.mock_interview import MockInterviewModel, InterviewQaLogModel
     from app.models.student_analytics import StudentGoalModel, StudentStreakModel
+    from app.models.student import StudentProfileModel
+    from app.models.admin import AdminProfileModel
 
     # Check and migrate legacy assignments and subjects tables if missing new columns
-    from sqlalchemy import inspect, text
-    inspector = inspect(engine)
-    if "assignments" in inspector.get_table_names():
-        columns = [c["name"] for c in inspector.get_columns("assignments")]
-        if "faculty" not in columns:
+    if engine.dialect.name == 'sqlite':
+        from sqlalchemy import inspect
+        inspector = inspect(engine)
+        if "assignments" in inspector.get_table_names():
+            columns = [c["name"] for c in inspector.get_columns("assignments")]
+            if "faculty" not in columns:
+                with engine.connect() as conn:
+                    conn.execute(text("DROP TABLE assignments"))
+                    conn.commit()
+
+        if "subjects" in inspector.get_table_names():
+            columns = [c["name"] for c in inspector.get_columns("subjects")]
+            if "department" not in columns:
+                with engine.connect() as conn:
+                    conn.execute(text("DROP TABLE subjects"))
+                    conn.commit()
+
+        if "resume_profiles" in inspector.get_table_names():
+            columns = [c["name"] for c in inspector.get_columns("resume_profiles")]
             with engine.connect() as conn:
-                conn.execute(text("DROP TABLE assignments"))
+                if "template" not in columns:
+                    conn.execute(text("ALTER TABLE resume_profiles ADD COLUMN template VARCHAR DEFAULT 'modern'"))
+                if "created_at" not in columns:
+                    conn.execute(text("ALTER TABLE resume_profiles ADD COLUMN created_at DATETIME"))
+                if "suggestions" not in columns:
+                    conn.execute(text("ALTER TABLE resume_profiles ADD COLUMN suggestions TEXT"))
                 conn.commit()
 
-    if "subjects" in inspector.get_table_names():
-        columns = [c["name"] for c in inspector.get_columns("subjects")]
-        if "department" not in columns:
+        if "uploaded_documents" in inspector.get_table_names():
+            columns = [c["name"] for c in inspector.get_columns("uploaded_documents")]
             with engine.connect() as conn:
-                conn.execute(text("DROP TABLE subjects"))
+                if "folder_name" not in columns:
+                    conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN folder_name VARCHAR DEFAULT 'General'"))
+                if "is_pinned" not in columns:
+                    conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN is_pinned BOOLEAN DEFAULT 0"))
+                if "is_favorite" not in columns:
+                    conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN is_favorite BOOLEAN DEFAULT 0"))
+                if "is_indexed" not in columns:
+                    conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN is_indexed BOOLEAN DEFAULT 0"))
+                if "chunk_count" not in columns:
+                    conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN chunk_count INTEGER DEFAULT 0"))
+                if "summary" not in columns:
+                    conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN summary TEXT"))
+                if "keywords" not in columns:
+                    conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN keywords TEXT"))
+                if "topics" not in columns:
+                    conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN topics TEXT"))
+                if "estimated_reading_time" not in columns:
+                    conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN estimated_reading_time INTEGER DEFAULT 5"))
+                if "difficulty" not in columns:
+                    conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN difficulty VARCHAR DEFAULT 'Intermediate'"))
+                if "extracted_text" not in columns:
+                    conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN extracted_text TEXT"))
+        if "notifications" in inspector.get_table_names():
+            columns = [c["name"] for c in inspector.get_columns("notifications")]
+            with engine.connect() as conn:
+                if "is_pinned" not in columns:
+                    conn.execute(text("ALTER TABLE notifications ADD COLUMN is_pinned BOOLEAN DEFAULT 0"))
+                if "category" not in columns:
+                    conn.execute(text("ALTER TABLE notifications ADD COLUMN category VARCHAR DEFAULT 'general'"))
+                if "action_link" not in columns:
+                    conn.execute(text("ALTER TABLE notifications ADD COLUMN action_link VARCHAR"))
                 conn.commit()
 
-    if "resume_profiles" in inspector.get_table_names():
-        columns = [c["name"] for c in inspector.get_columns("resume_profiles")]
+    if engine.dialect.name == 'sqlite':
+        Base.metadata.create_all(bind=engine)
+    else:
         with engine.connect() as conn:
-            if "template" not in columns:
-                conn.execute(text("ALTER TABLE resume_profiles ADD COLUMN template VARCHAR DEFAULT 'modern'"))
-            if "created_at" not in columns:
-                conn.execute(text("ALTER TABLE resume_profiles ADD COLUMN created_at DATETIME"))
-            if "suggestions" not in columns:
-                conn.execute(text("ALTER TABLE resume_profiles ADD COLUMN suggestions TEXT"))
+            conn.execute(text("CREATE SCHEMA IF NOT EXISTS chatbot;"))
             conn.commit()
-
-    if "uploaded_documents" in inspector.get_table_names():
-        columns = [c["name"] for c in inspector.get_columns("uploaded_documents")]
-        with engine.connect() as conn:
-            if "folder_name" not in columns:
-                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN folder_name VARCHAR DEFAULT 'General'"))
-            if "is_pinned" not in columns:
-                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN is_pinned BOOLEAN DEFAULT 0"))
-            if "is_favorite" not in columns:
-                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN is_favorite BOOLEAN DEFAULT 0"))
-            if "is_indexed" not in columns:
-                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN is_indexed BOOLEAN DEFAULT 0"))
-            if "chunk_count" not in columns:
-                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN chunk_count INTEGER DEFAULT 0"))
-            if "summary" not in columns:
-                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN summary TEXT"))
-            if "keywords" not in columns:
-                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN keywords TEXT"))
-            if "topics" not in columns:
-                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN topics TEXT"))
-            if "estimated_reading_time" not in columns:
-                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN estimated_reading_time INTEGER DEFAULT 5"))
-            if "difficulty" not in columns:
-                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN difficulty VARCHAR DEFAULT 'Intermediate'"))
-            if "extracted_text" not in columns:
-                conn.execute(text("ALTER TABLE uploaded_documents ADD COLUMN extracted_text TEXT"))
-    if "notifications" in inspector.get_table_names():
-        columns = [c["name"] for c in inspector.get_columns("notifications")]
-        with engine.connect() as conn:
-            if "is_pinned" not in columns:
-                conn.execute(text("ALTER TABLE notifications ADD COLUMN is_pinned BOOLEAN DEFAULT 0"))
-            if "category" not in columns:
-                conn.execute(text("ALTER TABLE notifications ADD COLUMN category VARCHAR DEFAULT 'general'"))
-            if "action_link" not in columns:
-                conn.execute(text("ALTER TABLE notifications ADD COLUMN action_link VARCHAR"))
-            conn.commit()
-
-    Base.metadata.create_all(bind=engine)
+        Base.metadata.create_all(bind=engine)
 
     close_session = False
     if db is None:

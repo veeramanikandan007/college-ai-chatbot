@@ -6,15 +6,15 @@ from app.database.base import Base
 class Department(Base):
     __tablename__ = "departments"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True)
-    code = Column(String, unique=True, index=True)
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True)
+    code = Column(String, unique=True)
 
 class Subject(Base):
     __tablename__ = "subjects"
 
-    id = Column(Integer, primary_key=True, index=True)
-    subject_code = Column(String, unique=True, index=True)
+    id = Column(Integer, primary_key=True)
+    subject_code = Column(String, unique=True)
     subject_name = Column(String, index=True)
     subject_type = Column(String, default="Theory") # Theory, Lab
     color_code = Column(String, default="#1E4DB7")
@@ -22,7 +22,7 @@ class Subject(Base):
 class Faculty(Base):
     __tablename__ = "faculty"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     name = Column(String, index=True)
     email = Column(String, nullable=True)
     department = Column(String, index=True)
@@ -30,7 +30,7 @@ class Faculty(Base):
 class TimetableEntry(Base):
     __tablename__ = "timetable_entries"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     department = Column(String, default="Computer Science & Engineering")
     semester = Column(Integer, default=6)
     section = Column(String, default="A")

@@ -486,21 +486,21 @@ def get_study_analytics(
     # Daily Progress %
     today_total = len(today_tasks)
     today_completed = len([t for t in today_tasks if getattr(t, "status") == "Completed"])
-    daily_pct = (today_completed / today_total * 100.0) if today_total > 0 else 75.0
+    daily_pct = (today_completed / today_total * 100.0) if today_total > 0 else 0.0
 
     # Weekly & Monthly Progress %
     completed_all = len([t for t in all_tasks if getattr(t, "status") == "Completed"])
     total_all = len(all_tasks)
-    weekly_pct = (completed_all / total_all * 100.0) if total_all > 0 else 68.0
-    monthly_pct = (completed_all / total_all * 100.0) if total_all > 0 else 72.0
+    weekly_pct = (completed_all / total_all * 100.0) if total_all > 0 else 0.0
+    monthly_pct = (completed_all / total_all * 100.0) if total_all > 0 else 0.0
 
     # Study Hours
     total_hours_alloc = sum([int(getattr(t, "duration_minutes") or 60) for t in all_tasks]) / 60.0
     total_hours_comp = sum([int(getattr(t, "duration_minutes") or 60) for t in all_tasks if getattr(t, "status") == "Completed"]) / 60.0
 
     if total_hours_alloc == 0:
-        total_hours_alloc = 28.0
-        total_hours_comp = 18.5
+        total_hours_alloc = 0.0
+        total_hours_comp = 0.0
 
     weak_status = []
     for ws in weak_subs:
@@ -517,8 +517,8 @@ def get_study_analytics(
         monthly_progress_percentage=round(monthly_pct, 1),
         total_study_hours_allocated=round(total_hours_alloc, 1),
         total_study_hours_completed=round(total_hours_comp, 1),
-        completed_topics_count=completed_all or 12,
-        remaining_topics_count=(total_all - completed_all) if total_all > 0 else 6,
+        completed_topics_count=completed_all,
+        remaining_topics_count=(total_all - completed_all) if total_all > 0 else 0,
         weak_subjects_status=weak_status
     )
 

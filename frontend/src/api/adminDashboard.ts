@@ -1,6 +1,6 @@
-import axios from 'axios';
+import { fetchApi } from '../lib/api';
 
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8000') + '/api/v1/admin';
+// Note: fetchApi automatically prepends API_URL (/api/v1) and handles JWT headers.
 
 export interface AdminMasterOverviewStats {
   total_students: number;
@@ -99,107 +99,109 @@ export interface AdminAuditLog {
 
 export const adminDashboardApi = {
   getOverviewStats: async (): Promise<AdminMasterOverviewStats> => {
-    const res = await axios.get(`${API_BASE}/dashboard/overview`);
-    return res.data;
+    return await fetchApi('/admin/dashboard/overview');
   },
 
   getUsers: async (params?: { role?: string; department?: string; search?: string }): Promise<AdminUser[]> => {
-    const res = await axios.get(`${API_BASE}/users`, { params });
-    return res.data;
+    const urlParams = new URLSearchParams();
+    if (params?.role) urlParams.append('role', params.role);
+    if (params?.department) urlParams.append('department', params.department);
+    if (params?.search) urlParams.append('search', params.search);
+    const query = urlParams.toString() ? `?${urlParams.toString()}` : '';
+    return await fetchApi(`/admin/users${query}`);
   },
 
   createUser: async (data: Partial<AdminUser> & { password: string }): Promise<AdminUser> => {
-    const res = await axios.post(`${API_BASE}/users`, data);
-    return res.data;
+    return await fetchApi('/admin/users', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   },
 
   toggleUserStatus: async (userId: number): Promise<AdminUser> => {
-    const res = await axios.patch(`${API_BASE}/users/${userId}/status`);
-    return res.data;
+    return await fetchApi(`/admin/users/${userId}/status`, { method: 'PATCH' });
   },
 
   resetUserPassword: async (userId: number, newPassword?: string) => {
-    const res = await axios.post(`${API_BASE}/users/${userId}/reset-password`, null, { params: { new_password: newPassword } });
-    return res.data;
+    const params = new URLSearchParams();
+    if (newPassword) params.append('new_password', newPassword);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    return await fetchApi(`/admin/users/${userId}/reset-password${query}`, { method: 'POST' });
   },
 
   deleteUser: async (userId: number) => {
-    const res = await axios.delete(`${API_BASE}/users/${userId}`);
-    return res.data;
+    return await fetchApi(`/admin/users/${userId}`, { method: 'DELETE' });
   },
 
   getDepartments: async (): Promise<AdminDepartment[]> => {
-    const res = await axios.get(`${API_BASE}/departments`);
-    return res.data;
+    return await fetchApi('/admin/departments');
   },
 
   createDepartment: async (data: Partial<AdminDepartment>): Promise<AdminDepartment> => {
-    const res = await axios.post(`${API_BASE}/departments`, data);
-    return res.data;
+    return await fetchApi('/admin/departments', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   },
 
   deleteDepartment: async (id: number) => {
-    const res = await axios.delete(`${API_BASE}/departments/${id}`);
-    return res.data;
+    return await fetchApi(`/admin/departments/${id}`, { method: 'DELETE' });
   },
 
   getCourses: async (): Promise<AdminCourse[]> => {
-    const res = await axios.get(`${API_BASE}/courses`);
-    return res.data;
+    return await fetchApi('/admin/courses');
   },
 
   createCourse: async (data: Partial<AdminCourse>): Promise<AdminCourse> => {
-    const res = await axios.post(`${API_BASE}/courses`, data);
-    return res.data;
+    return await fetchApi('/admin/courses', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   },
 
   getAnnouncements: async (): Promise<AdminAnnouncement[]> => {
-    const res = await axios.get(`${API_BASE}/announcements`);
-    return res.data;
+    return await fetchApi('/admin/announcements');
   },
 
   createAnnouncement: async (data: Partial<AdminAnnouncement>): Promise<AdminAnnouncement> => {
-    const res = await axios.post(`${API_BASE}/announcements`, data);
-    return res.data;
+    return await fetchApi('/admin/announcements', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   },
 
   deleteAnnouncement: async (id: number) => {
-    const res = await axios.delete(`${API_BASE}/announcements/${id}`);
-    return res.data;
+    return await fetchApi(`/admin/announcements/${id}`, { method: 'DELETE' });
   },
 
   getAnalyticsMaster: async (): Promise<AdminAnalyticsMaster> => {
-    const res = await axios.get(`${API_BASE}/analytics/master`);
-    return res.data;
+    return await fetchApi('/admin/analytics/master');
   },
 
   getSettings: async (): Promise<AdminSettings> => {
-    const res = await axios.get(`${API_BASE}/settings`);
-    return res.data;
+    return await fetchApi('/admin/settings');
   },
 
   updateSettings: async (data: Partial<AdminSettings>): Promise<AdminSettings> => {
-    const res = await axios.put(`${API_BASE}/settings`, data);
-    return res.data;
+    return await fetchApi('/admin/settings', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
   },
 
   getAuditLogs: async (): Promise<AdminAuditLog[]> => {
-    const res = await axios.get(`${API_BASE}/audit-logs`);
-    return res.data;
+    return await fetchApi('/admin/audit-logs');
   },
 
   getDocuments: async (): Promise<{ documents: any[]; count: number }> => {
-    const res = await axios.get(`${API_BASE}/documents`);
-    return res.data;
+    return await fetchApi('/admin/documents');
   },
 
   deleteDocument: async (filename: string) => {
-    const res = await axios.delete(`${API_BASE}/documents/${filename}`);
-    return res.data;
+    return await fetchApi(`/admin/documents/${filename}`, { method: 'DELETE' });
   },
 
   rebuildRagIndex: async () => {
-    const res = await axios.post(`${API_BASE}/rag/rebuild`);
-    return res.data;
+    return await fetchApi('/admin/rag/rebuild', { method: 'POST' });
   },
 };

@@ -7,7 +7,7 @@ from app.database.base import Base
 class FacultyProfileModel(Base):
     __tablename__ = "faculty_profiles"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     employee_id = Column(String(50), unique=True, nullable=False)
     department = Column(String(100), nullable=False)
@@ -21,7 +21,7 @@ class FacultyProfileModel(Base):
 class FacultyScheduleModel(Base):
     __tablename__ = "faculty_schedules"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     faculty_id = Column(Integer, ForeignKey("faculty_profiles.id", ondelete="CASCADE"), nullable=False)
     day_of_week = Column(String(20), nullable=False)
     period_number = Column(Integer, nullable=False)
@@ -37,7 +37,7 @@ class FacultyScheduleModel(Base):
 class FacultyAttendanceRecordModel(Base):
     __tablename__ = "faculty_attendance_records"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     faculty_id = Column(Integer, ForeignKey("faculty_profiles.id", ondelete="CASCADE"), nullable=False)
     student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
     student_name = Column(String(150), nullable=False)
@@ -53,7 +53,7 @@ class FacultyAttendanceRecordModel(Base):
 class FacultyAssignmentModel(Base):
     __tablename__ = "faculty_assignments"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     faculty_id = Column(Integer, ForeignKey("faculty_profiles.id", ondelete="CASCADE"), nullable=False)
     title = Column(String(200), nullable=False)
     subject_code = Column(String(50), nullable=False)
@@ -68,7 +68,7 @@ class FacultyAssignmentModel(Base):
 class FacultySubmissionModel(Base):
     __tablename__ = "faculty_submissions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     assignment_id = Column(Integer, ForeignKey("faculty_assignments.id", ondelete="CASCADE"), nullable=False)
     student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
     student_name = Column(String(150), nullable=False)
@@ -84,7 +84,7 @@ class FacultySubmissionModel(Base):
 class FacultyQuestionPaperModel(Base):
     __tablename__ = "faculty_question_papers"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     faculty_id = Column(Integer, ForeignKey("faculty_profiles.id", ondelete="CASCADE"), nullable=False)
     title = Column(String(200), nullable=False)
     subject_name = Column(String(150), nullable=False)
@@ -100,7 +100,7 @@ class FacultyQuestionPaperModel(Base):
 class FacultyQuizModel(Base):
     __tablename__ = "faculty_quizzes"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     faculty_id = Column(Integer, ForeignKey("faculty_profiles.id", ondelete="CASCADE"), nullable=False)
     title = Column(String(200), nullable=False)
     subject_code = Column(String(50), nullable=False)
@@ -116,7 +116,7 @@ class FacultyQuizModel(Base):
 class FacultyQuizResultModel(Base):
     __tablename__ = "faculty_quiz_results"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     quiz_id = Column(Integer, ForeignKey("faculty_quizzes.id", ondelete="CASCADE"), nullable=False)
     student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
     student_name = Column(String(150), nullable=False)
@@ -128,7 +128,7 @@ class FacultyQuizResultModel(Base):
 class FacultyTimetableRequestModel(Base):
     __tablename__ = "faculty_timetable_change_requests"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     faculty_id = Column(Integer, ForeignKey("faculty_profiles.id", ondelete="CASCADE"), nullable=False)
     request_date = Column(Date, nullable=False)
     current_period = Column(Integer, nullable=False)

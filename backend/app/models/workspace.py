@@ -16,7 +16,7 @@ workspace_chats = Table(
     "workspace_chats",
     Base.metadata,
     Column("workspace_id", Integer, ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True),
-    Column("chat_session_id", String(100), ForeignKey("chat_sessions.id", ondelete="CASCADE"), primary_key=True)
+    Column("chat_session_id", Integer, ForeignKey("chat_sessions.id", ondelete="CASCADE"), primary_key=True)
 )
 
 workspace_notes = Table(
@@ -37,7 +37,7 @@ workspace_quizzes = Table(
 class WorkspaceModel(Base):
     __tablename__ = "workspaces"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)

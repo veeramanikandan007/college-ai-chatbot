@@ -6,7 +6,7 @@ from app.database.base import Base
 class UploadedDocument(Base):
     __tablename__ = "uploaded_documents"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     filename = Column(String, index=True)
     original_name = Column(String)
     file_type = Column(String) # pdf, docx, pptx, txt, csv, md, jpeg, png, webp, zip

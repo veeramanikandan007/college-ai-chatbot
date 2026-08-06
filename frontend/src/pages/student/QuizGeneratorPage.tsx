@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { fetchApi } from '../../lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -167,13 +168,10 @@ export default function QuizGeneratorPage() {
   const fetchDocuments = async () => {
     setLoadingDocs(true);
     try {
-      const res = await fetch('/api/v1/documents');
-      if (res.ok) {
-        const data = await res.json();
-        setDocuments(data.documents || []);
-        if (data.documents && data.documents.length > 0 && !selectedDoc) {
-          setSelectedDoc(data.documents[0]);
-        }
+      const data = await fetchApi('/documents');
+      setDocuments(data.documents || []);
+      if (data.documents && data.documents.length > 0 && !selectedDoc) {
+        setSelectedDoc(data.documents[0]);
       }
     } catch (err) {
       console.error('Failed to load documents for quiz generator:', err);
@@ -185,11 +183,8 @@ export default function QuizGeneratorPage() {
   const fetchHistory = async () => {
     setHistoryLoading(true);
     try {
-      const res = await fetch('/api/v1/quiz/history');
-      if (res.ok) {
-        const data = await res.json();
-        setQuizHistory(data.history || []);
-      }
+      const data = await fetchApi('/quiz/history');
+      setQuizHistory(data.history || []);
     } catch (err) {
       console.error('Failed to load quiz history:', err);
     } finally {
@@ -207,8 +202,14 @@ export default function QuizGeneratorPage() {
     formData.append('folder_name', 'Quiz Documents');
 
     try {
+      // NOTE: For FormData uploads, fetchApi automatically omits 'Content-Type' if not specified explicitly as application/json, 
+      // but in our fetchApi it forces 'application/json'. We should just use raw fetch for uploads with the token.
+      const token = localStorage.getItem('token');
       const res = await fetch('/api/v1/documents/upload', {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
         body: formData,
       });
 
@@ -242,9 +243,8 @@ export default function QuizGeneratorPage() {
     if (timerOption > 0) setSecondsRemaining(timerOption);
 
     try {
-      const res = await fetch('/api/v1/quiz/generate', {
+      const quizData = await fetchApi('/quiz/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           document_name: selectedDoc.original_name || selectedDoc.filename,
           document_id: selectedDoc.id,
@@ -255,17 +255,11 @@ export default function QuizGeneratorPage() {
         }),
       });
 
-      if (res.ok) {
-        const quizData = await res.json();
-        setCurrentQuestions(quizData.questions || []);
-        setViewState('active');
-      } else {
-        const errData = await res.json();
-        alert(errData.detail || 'Failed to generate quiz.');
-      }
-    } catch (err) {
+      setCurrentQuestions(quizData.questions || []);
+      setViewState('active');
+    } catch (err: any) {
       console.error('Error generating quiz:', err);
-      alert('Network error while generating quiz.');
+      alert(err.message || 'Failed to generate quiz.');
     } finally {
       setGenerating(false);
     }
@@ -297,9 +291,8 @@ export default function QuizGeneratorPage() {
     }));
 
     try {
-      const res = await fetch('/api/v1/quiz/submit', {
+      const resultData = await fetchApi('/quiz/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           document_name: selectedDoc?.original_name || selectedDoc?.filename || 'Document',
           subject: selectedDoc?.folder_name || selectedDoc?.category || 'General',
@@ -310,16 +303,12 @@ export default function QuizGeneratorPage() {
         }),
       });
 
-      if (res.ok) {
-        const resultData = await res.json();
-        setCompletedResult(resultData);
-        setViewState('results');
-        fetchHistory(); // Refresh history
-      } else {
-        alert('Failed to submit quiz results.');
-      }
-    } catch (err) {
+      setCompletedResult(resultData);
+      setViewState('results');
+      fetchHistory(); // Refresh history
+    } catch (err: any) {
       console.error('Error submitting quiz:', err);
+      alert(err.message || 'Failed to submit quiz results.');
     } finally {
       setSubmitting(false);
     }
@@ -328,11 +317,9 @@ export default function QuizGeneratorPage() {
   const handleDeleteHistory = async (attemptId: number) => {
     if (!confirm('Are you sure you want to delete this quiz history entry?')) return;
     try {
-      const res = await fetch(`/api/v1/quiz/history/${attemptId}`, { method: 'DELETE' });
-      if (res.ok) {
-        setQuizHistory((prev) => prev.filter((item) => item.id !== attemptId));
-        if (selectedHistoryItem?.id === attemptId) setSelectedHistoryItem(null);
-      }
+      await fetchApi(`/quiz/history/${attemptId}`, { method: 'DELETE' });
+      setQuizHistory((prev) => prev.filter((item) => item.id !== attemptId));
+      if (selectedHistoryItem?.id === attemptId) setSelectedHistoryItem(null);
     } catch (err) {
       console.error('Failed to delete history item:', err);
     }

@@ -8,7 +8,7 @@ from app.database.base import Base
 class NoteModel(Base):
     __tablename__ = "ai_notes"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     document_id = Column(Integer, ForeignKey("uploaded_documents.id"), nullable=True, index=True)
     document_name = Column(String(255), nullable=False)

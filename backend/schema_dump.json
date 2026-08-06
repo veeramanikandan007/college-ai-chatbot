@@ -1,0 +1,1002 @@
+{
+  "public.profiles": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    },
+    {
+      "column": "name",
+      "type": "text"
+    },
+    {
+      "column": "email",
+      "type": "text"
+    },
+    {
+      "column": "role",
+      "type": "text"
+    },
+    {
+      "column": "department",
+      "type": "text"
+    },
+    {
+      "column": "year",
+      "type": "bigint"
+    },
+    {
+      "column": "section",
+      "type": "text"
+    },
+    {
+      "column": "register_number",
+      "type": "text"
+    },
+    {
+      "column": "phone",
+      "type": "text"
+    },
+    {
+      "column": "profile_image",
+      "type": "text"
+    }
+  ],
+  "public.students": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "profile_id",
+      "type": "uuid"
+    },
+    {
+      "column": "register_number",
+      "type": "text"
+    },
+    {
+      "column": "department_id",
+      "type": "uuid"
+    },
+    {
+      "column": "course_id",
+      "type": "uuid"
+    },
+    {
+      "column": "year",
+      "type": "bigint"
+    },
+    {
+      "column": "section",
+      "type": "text"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "public.faculty": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "profile_id",
+      "type": "uuid"
+    },
+    {
+      "column": "employee_id",
+      "type": "text"
+    },
+    {
+      "column": "department_id",
+      "type": "uuid"
+    },
+    {
+      "column": "designation",
+      "type": "text"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "chatbot.faculty": [
+    {
+      "column": "id",
+      "type": "integer"
+    },
+    {
+      "column": "name",
+      "type": "character varying"
+    },
+    {
+      "column": "email",
+      "type": "character varying"
+    },
+    {
+      "column": "department",
+      "type": "character varying"
+    }
+  ],
+  "public.departments": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    },
+    {
+      "column": "department_name",
+      "type": "text"
+    },
+    {
+      "column": "department_code",
+      "type": "text"
+    }
+  ],
+  "chatbot.departments": [
+    {
+      "column": "id",
+      "type": "integer"
+    },
+    {
+      "column": "name",
+      "type": "character varying"
+    },
+    {
+      "column": "code",
+      "type": "character varying"
+    }
+  ],
+  "public.courses": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "course_name",
+      "type": "text"
+    },
+    {
+      "column": "course_code",
+      "type": "text"
+    },
+    {
+      "column": "duration",
+      "type": "bigint"
+    },
+    {
+      "column": "department_id",
+      "type": "uuid"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "public.subjects": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "subject_name",
+      "type": "text"
+    },
+    {
+      "column": "subject_code",
+      "type": "text"
+    },
+    {
+      "column": "semester",
+      "type": "bigint"
+    },
+    {
+      "column": "department_id",
+      "type": "uuid"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "chatbot.subjects": [
+    {
+      "column": "id",
+      "type": "integer"
+    },
+    {
+      "column": "subject_code",
+      "type": "character varying"
+    },
+    {
+      "column": "subject_name",
+      "type": "character varying"
+    },
+    {
+      "column": "subject_type",
+      "type": "character varying"
+    },
+    {
+      "column": "color_code",
+      "type": "character varying"
+    },
+    {
+      "column": "department",
+      "type": "character varying"
+    },
+    {
+      "column": "semester",
+      "type": "integer"
+    },
+    {
+      "column": "regulation",
+      "type": "character varying"
+    }
+  ],
+  "public.attendance": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "student_id",
+      "type": "uuid"
+    },
+    {
+      "column": "subject_id",
+      "type": "uuid"
+    },
+    {
+      "column": "faculty_id",
+      "type": "uuid"
+    },
+    {
+      "column": "attendance_date",
+      "type": "date"
+    },
+    {
+      "column": "status",
+      "type": "text"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "chatbot.attendance": [
+    {
+      "column": "id",
+      "type": "integer"
+    },
+    {
+      "column": "user_id",
+      "type": "integer"
+    },
+    {
+      "column": "subject",
+      "type": "character varying"
+    },
+    {
+      "column": "date",
+      "type": "date"
+    },
+    {
+      "column": "status",
+      "type": "character varying"
+    },
+    {
+      "column": "semester",
+      "type": "integer"
+    }
+  ],
+  "public.assignments": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "title",
+      "type": "text"
+    },
+    {
+      "column": "description",
+      "type": "text"
+    },
+    {
+      "column": "subject_id",
+      "type": "uuid"
+    },
+    {
+      "column": "faculty_id",
+      "type": "uuid"
+    },
+    {
+      "column": "due_date",
+      "type": "date"
+    },
+    {
+      "column": "total_marks",
+      "type": "integer"
+    },
+    {
+      "column": "attachment_url",
+      "type": "text"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "chatbot.assignments": [
+    {
+      "column": "id",
+      "type": "integer"
+    },
+    {
+      "column": "title",
+      "type": "character varying"
+    },
+    {
+      "column": "subject",
+      "type": "character varying"
+    },
+    {
+      "column": "faculty",
+      "type": "character varying"
+    },
+    {
+      "column": "description",
+      "type": "text"
+    },
+    {
+      "column": "priority",
+      "type": "character varying"
+    },
+    {
+      "column": "due_date",
+      "type": "timestamp without time zone"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    },
+    {
+      "column": "status",
+      "type": "character varying"
+    },
+    {
+      "column": "attachment_name",
+      "type": "character varying"
+    },
+    {
+      "column": "attachment_url",
+      "type": "text"
+    },
+    {
+      "column": "attachment_size",
+      "type": "character varying"
+    },
+    {
+      "column": "submission_time",
+      "type": "timestamp with time zone"
+    },
+    {
+      "column": "remarks",
+      "type": "text"
+    },
+    {
+      "column": "assigned_class",
+      "type": "character varying"
+    },
+    {
+      "column": "user_id",
+      "type": "integer"
+    },
+    {
+      "column": "created_by",
+      "type": "integer"
+    }
+  ],
+  "public.assignment_submissions": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "assignment_id",
+      "type": "uuid"
+    },
+    {
+      "column": "student_id",
+      "type": "uuid"
+    },
+    {
+      "column": "submission_url",
+      "type": "text"
+    },
+    {
+      "column": "submitted_at",
+      "type": "timestamp with time zone"
+    },
+    {
+      "column": "marks",
+      "type": "integer"
+    },
+    {
+      "column": "feedback",
+      "type": "text"
+    },
+    {
+      "column": "status",
+      "type": "text"
+    }
+  ],
+  "public.question_papers": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "subject_id",
+      "type": "uuid"
+    },
+    {
+      "column": "faculty_id",
+      "type": "uuid"
+    },
+    {
+      "column": "year",
+      "type": "integer"
+    },
+    {
+      "column": "title",
+      "type": "text"
+    },
+    {
+      "column": "file_url",
+      "type": "text"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "chatbot.question_papers": [
+    {
+      "column": "id",
+      "type": "integer"
+    },
+    {
+      "column": "title",
+      "type": "character varying"
+    },
+    {
+      "column": "subject_code",
+      "type": "character varying"
+    },
+    {
+      "column": "subject_name",
+      "type": "character varying"
+    },
+    {
+      "column": "department",
+      "type": "character varying"
+    },
+    {
+      "column": "semester",
+      "type": "integer"
+    },
+    {
+      "column": "academic_year",
+      "type": "integer"
+    },
+    {
+      "column": "regulation",
+      "type": "character varying"
+    },
+    {
+      "column": "exam_type",
+      "type": "character varying"
+    },
+    {
+      "column": "faculty_name",
+      "type": "character varying"
+    },
+    {
+      "column": "file_name",
+      "type": "character varying"
+    },
+    {
+      "column": "file_url",
+      "type": "text"
+    },
+    {
+      "column": "file_size",
+      "type": "character varying"
+    },
+    {
+      "column": "page_count",
+      "type": "integer"
+    },
+    {
+      "column": "view_count",
+      "type": "integer"
+    },
+    {
+      "column": "download_count",
+      "type": "integer"
+    },
+    {
+      "column": "is_pinned",
+      "type": "boolean"
+    },
+    {
+      "column": "uploaded_by",
+      "type": "integer"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "public.quizzes": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "title",
+      "type": "text"
+    },
+    {
+      "column": "subject_id",
+      "type": "uuid"
+    },
+    {
+      "column": "faculty_id",
+      "type": "uuid"
+    },
+    {
+      "column": "total_marks",
+      "type": "integer"
+    },
+    {
+      "column": "start_time",
+      "type": "timestamp with time zone"
+    },
+    {
+      "column": "end_time",
+      "type": "timestamp with time zone"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "chatbot.quizzes": [
+    {
+      "column": "id",
+      "type": "integer"
+    },
+    {
+      "column": "user_id",
+      "type": "integer"
+    },
+    {
+      "column": "title",
+      "type": "character varying"
+    },
+    {
+      "column": "document_id",
+      "type": "integer"
+    },
+    {
+      "column": "document_name",
+      "type": "character varying"
+    },
+    {
+      "column": "subject",
+      "type": "character varying"
+    },
+    {
+      "column": "difficulty",
+      "type": "character varying"
+    },
+    {
+      "column": "quiz_type",
+      "type": "character varying"
+    },
+    {
+      "column": "num_questions",
+      "type": "integer"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "public.notes": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "subject_id",
+      "type": "uuid"
+    },
+    {
+      "column": "faculty_id",
+      "type": "uuid"
+    },
+    {
+      "column": "title",
+      "type": "text"
+    },
+    {
+      "column": "description",
+      "type": "text"
+    },
+    {
+      "column": "file_url",
+      "type": "text"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "chatbot.notes": [
+    {
+      "column": "id",
+      "type": "integer"
+    },
+    {
+      "column": "user_id",
+      "type": "integer"
+    },
+    {
+      "column": "title",
+      "type": "character varying"
+    },
+    {
+      "column": "content",
+      "type": "text"
+    },
+    {
+      "column": "subject",
+      "type": "character varying"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    },
+    {
+      "column": "updated_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "public.chat_sessions": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "profile_id",
+      "type": "uuid"
+    },
+    {
+      "column": "title",
+      "type": "text"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "chatbot.chat_sessions": [
+    {
+      "column": "id",
+      "type": "integer"
+    },
+    {
+      "column": "user_id",
+      "type": "integer"
+    },
+    {
+      "column": "title",
+      "type": "character varying"
+    },
+    {
+      "column": "is_pinned",
+      "type": "boolean"
+    },
+    {
+      "column": "is_favorite",
+      "type": "boolean"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    },
+    {
+      "column": "updated_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "public.chat_messages": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "session_id",
+      "type": "uuid"
+    },
+    {
+      "column": "role",
+      "type": "text"
+    },
+    {
+      "column": "message",
+      "type": "text"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "chatbot.chat_messages": [
+    {
+      "column": "id",
+      "type": "integer"
+    },
+    {
+      "column": "session_id",
+      "type": "integer"
+    },
+    {
+      "column": "role",
+      "type": "character varying"
+    },
+    {
+      "column": "content",
+      "type": "text"
+    },
+    {
+      "column": "is_bookmarked",
+      "type": "boolean"
+    },
+    {
+      "column": "reaction",
+      "type": "character varying"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "public.notifications": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "profile_id",
+      "type": "uuid"
+    },
+    {
+      "column": "title",
+      "type": "text"
+    },
+    {
+      "column": "message",
+      "type": "text"
+    },
+    {
+      "column": "is_read",
+      "type": "boolean"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "chatbot.notifications": [
+    {
+      "column": "id",
+      "type": "integer"
+    },
+    {
+      "column": "user_id",
+      "type": "integer"
+    },
+    {
+      "column": "title",
+      "type": "character varying"
+    },
+    {
+      "column": "message",
+      "type": "text"
+    },
+    {
+      "column": "type",
+      "type": "character varying"
+    },
+    {
+      "column": "priority",
+      "type": "character varying"
+    },
+    {
+      "column": "icon",
+      "type": "character varying"
+    },
+    {
+      "column": "is_read",
+      "type": "boolean"
+    },
+    {
+      "column": "is_pinned",
+      "type": "boolean"
+    },
+    {
+      "column": "action_url",
+      "type": "character varying"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    },
+    {
+      "column": "updated_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "public.rag_documents": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "title",
+      "type": "text"
+    },
+    {
+      "column": "subject_id",
+      "type": "uuid"
+    },
+    {
+      "column": "uploaded_by",
+      "type": "uuid"
+    },
+    {
+      "column": "file_url",
+      "type": "text"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "public.timetable": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "department_id",
+      "type": "uuid"
+    },
+    {
+      "column": "course_id",
+      "type": "uuid"
+    },
+    {
+      "column": "subject_id",
+      "type": "uuid"
+    },
+    {
+      "column": "faculty_id",
+      "type": "uuid"
+    },
+    {
+      "column": "year",
+      "type": "bigint"
+    },
+    {
+      "column": "section",
+      "type": "text"
+    },
+    {
+      "column": "day",
+      "type": "text"
+    },
+    {
+      "column": "start_time",
+      "type": "time without time zone"
+    },
+    {
+      "column": "end_time",
+      "type": "time without time zone"
+    },
+    {
+      "column": "room_no",
+      "type": "text"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ],
+  "chatbot.timetable": [
+    {
+      "column": "id",
+      "type": "integer"
+    },
+    {
+      "column": "department",
+      "type": "character varying"
+    },
+    {
+      "column": "year",
+      "type": "integer"
+    },
+    {
+      "column": "semester",
+      "type": "integer"
+    },
+    {
+      "column": "day_of_week",
+      "type": "character varying"
+    },
+    {
+      "column": "period",
+      "type": "character varying"
+    },
+    {
+      "column": "subject",
+      "type": "character varying"
+    },
+    {
+      "column": "faculty",
+      "type": "character varying"
+    },
+    {
+      "column": "room",
+      "type": "character varying"
+    }
+  ],
+  "public.announcements": [
+    {
+      "column": "id",
+      "type": "uuid"
+    },
+    {
+      "column": "title",
+      "type": "text"
+    },
+    {
+      "column": "description",
+      "type": "text"
+    },
+    {
+      "column": "created_by",
+      "type": "uuid"
+    },
+    {
+      "column": "target_role",
+      "type": "text"
+    },
+    {
+      "column": "created_at",
+      "type": "timestamp with time zone"
+    }
+  ]
+}

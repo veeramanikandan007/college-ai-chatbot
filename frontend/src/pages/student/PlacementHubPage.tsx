@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { fetchApi } from '../../lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Briefcase,
@@ -180,15 +181,12 @@ export default function PlacementHubPage() {
   const fetchPlacementData = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/v1/placement/dashboard');
-      if (res.ok) {
-        const json = await res.json();
-        setStats(json.stats);
-        setDrives(json.drives || []);
-        setApplications(json.applications || []);
-        setCodingProblems(json.coding_problems || []);
-        setCertificates(json.certificates || []);
-      }
+      const json = await fetchApi('/placement/dashboard');
+      setStats(json.stats);
+      setDrives(json.drives || []);
+      setApplications(json.applications || []);
+      setCodingProblems(json.coding_problems || []);
+      setCertificates(json.certificates || []);
     } catch (err) {
       console.error('Failed to load placement hub data:', err);
     } finally {
@@ -203,9 +201,8 @@ export default function PlacementHubPage() {
   // Handle Application Trigger
   const handleApplyDrive = async (drive: CompanyDrive) => {
     try {
-      const res = await fetch('/api/v1/placement/apply', {
+      await fetchApi('/placement/apply', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           drive_id: drive.id,
           company_name: drive.company_name,
@@ -213,19 +210,18 @@ export default function PlacementHubPage() {
           stage: 'Applied',
         }),
       });
-      if (res.ok) {
-        const newApp: ApplicationItem = {
-          id: Date.now(),
-          drive_id: drive.id,
-          company_name: drive.company_name,
-          role: drive.role,
-          stage: 'Applied',
-          applied_at: new Date().toISOString(),
-          notes: 'Application submitted via CollegeMate AI Placement Hub.',
-        };
-        setApplications((prev) => [newApp, ...prev.filter((a) => a.drive_id !== drive.id)]);
-        alert(`Successfully applied for ${drive.company_name}!`);
-      }
+      
+      const newApp: ApplicationItem = {
+        id: Date.now(),
+        drive_id: drive.id,
+        company_name: drive.company_name,
+        role: drive.role,
+        stage: 'Applied',
+        applied_at: new Date().toISOString(),
+        notes: 'Application submitted via CollegeMate AI Placement Hub.',
+      };
+      setApplications((prev) => [newApp, ...prev.filter((a) => a.drive_id !== drive.id)]);
+      alert(`Successfully applied for ${drive.company_name}!`);
     } catch (err) {
       console.error('Apply drive error:', err);
     }
@@ -235,15 +231,11 @@ export default function PlacementHubPage() {
   const handleRunAtsCheck = async () => {
     setAnalyzingAts(true);
     try {
-      const res = await fetch('/api/v1/placement/ats-check', {
+      const json = await fetchApi('/placement/ats-check', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ resume_text: resumeText }),
       });
-      if (res.ok) {
-        const json = await res.json();
-        setAtsResult(json);
-      }
+      setAtsResult(json);
     } catch (err) {
       console.error('ATS check error:', err);
     } finally {
@@ -257,15 +249,11 @@ export default function PlacementHubPage() {
     setMockUserAns('');
     setMockResult(null);
     try {
-      const res = await fetch('/api/v1/placement/mock-interview/generate', {
+      const json = await fetchApi('/placement/mock-interview/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ category: mockCategory, role: mockRole }),
       });
-      if (res.ok) {
-        const json = await res.json();
-        setCurrentMockQ(json);
-      }
+      setCurrentMockQ(json);
     } catch (err) {
       console.error('Generate mock question error:', err);
     } finally {
@@ -281,19 +269,15 @@ export default function PlacementHubPage() {
     }
     setEvaluatingMock(true);
     try {
-      const res = await fetch('/api/v1/placement/mock-interview/evaluate', {
+      const json = await fetchApi('/placement/mock-interview/evaluate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           question: currentMockQ?.question || 'Technical question',
           user_answer: mockUserAns,
           category: mockCategory,
         }),
       });
-      if (res.ok) {
-        const json = await res.json();
-        setMockResult(json);
-      }
+      setMockResult(json);
     } catch (err) {
       console.error('Evaluate mock answer error:', err);
     } finally {
@@ -307,15 +291,11 @@ export default function PlacementHubPage() {
     if (!q.trim()) return;
     setAskingAdvisor(true);
     try {
-      const res = await fetch('/api/v1/placement/career-advisor', {
+      const json = await fetchApi('/placement/career-advisor', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: q }),
       });
-      if (res.ok) {
-        const json = await res.json();
-        setAdvisorAdvice(json.advice);
-      }
+      setAdvisorAdvice(json.advice);
     } catch (err) {
       console.error('Career advisor error:', err);
     } finally {
@@ -331,20 +311,18 @@ export default function PlacementHubPage() {
       return;
     }
     try {
-      const res = await fetch('/api/v1/placement/certificates', {
+      await fetchApi('/placement/certificates', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newCert),
       });
-      if (res.ok) {
-        const item: CertificateItem = {
-          id: Date.now(),
-          ...newCert,
-        };
-        setCertificates((prev) => [item, ...prev]);
-        setIsAddCertOpen(false);
-        setNewCert({ title: '', issuer: '', category: 'Internship', issue_date: '', credential_url: '' });
-      }
+      
+      const item: CertificateItem = {
+        id: Date.now(),
+        ...newCert,
+      };
+      setCertificates((prev) => [item, ...prev]);
+      setIsAddCertOpen(false);
+      setNewCert({ title: '', issuer: '', category: 'Internship', issue_date: '', credential_url: '' });
     } catch (err) {
       console.error('Add certificate error:', err);
     }

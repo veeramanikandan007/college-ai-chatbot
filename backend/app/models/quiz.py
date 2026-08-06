@@ -6,7 +6,7 @@ from app.database.base import Base
 class Quiz(Base):
     __tablename__ = "quizzes"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), default=1)
     title = Column(String, index=True)
     document_id = Column(Integer, nullable=True)
@@ -20,7 +20,7 @@ class Quiz(Base):
 class QuizAttempt(Base):
     __tablename__ = "quiz_attempts"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     quiz_id = Column(Integer, nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"), default=1)
     title = Column(String, default="AI Generated Quiz")

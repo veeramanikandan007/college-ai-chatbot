@@ -6,7 +6,7 @@ from app.database.base import Base
 class StudentGoalModel(Base):
     __tablename__ = "student_goals"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     title = Column(String(255), nullable=False)
     category = Column(String(50), default="Academic")  # Academic, Attendance, Assignment, Interview, Placement
@@ -23,8 +23,8 @@ class StudentGoalModel(Base):
 class StudentStreakModel(Base):
     __tablename__ = "student_streaks"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False, index=True)
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
     daily_study_streak = Column(Integer, default=0)
     quiz_streak = Column(Integer, default=0)
     attendance_streak = Column(Integer, default=0)

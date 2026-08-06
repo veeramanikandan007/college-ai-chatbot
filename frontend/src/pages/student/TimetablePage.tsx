@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { fetchApi } from '../../lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   CalendarDays,
@@ -63,15 +64,15 @@ export default function TimetablePage() {
   const fetchTimetable = async () => {
     setLoading(true);
     try {
-      const [todayRes, weeklyRes, calRes] = await Promise.all([
-        fetch('/api/v1/timetable/today'),
-        fetch('/api/v1/timetable/weekly'),
-        fetch('/api/v1/timetable/calendar'),
+      const [todayDataRes, weeklyDataRes, calDataRes] = await Promise.all([
+        fetchApi('/timetable/today').catch(() => null),
+        fetchApi('/timetable/weekly').catch(() => null),
+        fetchApi('/timetable/calendar').catch(() => null),
       ]);
 
-      if (todayRes.ok) setTodayData(await todayRes.json());
-      if (weeklyRes.ok) setWeeklyData(await weeklyRes.json());
-      if (calRes.ok) setCalendarEvents(await calRes.json());
+      if (todayDataRes) setTodayData(todayDataRes);
+      if (weeklyDataRes) setWeeklyData(weeklyDataRes);
+      if (calDataRes) setCalendarEvents(calDataRes);
     } catch (err) {
       console.error('Failed to load timetable data:', err);
     } finally {
@@ -86,15 +87,12 @@ export default function TimetablePage() {
   // Handle Setting 10-Minute Reminder
   const handleSetReminder = async (item: TimetableItem) => {
     try {
-      const res = await fetch('/api/v1/timetable/reminder', {
+      await fetchApi('/timetable/reminder', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ entry_id: item.id, minutes_before: 10 }),
       });
-      if (res.ok) {
-        setReminderToast(`Reminder set for 10 minutes before ${item.subject_name}.`);
-        setTimeout(() => setReminderToast(null), 4000);
-      }
+      setReminderToast(`Reminder set for 10 minutes before ${item.subject_name}.`);
+      setTimeout(() => setReminderToast(null), 4000);
     } catch (err) {
       console.error('Set reminder error:', err);
     }
@@ -106,15 +104,11 @@ export default function TimetablePage() {
     if (!q.trim()) return;
     setAskingAi(true);
     try {
-      const res = await fetch('/api/v1/timetable/ai-query', {
+      const json = await fetchApi('/timetable/ai-query', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: q }),
       });
-      if (res.ok) {
-        const json = await res.json();
-        setAiAnswer(json.answer);
-      }
+      setAiAnswer(json.answer);
     } catch (err) {
       console.error('AI timetable query error:', err);
     } finally {

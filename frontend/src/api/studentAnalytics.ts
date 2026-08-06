@@ -1,6 +1,4 @@
-import axios from 'axios';
-
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8000') + '/api/v1/analytics';
+import { fetchApi } from '../lib/api';
 
 export interface AnalyticsOverview {
   study_hours_week: number;
@@ -106,45 +104,45 @@ export interface AnalyticsExportPayload {
 }
 
 export const getAnalyticsOverview = async (): Promise<AnalyticsOverview> => {
-  const { data } = await axios.get<AnalyticsOverview>(`${API_BASE}/overview`);
-  return data;
+  return fetchApi('/analytics/overview');
 };
 
 export const getAiInsights = async (): Promise<AiInsightsResponse> => {
-  const { data } = await axios.get<AiInsightsResponse>(`${API_BASE}/ai-insights`);
-  return data;
+  return fetchApi('/analytics/ai-insights');
 };
 
 export const getAnalyticsCharts = async (): Promise<AnalyticsChartsData> => {
-  const { data } = await axios.get<AnalyticsChartsData>(`${API_BASE}/charts`);
-  return data;
+  return fetchApi('/analytics/charts');
 };
 
 export const getStreaks = async (): Promise<StreakData> => {
-  const { data } = await axios.get<StreakData>(`${API_BASE}/streaks`);
-  return data;
+  return fetchApi('/analytics/streaks');
 };
 
 export const getGoals = async (): Promise<GoalResponse[]> => {
-  const { data } = await axios.get<GoalResponse[]>(`${API_BASE}/goals`);
-  return data;
+  return fetchApi('/analytics/goals');
 };
 
 export const createGoal = async (payload: GoalCreatePayload): Promise<GoalResponse> => {
-  const { data } = await axios.post<GoalResponse>(`${API_BASE}/goals`, payload);
-  return data;
+  return fetchApi('/analytics/goals', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
 };
 
 export const updateGoal = async (id: number, payload: GoalUpdatePayload): Promise<GoalResponse> => {
-  const { data } = await axios.patch<GoalResponse>(`${API_BASE}/goals/${id}`, payload);
-  return data;
+  return fetchApi(`/analytics/goals/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  });
 };
 
 export const deleteGoal = async (id: number): Promise<void> => {
-  await axios.delete(`${API_BASE}/goals/${id}`);
+  return fetchApi(`/analytics/goals/${id}`, {
+    method: 'DELETE',
+  });
 };
 
 export const exportAnalytics = async (): Promise<AnalyticsExportPayload> => {
-  const { data } = await axios.get<AnalyticsExportPayload>(`${API_BASE}/export`);
-  return data;
+  return fetchApi('/analytics/export');
 };

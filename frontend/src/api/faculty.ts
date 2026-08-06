@@ -1,20 +1,6 @@
-import axios from 'axios';
+import { fetchApi } from '../lib/api';
 
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8000') + '/api/v1/faculty';
-
-axios.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-const getAuthHeader = () => {
-  const token = localStorage.getItem('token');
-  return token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-};
-
+// Note: fetchApi automatically prepends API_URL (/api/v1) and handles JWT headers.
 
 export interface FacultyProfile {
   id: number;
@@ -157,109 +143,130 @@ export interface StudentRosterItem {
 
 export const facultyApi = {
   getDashboard: async (): Promise<FacultyDashboardData> => {
-    const res = await axios.get(`${API_BASE}/dashboard`);
-    return res.data;
+    return await fetchApi('/faculty/dashboard');
   },
 
   getAttendance: async (subject_code?: string, section?: string, attendance_date?: string): Promise<AttendanceRecord[]> => {
-    const res = await axios.get(`${API_BASE}/attendance`, { params: { subject_code, section, attendance_date } });
-    return res.data;
+    const params = new URLSearchParams();
+    if (subject_code) params.append('subject_code', subject_code);
+    if (section) params.append('section', section);
+    if (attendance_date) params.append('attendance_date', attendance_date);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    return await fetchApi(`/faculty/attendance${query}`);
   },
 
   markAttendance: async (data: Partial<AttendanceRecord>): Promise<AttendanceRecord> => {
-    const res = await axios.post(`${API_BASE}/attendance`, data);
-    return res.data;
+    return await fetchApi('/faculty/attendance', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   },
 
   markBulkAttendance: async (subject_code: string, section: string, date: string, records: Partial<AttendanceRecord>[]): Promise<AttendanceRecord[]> => {
-    const res = await axios.post(`${API_BASE}/attendance/bulk`, { subject_code, section, date, records });
-    return res.data;
+    return await fetchApi('/faculty/attendance/bulk', {
+      method: 'POST',
+      body: JSON.stringify({ subject_code, section, date, records }),
+    });
   },
 
   editAttendance: async (id: number, statusVal: string, remarks?: string): Promise<AttendanceRecord> => {
-    const res = await axios.put(`${API_BASE}/attendance/${id}`, null, { params: { status_val: statusVal, remarks } });
-    return res.data;
+    const params = new URLSearchParams();
+    params.append('status_val', statusVal);
+    if (remarks) params.append('remarks', remarks);
+    return await fetchApi(`/faculty/attendance/${id}?${params.toString()}`, {
+      method: 'PUT',
+    });
   },
 
   getAssignments: async (): Promise<FacultyAssignment[]> => {
-    const res = await axios.get(`${API_BASE}/assignments`);
-    return res.data;
+    return await fetchApi('/faculty/assignments');
   },
 
   createAssignment: async (data: Partial<FacultyAssignment>): Promise<FacultyAssignment> => {
-    const res = await axios.post(`${API_BASE}/assignments`, data);
-    return res.data;
+    return await fetchApi('/faculty/assignments', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   },
 
   editAssignment: async (id: number, data: Partial<FacultyAssignment>): Promise<FacultyAssignment> => {
-    const res = await axios.put(`${API_BASE}/assignments/${id}`, data);
-    return res.data;
+    return await fetchApi(`/faculty/assignments/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
   },
 
   deleteAssignment: async (id: number): Promise<void> => {
-    await axios.delete(`${API_BASE}/assignments/${id}`);
+    await fetchApi(`/faculty/assignments/${id}`, { method: 'DELETE' });
   },
 
   getSubmissions: async (assignmentId: number): Promise<FacultySubmission[]> => {
-    const res = await axios.get(`${API_BASE}/assignments/${assignmentId}/submissions`);
-    return res.data;
+    return await fetchApi(`/faculty/assignments/${assignmentId}/submissions`);
   },
 
   gradeSubmission: async (submissionId: number, grade: string, remarks?: string): Promise<FacultySubmission> => {
-    const res = await axios.post(`${API_BASE}/submissions/${submissionId}/grade`, { grade, remarks });
-    return res.data;
+    return await fetchApi(`/faculty/submissions/${submissionId}/grade`, {
+      method: 'POST',
+      body: JSON.stringify({ grade, remarks }),
+    });
   },
 
   getQuestionPapers: async (): Promise<FacultyQuestionPaper[]> => {
-    const res = await axios.get(`${API_BASE}/question-papers`);
-    return res.data;
+    return await fetchApi('/faculty/question-papers');
   },
 
   uploadQuestionPaper: async (data: Partial<FacultyQuestionPaper>): Promise<FacultyQuestionPaper> => {
-    const res = await axios.post(`${API_BASE}/question-papers`, data);
-    return res.data;
+    return await fetchApi('/faculty/question-papers', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   },
 
   deleteQuestionPaper: async (id: number): Promise<void> => {
-    await axios.delete(`${API_BASE}/question-papers/${id}`);
+    await fetchApi(`/faculty/question-papers/${id}`, { method: 'DELETE' });
   },
 
   getQuizzes: async (): Promise<FacultyQuiz[]> => {
-    const res = await axios.get(`${API_BASE}/quizzes`);
-    return res.data;
+    return await fetchApi('/faculty/quizzes');
   },
 
   createQuiz: async (data: Partial<FacultyQuiz>): Promise<FacultyQuiz> => {
-    const res = await axios.post(`${API_BASE}/quizzes`, data);
-    return res.data;
+    return await fetchApi('/faculty/quizzes', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   },
 
   togglePublishQuiz: async (id: number): Promise<FacultyQuiz> => {
-    const res = await axios.put(`${API_BASE}/quizzes/${id}/publish`);
-    return res.data;
+    return await fetchApi(`/faculty/quizzes/${id}/publish`, { method: 'PUT' });
   },
 
   deleteQuiz: async (id: number): Promise<void> => {
-    await axios.delete(`${API_BASE}/quizzes/${id}`);
+    await fetchApi(`/faculty/quizzes/${id}`, { method: 'DELETE' });
   },
 
   getQuizScores: async (quizId: number): Promise<FacultyQuizResult[]> => {
-    const res = await axios.get(`${API_BASE}/quizzes/${quizId}/scores`);
-    return res.data;
+    return await fetchApi(`/faculty/quizzes/${quizId}/scores`);
   },
 
   getTimetable: async (): Promise<FacultyScheduleItem[]> => {
-    const res = await axios.get(`${API_BASE}/timetable`);
-    return res.data;
+    return await fetchApi('/faculty/timetable');
   },
 
   requestTimetableChange: async (data: { request_date: string; current_period: number; requested_period: number; reason: string }) => {
-    const res = await axios.post(`${API_BASE}/timetable/change-request`, data);
-    return res.data;
+    return await fetchApi('/faculty/timetable/change-request', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   },
 
   getStudents: async (params?: { department?: string; semester?: number; section?: string; search?: string }): Promise<StudentRosterItem[]> => {
-    const res = await axios.get(`${API_BASE}/students`, { params });
-    return res.data;
+    const urlParams = new URLSearchParams();
+    if (params?.department) urlParams.append('department', params.department);
+    if (params?.semester) urlParams.append('semester', params.semester.toString());
+    if (params?.section) urlParams.append('section', params.section);
+    if (params?.search) urlParams.append('search', params.search);
+    const query = urlParams.toString() ? `?${urlParams.toString()}` : '';
+    return await fetchApi(`/faculty/students${query}`);
   },
 };

@@ -5,7 +5,7 @@ from app.database.base import Base
 class MockInterviewModel(Base):
     __tablename__ = "mock_interviews"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     title = Column(String(255), nullable=False)
     interview_type = Column(String(50), default="Technical", index=True) # HR, Technical, Coding, Aptitude, Group Discussion
@@ -34,7 +34,7 @@ class MockInterviewModel(Base):
 class InterviewQaLogModel(Base):
     __tablename__ = "interview_qa_logs"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     interview_id = Column(Integer, ForeignKey("mock_interviews.id", ondelete="CASCADE"), nullable=False, index=True)
     question_number = Column(Integer, nullable=False)
     question_text = Column(Text, nullable=False)

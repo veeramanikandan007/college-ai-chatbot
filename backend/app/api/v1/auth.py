@@ -12,9 +12,25 @@ router = APIRouter()
 
 @router.post("/register", response_model=Token)
 @limiter.limit("5/minute")
-def register(request: Request, user_in: UserCreate, db: Session = Depends(deps.get_db)):
+async def register(request: Request, user_in: UserCreate, db: Session = Depends(deps.get_db)):
     """Register a new user."""
-    return auth_service.register_user(db, user_in)
+    import logging
+    import json
+    logger = logging.getLogger(__name__)
+    body = await request.body()
+    logger.info(f"REQUEST_URL: {request.url}")
+    logger.info(f"REQUEST_JSON: {body.decode()}")
+    logger.info(f"VALIDATED_DATA: {user_in.model_dump()}")
+    
+    try:
+        result = auth_service.register_user(db, user_in)
+        logger.info("REGISTER_SUCCESS: True")
+        return result
+    except Exception as e:
+        logger.error(f"REGISTER_EXCEPTION: {type(e).__name__}: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        raise
 
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -37,4 +53,4 @@ def logout():
 @router.put("/me", response_model=UserProfile)
 def update_me(request: UserUpdate, current_user: User = Depends(deps.get_current_user), db: Session = Depends(deps.get_db)):
     """Update current user profile."""
-    return auth_service.update_user_profile(db, current_user.id, request.model_dump(exclude_unset=True))
+    return auth_service.update_user_profile(db, current_user.id, request.model_dump(exclude_unset=True))  # type: ignore

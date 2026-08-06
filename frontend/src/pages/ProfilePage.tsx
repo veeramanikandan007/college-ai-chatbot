@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -23,6 +23,7 @@ import { useAuth } from '../hooks/useAuth';
 import UserAvatar from '../components/UserAvatar';
 import AvatarCropperModal from '../components/AvatarCropperModal';
 import { validateAvatarFile, uploadAvatarImage } from '../services/avatarService';
+import { fetchApi } from '../lib/api';
 
 export default function ProfilePage() {
   const { user, updateUser } = useAuth();
@@ -31,6 +32,14 @@ export default function ProfilePage() {
   const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
   const [isCropperOpen, setIsCropperOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  
+  const [dashboardData, setDashboardData] = useState<{ attendance: number, cgpa: number } | null>(null);
+
+  useEffect(() => {
+    fetchApi('/students/dashboard')
+      .then(data => setDashboardData(data))
+      .catch(err => console.error(err));
+  }, []);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -111,10 +120,10 @@ export default function ProfilePage() {
               </div>
 
               <h1 className="text-[20px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] tracking-tight leading-[1.2]">
-                {user?.name || 'Ariana Patel'}
+                {user?.name || 'Not available'}
               </h1>
               <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA]">
-                {user?.department || 'Computer Science & Engineering'} • {user?.role === 'admin' ? 'Administrator' : '3rd Year Student'}
+                {user?.department || 'Department not set'} • {user?.role === 'admin' ? 'Administrator' : user?.role === 'faculty' ? 'Faculty' : 'Student'}
               </p>
 
               {/* Quick Upload Action */}
@@ -142,7 +151,7 @@ export default function ProfilePage() {
           <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
             <div className="min-w-0 flex-1 space-y-0.5">
               <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Student ID</p>
-              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">STU23911</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">{user?.student_id || user?.employee_id || 'Not set'}</p>
               <p className="text-[12px] sm:text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Verified Registration</p>
             </div>
             <div className="w-[34px] h-[34px] sm:w-[38px] sm:h-[38px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2">
@@ -153,8 +162,8 @@ export default function ProfilePage() {
           <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
             <div className="min-w-0 flex-1 space-y-0.5">
               <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Semester</p>
-              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">6th Semester</p>
-              <p className="text-[12px] sm:text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Academic Year 2026</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">{user?.semester ? `${user.semester}th Semester` : 'Not set'}</p>
+              <p className="text-[12px] sm:text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">{user?.year ? `Year ${user.year}` : 'Year not set'}</p>
             </div>
             <div className="w-[34px] h-[34px] sm:w-[38px] sm:h-[38px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2">
               <GraduationCap size={16} />
@@ -164,7 +173,7 @@ export default function ProfilePage() {
           <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
             <div className="min-w-0 flex-1 space-y-0.5">
               <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Attendance</p>
-              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">94%</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">{dashboardData?.attendance || 0}%</p>
               <p className="text-[12px] sm:text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Good Standing</p>
             </div>
             <div className="w-[34px] h-[34px] sm:w-[38px] sm:h-[38px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2">
@@ -175,7 +184,7 @@ export default function ProfilePage() {
           <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
             <div className="min-w-0 flex-1 space-y-0.5">
               <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">CGPA</p>
-              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">8.9 / 10</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">{dashboardData?.cgpa || '0.0'} / 10</p>
               <p className="text-[12px] sm:text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">First Class Distinction</p>
             </div>
             <div className="w-[34px] h-[34px] sm:w-[38px] sm:h-[38px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2">
@@ -186,7 +195,8 @@ export default function ProfilePage() {
           <div className="h-[88px] p-3.5 sm:p-[16px] rounded-[16px] bg-[#FFFFFF] dark:bg-[#18181B] border border-[#D1D5DB] dark:border-[#3F3F46] shadow-xs flex items-center justify-between transition-all duration-150 ease-in-out hover:-translate-y-[2px] hover:shadow-md">
             <div className="min-w-0 flex-1 space-y-0.5">
               <p className="text-[14px] sm:text-[15px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate">Section</p>
-              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">Section A</p>
+              <p className="text-[26px] sm:text-[30px] font-[600] text-[#111827] dark:text-[#FAFAFA] leading-none truncate">{/* @ts-ignore */}
+              {user?.section || 'Not set'}</p>
               <p className="text-[12px] sm:text-[14px] font-[400] text-[#6B7280] dark:text-[#A1A1AA] truncate pt-0.5">Morning Batch</p>
             </div>
             <div className="w-[34px] h-[34px] sm:w-[38px] sm:h-[38px] rounded-[10px] bg-[#F8FAFC] dark:bg-[#111111] border border-[#D1D5DB] dark:border-[#3F3F46] text-[#111827] dark:text-[#FAFAFA] flex items-center justify-center shrink-0 ml-2">
@@ -220,7 +230,7 @@ export default function ProfilePage() {
                 <div className="min-w-0 flex-1">
                   <p className="text-[11px] font-[400] uppercase text-[#6B7280] dark:text-[#A1A1AA]">Email Address</p>
                   <p className="text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] truncate">
-                    {user?.email || 'student@mountzion.ac.in'}
+                    {user?.email || 'Not provided'}
                   </p>
                 </div>
               </div>
@@ -230,7 +240,7 @@ export default function ProfilePage() {
                 <div className="min-w-0 flex-1">
                   <p className="text-[11px] font-[400] uppercase text-[#6B7280] dark:text-[#A1A1AA]">Phone Number</p>
                   <p className="text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] truncate">
-                    +91 98765 43210
+                    {user?.phone || 'Not provided'}
                   </p>
                 </div>
               </div>
@@ -249,7 +259,7 @@ export default function ProfilePage() {
                 <div className="min-w-0 flex-1">
                   <p className="text-[11px] font-[400] uppercase text-[#6B7280] dark:text-[#A1A1AA]">Department</p>
                   <p className="text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] truncate">
-                    {user?.department || 'Computer Science & Engineering'}
+                    {user?.department || 'Not specified'}
                   </p>
                 </div>
               </div>
@@ -259,7 +269,7 @@ export default function ProfilePage() {
                 <div className="min-w-0 flex-1">
                   <p className="text-[11px] font-[400] uppercase text-[#6B7280] dark:text-[#A1A1AA]">Role & Standing</p>
                   <p className="text-[14px] font-[500] text-[#111827] dark:text-[#FAFAFA] truncate">
-                    {user?.role === 'admin' ? 'Administrator' : '3rd Year Undergraduate'}
+                    {user?.role === 'admin' ? 'Administrator' : user?.role === 'faculty' ? 'Faculty' : 'Undergraduate Student'}
                   </p>
                 </div>
               </div>
